@@ -6,6 +6,8 @@ This documentation is intended for developers who would like to contribute to or
 
 ## Documentation
 
+Details of the changes made in this repository are documented in the [`docs`](docs/) directory. For all other documentation, visit [https://vscode-elements.github.io/](https://vscode-elements.github.io/).
+
 - [Form control sizes](docs/form-size.md) explains the shared `small`,
   `medium`, and `large` sizes, supported components, runtime usage, form groups,
   and icon sizing.
