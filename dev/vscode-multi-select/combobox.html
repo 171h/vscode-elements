@@ -31,27 +31,10 @@
           <vscode-option>Ipsum</vscode-option>
           <vscode-option>Dolor</vscode-option>
         </vscode-multi-select>
-        <div>
-          <button type="button" class="size-button" data-size="small">
-            small
-          </button>
-          <button type="button" class="size-button" data-size="medium">
-            medium
-          </button>
-          <button type="button" class="size-button" data-size="large">
-            large
-          </button>
-        </div>
         <script type="module">
           const sl = document.querySelector('vscode-multi-select');
           sl.addEventListener('change', () => {
             console.log(sl.value);
-          });
-
-          document.querySelectorAll('.size-button').forEach((button) => {
-            button.addEventListener('click', () => {
-              sl.setAttribute('size', button.dataset.size);
-            });
           });
         </script>
         <div class="size-buttons">

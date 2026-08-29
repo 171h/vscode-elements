@@ -37,17 +37,6 @@
           </vscode-radio-group>
           <button type="reset">Reset</button>
           <button type="submit">Submit</button>
-          <div>
-            <button type="button" class="size-button" data-size="small">
-              small
-            </button>
-            <button type="button" class="size-button" data-size="medium">
-              medium
-            </button>
-            <button type="button" class="size-button" data-size="large">
-              large
-            </button>
-          </div>
         </form>
         <script type="module">
           const form = document.querySelector('form');
@@ -58,16 +47,6 @@
             const fd = new FormData(form);
 
             console.log(Array.from(fd.entries));
-          });
-
-          document.querySelectorAll('.size-button').forEach((button) => {
-            button.addEventListener('click', () => {
-              document
-                .querySelectorAll('#radio-group vscode-radio')
-                .forEach((el) => {
-                  el.setAttribute('size', button.dataset.size);
-                });
-            });
           });
         </script>
         <div class="size-buttons">

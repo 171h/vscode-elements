@@ -37,30 +37,10 @@
           ></vscode-checkbox>
           <input type="checkbox" id="native-checkbox-1" disabled />
           <label for="native-checkbox-1" disabled>Native checkbox</label>
-          <div>
-            <button type="button" class="size-button" data-size="small">
-              small
-            </button>
-            <button type="button" class="size-button" data-size="medium">
-              medium
-            </button>
-            <button type="button" class="size-button" data-size="large">
-              large
-            </button>
-          </div>
           <script type="module">
             const cb1 = document.querySelector('#checkbox-1');
             const ncb1 = document.querySelector('#native-checkbox-1');
 
-            document.querySelectorAll('.size-button').forEach((button) => {
-              button.addEventListener('click', () => {
-                document
-                  .querySelectorAll('#demo vscode-checkbox')
-                  .forEach((el) => {
-                    el.setAttribute('size', button.dataset.size);
-                  });
-              });
-            });
             cb1.addEventListener('click', (ev) => {
               console.log(ev);
             });

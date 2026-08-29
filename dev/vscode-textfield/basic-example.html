@@ -39,26 +39,9 @@
           ></vscode-icon>
         </vscode-textfield>
         <button type="button" id="bt-focus">focus</button>
-        <div>
-          <button type="button" class="size-button" data-size="small">
-            small
-          </button>
-          <button type="button" class="size-button" data-size="medium">
-            medium
-          </button>
-          <button type="button" class="size-button" data-size="large">
-            large
-          </button>
-        </div>
         <script type="module">
           const el = document.getElementById('field-1');
           const icon = document.getElementById('search-icon');
-
-          document.querySelectorAll('.size-button').forEach((button) => {
-            button.addEventListener('click', () => {
-              el.setAttribute('size', button.dataset.size);
-            });
-          });
 
           document.addEventListener('invalid', (ev) => {
             console.log(ev);

@@ -32,18 +32,7 @@
           <vscode-option>Dolor</vscode-option>
           <vscode-option>Sit</vscode-option>
         </vscode-single-select>
-        <button type="button">focus</button>
-        <div>
-          <button type="button" class="size-button" data-size="small">
-            small
-          </button>
-          <button type="button" class="size-button" data-size="medium">
-            medium
-          </button>
-          <button type="button" class="size-button" data-size="large">
-            large
-          </button>
-        </div>
+        <button type="button" id="bt-focus">focus</button>
         <div class="size-buttons">
           <button type="button" data-size="small">small</button>
           <button type="button" data-size="medium">medium</button>
@@ -52,16 +41,10 @@
       </vscode-demo>
       <script type="module">
         const sl = document.querySelector('vscode-single-select');
-        const bt = document.querySelector('button');
+        const bt = document.querySelector('#bt-focus');
 
         bt.addEventListener('click', () => {
           sl.focus();
-        });
-
-        document.querySelectorAll('.size-button').forEach((button) => {
-          button.addEventListener('click', () => {
-            sl.setAttribute('size', button.dataset.size);
-          });
         });
       </script>
     </main>

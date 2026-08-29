@@ -53,31 +53,7 @@
     <h1>Apply CSP</h1>
     <main>
       <vscode-demo id="size-demo-target">
-        <vscode-textarea
-          id="textarea"
-          value="ffff"
-          resize="vertical"
-        ></vscode-textarea>
-        <div>
-          <button type="button" class="size-button" data-size="small">
-            small
-          </button>
-          <button type="button" class="size-button" data-size="medium">
-            medium
-          </button>
-          <button type="button" class="size-button" data-size="large">
-            large
-          </button>
-        </div>
-        <script type="module" nonce="abc123">
-          const el = document.getElementById('textarea');
-
-          document.querySelectorAll('.size-button').forEach((button) => {
-            button.addEventListener('click', () => {
-              el.setAttribute('size', button.dataset.size);
-            });
-          });
-        </script>
+        <vscode-textarea value="ffff" resize="vertical"></vscode-textarea>
         <div class="size-buttons">
           <button type="button" data-size="small">small</button>
           <button type="button" data-size="medium">medium</button>
