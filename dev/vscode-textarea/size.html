@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VSCode Elements</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+  </head>
+
+  <body>
+    <main>
+      <h1>Textarea sizes</h1>
+      <vscode-demo>
+        <div>
+          <vscode-textarea
+            id="textarea"
+            size="medium"
+            placeholder="Placeholder..."
+          ></vscode-textarea>
+        </div>
+        <div>
+          <label for="size">Size:</label>
+          <select id="size">
+            <option value="small">small</option>
+            <option value="medium" selected>medium</option>
+            <option value="large">large</option>
+          </select>
+        </div>
+        <script type="module">
+          const textarea = document.querySelector('#textarea');
+          const size = document.querySelector('#size');
+
+          size.addEventListener('change', () => {
+            textarea.setAttribute('size', size.value);
+          });
+        </script>
+      </vscode-demo>
+    </main>
+  </body>
+</html>
