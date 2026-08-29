@@ -243,7 +243,27 @@
             });
           </script>
         </div>
+        <div class="icon-size-buttons">
+          Icon size:
+          <button type="button" data-icon-size="small">small</button>
+          <button type="button" data-icon-size="medium">medium</button>
+          <button type="button" data-icon-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document
+        .querySelectorAll('.icon-size-buttons button')
+        .forEach((button) => {
+          button.addEventListener('click', () => {
+            button
+              .closest('vscode-demo')
+              .querySelectorAll('vscode-icon')
+              .forEach((icon) => {
+                icon.setAttribute('size', button.dataset.iconSize);
+              });
+          });
+        });
+    </script>
   </body>
 </html>
