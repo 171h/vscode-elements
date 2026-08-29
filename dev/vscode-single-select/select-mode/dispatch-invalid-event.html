@@ -20,7 +20,7 @@
   <body>
     <h1>Single Select</h1>
     <h2>Dispatch "invalid" event</h2>
-    <vscode-demo>
+    <vscode-demo id="size-demo-target">
       <form action="#">
         <p>
           <vscode-single-select required name="select-1" id="select-1">
@@ -39,6 +39,22 @@
           console.log(ev);
         });
       </script>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </vscode-demo>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

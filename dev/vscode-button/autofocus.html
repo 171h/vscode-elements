@@ -26,9 +26,25 @@
   <body>
     <h1>Autofocus</h1>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-button autofocus>Focused</vscode-button>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-button')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

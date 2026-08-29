@@ -25,7 +25,7 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <div
           style="width: 320px; display: flex; flex-direction: column; gap: 6px"
         >
@@ -35,7 +35,23 @@
           <vscode-button block>Block Button</vscode-button>
           <vscode-button block secondary>Secondary Block Button</vscode-button>
         </div>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-button')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

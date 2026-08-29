@@ -26,10 +26,15 @@
 
   <body>
     <h1>Select</h1>
-    <vscode-demo>
+    <vscode-demo id="size-demo-target">
       <form>
         <vscode-single-select id="select" name="test"></vscode-single-select>
       </form>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </vscode-demo>
     <script type="module">
       const select = document.querySelector('vscode-single-select');
@@ -50,6 +55,17 @@
       const form = document.querySelector('form');
       const fd = new FormData(form);
       console.log(fd.get('test'));
+    </script>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
     </script>
   </body>
 </html>

@@ -25,30 +25,50 @@
 
   <body>
     <main>
-      <vscode-demo id="demo">
-        <vscode-button>Primary Button</vscode-button>
-        <vscode-button secondary>Secondary Button</vscode-button>
-        <div>
-          <button type="button" class="size-button" data-size="small">
-            small
-          </button>
-          <button type="button" class="size-button" data-size="medium">
-            medium
-          </button>
-          <button type="button" class="size-button" data-size="large">
-            large
-          </button>
-        </div>
-        <script type="module">
-          document.querySelectorAll('.size-button').forEach((button) => {
-            button.addEventListener('click', () => {
-              document.querySelectorAll('#demo vscode-button').forEach((el) => {
-                el.setAttribute('size', button.dataset.size);
+      <div id="size-demo-target">
+        <vscode-demo id="demo">
+          <vscode-button>Primary Button</vscode-button>
+          <vscode-button secondary>Secondary Button</vscode-button>
+          <div>
+            <button type="button" class="size-button" data-size="small">
+              small
+            </button>
+            <button type="button" class="size-button" data-size="medium">
+              medium
+            </button>
+            <button type="button" class="size-button" data-size="large">
+              large
+            </button>
+          </div>
+          <script type="module">
+            document.querySelectorAll('.size-button').forEach((button) => {
+              button.addEventListener('click', () => {
+                document
+                  .querySelectorAll('#demo vscode-button')
+                  .forEach((el) => {
+                    el.setAttribute('size', button.dataset.size);
+                  });
               });
             });
-          });
-        </script>
-      </vscode-demo>
+          </script>
+          <div class="size-buttons">
+            <button type="button" data-size="small">small</button>
+            <button type="button" data-size="medium">medium</button>
+            <button type="button" data-size="large">large</button>
+          </div>
+        </vscode-demo>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-button')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

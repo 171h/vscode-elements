@@ -30,8 +30,13 @@
   </head>
   <body>
     <h1>vscode-single-select stale index repro</h1>
-    <div class="row">
+    <div class="row" id="size-demo-target">
       <vscode-single-select id="sel" combobox></vscode-single-select>
+    </div>
+    <div class="row size-buttons">
+      <button type="button" data-size="small">small</button>
+      <button type="button" data-size="medium">medium</button>
+      <button type="button" data-size="large">large</button>
     </div>
     <div class="row">
       <button id="mount">Mount options</button>
@@ -91,6 +96,12 @@
           throw e;
         }
       };
+
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          sel.setAttribute('size', button.dataset.size);
+        });
+      });
     </script>
   </body>
 </html>

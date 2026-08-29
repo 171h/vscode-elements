@@ -22,7 +22,7 @@
     <main>
       <h1>Textfield</h1>
       <h2>File input</h2>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-label for="field-2">Lorem ipsum</vscode-label>
         <vscode-textfield
           id="field-2"
@@ -31,7 +31,23 @@
           type="file"
         >
         </vscode-textfield>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-textfield')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

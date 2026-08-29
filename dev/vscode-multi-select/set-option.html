@@ -27,7 +27,7 @@
   <body>
     <h1>Multi Select</h1>
     <p>description</p>
-    <vscode-demo>
+    <vscode-demo id="size-demo-target">
       <vscode-multi-select id="my-select">
         <vscode-option value="A">A</vscode-option>
         <vscode-option value="B">B</vscode-option>
@@ -42,6 +42,22 @@
         select.value = ['A', 'B', 'C']; // fill with all values
         console.log(select.value); // show all set now
       </script>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </vscode-demo>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-multi-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

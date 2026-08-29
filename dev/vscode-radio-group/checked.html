@@ -26,7 +26,7 @@
   <body>
     <h1>Component demo</h1>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <form action="/">
           <vscode-radio-group id="radio-group">
             <vscode-radio name="radio-example" value="1">Lorem</vscode-radio>
@@ -70,6 +70,11 @@
             });
           });
         </script>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
 
       <form action="/">
@@ -101,5 +106,16 @@
         <button type="submit">Submit</button>
       </form>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-radio')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

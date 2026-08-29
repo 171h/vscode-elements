@@ -14,7 +14,7 @@
   </head>
 
   <body class="vscode-light">
-    <vscode-demo>
+    <vscode-demo id="size-demo-target">
       <vscode-single-select id="select">
         <vscode-option value="3f7382c7-d4cb-49a5-a1d3-4e9df19ed432"
           >Lorem</vscode-option
@@ -26,6 +26,11 @@
           >Dolor</vscode-option
         >
       </vscode-single-select>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </vscode-demo>
     <div id="out"></div>
     <script type="module">
@@ -35,6 +40,17 @@
       sl.addEventListener('change', (ev) => {
         console.log(ev.target.value);
         out.innerHTML = ev.target.value;
+      });
+    </script>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
       });
     </script>
   </body>

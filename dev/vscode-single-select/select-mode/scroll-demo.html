@@ -25,7 +25,7 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-single-select>
           <vscode-option>Option 1</vscode-option>
           <vscode-option>Option 2</vscode-option>
@@ -48,7 +48,23 @@
           <vscode-option>Option 19</vscode-option>
           <vscode-option>Option 20</vscode-option>
         </vscode-single-select>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

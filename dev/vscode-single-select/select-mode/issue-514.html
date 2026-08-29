@@ -27,97 +27,115 @@
     <vscode-dev-toolbar></vscode-dev-toolbar>
     <h1>Component demo</h1>
     <main>
-      <p>line</p>
-      <p>line</p>
-      <p>line</p>
-      <p>line</p>
-      <p>line</p>
-      <p>line</p>
-      <p>line</p>
-      <p>line</p>
-      <p>line</p>
-      <vscode-single-select>
-        <vscode-option>Option 1</vscode-option>
-        <vscode-option>Option 2</vscode-option>
-        <vscode-option>Option 3</vscode-option>
-        <vscode-option>Option 4</vscode-option>
-      </vscode-single-select>
-      <div id="lines">
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
-        <p>line</p>
+      <div id="size-demo-target">
+        <p>line</p>
+        <p>line</p>
+        <p>line</p>
+        <p>line</p>
+        <p>line</p>
+        <p>line</p>
+        <p>line</p>
+        <p>line</p>
+        <p>line</p>
+        <vscode-single-select>
+          <vscode-option>Option 1</vscode-option>
+          <vscode-option>Option 2</vscode-option>
+          <vscode-option>Option 3</vscode-option>
+          <vscode-option>Option 4</vscode-option>
+        </vscode-single-select>
+        <div id="lines">
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+          <p>line</p>
+        </div>
+        <script type="module">
+          let counter = 1;
+          setInterval(() => {
+            const line = document.createElement('p');
+            line.innerHTML = counter;
+            counter++;
+            document.getElementById('lines').appendChild(line);
+          }, 700);
+        </script>
       </div>
-      <script type="module">
-        let counter = 1;
-        setInterval(() => {
-          const line = document.createElement('p');
-          line.innerHTML = counter;
-          counter++;
-          document.getElementById('lines').appendChild(line);
-        }, 700);
-      </script>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

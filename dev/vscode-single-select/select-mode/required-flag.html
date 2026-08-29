@@ -13,7 +13,7 @@
     <script type="module" src="/dist/vscode-option/index.js"></script>
   </head>
   <body>
-    <vscode-demo>
+    <vscode-demo id="size-demo-target">
       <p>
         <vscode-textfield
           id="none-required-textfield-example"
@@ -50,6 +50,22 @@
           select.setAttribute('required', '');
         });
       </script>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </vscode-demo>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

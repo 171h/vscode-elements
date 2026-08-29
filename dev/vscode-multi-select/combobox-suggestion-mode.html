@@ -25,7 +25,7 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-multi-select combobox creatable>
           <vscode-option>Afghanistan</vscode-option>
           <vscode-option>Albania</vscode-option>
@@ -227,7 +227,23 @@
           logEvents('vscode-multi-select', 'change');
           logEvents('vscode-multi-select', 'vsc-multi-select-create-option');
         </script>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-multi-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

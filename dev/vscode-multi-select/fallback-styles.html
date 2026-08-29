@@ -21,11 +21,29 @@
 
   <body style="background-color: #1f1f1f">
     <main>
-      <vscode-multi-select required>
-        <vscode-option>Lorem</vscode-option>
-        <vscode-option>Ipsum</vscode-option>
-        <vscode-option>Dolor</vscode-option>
-      </vscode-multi-select>
+      <div id="size-demo-target">
+        <vscode-multi-select required>
+          <vscode-option>Lorem</vscode-option>
+          <vscode-option>Ipsum</vscode-option>
+          <vscode-option>Dolor</vscode-option>
+        </vscode-multi-select>
+      </div>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-multi-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

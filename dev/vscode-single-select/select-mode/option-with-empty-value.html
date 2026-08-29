@@ -32,7 +32,7 @@
     <h1>Option with empty value</h1>
     <main>
       <h2>VSCode Elements SingleSelect</h2>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <form action="">
           <vscode-single-select id="vscode-select" name="select" required>
             <vscode-option value="">--- Choose an option ---</vscode-option>
@@ -42,6 +42,11 @@
           </vscode-single-select>
           <button type="submit">Submit</button>
         </form>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
       <script type="module">
         logEvents('#vscode-select', 'change');
@@ -60,5 +65,16 @@
         logEvents('#native-select', 'change');
       </script>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

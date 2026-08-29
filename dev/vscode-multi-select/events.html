@@ -26,7 +26,7 @@
 
   <body>
     <h1>MultiSelect</h1>
-    <vscode-demo>
+    <vscode-demo id="size-demo-target">
       <h2>Change event</h2>
       <vscode-multi-select id="select-1">
         <vscode-option>Lorem</vscode-option>
@@ -36,6 +36,11 @@
       <script type="module">
         logEvents('#select-1', 'change');
       </script>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </vscode-demo>
 
     <vscode-demo>
@@ -52,5 +57,16 @@
         logEvents('#select-2', 'invalid');
       </script>
     </vscode-demo>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-multi-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

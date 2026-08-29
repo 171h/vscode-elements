@@ -25,7 +25,7 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-multi-select name="fruit" id="select" label="Fruits">
           <vscode-option value="banana">Banana</vscode-option>
           <vscode-option value="cherry">Cherry</vscode-option>
@@ -34,7 +34,23 @@
           <vscode-option value="lemon">Lemon</vscode-option>
           <vscode-option value="orange">Orange</vscode-option>
         </vscode-multi-select>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-multi-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>
