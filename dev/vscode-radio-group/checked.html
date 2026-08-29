@@ -28,7 +28,7 @@
     <main>
       <vscode-demo>
         <form action="/">
-          <vscode-radio-group>
+          <vscode-radio-group id="radio-group">
             <vscode-radio name="radio-example" value="1">Lorem</vscode-radio>
             <vscode-radio name="radio-example" value="2" checked
               >Ipsum</vscode-radio
@@ -62,9 +62,11 @@
 
           document.querySelectorAll('.size-button').forEach((button) => {
             button.addEventListener('click', () => {
-              document.querySelectorAll('vscode-radio').forEach((el) => {
-                el.setAttribute('size', button.dataset.size);
-              });
+              document
+                .querySelectorAll('#radio-group vscode-radio')
+                .forEach((el) => {
+                  el.setAttribute('size', button.dataset.size);
+                });
             });
           });
         </script>

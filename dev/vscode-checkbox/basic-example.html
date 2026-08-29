@@ -15,7 +15,7 @@
   <body>
     <main>
       <h2>Basic example</h2>
-      <vscode-demo>
+      <vscode-demo id="demo">
         <vscode-checkbox
           label="Checkbox example"
           value="testvalue1"
@@ -53,9 +53,11 @@
 
           document.querySelectorAll('.size-button').forEach((button) => {
             button.addEventListener('click', () => {
-              document.querySelectorAll('vscode-checkbox').forEach((el) => {
-                el.setAttribute('size', button.dataset.size);
-              });
+              document
+                .querySelectorAll('#demo vscode-checkbox')
+                .forEach((el) => {
+                  el.setAttribute('size', button.dataset.size);
+                });
             });
           });
           cb1.addEventListener('click', (ev) => {
