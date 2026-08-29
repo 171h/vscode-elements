@@ -185,6 +185,18 @@ const styles: CSSResultGroup = [
       padding: 1px 4px;
     }
 
+    :host([size='small']:empty) .base,
+    :host([size='small']) .base.icon-only {
+      min-height: 16px;
+      min-width: 18px;
+    }
+
+    :host([size='large']:empty) .base,
+    :host([size='large']) .base.icon-only {
+      min-height: 30px;
+      min-width: 34px;
+    }
+
     slot {
       align-items: center;
       display: flex;
