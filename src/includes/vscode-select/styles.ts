@@ -54,7 +54,7 @@ export default [
     }
 
     :host([size='small']) .select-face .icon {
-      top: 4px;
+      top: 0;
     }
 
     .main-slot {
