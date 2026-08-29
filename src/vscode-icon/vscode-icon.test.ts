@@ -18,6 +18,14 @@ describe('vscode-icon', () => {
     expect(el.size).to.eq(24);
   });
 
+  it('preserves numeric size attributes', async () => {
+    const el = await fixture<VscodeIcon>(
+      html`<vscode-icon name="account" size="24"></vscode-icon>`
+    );
+
+    expect(el.size).to.eq(24);
+  });
+
   it('maps the small preset to 14px', async () => {
     const el = await fixture<VscodeIcon>(
       html`<vscode-icon name="account" size="small"></vscode-icon>`

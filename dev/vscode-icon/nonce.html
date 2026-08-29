@@ -36,7 +36,7 @@
   <body>
     <h1>Using nonce property</h1>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-icon name="account"></vscode-icon>
         <vscode-icon
           name="loading"
@@ -46,7 +46,23 @@
         ></vscode-icon>
         <vscode-button icon="account">Hello World</vscode-button>
         <vscode-button secondary>Hello World</vscode-button>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module" nonce="abc123">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-icon')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

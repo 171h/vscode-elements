@@ -45,7 +45,13 @@ export class VscodeIcon extends VscElement {
       large: 20,
     };
 
-    this._size = typeof val === 'number' ? val : (presets[val] ?? 16);
+    const numericValue = Number(val);
+
+    this._size =
+      typeof val === 'number' ||
+      (String(val).trim() !== '' && Number.isFinite(numericValue))
+        ? numericValue
+        : (presets[val] ?? 16);
   }
   get size(): number {
     return this._size;
