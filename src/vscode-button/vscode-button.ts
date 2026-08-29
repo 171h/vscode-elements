@@ -252,6 +252,8 @@ export class VscodeButton extends VscElement {
   override render(): TemplateResult {
     const hasIcon = this.icon !== '';
     const hasIconAfter = this.iconAfter !== '';
+    const iconSize =
+      this.size === 'small' ? 12 : this.size === 'large' ? 20 : 16;
     const baseClasses = {
       base: true,
       'icon-only': this.iconOnly,
@@ -262,6 +264,7 @@ export class VscodeButton extends VscElement {
     const iconElem = hasIcon
       ? html`<vscode-icon
           name=${this.icon}
+          .size=${iconSize}
           ?spin=${this.iconSpin}
           spin-duration=${ifDefined(this.iconSpinDuration)}
           class="icon"
@@ -271,6 +274,7 @@ export class VscodeButton extends VscElement {
     const iconAfterElem = hasIconAfter
       ? html`<vscode-icon
           name=${this.iconAfter}
+          .size=${iconSize}
           ?spin=${this.iconAfterSpin}
           spin-duration=${ifDefined(this.iconAfterSpinDuration)}
           class="icon-after"
