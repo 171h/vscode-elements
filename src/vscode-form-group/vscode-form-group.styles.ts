@@ -9,7 +9,6 @@ const styles: CSSResultGroup = [
       --label-width: 150px;
 
       display: block;
-      margin: 15px 0;
     }
 
     :host([size='small']) {
