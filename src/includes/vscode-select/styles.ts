@@ -25,7 +25,7 @@ export default [
     }
 
     :host([size='large']) .select-face {
-      padding: 4px 4px;
+      padding: 4px;
     }
 
     :host([size='small']) .combobox-input {
