@@ -70,10 +70,11 @@ describe('vscode-button', () => {
         const base = $(button.shadowRoot!, '.base') as HTMLElement;
         const icon = $(button.shadowRoot!, 'vscode-icon');
 
-        expect(base.getBoundingClientRect().height).to.be.closeTo(
-          expectedHeights[index],
-          0.5
-        );
+        const rect = base.getBoundingClientRect();
+        expect(rect.height).to.be.closeTo(expectedHeights[index], 0.5);
+        if (size === 'small' && index < 2) {
+          expect(rect.width).to.be.closeTo(rect.height, 0.5);
+        }
         expect(icon.size).to.eq(expectedIconSize);
       }
     }
