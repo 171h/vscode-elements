@@ -4,6 +4,12 @@ For the end-user documentation, [click here](https://vscode-elements.github.io).
 
 This documentation is intended for developers who would like to contribute to or modify the code on their own.
 
+## Documentation
+
+- [Form control sizes](docs/form-size.md) explains the shared `small`,
+  `medium`, and `large` sizes, supported components, runtime usage, form groups,
+  and icon sizing.
+
 VSCode Elements is based on the [Lit](https://lit.dev/) library. The local development environment requires `NodeJS 22` or newer. If you want to use a local copy of the library in your codebase, you can use the `npm link` command. First, navigate to the VSCode Elements directory and run:
 
 ```bash
