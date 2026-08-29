@@ -56,7 +56,7 @@ describe('vscode-button', () => {
     );
 
     for (const [size, expectedHeights, expectedIconSize] of [
-      ['small', [16, 16, 16], 12],
+      ['small', [16, 16, 16], 14],
       ['medium', [24, 24, 26], 16],
       ['large', [30, 30, 30], 20],
     ] as const) {

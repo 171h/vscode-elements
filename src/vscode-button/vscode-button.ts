@@ -253,7 +253,7 @@ export class VscodeButton extends VscElement {
     const hasIcon = this.icon !== '';
     const hasIconAfter = this.iconAfter !== '';
     const iconSize =
-      this.size === 'small' ? 12 : this.size === 'large' ? 20 : 16;
+      this.size === 'small' ? 14 : this.size === 'large' ? 20 : 16;
     const baseClasses = {
       base: true,
       'icon-only': this.iconOnly,

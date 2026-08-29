@@ -52,4 +52,27 @@ describe('vscode-icon', () => {
     expect(icon.style.width).to.eq('20px');
     expect(icon.style.fontSize).to.eq('20px');
   });
+
+  it('rejects non-numeric size attributes', async () => {
+    const el = await fixture<VscodeIcon>(
+      html`<vscode-icon name="account" size="24px"></vscode-icon>`
+    );
+
+    expect(el.size).to.eq(16);
+  });
+
+  it('rejects empty size attributes', async () => {
+    const el = await fixture<VscodeIcon>(
+      html`<vscode-icon name="account" size=""></vscode-icon>`
+    );
+
+    expect(el.size).to.eq(16);
+  });
+
+  it('rejects NaN size values', () => {
+    const el = document.createElement('vscode-icon');
+    el.size = NaN;
+
+    expect(el.size).to.eq(16);
+  });
 });

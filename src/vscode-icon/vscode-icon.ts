@@ -36,6 +36,8 @@ export class VscodeIcon extends VscElement {
   /**
    * Icon size. Accepts a number of pixels or one of the predefined sizes:
    * `small` (14px), `medium` (16px, default) and `large` (20px).
+   * Invalid values (for example `NaN`, `24px` or an empty string) are
+   * rejected and fall back to the `medium` default (16px).
    */
   @property()
   set size(val: number | 'small' | 'medium' | 'large') {
@@ -43,15 +45,23 @@ export class VscodeIcon extends VscElement {
       small: 14,
       medium: 16,
       large: 20,
-    };
+    } as const;
 
-    const numericValue = Number(val);
+    if (typeof val === 'string') {
+      const trimmed = val.trim();
 
-    this._size =
-      typeof val === 'number' ||
-      (String(val).trim() !== '' && Number.isFinite(numericValue))
-        ? numericValue
-        : (presets[val] ?? 16);
+      if (trimmed in presets) {
+        this._size = presets[trimmed as keyof typeof presets];
+        return;
+      }
+
+      const numericValue = Number(trimmed);
+      this._size =
+        trimmed !== '' && Number.isFinite(numericValue) ? numericValue : 16;
+      return;
+    }
+
+    this._size = Number.isFinite(val) ? val : 16;
   }
   get size(): number {
     return this._size;

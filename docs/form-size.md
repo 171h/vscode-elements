@@ -91,7 +91,7 @@ Icons created by `vscode-button` follow the button size automatically:
 
 | Button size | Generated icon size |
 | --- | --- |
-| `small` | 12px |
+| `small` | 14px |
 | `medium` | 16px |
 | `large` | 20px |
 

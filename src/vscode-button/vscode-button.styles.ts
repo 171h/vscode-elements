@@ -189,7 +189,7 @@ const styles: CSSResultGroup = [
     :host([size='small']) .base.icon-only {
       min-height: 16px;
       min-width: 16px;
-      padding: 1px;
+      padding: 0;
     }
 
     :host([size='large']:empty) .base,

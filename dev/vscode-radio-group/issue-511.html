@@ -73,8 +73,11 @@
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {
         button.addEventListener('click', () => {
-          document
-            .querySelectorAll('#size-demo-target vscode-radio')
+          const demoElement = document.querySelector(
+            '#size-demo-target demo-element'
+          );
+          demoElement.shadowRoot
+            .querySelectorAll('vscode-radio')
             .forEach((el) => {
               el.setAttribute('size', button.dataset.size);
             });

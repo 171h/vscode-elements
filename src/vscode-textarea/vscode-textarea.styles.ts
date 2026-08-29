@@ -20,7 +20,7 @@ const styles: CSSResultGroup = [
     }
 
     :host([size='small']) {
-      --vsc-form-control-font-size: 12px;
+      --vsc-form-control-font-size: 11px;
     }
 
     :host([size='large']) {
