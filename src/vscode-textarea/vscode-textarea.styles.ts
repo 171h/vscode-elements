@@ -19,6 +19,14 @@ const styles: CSSResultGroup = [
       height: auto;
     }
 
+    :host([size='small']) {
+      --vsc-form-control-font-size: 12px;
+    }
+
+    :host([size='large']) {
+      --vsc-form-control-font-size: 15px;
+    }
+
     .shadow {
       box-shadow: var(--vscode-scrollbar-shadow, #000000) 0 6px 6px -6px inset;
       display: none;
@@ -43,7 +51,10 @@ const styles: CSSResultGroup = [
       color: var(--vscode-settings-textInputForeground, #cccccc);
       display: block;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
       height: 100%;
       width: 100%;

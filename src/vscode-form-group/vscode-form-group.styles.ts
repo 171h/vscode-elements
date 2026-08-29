@@ -14,6 +14,7 @@ const styles: CSSResultGroup = [
     :host([size='small']) {
       --label-right-margin: 10px;
       --label-width: 100px;
+      --vsc-form-control-font-size: 12px;
 
       margin: 8px 0;
     }
@@ -28,6 +29,7 @@ const styles: CSSResultGroup = [
     :host([size='large']) {
       --label-right-margin: 18px;
       --label-width: 200px;
+      --vsc-form-control-font-size: 15px;
 
       margin: 22px 0;
     }

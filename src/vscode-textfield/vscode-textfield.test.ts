@@ -50,6 +50,25 @@ describe('vscode-textfield', () => {
     expect(el.type).to.eq('text');
   });
 
+  it('uses medium size by default', async () => {
+    const el = await fixture<VscodeTextfield>(
+      html`<vscode-textfield></vscode-textfield>`
+    );
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = await fixture<VscodeTextfield>(
+      html`<vscode-textfield></vscode-textfield>`
+    );
+    el.size = 'small';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('small');
+  });
+
   it('should be participated in the form', async () => {
     const form = document.createElement('form');
     await fixture(

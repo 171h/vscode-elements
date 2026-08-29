@@ -29,6 +29,25 @@ describe('vscode-single-select', () => {
     expect(el).to.instanceOf(VscodeSingleSelect);
   });
 
+  it('uses medium size by default', async () => {
+    const el = (await fixture(html`
+      <vscode-single-select></vscode-single-select>
+    `)) as VscodeSingleSelect;
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = (await fixture(html`
+      <vscode-single-select></vscode-single-select>
+    `)) as VscodeSingleSelect;
+    el.size = 'small';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('small');
+  });
+
   describe('select mode', () => {
     it('should display selected value', async () => {
       const el = (await fixture(html`

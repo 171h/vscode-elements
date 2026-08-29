@@ -12,6 +12,30 @@ export default [
       width: 320px;
     }
 
+    :host([size='small']) {
+      --vsc-form-control-font-size: 12px;
+    }
+
+    :host([size='large']) {
+      --vsc-form-control-font-size: 15px;
+    }
+
+    :host([size='small']) .select-face {
+      padding: 2px 4px;
+    }
+
+    :host([size='large']) .select-face {
+      padding: 4px 4px;
+    }
+
+    :host([size='small']) .combobox-input {
+      padding: 3px 4px;
+    }
+
+    :host([size='large']) .combobox-input {
+      padding: 5px 4px;
+    }
+
     .main-slot {
       display: none;
     }
@@ -26,7 +50,10 @@ export default [
       box-sizing: border-box;
       color: var(--vscode-settings-dropdownForeground, #cccccc);
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
       line-height: 18px;
       position: relative;

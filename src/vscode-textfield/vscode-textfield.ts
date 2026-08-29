@@ -2,6 +2,7 @@ import {html, LitElement, TemplateResult} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
+import {FormControlSize} from '../includes/form-control-size.js';
 import styles from './vscode-textfield.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
@@ -48,6 +49,7 @@ type InputType =
  * @cssprop [--vscode-button-background=#0078d4]
  * @cssprop [--vscode-button-foreground=#ffffff]
  * @cssprop [--vscode-button-hoverBackground=#026ec1]
+ * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - Font size of the input. It is set automatically by the `size` property.
  */
 @customElement('vscode-textfield')
 export class VscodeTextfield
@@ -128,6 +130,12 @@ export class VscodeTextfield
 
   @property({type: Boolean, reflect: true})
   required = false;
+
+  /**
+   * The size of the textfield. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   @property({type: Number})
   step: number | undefined = undefined;

@@ -35,7 +35,10 @@ const styles: CSSResultGroup = [
       color: var(--vscode-button-foreground, #ffffff);
       display: flex;
       font-family: var(--vscode-font-family, ${defaultFontStack});
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
       height: 100%;
       justify-content: center;
@@ -47,6 +50,26 @@ const styles: CSSResultGroup = [
       user-select: none;
       white-space: nowrap;
       width: 100%;
+    }
+
+    :host([size='small']) {
+      --vsc-form-control-font-size: 12px;
+    }
+
+    :host([size='large']) {
+      --vsc-form-control-font-size: 15px;
+    }
+
+    :host([size='small']) .base {
+      line-height: 18px;
+      padding: 1px calc(9px + var(--vsc-base-additional-right-padding, 0px)) 1px
+        9px;
+    }
+
+    :host([size='large']) .base {
+      line-height: 26px;
+      padding: 1px calc(17px + var(--vsc-base-additional-right-padding, 0px))
+        1px 17px;
     }
 
     :host([block]) .base {

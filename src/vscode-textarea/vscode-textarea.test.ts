@@ -38,6 +38,25 @@ describe('vscode-textarea', () => {
     `);
   });
 
+  it('uses medium size by default', async () => {
+    const el = await fixture<VscodeTextarea>(
+      html`<vscode-textarea></vscode-textarea>`
+    );
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = await fixture<VscodeTextarea>(
+      html`<vscode-textarea></vscode-textarea>`
+    );
+    el.size = 'large';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('large');
+  });
+
   it('should forward "autocomplete" attribute to the inner textarea', async () => {
     const el = await fixture(
       html`<vscode-textarea autocomplete="on"></vscode-textarea>`

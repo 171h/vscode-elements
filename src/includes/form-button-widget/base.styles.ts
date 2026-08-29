@@ -19,7 +19,10 @@ export default [
       cursor: pointer;
       display: block;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
       line-height: 18px;
       margin-bottom: 4px;
@@ -27,6 +30,32 @@ export default [
       min-height: 18px;
       position: relative;
       user-select: none;
+    }
+
+    :host([size='small']) {
+      --vsc-form-control-font-size: 12px;
+    }
+
+    :host([size='large']) {
+      --vsc-form-control-font-size: 15px;
+    }
+
+    :host([size='small']) .icon {
+      height: 16px;
+      width: 16px;
+    }
+
+    :host([size='large']) .icon {
+      height: 20px;
+      width: 20px;
+    }
+
+    :host([size='small']) .label-inner {
+      padding-left: 25px;
+    }
+
+    :host([size='large']) .label-inner {
+      padding-left: 29px;
     }
 
     :host([disabled]) .wrapper {

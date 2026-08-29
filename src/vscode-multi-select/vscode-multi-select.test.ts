@@ -13,6 +13,25 @@ describe('vscode-multi-select', () => {
     expect(el).to.instanceOf(VscodeMultiSelect);
   });
 
+  it('uses medium size by default', async () => {
+    const el = (await fixture(html`
+      <vscode-multi-select></vscode-multi-select>
+    `)) as VscodeMultiSelect;
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = (await fixture(html`
+      <vscode-multi-select></vscode-multi-select>
+    `)) as VscodeMultiSelect;
+    el.size = 'large';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('large');
+  });
+
   it('should display selected value', async () => {
     const el = (await fixture(html`
       <vscode-multi-select>

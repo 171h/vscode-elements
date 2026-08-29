@@ -9,6 +9,7 @@ import '../../vscode-option/index.js';
 import {VscodeOption} from '../../vscode-option/index.js';
 import {stylePropertyMap} from '../style-property-map.js';
 import {VscElement} from '../VscElement.js';
+import {FormControlSize} from '../form-control-size.js';
 import {filterOptionsByPattern, highlightRanges} from './helpers.js';
 import type {InternalOption, Option, FilterMethod} from './types.js';
 import {OptionListController} from './OptionListController.js';
@@ -68,6 +69,12 @@ export class VscodeSelectBase extends VscElement {
    */
   @property({type: Boolean, reflect: true})
   invalid = false;
+
+  /**
+   * The size of the component. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   /**
    * Search method in the filtered list within the combobox mode.

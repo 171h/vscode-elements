@@ -24,6 +24,25 @@ describe('vscode-checkbox', () => {
     expect(el.type).to.eq('checkbox');
   });
 
+  it('uses medium size by default', async () => {
+    const el = await fixture<VscodeCheckbox>(
+      html`<vscode-checkbox>Test checkbox</vscode-checkbox>`
+    );
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = await fixture<VscodeCheckbox>(
+      html`<vscode-checkbox>Test checkbox</vscode-checkbox>`
+    );
+    el.size = 'small';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('small');
+  });
+
   it('should be participated in the form', async () => {
     const form = document.createElement('form');
     await fixture(

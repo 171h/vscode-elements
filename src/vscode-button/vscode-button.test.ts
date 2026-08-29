@@ -24,6 +24,25 @@ describe('vscode-button', () => {
     expect(el.focused).to.be.true;
   });
 
+  it('uses medium size by default', async () => {
+    const el = await fixture<VscodeButton>(
+      html`<vscode-button>test</vscode-button>`
+    );
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = await fixture<VscodeButton>(
+      html`<vscode-button>test</vscode-button>`
+    );
+    el.size = 'large';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('large');
+  });
+
   it('dispatches click event when enter key is pressed', async () => {
     const el = await fixture<VscodeButton>(
       html`<vscode-button>test</vscode-button>`
