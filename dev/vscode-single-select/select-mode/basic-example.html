@@ -33,6 +33,17 @@
           <vscode-option>Sit</vscode-option>
         </vscode-single-select>
         <button type="button">focus</button>
+        <div>
+          <button type="button" class="size-button" data-size="small">
+            small
+          </button>
+          <button type="button" class="size-button" data-size="medium">
+            medium
+          </button>
+          <button type="button" class="size-button" data-size="large">
+            large
+          </button>
+        </div>
       </vscode-demo>
       <script type="module">
         const sl = document.querySelector('vscode-single-select');
@@ -40,6 +51,12 @@
 
         bt.addEventListener('click', () => {
           sl.focus();
+        });
+
+        document.querySelectorAll('.size-button').forEach((button) => {
+          button.addEventListener('click', () => {
+            sl.setAttribute('size', button.dataset.size);
+          });
         });
       </script>
     </main>

@@ -28,6 +28,26 @@
       <vscode-demo>
         <vscode-button>Primary Button</vscode-button>
         <vscode-button secondary>Secondary Button</vscode-button>
+        <div>
+          <button type="button" class="size-button" data-size="small">
+            small
+          </button>
+          <button type="button" class="size-button" data-size="medium">
+            medium
+          </button>
+          <button type="button" class="size-button" data-size="large">
+            large
+          </button>
+        </div>
+        <script type="module">
+          document.querySelectorAll('.size-button').forEach((button) => {
+            button.addEventListener('click', () => {
+              document.querySelectorAll('vscode-button').forEach((el) => {
+                el.setAttribute('size', button.dataset.size);
+              });
+            });
+          });
+        </script>
       </vscode-demo>
     </main>
   </body>
