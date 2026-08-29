@@ -12,6 +12,27 @@ const styles: CSSResultGroup = [
       margin: 15px 0;
     }
 
+    :host([size='small']) {
+      --label-right-margin: 10px;
+      --label-width: 100px;
+
+      margin: 8px 0;
+    }
+
+    :host([size='medium']) {
+      --label-right-margin: 14px;
+      --label-width: 150px;
+
+      margin: 15px 0;
+    }
+
+    :host([size='large']) {
+      --label-right-margin: 18px;
+      --label-width: 200px;
+
+      margin: 22px 0;
+    }
+
     :host([variant='settings-group']) {
       margin: 0;
       padding: 12px 14px 18px;

@@ -5,6 +5,8 @@ import styles from './vscode-form-group.styles.js';
 
 export type FormGroupVariant = 'horizontal' | 'vertical' | 'settings-group';
 
+export type FormGroupSize = 'small' | 'medium' | 'large';
+
 /**
  * @tag vscode-form-group
  *
@@ -17,6 +19,12 @@ export class VscodeFormGroup extends VscElement {
 
   @property({reflect: true})
   variant: FormGroupVariant = 'horizontal';
+
+  /**
+   * The size of the form group. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormGroupSize = 'medium';
 
   override render(): TemplateResult {
     return html`
