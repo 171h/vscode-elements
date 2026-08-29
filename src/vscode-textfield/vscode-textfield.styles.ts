@@ -83,7 +83,7 @@ const styles: CSSResultGroup = [
     }
 
     :host([size='small']) {
-      --vsc-form-control-font-size: 12px;
+      --vsc-form-control-font-size: 11px;
     }
 
     :host([size='large']) {
@@ -91,8 +91,9 @@ const styles: CSSResultGroup = [
     }
 
     :host([size='small']) input {
-      padding-bottom: 2px;
-      padding-top: 2px;
+      line-height: 12px;
+      padding-bottom: 1px;
+      padding-top: 1px;
     }
 
     :host([size='large']) input {

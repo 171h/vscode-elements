@@ -53,7 +53,7 @@ const styles: CSSResultGroup = [
     }
 
     :host([size='small']) {
-      --vsc-form-control-font-size: 12px;
+      --vsc-form-control-font-size: 11px;
     }
 
     :host([size='large']) {
@@ -61,7 +61,7 @@ const styles: CSSResultGroup = [
     }
 
     :host([size='small']) .base {
-      line-height: 18px;
+      line-height: 12px;
       padding: 1px calc(9px + var(--vsc-base-additional-right-padding, 0px)) 1px
         9px;
     }

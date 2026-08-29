@@ -13,7 +13,7 @@ export default [
     }
 
     :host([size='small']) {
-      --vsc-form-control-font-size: 12px;
+      --vsc-form-control-font-size: 11px;
     }
 
     :host([size='large']) {
@@ -21,19 +21,40 @@ export default [
     }
 
     :host([size='small']) .select-face {
-      padding: 2px 4px;
+      line-height: 12px;
+      padding: 1px 4px;
     }
 
     :host([size='large']) .select-face {
       padding: 4px;
     }
 
+    :host([size='small']) .select-face .text {
+      height: 12px;
+    }
+
+    :host([size='small']) .select-face.multiselect {
+      align-items: center;
+      display: flex;
+    }
+
+    :host([size='small']) .select-face-badge {
+      line-height: 12px;
+      margin: 0 1px;
+      padding: 0 2px;
+    }
+
     :host([size='small']) .combobox-input {
-      padding: 3px 4px;
+      line-height: 12px;
+      padding: 1px 4px;
     }
 
     :host([size='large']) .combobox-input {
       padding: 5px 4px;
+    }
+
+    :host([size='small']) .select-face .icon {
+      top: 4px;
     }
 
     .main-slot {

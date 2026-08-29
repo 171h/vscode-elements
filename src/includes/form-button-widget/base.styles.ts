@@ -33,16 +33,21 @@ export default [
     }
 
     :host([size='small']) {
-      --vsc-form-control-font-size: 12px;
+      --vsc-form-control-font-size: 11px;
     }
 
     :host([size='large']) {
       --vsc-form-control-font-size: 15px;
     }
 
+    :host([size='small']) .wrapper {
+      line-height: 14px;
+      min-height: 16px;
+    }
+
     :host([size='small']) .icon {
-      height: 16px;
-      width: 16px;
+      height: 14px;
+      width: 14px;
     }
 
     :host([size='large']) .icon {
@@ -50,8 +55,12 @@ export default [
       width: 20px;
     }
 
+    :host([size='small']) .label {
+      min-height: 16px;
+    }
+
     :host([size='small']) .label-inner {
-      padding-left: 25px;
+      padding-left: 23px;
     }
 
     :host([size='large']) .label-inner {

@@ -14,7 +14,7 @@ const styles: CSSResultGroup = [
     :host([size='small']) {
       --label-right-margin: 10px;
       --label-width: 100px;
-      --vsc-form-control-font-size: 12px;
+      --vsc-form-control-font-size: 11px;
 
       margin: 8px 0;
     }
