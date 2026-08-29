@@ -34,10 +34,22 @@ export class VscodeIcon extends VscElement {
   name = '';
 
   /**
-   * Icon size in pixels
+   * Icon size. Accepts a number of pixels or one of the predefined sizes:
+   * `small` (14px), `medium` (16px, default) and `large` (20px).
    */
-  @property({type: Number})
-  size = 16;
+  @property()
+  set size(val: number | 'small' | 'medium' | 'large') {
+    const presets = {
+      small: 14,
+      medium: 16,
+      large: 20,
+    };
+
+    this._size = typeof val === 'number' ? val : (presets[val] ?? 16);
+  }
+  get size(): number {
+    return this._size;
+  }
 
   /**
    * Enable rotation animation
@@ -60,6 +72,8 @@ export class VscodeIcon extends VscElement {
   private static stylesheetHref: string | undefined = '';
 
   private static nonce: string | undefined = '';
+
+  private _size = 16;
 
   override connectedCallback(): void {
     super.connectedCallback();
