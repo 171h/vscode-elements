@@ -21,7 +21,25 @@
 
   <body style="background-color: #1f1f1f">
     <main>
-      <vscode-icon name="account" action-icon></vscode-icon>
+      <div id="size-demo-target">
+        <vscode-icon name="account" action-icon></vscode-icon>
+      </div>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-icon')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>
