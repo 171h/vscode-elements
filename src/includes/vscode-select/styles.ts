@@ -21,6 +21,7 @@ export default [
     }
 
     :host([size='small']) .select-face {
+      height: 16px;
       line-height: 12px;
       padding: 1px 4px;
     }
@@ -45,6 +46,7 @@ export default [
     }
 
     :host([size='small']) .combobox-input {
+      height: 14px;
       line-height: 12px;
       padding: 1px 4px;
     }

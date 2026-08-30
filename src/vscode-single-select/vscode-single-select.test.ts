@@ -48,6 +48,16 @@ describe('vscode-single-select', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('uses a 16px height at the small size', async () => {
+    const el = await fixture<VscodeSingleSelect>(html`
+      <vscode-single-select size="small">
+        <vscode-option selected>Option</vscode-option>
+      </vscode-single-select>
+    `);
+
+    expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
   describe('select mode', () => {
     it('should display selected value', async () => {
       const el = (await fixture(html`

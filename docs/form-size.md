@@ -19,8 +19,10 @@ The common form-control sizes are available on:
 - `vscode-button`
 - `vscode-textfield`
 - `vscode-textarea`
+- `vscode-label`
 - `vscode-checkbox`
 - `vscode-radio`
+- `vscode-radio-group` (applies the size to every child radio)
 - `vscode-single-select`
 - `vscode-multi-select`
 - `vscode-form-group`
@@ -42,6 +44,7 @@ give related controls the same value:
 
 ```html
 <vscode-textfield size="small"></vscode-textfield>
+<vscode-label size="small">Preferences</vscode-label>
 <vscode-checkbox size="small">Remember me</vscode-checkbox>
 <vscode-button size="small">Save</vscode-button>
 ```
@@ -84,6 +87,11 @@ The automatic font sizes are 11px for `small`, the configured VS Code font
 size (13px by default) for `medium`, and 15px for `large`. You can override the
 font size for a form group or an individual control with
 `--vsc-form-control-font-size`.
+
+Small single-line controls, labels, checkboxes, and radios are normalized to a
+16px row height. Setting `size="small"` on a `vscode-radio-group` also sets
+every radio in the group to `small`, so grouped and standalone radios align
+with the other controls.
 
 ## Buttons with icons
 

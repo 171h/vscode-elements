@@ -3,6 +3,7 @@ import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import {VscodeRadio} from '../vscode-radio/index.js';
 import styles from './vscode-radio-group.styles.js';
+import {FormControlSize} from '../includes/form-control-size.js';
 
 /**
  * @tag vscode-radio-group
@@ -17,6 +18,10 @@ export class VscodeRadioGroup extends VscElement {
 
   @property({reflect: true})
   variant: 'horizontal' | 'vertical' = 'horizontal';
+
+  /** The size applied to each radio in the group. */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   /** @internal */
   @property({reflect: true})
@@ -36,6 +41,14 @@ export class VscodeRadioGroup extends VscElement {
   private _checkedRadio = -1;
 
   private _firstContentLoaded = false;
+
+  protected override updated(changedProperties: Map<PropertyKey, unknown>) {
+    if (changedProperties.has('size')) {
+      this._radios.forEach((radio) => {
+        radio.size = this.size;
+      });
+    }
+  }
 
   //#endregion
 
@@ -166,6 +179,8 @@ export class VscodeRadioGroup extends VscElement {
     let indexOfDefaultCheckedRadio = -1;
 
     this._radios.forEach((r, i) => {
+      r.size = this.size;
+
       // if _focusedRadio is not set, the first radio should be focusable
       if (this._focusedRadio > -1) {
         r.tabIndex = i === this._focusedRadio ? 0 : -1;
