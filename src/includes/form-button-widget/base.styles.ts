@@ -42,6 +42,8 @@ export default [
 
     :host([size='small']) .wrapper {
       line-height: 14px;
+      margin-bottom: 0;
+      margin-top: 0;
       min-height: 16px;
     }
 

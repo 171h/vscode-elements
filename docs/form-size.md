@@ -24,8 +24,20 @@ The common form-control sizes are available on:
 - `vscode-single-select`
 - `vscode-multi-select`
 - `vscode-form-group`
+- `vscode-label`
 
 `medium` remains the default for backward compatibility.
+
+`vscode-radio-group` and `vscode-checkbox-group` are containers without their own
+`size` attribute. Their height follows the child `vscode-radio` / `vscode-checkbox`
+controls, so set `size` on the children:
+
+```html
+<vscode-radio-group>
+  <vscode-radio size="small">One</vscode-radio>
+  <vscode-radio size="small">Two</vscode-radio>
+</vscode-radio-group>
+```
 
 ## Set a size in markup
 
@@ -79,6 +91,9 @@ the inherited `--vsc-form-control-font-size` custom property. Set the same
   <vscode-button size="small">Search</vscode-button>
 </vscode-form-group>
 ```
+
+A `vscode-label` inside a sized form group shrinks automatically, so it does not
+need its own `size`. It also accepts `size` when used outside a form group.
 
 The automatic font sizes are 11px for `small`, the configured VS Code font
 size (13px by default) for `medium`, and 15px for `large`. You can override the

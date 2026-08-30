@@ -49,6 +49,12 @@ export default [
       padding: 1px 4px;
     }
 
+    :host([size='small']) .combobox-button {
+      height: 12px;
+      margin: 0 1px 0 0;
+      padding: 1px;
+    }
+
     :host([size='large']) .combobox-input {
       padding: 5px 4px;
     }
@@ -152,7 +158,10 @@ export default [
       color: var(--vscode-foreground, #cccccc);
       display: block;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       line-height: 16px;
       padding: 4px;
       width: 100%;
