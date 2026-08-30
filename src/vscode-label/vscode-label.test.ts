@@ -21,4 +21,12 @@ describe('vscode-label', () => {
 
     expect(el.getAttribute('size')).to.eq('small');
   });
+
+  it('uses a 16px height at the small size', async () => {
+    const el = await fixture<VscodeLabel>(
+      html`<vscode-label size="small">Label</vscode-label>`
+    );
+
+    expect(el.getBoundingClientRect().height).to.eq(16);
+  });
 });

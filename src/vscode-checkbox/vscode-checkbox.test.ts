@@ -43,6 +43,14 @@ describe('vscode-checkbox', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('uses a 16px height at the small size', async () => {
+    const el = await fixture<VscodeCheckbox>(
+      html`<vscode-checkbox size="small">Checkbox</vscode-checkbox>`
+    );
+
+    expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
   it('should be participated in the form', async () => {
     const form = document.createElement('form');
     await fixture(

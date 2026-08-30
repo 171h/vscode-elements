@@ -45,6 +45,16 @@ describe('vscode-radio-group', () => {
     expect(el).to.instanceOf(VscodeRadioGroup);
   });
 
+  it('follows the height of its small child radios', async () => {
+    const el = await fixture<VscodeRadioGroup>(html`
+      <vscode-radio-group>
+        <vscode-radio size="small">Option</vscode-radio>
+      </vscode-radio-group>
+    `);
+
+    expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
   it('checks the default option on page load', async () => {
     await fixture<VscodeRadioGroup>(html`
       <vscode-radio-group>
