@@ -41,7 +41,9 @@
       document.querySelectorAll('.size-buttons button').forEach((button) => {
         button.addEventListener('click', () => {
           document
-            .querySelectorAll('#size-demo-target vscode-form-group')
+            .querySelectorAll(
+              '#size-demo-target vscode-form-group, #size-demo-target vscode-label, #size-demo-target vscode-textfield'
+            )
             .forEach((el) => {
               el.setAttribute('size', button.dataset.size);
             });
