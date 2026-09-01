@@ -15,10 +15,6 @@ import {
   updateChangelog,
 } from './release-lib.mjs';
 
-function run(command, args) {
-  execFileSync(command, args, {cwd: repoRoot, stdio: 'inherit'});
-}
-
 async function confirm(rl, question) {
   return ['y', 'yes'].includes(
     (await rl.question(`${question} [y/N] `)).trim().toLowerCase()
@@ -50,23 +46,33 @@ async function main() {
     console.log('\nCHANGELOG preview:\n');
     console.log(renderChangelog(version, commits));
     console.log(
-      'The release will update versions and CHANGELOG, run checks, create a commit/tag, and publish to npmjs.'
+      'The release will update versions and CHANGELOG, then create a commit and tag.'
     );
     if (!(await confirm(rl, 'Continue?')))
       return console.log('Release cancelled.');
 
-    run('npm', ['version', version, '--no-git-tag-version']);
-    run('node', ['scripts/update-version-number.mjs']);
-    updateChangelog(version, commits);
-    for (const script of ['build', 'test', 'lint', 'prettier'])
-      run('npm', ['run', script]);
-
-    const packResult = JSON.parse(
-      execFileSync('npm', ['pack', '--json'], {cwd: repoRoot, encoding: 'utf8'})
+    const packageJson = JSON.parse(
+      fs.readFileSync(path.join(repoRoot, 'package.json'), 'utf8')
     );
-    const tarball = packResult[0]?.filename;
-    if (!tarball)
-      throw new Error('npm pack did not return a package filename.');
+    packageJson.version = version;
+    fs.writeFileSync(
+      path.join(repoRoot, 'package.json'),
+      `${JSON.stringify(packageJson, null, 2)}\n`
+    );
+    const packageLock = JSON.parse(
+      fs.readFileSync(path.join(repoRoot, 'package-lock.json'), 'utf8')
+    );
+    packageLock.version = version;
+    packageLock.packages[''].version = version;
+    fs.writeFileSync(
+      path.join(repoRoot, 'package-lock.json'),
+      `${JSON.stringify(packageLock, null, 2)}\n`
+    );
+    execFileSync('node', ['scripts/update-version-number.mjs'], {
+      cwd: repoRoot,
+      stdio: 'inherit',
+    });
+    updateChangelog(version, commits);
 
     git([
       'add',
@@ -77,9 +83,7 @@ async function main() {
     ]);
     git(['commit', '-m', `chore(release): publish ${tag}`]);
     git(['tag', '-a', tag, '-m', tag]);
-    run('npm', ['publish', path.join(repoRoot, tarball), '--access=public']);
-    fs.rmSync(path.join(repoRoot, tarball), {force: true});
-    console.log(`\nPublished nusys-ui@${version} to npmjs.`);
+    console.log(`\nCreated release commit and tag ${tag}.`);
 
     if (await confirm(rl, 'Push the release commit and tag to origin?')) {
       const branch = git(['branch', '--show-current'], true);
@@ -87,6 +91,9 @@ async function main() {
         throw new Error('Cannot push a release from a detached HEAD.');
       git(['push', 'origin', branch]);
       git(['push', 'origin', tag]);
+      console.log(
+        `GitHub Actions will build and publish nusys-ui@${version} to npmjs.`
+      );
     } else {
       console.log(`Push later with: git push origin && git push origin ${tag}`);
     }

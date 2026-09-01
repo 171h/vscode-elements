@@ -33,8 +33,8 @@ Commit messages aim to follow the [50/72 style](https://tbaggery.com/2008/04/19/
 Releases are created locally with `npm run release`. The command defaults to a patch release; pass
 `minor`, `major`, or an explicit version when needed, for example `npm run release -- minor`.
 
-The release assistant requires a clean Git working tree. Before publishing, it previews and updates
-`CHANGELOG.md` from commits since the latest tag, synchronizes the package and component versions,
-runs the build, tests, lint, and formatting checks, and creates an npm tarball. After confirmation it
-creates the release commit and annotated tag, publishes the tarball to npmjs, and optionally pushes
-the commit and tag to `origin`. The npm account used locally must have publish access to `nusys-ui`.
+The release assistant requires a clean Git working tree. It previews and updates `CHANGELOG.md` from
+commits since the latest release, synchronizes `package.json` and `package-lock.json`, and creates a
+release commit and annotated tag. When that tag is pushed to `origin`, the GitHub `Release` workflow
+runs all verification steps and publishes the package to npmjs. npm publish credentials are only
+used by GitHub Actions; the local command never publishes a package directly.
