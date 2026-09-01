@@ -84,7 +84,7 @@ export class VscodeTree extends VscElement {
    * Valid options are available as constants.
    *
    * ```javascript
-   * import {ExpandMode} from '@vscode-elements/elements/dist/vscode-tree/vscode-tree.js';
+   * import {ExpandMode} from 'nusys-ui/dist/vscode-tree/vscode-tree.js';
    *
    * document.querySelector('vscode-tree').expandMode = ExpandMode.singleClick;
    * ```
@@ -116,7 +116,7 @@ export class VscodeTree extends VscElement {
    * Valid options are available as constants.
    *
    * ```javascript
-   * import {IndentGuides} from '@vscode-elements/elements/dist/vscode-tree/vscode-tree.js';
+   * import {IndentGuides} from 'nusys-ui/dist/vscode-tree/vscode-tree.js';
    *
    * document.querySelector('vscode-tree').expandMode = IndentGuides.onHover;
    * ```
