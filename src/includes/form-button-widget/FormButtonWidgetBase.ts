@@ -1,9 +1,16 @@
 import {property} from 'lit/decorators.js';
 import {VscElement} from '../VscElement.js';
+import {FormControlSize} from '../form-control-size.js';
 
 export class FormButtonWidgetBase extends VscElement {
   @property({type: Boolean, reflect: true})
   focused = false;
+
+  /**
+   * The size of the component. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   constructor() {
     super();

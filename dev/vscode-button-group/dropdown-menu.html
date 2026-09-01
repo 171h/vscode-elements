@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>&lt;vscode-button-group&gt; Demo</title>
+    <title>button-group/dropdown-menu</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -34,7 +34,7 @@
     <main>
       <h2>Basic example</h2>
 
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <div class="dropdown-menu">
           <vscode-button-group>
             <vscode-button secondary id="button-1" icon="check"
@@ -91,7 +91,23 @@
             menu.show = !menu.show;
           });
         </script>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-button')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

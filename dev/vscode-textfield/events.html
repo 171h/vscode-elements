@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Textfield</title>
+    <title>textfield/events</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -26,12 +26,17 @@
   <body>
     <h1>Textfield</h1>
     <h2>Change, Input</h2>
-    <vscode-demo>
+    <vscode-demo id="size-demo-target">
       <vscode-textfield id="textfield-1"></vscode-textfield>
       <script type="module">
         logEvents('#textfield-1', 'change');
         logEvents('#textfield-1', 'input');
       </script>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </vscode-demo>
     <h2>Invalid</h2>
     <vscode-demo>
@@ -43,5 +48,16 @@
         logEvents('#textfield-2', 'invalid');
       </script>
     </vscode-demo>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-textfield')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

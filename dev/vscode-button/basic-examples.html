@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VSCode Elements</title>
+    <title>button/basic-examples</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -25,10 +25,28 @@
 
   <body>
     <main>
-      <vscode-demo>
-        <vscode-button>Primary Button</vscode-button>
-        <vscode-button secondary>Secondary Button</vscode-button>
-      </vscode-demo>
+      <div id="size-demo-target">
+        <vscode-demo>
+          <vscode-button>Primary Button</vscode-button>
+          <vscode-button secondary>Secondary Button</vscode-button>
+          <div class="size-buttons">
+            <button type="button" data-size="small">small</button>
+            <button type="button" data-size="medium">medium</button>
+            <button type="button" data-size="large">large</button>
+          </div>
+        </vscode-demo>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-button')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

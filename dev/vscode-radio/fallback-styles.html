@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VSCode Elements</title>
+    <title>radio/fallback-styles</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -22,10 +22,28 @@
   <body style="background-color: #1f1f1f">
     <h1>%%TITLE%%</h1>
     <main>
-      <vscode-radio-group>
-        <vscode-radio name="radio" required>Lorem</vscode-radio>
-        <vscode-radio name="radio">Ipsum</vscode-radio>
-      </vscode-radio-group>
+      <div id="size-demo-target">
+        <vscode-radio-group>
+          <vscode-radio name="radio" required>Lorem</vscode-radio>
+          <vscode-radio name="radio">Ipsum</vscode-radio>
+        </vscode-radio-group>
+      </div>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-radio')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

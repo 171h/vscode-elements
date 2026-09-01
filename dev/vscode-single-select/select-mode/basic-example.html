@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VSCode Elements</title>
+    <title>single-select/select-mode/basic-example</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -25,23 +25,39 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-single-select label="Single Select example">
           <vscode-option>Lorem</vscode-option>
           <vscode-option>Ipsum</vscode-option>
           <vscode-option>Dolor</vscode-option>
           <vscode-option>Sit</vscode-option>
         </vscode-single-select>
-        <button type="button">focus</button>
+        <button type="button" id="bt-focus">focus</button>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
       <script type="module">
         const sl = document.querySelector('vscode-single-select');
-        const bt = document.querySelector('button');
+        const bt = document.querySelector('#bt-focus');
 
         bt.addEventListener('click', () => {
           sl.focus();
         });
       </script>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

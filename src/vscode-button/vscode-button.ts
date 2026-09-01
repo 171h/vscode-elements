@@ -2,6 +2,7 @@ import {html, nothing, PropertyValueMap, TemplateResult} from 'lit';
 import {property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
+import {FormControlSize} from '../includes/form-control-size.js';
 import '../vscode-icon/index.js';
 import styles from './vscode-button.styles.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
@@ -22,6 +23,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
  * @cssprop [--vscode-button-secondaryBackground=#313131]
  * @cssprop [--vscode-button-secondaryHoverBackground=#3c3c3c]
  * @cssprop [--vscode-focusBorder=#0078d4]
+ * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - Font size of the button label. It is set automatically by the `size` property.
  *
  * @csspart base - The main content area of the component.
  *
@@ -61,6 +63,12 @@ export class VscodeButton extends VscElement {
 
   @property({type: Boolean, reflect: true})
   disabled = false;
+
+  /**
+   * The size of the button. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   /**
    * A [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) before the label
@@ -244,6 +252,8 @@ export class VscodeButton extends VscElement {
   override render(): TemplateResult {
     const hasIcon = this.icon !== '';
     const hasIconAfter = this.iconAfter !== '';
+    const iconSize =
+      this.size === 'small' ? 14 : this.size === 'large' ? 20 : 16;
     const baseClasses = {
       base: true,
       'icon-only': this.iconOnly,
@@ -254,6 +264,7 @@ export class VscodeButton extends VscElement {
     const iconElem = hasIcon
       ? html`<vscode-icon
           name=${this.icon}
+          .size=${iconSize}
           ?spin=${this.iconSpin}
           spin-duration=${ifDefined(this.iconSpinDuration)}
           class="icon"
@@ -263,6 +274,7 @@ export class VscodeButton extends VscElement {
     const iconAfterElem = hasIconAfter
       ? html`<vscode-icon
           name=${this.iconAfter}
+          .size=${iconSize}
           ?spin=${this.iconAfterSpin}
           spin-duration=${ifDefined(this.iconAfterSpinDuration)}
           class="icon-after"

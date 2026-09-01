@@ -14,7 +14,7 @@
         style-src 'nonce-abc123';
         style-src-elem 'nonce-abc123'"
     />
-    <title>VSCode Elements</title>
+    <title>textarea/csp</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -52,9 +52,25 @@
   <body>
     <h1>Apply CSP</h1>
     <main>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-textarea value="ffff" resize="vertical"></vscode-textarea>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module" nonce="abc123">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-textarea')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>&lt;vscode-textfield&gt; Demo</title>
+    <title>textfield/validation-on-value-change</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -22,7 +22,7 @@
     <main>
       <h1>Textfield</h1>
       <h2>Validation on value change</h2>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <style>
           input[type='text']:invalid {
             background-color: rgba(255, 0, 0, 0.2);
@@ -36,7 +36,23 @@
           pattern="^(/.*)?$"
         ></vscode-textfield>
         <input type="text" id="path2" name="path2" pattern="^(/.*)?$" />
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-textfield')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

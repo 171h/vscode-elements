@@ -13,6 +13,35 @@ describe('vscode-multi-select', () => {
     expect(el).to.instanceOf(VscodeMultiSelect);
   });
 
+  it('uses medium size by default', async () => {
+    const el = (await fixture(html`
+      <vscode-multi-select></vscode-multi-select>
+    `)) as VscodeMultiSelect;
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = (await fixture(html`
+      <vscode-multi-select></vscode-multi-select>
+    `)) as VscodeMultiSelect;
+    el.size = 'large';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('large');
+  });
+
+  it('uses a 16px height at the small size', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select size="small">
+        <vscode-option selected>Option</vscode-option>
+      </vscode-multi-select>
+    `);
+
+    expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
   it('should display selected value', async () => {
     const el = (await fixture(html`
       <vscode-multi-select>

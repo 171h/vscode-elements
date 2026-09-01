@@ -24,6 +24,62 @@ describe('vscode-button', () => {
     expect(el.focused).to.be.true;
   });
 
+  it('uses medium size by default', async () => {
+    const el = await fixture<VscodeButton>(
+      html`<vscode-button>test</vscode-button>`
+    );
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = await fixture<VscodeButton>(
+      html`<vscode-button>test</vscode-button>`
+    );
+    el.size = 'large';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('large');
+  });
+
+  it('resizes every icon button variation when its size changes', async () => {
+    const wrapper = await fixture<HTMLDivElement>(html`
+      <div>
+        <vscode-button icon="account"></vscode-button>
+        <vscode-button icon-after="account"></vscode-button>
+        <vscode-button icon-only icon="account">Label</vscode-button>
+      </div>
+    `);
+    const buttons = Array.from(
+      wrapper.querySelectorAll<VscodeButton>('vscode-button')
+    );
+
+    for (const [size, expectedHeights, expectedIconSize] of [
+      ['small', [16, 16, 16], 14],
+      ['medium', [24, 24, 26], 16],
+      ['large', [30, 30, 30], 20],
+    ] as const) {
+      for (const button of buttons) {
+        button.size = size;
+      }
+      await Promise.all(buttons.map((button) => button.updateComplete));
+      await aTimeout(0);
+
+      for (const [index, button] of buttons.entries()) {
+        const base = $(button.shadowRoot!, '.base') as HTMLElement;
+        const icon = $(button.shadowRoot!, 'vscode-icon');
+
+        const rect = base.getBoundingClientRect();
+        expect(rect.height).to.be.closeTo(expectedHeights[index], 0.5);
+        if (size === 'small' && index < 2) {
+          expect(rect.width).to.be.closeTo(rect.height, 0.5);
+        }
+        expect(icon.size).to.eq(expectedIconSize);
+      }
+    }
+  });
+
   it('dispatches click event when enter key is pressed', async () => {
     const el = await fixture<VscodeButton>(
       html`<vscode-button>test</vscode-button>`

@@ -31,6 +31,29 @@ describe('vscode-radio', () => {
     expect(radio.form?.getAttribute('id')).to.eq('test-form');
   });
 
+  it('uses medium size by default', async () => {
+    const el = await fixture<VscodeRadio>(html`<vscode-radio></vscode-radio>`);
+
+    expect(el.size).to.eq('medium');
+    expect(el.getAttribute('size')).to.eq('medium');
+  });
+
+  it('reflects the size property', async () => {
+    const el = await fixture<VscodeRadio>(html`<vscode-radio></vscode-radio>`);
+    el.size = 'large';
+    await el.updateComplete;
+
+    expect(el.getAttribute('size')).to.eq('large');
+  });
+
+  it('uses a 16px height at the small size', async () => {
+    const el = await fixture<VscodeRadio>(
+      html`<vscode-radio size="small">Radio</vscode-radio>`
+    );
+
+    expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
   it('type should be "radio"', async () => {
     const el = await fixture<VscodeRadio>(html`<vscode-radio></vscode-radio>`);
 

@@ -3,6 +3,7 @@ import {property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
+import {FormControlSize} from '../includes/form-control-size.js';
 import {stylePropertyMap} from '../includes/style-property-map.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 import styles from './vscode-textarea.styles.js';
@@ -36,6 +37,7 @@ import styles from './vscode-textarea.styles.js';
  * @cssprop [--vscode-scrollbarSlider-background=rgba(121, 121, 121, 0.4)]
  * @cssprop [--vscode-scrollbarSlider-hoverBackground=rgba(100, 100, 100, 0.7)]
  * @cssprop [--vscode-scrollbarSlider-activeBackground=rgba(191, 191, 191, 0.4)]
+ * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - Font size of the textarea. It is set automatically by the `size` property.
  */
 @customElement('vscode-textarea')
 export class VscodeTextarea
@@ -97,6 +99,12 @@ export class VscodeTextarea
 
   @property()
   resize: 'both' | 'horizontal' | 'vertical' | 'none' = 'none';
+
+  /**
+   * The size of the textarea. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   @property({type: Boolean, reflect: true})
   required = false;

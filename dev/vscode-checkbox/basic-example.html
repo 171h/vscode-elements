@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>VSCode Webview Elements demo page</title>
+    <title>checkbox/basic-example</title>
     <script
       type="module"
       src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
@@ -14,45 +14,64 @@
 
   <body>
     <main>
-      <h2>Basic example</h2>
-      <vscode-demo>
-        <vscode-checkbox
-          label="Checkbox example"
-          value="testvalue1"
-          autofocus
-          required
-          id="checkbox-1"
-        ></vscode-checkbox>
-        <vscode-checkbox
-          label="Checkbox example"
-          value="testvalue1"
-          checked
-          disabled
-        ></vscode-checkbox>
-        <vscode-checkbox
-          label="Checkbox example"
-          value="testvalue1"
-          indeterminate
-        ></vscode-checkbox>
-        <input type="checkbox" id="native-checkbox-1" disabled />
-        <label for="native-checkbox-1" disabled>Native checkbox</label>
-        <script type="module">
-          const cb1 = document.querySelector('#checkbox-1');
-          const ncb1 = document.querySelector('#native-checkbox-1');
-          cb1.addEventListener('click', (ev) => {
-            console.log(ev);
-          });
-          cb1.addEventListener('change', (ev) => {
-            console.log(ev);
-          });
-          cb1.addEventListener('invalid', (ev) => {
-            console.log(ev);
-          });
-          ncb1.addEventListener('click', (ev) => {
-            console.log(ev);
-          });
-        </script>
-      </vscode-demo>
+      <div id="size-demo-target">
+        <h2>Basic example</h2>
+        <vscode-demo id="demo">
+          <vscode-checkbox
+            label="Checkbox example"
+            value="testvalue1"
+            autofocus
+            required
+            id="checkbox-1"
+          ></vscode-checkbox>
+          <vscode-checkbox
+            label="Checkbox example"
+            value="testvalue1"
+            checked
+            disabled
+          ></vscode-checkbox>
+          <vscode-checkbox
+            label="Checkbox example"
+            value="testvalue1"
+            indeterminate
+          ></vscode-checkbox>
+          <input type="checkbox" id="native-checkbox-1" disabled />
+          <label for="native-checkbox-1" disabled>Native checkbox</label>
+          <script type="module">
+            const cb1 = document.querySelector('#checkbox-1');
+            const ncb1 = document.querySelector('#native-checkbox-1');
+
+            cb1.addEventListener('click', (ev) => {
+              console.log(ev);
+            });
+            cb1.addEventListener('change', (ev) => {
+              console.log(ev);
+            });
+            cb1.addEventListener('invalid', (ev) => {
+              console.log(ev);
+            });
+            ncb1.addEventListener('click', (ev) => {
+              console.log(ev);
+            });
+          </script>
+          <div class="size-buttons">
+            <button type="button" data-size="small">small</button>
+            <button type="button" data-size="medium">medium</button>
+            <button type="button" data-size="large">large</button>
+          </div>
+        </vscode-demo>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-checkbox')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

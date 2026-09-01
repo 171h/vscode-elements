@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VSCode Elements</title>
+    <title>collapsible/always-show-header-actions</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -120,6 +120,12 @@
             <p>lorem ipsum dolor sit</p>
           </vscode-collapsible>
           <vscode-collapsible title="Dolor"></vscode-collapsible>
+          <div class="icon-size-buttons">
+            Icon size:
+            <button type="button" data-icon-size="small">small</button>
+            <button type="button" data-icon-size="medium">medium</button>
+            <button type="button" data-icon-size="large">large</button>
+          </div>
         </vscode-demo>
         <script type="module">
           const icons = document.querySelectorAll('vscode-icon[action-icon]');
@@ -142,5 +148,19 @@
         </script>
       </div>
     </div>
+    <script type="module">
+      document
+        .querySelectorAll('.icon-size-buttons button')
+        .forEach((button) => {
+          button.addEventListener('click', () => {
+            button
+              .closest('vscode-demo')
+              .querySelectorAll('vscode-icon')
+              .forEach((icon) => {
+                icon.setAttribute('size', button.dataset.iconSize);
+              });
+          });
+        });
+    </script>
   </body>
 </html>

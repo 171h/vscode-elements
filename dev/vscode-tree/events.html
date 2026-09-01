@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VSCode Elements</title>
+    <title>tree/events</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -231,7 +231,27 @@
             logEvents('vscode-tree', 'vsc-list-select');
           </script>
         </div>
+        <div class="icon-size-buttons">
+          Icon size:
+          <button type="button" data-icon-size="small">small</button>
+          <button type="button" data-icon-size="medium">medium</button>
+          <button type="button" data-icon-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document
+        .querySelectorAll('.icon-size-buttons button')
+        .forEach((button) => {
+          button.addEventListener('click', () => {
+            button
+              .closest('vscode-demo')
+              .querySelectorAll('vscode-icon')
+              .forEach((icon) => {
+                icon.setAttribute('size', button.dataset.iconSize);
+              });
+          });
+        });
+    </script>
   </body>
 </html>

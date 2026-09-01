@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VSCode Elements</title>
+    <title>single-select/combobox-mode/deleting-value</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -26,7 +26,7 @@
   <body>
     <main>
       <form action="#">
-        <vscode-demo>
+        <vscode-demo id="size-demo-target">
           <vscode-single-select name="fruit" id="select" combobox required>
             <vscode-option value="banana">Banana</vscode-option>
             <vscode-option value="cherry">Cherry</vscode-option>
@@ -51,8 +51,24 @@
             logEvents('#native-select', 'change');
             logEvents('#native-select', 'input');
           </script>
+          <div class="size-buttons">
+            <button type="button" data-size="small">small</button>
+            <button type="button" data-size="medium">medium</button>
+            <button type="button" data-size="large">large</button>
+          </div>
         </vscode-demo>
       </form>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

@@ -68,7 +68,10 @@ const styles: CSSResultGroup = [
       color: var(--vscode-settings-textInputForeground, #cccccc);
       display: block;
       font-family: var(--vscode-font-family, ${defaultFontStack});
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
       line-height: 18px;
       outline: none;
@@ -77,6 +80,25 @@ const styles: CSSResultGroup = [
       padding-right: 4px;
       padding-top: 3px;
       width: 100%;
+    }
+
+    :host([size='small']) {
+      --vsc-form-control-font-size: 11px;
+    }
+
+    :host([size='large']) {
+      --vsc-form-control-font-size: 15px;
+    }
+
+    :host([size='small']) input {
+      line-height: 12px;
+      padding-bottom: 1px;
+      padding-top: 1px;
+    }
+
+    :host([size='large']) input {
+      padding-bottom: 5px;
+      padding-top: 5px;
     }
 
     input:read-only:not([type='file']) {

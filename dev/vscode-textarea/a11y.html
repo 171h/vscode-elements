@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VSCode Elements</title>
+    <title>textarea/a11y</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -26,8 +26,26 @@
   <body style="background-color: #1f1f1f; color: #fff">
     <h1>A11Y test</h1>
     <main>
-      <vscode-label for="textarea">Test label</vscode-label>
-      <vscode-textarea id="textarea"></vscode-textarea>
+      <div id="size-demo-target">
+        <vscode-label for="textarea">Test label</vscode-label>
+        <vscode-textarea id="textarea"></vscode-textarea>
+      </div>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-textarea')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
   </body>
 </html>

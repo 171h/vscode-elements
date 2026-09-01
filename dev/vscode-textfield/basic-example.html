@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>&lt;vscode-textfield&gt; Demo</title>
+    <title>textfield/basic-example</title>
     <link
       rel="stylesheet"
       href="/node_modules/@vscode/codicons/dist/codicon.css"
@@ -22,7 +22,7 @@
     <main>
       <h1>Textfield</h1>
       <h2>Basic example</h2>
-      <vscode-demo>
+      <vscode-demo id="size-demo-target">
         <vscode-label for="field-1">Lorem ipsum</vscode-label>
         <vscode-textfield
           id="field-1"
@@ -71,7 +71,43 @@
             document.getElementById('field-1').focus();
           });
         </script>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
+        <div class="icon-size-buttons">
+          Icon size:
+          <button type="button" data-icon-size="small">small</button>
+          <button type="button" data-icon-size="medium">medium</button>
+          <button type="button" data-icon-size="large">large</button>
+        </div>
       </vscode-demo>
     </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-textfield')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
+    <script type="module">
+      document
+        .querySelectorAll('.icon-size-buttons button')
+        .forEach((button) => {
+          button.addEventListener('click', () => {
+            button
+              .closest('vscode-demo')
+              .querySelectorAll('vscode-icon')
+              .forEach((icon) => {
+                icon.setAttribute('size', button.dataset.iconSize);
+              });
+          });
+        });
+    </script>
   </body>
 </html>

@@ -1,6 +1,7 @@
 import {html, TemplateResult} from 'lit';
 import {property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {FormControlSize} from '../includes/form-control-size.js';
 import uniqueId from '../includes/uniqueId.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import styles from './vscode-label.styles.js';
@@ -45,6 +46,12 @@ export class VscodeLabel extends VscElement {
 
   @property({type: Boolean, reflect: true})
   required = false;
+
+  /**
+   * The size of the component. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   override attributeChangedCallback(
     name: string,
