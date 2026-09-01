@@ -13,7 +13,7 @@ npm link
 Then, go to the library where you want to use it and run:
 
 ```bash
-npm link @vscode-elements/elements
+npm link nusys-ui
 ```
 
 > [!WARNING]
@@ -21,7 +21,7 @@ npm link @vscode-elements/elements
 > Multiple packages must be linked with a single command. For example:
 >
 > ```bash
-> npm link @vscode-elements/elements @vscode-elements/webview-playground
+> npm link nusys-ui @vscode-elements/webview-playground
 > ```
 
 Don't forget to run the build script before using the package.
