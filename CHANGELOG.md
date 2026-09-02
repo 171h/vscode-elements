@@ -4,6 +4,74 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [3.0.0] - 2026-09-02
+
+### Added
+
+- **release**: add local npm release workflow (b86abd25)
+- make small form controls 16px high (13f6ee85)
+- add size property to all form control components (50d01b56)
+- add size property (small/medium/large) to vscode-form-group (47d9dc24)
+
+### Fixed
+
+- keep small textfields 16px high (194a47a5)
+- **release**: publish tagged versions in GitHub Actions (4a2af716)
+- **dev**: resize label demo controls together (7c2f8747)
+- make small form controls 16px high (49b87a3f)
+- address review feedback on component sizes (60fa4886)
+- **button**: keep small icon buttons square (a388f660)
+- make icon buttons respond to `size` changes (be07012a)
+- complete icon size support (36c0ffb9)
+- center dropdown icon in small select face (1ace1707)
+
+### Changed
+
+- remove redundant base margin from vscode-form-group styles (b755d9f5)
+
+### Documentation
+
+- clarify documentation links (47c407fb)
+- explain form control sizes (6209382b)
+
+### Tests
+
+- cover small label and radio group heights (fdc74a8f)
+
+### Continuous integration
+
+- improve interactive release workflow (55e1cb83)
+- require version tag for releases (df3704f0)
+
+### Maintenance
+
+- Rename package to nusys-ui (5abfa9a9)
+- Update dev page titles (77cd45ab)
+- Reapply "Changes before error encountered" (a9e0be76)
+- Revert "Changes before error encountered" (222038ac)
+- Changes before error encountered (3ef5d3be)
+- Update dependency concurrently to v10 (b82f8fbe)
+- Update dependency @web/dev-server-legacy to v3 (a626304b)
+- Update dependency @web/dev-server-rollup to v1 (4a47e9aa)
+- Update dependency @web/test-runner-playwright to v1 (7776c32e)
+- Update dependency @web/test-runner-mocha to v1 (83ecb4be)
+- Update dependency @web/dev-server to v1 (27285b20)
+- Bump the npm_and_yarn group across 1 directory with 7 updates (890ce8f3)
+- Update dependency @web/dev-server-esbuild to v2 (f9311936)
+- Update dependency @web/test-runner to v1 (88455792)
+- Update actions/checkout action to v7 (d6dd4ad0)
+- Bump lodash in the npm_and_yarn group across 1 directory (563ff1fc)
+- Update dependency sinon to v22 (82561603)
+- **deps**: update dependency @rollup/plugin-terser to v1 (cd6f97bd)
+- Update dependency npm-check-updates to v22 (c6a937b1)
+- Update all non-major dependencies (93fd1f09)
+- Fix invalid state styling on vscode-textfield (47940247)
+- fix formatting with prettier (b85cc023)
+- vscode-radio-group: dispatch change event on arrow key selection (cd1851a4)
+- remove whitespace (23a7416a)
+- Fix vscode-radio: use native radio input type (e47eacb4)
+- **deps**: update all non-major dependencies (2086c414)
+
 ## [2.5.1] - 2026-02-21
 
 - Fixed **SingleSelect** value not updated in the form data.
