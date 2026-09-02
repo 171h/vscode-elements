@@ -30,8 +30,9 @@ Commit messages aim to follow the [50/72 style](https://tbaggery.com/2008/04/19/
 
 ## Publish a release
 
-Releases are created locally with `npm run release`. The command defaults to a patch release; pass
-`minor`, `major`, or an explicit version when needed, for example `npm run release -- minor`.
+Releases are created locally with `npm run release`. The assistant prompts for a version tag and
+suggests a patch release by default. Pass `minor`, `major`, or an explicit version to change the
+suggestion, for example `npm run release -- minor`; you still confirm the final tag interactively.
 
 The release assistant requires a clean Git working tree. It previews and updates `CHANGELOG.md` from
 commits since the latest release, synchronizes `package.json` and `package-lock.json`, and creates a
@@ -40,3 +41,11 @@ workflow, choose **Run workflow**, and enter the existing version tag (for examp
 workflow checks out that tag, runs all verification steps, and publishes the package to npmjs. npm
 publish credentials are only used by GitHub Actions; the local command never publishes a package
 directly.
+
+If the requested tag already exists locally or on `origin`, the assistant reports where it exists
+and asks before replacing it. Remote replacements use a force-with-lease check so a tag changed by
+someone else after confirmation is not overwritten. The branch and tag are pushed atomically, so
+the remote is not left with only half of the release. Cancelling before confirming the release
+leaves its files unchanged; declining the final push keeps the release commit and tag locally and
+prints the command needed to push them later. Selecting the current package version recreates or
+moves only its tag and does not add a duplicate changelog entry or release commit.

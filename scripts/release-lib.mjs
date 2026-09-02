@@ -22,11 +22,12 @@ const changelogGroups = [
 ];
 
 export function git(args, capture = false, quiet = false) {
-  return execFileSync('git', args, {
+  const output = execFileSync('git', args, {
     cwd: repoRoot,
     encoding: 'utf8',
     stdio: ['ignore', capture ? 'pipe' : 'inherit', quiet ? 'pipe' : 'inherit'],
-  }).trim();
+  });
+  return typeof output === 'string' ? output.trim() : '';
 }
 
 export function resolveVersion(currentVersion, requestedVersion) {
@@ -42,17 +43,67 @@ export function resolveVersion(currentVersion, requestedVersion) {
   return nextVersion;
 }
 
-export function getLastReleaseRef(currentVersion) {
+export function resolveVersionTag(currentVersion, requestedTag) {
+  const tag = requestedTag.trim();
+  if (!tag.startsWith('v'))
+    throw new Error(
+      `Invalid version tag "${requestedTag}". Tags must start with v.`
+    );
+  const version = semver.valid(tag.slice(1));
+  if (!version || semver.lt(version, currentVersion)) {
+    throw new Error(
+      `Invalid version tag "${requestedTag}". Use v followed by a semantic version that is not older than ${currentVersion}.`
+    );
+  }
+  return {tag: `v${version}`, version};
+}
+
+export function localTagExists(tag) {
   try {
-    return git(['describe', '--tags', '--abbrev=0', 'HEAD'], true, true);
+    git(['show-ref', '--verify', '--quiet', `refs/tags/${tag}`], true, true);
+    return true;
+  } catch (error) {
+    if (error?.status === 1) return false;
+    throw error;
+  }
+}
+
+export function getRemoteTagObjectId(tag) {
+  try {
+    const output = git(
+      ['ls-remote', '--exit-code', '--tags', 'origin', `refs/tags/${tag}`],
+      true,
+      true
+    );
+    return output.split(/\s+/)[0] ?? '';
+  } catch (error) {
+    if (error?.status === 2) return '';
+    throw new Error(`Could not check whether ${tag} exists on origin.`, {
+      cause: error,
+    });
+  }
+}
+
+export function getLastReleaseRef(currentVersion, excludedTag = '') {
+  try {
+    const excludeArgs = excludedTag ? [`--exclude=${excludedTag}`] : [];
+    return git(
+      ['describe', '--tags', '--abbrev=0', ...excludeArgs, 'HEAD'],
+      true,
+      true
+    );
   } catch {
     const releases = git(['log', '--format=%H%x09%s'], true)
       .split('\n')
       .map((line) => line.split('\t'));
+    const releaseSubjects = [
+      currentVersion,
+      `v${currentVersion}`,
+      `chore(release): publish v${currentVersion}`,
+    ];
     return (
-      releases.find(([, subject]) =>
-        [`${currentVersion}`, `v${currentVersion}`].includes(subject)
-      )?.[0] ?? ''
+      releases.find(([, subject]) => releaseSubjects.includes(subject))?.[0] ??
+      ''
     );
   }
 }
