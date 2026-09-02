@@ -2,6 +2,7 @@
 import sinon from 'sinon';
 import {aTimeout, expect, fixture, html} from '@open-wc/testing';
 import {sendKeys, sendMouse} from '@web/test-runner-commands';
+import '../vscode-icon/vscode-icon.js';
 import '../vscode-label/vscode-label.js';
 import {VscodeTextfield} from './index.js';
 
@@ -67,6 +68,22 @@ describe('vscode-textfield', () => {
     await el.updateComplete;
 
     expect(el.getAttribute('size')).to.eq('small');
+  });
+
+  it('uses a 16px height at the small size with slotted icons', async () => {
+    const el = await fixture<VscodeTextfield>(html`
+      <vscode-textfield size="small">
+        <vscode-icon name="calendar" slot="content-before"></vscode-icon>
+        <vscode-icon
+          name="search"
+          slot="content-after"
+          action-icon
+          label="Search"
+        ></vscode-icon>
+      </vscode-textfield>
+    `);
+
+    expect(el.getBoundingClientRect().height).to.eq(16);
   });
 
   it('should be participated in the form', async () => {

@@ -23,11 +23,11 @@ const styles: CSSResultGroup = [
     .button {
       border-color: transparent;
       border-style: solid;
-      border-width: 1px;
+      border-width: var(--vsc-icon-action-border-width, 1px);
       border-radius: 5px;
       color: currentColor;
       cursor: pointer;
-      padding: 2px;
+      padding: var(--vsc-icon-action-padding, 2px);
     }
 
     .button:hover {

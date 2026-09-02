@@ -47,10 +47,26 @@ describe('vscode-icon', () => {
       html`<vscode-icon name="account" size="large"></vscode-icon>`
     );
     const icon = el.shadowRoot?.querySelector('.codicon') as HTMLElement;
+    const computedStyle = getComputedStyle(icon);
 
-    expect(icon.style.height).to.eq('20px');
-    expect(icon.style.width).to.eq('20px');
-    expect(icon.style.fontSize).to.eq('20px');
+    expect(computedStyle.height).to.eq('20px');
+    expect(computedStyle.width).to.eq('20px');
+    expect(computedStyle.fontSize).to.eq('20px');
+  });
+
+  it('allows a containing component to override the rendered size', async () => {
+    const el = await fixture<VscodeIcon>(
+      html`<vscode-icon
+        name="account"
+        style="--vsc-icon-size: 12px"
+      ></vscode-icon>`
+    );
+    const icon = el.shadowRoot?.querySelector('.codicon') as HTMLElement;
+    const computedStyle = getComputedStyle(icon);
+
+    expect(computedStyle.height).to.eq('12px');
+    expect(computedStyle.width).to.eq('12px');
+    expect(computedStyle.fontSize).to.eq('12px');
   });
 
   it('rejects non-numeric size attributes', async () => {

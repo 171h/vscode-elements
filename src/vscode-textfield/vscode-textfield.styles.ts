@@ -96,6 +96,15 @@ const styles: CSSResultGroup = [
       padding-top: 1px;
     }
 
+    :host([size='small']) ::slotted(vscode-icon) {
+      --vsc-icon-size: 14px;
+    }
+
+    :host([size='small']) ::slotted(vscode-icon[action-icon]) {
+      --vsc-icon-action-padding: 0;
+      --vsc-icon-size: 12px;
+    }
+
     :host([size='large']) input {
       padding-bottom: 5px;
       padding-top: 5px;

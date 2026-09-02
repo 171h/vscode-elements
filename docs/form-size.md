@@ -100,6 +100,11 @@ size (13px by default) for `medium`, and 15px for `large`. You can override the
 font size for a form group or an individual control with
 `--vsc-form-control-font-size`.
 
+Small textfields remain 16px high when `vscode-icon` elements are placed in the
+`content-before` or `content-after` slots. Slotted icons are adjusted to the
+available content height: regular icons render at 14px, while action icons use
+a 12px glyph with their focus border preserved.
+
 ## Buttons with icons
 
 Icons created by `vscode-button` follow the button size automatically:
