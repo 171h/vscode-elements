@@ -92,7 +92,7 @@ async function main() {
       git(['push', 'origin', branch]);
       git(['push', 'origin', tag]);
       console.log(
-        `GitHub Actions will build and publish nusys-ui@${version} to npmjs.`
+        `Tag ${tag} was pushed. Run the GitHub Actions Release workflow and enter ${tag} to build and publish nusys-ui@${version} to npmjs.`
       );
     } else {
       console.log(`Push later with: git push origin && git push origin ${tag}`);

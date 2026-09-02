@@ -35,6 +35,8 @@ Releases are created locally with `npm run release`. The command defaults to a p
 
 The release assistant requires a clean Git working tree. It previews and updates `CHANGELOG.md` from
 commits since the latest release, synchronizes `package.json` and `package-lock.json`, and creates a
-release commit and annotated tag. When that tag is pushed to `origin`, the GitHub `Release` workflow
-runs all verification steps and publishes the package to npmjs. npm publish credentials are only
-used by GitHub Actions; the local command never publishes a package directly.
+release commit and annotated tag. After pushing that tag to `origin`, open the GitHub `Release`
+workflow, choose **Run workflow**, and enter the existing version tag (for example, `v2.6.0`). The
+workflow checks out that tag, runs all verification steps, and publishes the package to npmjs. npm
+publish credentials are only used by GitHub Actions; the local command never publishes a package
+directly.
