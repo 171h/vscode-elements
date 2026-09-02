@@ -148,9 +148,9 @@ export class VscodeIcon extends VscElement {
       })}
       .style=${stylePropertyMap({
         animationDuration: String(this.spinDuration) + 's',
-        fontSize: this.size + 'px',
-        height: this.size + 'px',
-        width: this.size + 'px',
+        fontSize: `var(--vsc-icon-size, ${this.size}px)`,
+        height: `var(--vsc-icon-size, ${this.size}px)`,
+        width: `var(--vsc-icon-size, ${this.size}px)`,
       })}
     ></span>`;
 
