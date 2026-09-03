@@ -1,10 +1,14 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import test from 'node:test';
 
 import {
   renderChangelog,
   resolveVersion,
   resolveVersionTag,
+  updateChangelog,
 } from './release-lib.mjs';
 import {buildReleasePushArgs, confirm, promptVersionTag} from './release.mjs';
 import {extractReleaseNotes} from './extract-release-notes.mjs';
@@ -127,4 +131,38 @@ test('renderChangelog groups conventional commits', () => {
     /### Added\n\n- \*\*button\*\*: add busy state \(abc1234\)/
   );
   assert.match(result, /### Fixed\n\n- correct focus handling \(def5678\)/);
+});
+
+test('updateChangelog writes release notes and preserves previous releases', (t) => {
+  const directory = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'release-changelog-')
+  );
+  t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
+  const filePath = path.join(directory, 'CHANGELOG.md');
+  const header = '# Changelog\n\nAll notable changes.\n\n';
+  const previous = '## [3.0.0] - 2026-09-02\n\n- Previous release.\n';
+  fs.writeFileSync(filePath, header + previous);
+
+  updateChangelog(
+    '3.0.1',
+    [
+      {
+        hash: 'abc1234',
+        type: 'fix',
+        scope: 'release',
+        subject: 'use NPM_TOKEN',
+      },
+    ],
+    filePath
+  );
+
+  const content = fs.readFileSync(filePath, 'utf8');
+  assert.ok(content.startsWith(`${header}## [3.0.1] - `));
+  assert.ok(content.endsWith(previous));
+  assert.equal(
+    extractReleaseNotes(content, '3.0.1'),
+    '### Fixed\n\n- **release**: use NPM_TOKEN (abc1234)'
+  );
+  assert.equal(extractReleaseNotes(content, '3.0.0'), '- Previous release.');
+  assert.throws(() => extractReleaseNotes(content, '3.0.2'), /was not found/);
 });

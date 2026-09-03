@@ -201,12 +201,12 @@ async function main() {
     );
 
     const pushQuestion = hasRemoteTag
-      ? `Push branch ${branch} and safely force-update ${tag} on origin?`
-      : `Push branch ${branch} and tag ${tag} to origin?`;
+      ? `Push branch ${branch} and safely force-update ${tag} on origin to publish to npmjs?`
+      : `Push branch ${branch} and tag ${tag} to origin to publish to npmjs?`;
     if (await confirm(rl, pushQuestion)) {
       pushRelease(branch, tag, remoteTagObjectId);
       console.log(
-        `Tag ${tag} was pushed. Run the GitHub Actions Release workflow and enter ${tag} to build and publish nusys-ui@${version} to npmjs.`
+        `Tag ${tag} was pushed. The GitHub Actions Release workflow will build and publish nusys-ui@${version} to npmjs using the repository's NPM_TOKEN secret. Check the workflow run for the publish result.`
       );
     } else {
       const branchRef = `refs/heads/${branch}`;

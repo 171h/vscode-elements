@@ -128,3 +128,32 @@ the `vscode-elements.github.io/src/content/docs/components/icon.mdx` so the docs
 ### vscode-data
 
 Generates HTML and CSS [custom data format](https://code.visualstudio.com/blogs/2020/02/24/custom-data-format) for VSCode code completions.
+
+### release
+
+Run `npm run release` from a clean working tree. The default version increment is
+`patch`; use `npm run release -- minor`, `npm run release -- major`, or
+`npm run release -- 3.1.0` to suggest a different version. The command prompts for
+the final `v`-prefixed version tag and confirmation.
+
+For a new version, the command updates `package.json`, `package-lock.json`, and the
+component version, generates a `CHANGELOG.md` entry from Git commits since the
+previous release, then commits those files and creates the tag. Selecting the
+current version only creates or updates its tag and keeps its existing changelog.
+
+Confirming the push sends the branch and tag to `origin` and automatically starts
+the GitHub Actions **Release** workflow. It builds, tests, and publishes `nusys-ui`
+to npmjs, then creates a GitHub release with notes from `CHANGELOG.md`. Check the
+workflow run for completion; a successful local push does not mean npm publishing
+has finished. If you decline the push, the command prints how to push later.
+
+Configure a repository Actions secret named `NPM_TOKEN` with permission to publish
+`nusys-ui` (and bypass 2FA for unattended publishing). The workflow supplies it as
+`NODE_AUTH_TOKEN` to npm through `actions/setup-node`. GitHub secrets stay in
+Actions; the local command needs Git push access but does not need an npm token.
+The package repository URL must match this repository for npm provenance.
+
+The updated workflow must be included in the commit being tagged. To retry a
+failed release, manually run **Release** in GitHub Actions and set `version_tag`
+to the existing tag. An already published npm version is skipped; publish a newer
+version to distribute changed package contents.

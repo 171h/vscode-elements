@@ -127,7 +127,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vscode-elements/elements.git"
+    "url": "git+https://github.com/171h/vscode-elements.git"
   },
   "bugs": {
     "url": "https://github.com/vscode-elements/elements/issues"

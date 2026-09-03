@@ -148,14 +148,14 @@ export function renderChangelog(version, commits, date = new Date()) {
   return lines.join('\n');
 }
 
-export function updateChangelog(version, commits) {
-  const content = fs.readFileSync(changelogPath, 'utf8');
+export function updateChangelog(version, commits, filePath = changelogPath) {
+  const content = fs.readFileSync(filePath, 'utf8');
   const block = renderChangelog(version, commits);
   const firstRelease = content.search(/^## \[/m);
   if (firstRelease < 0)
     throw new Error('Could not find where to insert the new CHANGELOG entry.');
   fs.writeFileSync(
-    changelogPath,
+    filePath,
     `${content.slice(0, firstRelease)}${block}\n${content.slice(firstRelease)}`
   );
 }

@@ -1,8 +1,11 @@
 name: Release
 
 # `npm run release` creates and pushes a tag after updating the version and
-# CHANGELOG. Start this workflow manually and enter that tag to publish it.
+# CHANGELOG. Pushing the tag publishes it; manual dispatch allows retries.
 on:
+  push:
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       version_tag:
@@ -14,11 +17,16 @@ permissions:
   contents: write
   id-token: write
 
+concurrency:
+  group: release-${{ inputs.version_tag || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   release:
+    if: github.event_name != 'push' || !github.event.deleted
     runs-on: ubuntu-latest
     env:
-      VERSION_TAG: ${{ inputs.version_tag }}
+      VERSION_TAG: ${{ inputs.version_tag || github.ref_name }}
     steps:
       - name: Validate release tag
         shell: bash
@@ -32,7 +40,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
-          ref: refs/tags/${{ inputs.version_tag }}
+          ref: refs/tags/${{ env.VERSION_TAG }}
           fetch-depth: 0
 
       - name: Setup Node.js
@@ -53,6 +61,16 @@ jobs:
           fi
           echo "PACKAGE_VERSION=$PACKAGE_VERSION" >> "$GITHUB_ENV"
 
+      - name: Verify npm token is configured
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [[ -z "$NODE_AUTH_TOKEN" ]]; then
+            echo "Configure the NPM_TOKEN repository secret with npm publish access." >&2
+            exit 1
+          fi
+
       - name: Install dependencies
         run: npm ci
 
@@ -71,6 +89,9 @@ jobs:
       - name: Check formatting
         run: npm run prettier
 
+      - name: Verify changelog and extract release notes
+        run: node scripts/extract-release-notes.mjs "$PACKAGE_VERSION"
+
       - name: Pack package
         run: npm pack
 
@@ -83,10 +104,7 @@ jobs:
             npm publish "nusys-ui-${PACKAGE_VERSION}.tgz" --access=public --provenance
           fi
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.ORG_NPM_TOKEN }}
-
-      - name: Extract release notes
-        run: node scripts/extract-release-notes.mjs "$PACKAGE_VERSION"
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub release
         env:
