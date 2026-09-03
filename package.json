@@ -1,6 +1,6 @@
 {
   "name": "nusys-ui",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Web components for creating Visual Studio Code extensions",
   "main": "dist/main.js",
   "module": "dist/main.js",
