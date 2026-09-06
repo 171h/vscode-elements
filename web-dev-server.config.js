@@ -8,7 +8,10 @@ import {legacyPlugin} from '@web/dev-server-legacy';
 import {directoryIndexPlugin} from '@bendera/wds-plugin-directory-index';
 
 export default {
-  appIndex: 'dev/index.html',
+  // Keep the app index virtual so /dev continues to fall through to the
+  // directory index plugin. The real /dev/index.html remains directly
+  // accessible as the unified component gallery.
+  appIndex: 'dev/__index.html',
   nodeResolve: true,
   open: true,
   preserveSymlinks: true,
