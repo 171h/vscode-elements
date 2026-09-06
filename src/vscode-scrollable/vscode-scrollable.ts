@@ -123,8 +123,6 @@ export class VscodeScrollable extends VscElement {
 
   private _hostResizeObserver!: ResizeObserver;
   private _contentResizeObserver!: ResizeObserver;
-  private _componentHeight = 0;
-  private _contentHeight = 0;
   private _scrollThumbStartY = 0;
   private _mouseStartY = 0;
   private _scrollbarVisible = true;
@@ -172,8 +170,6 @@ export class VscodeScrollable extends VscElement {
   //#endregion
 
   private _resizeObserverCallback = () => {
-    this._componentHeight = this.offsetHeight;
-    this._contentHeight = this._contentElement.offsetHeight;
     this._updateScrollbar();
     this._updateThumbPosition();
   };
@@ -334,7 +330,7 @@ export class VscodeScrollable extends VscElement {
   };
 
   private _handleComponentWheel = (ev: WheelEvent) => {
-    if (this._contentHeight <= this._componentHeight) {
+    if (this.scrollMax <= 0) {
       return;
     }
 

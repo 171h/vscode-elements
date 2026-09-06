@@ -1,0 +1,1061 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>VSCode Elements · Component gallery</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+    <style>
+      :root {
+        font-family: var(--vscode-font-family, system-ui, sans-serif);
+        color: var(--vscode-foreground);
+        background: var(--vscode-editor-background);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--vscode-editor-background, #1e1e1e);
+        color: var(--vscode-foreground, #ccc);
+      }
+      body.vscode-light {
+        color-scheme: light;
+      }
+      body.vscode-dark,
+      body.vscode-high-contrast {
+        color-scheme: dark;
+      }
+      body.vscode-high-contrast-light {
+        color-scheme: light;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: 18px clamp(16px, 4vw, 48px);
+        border-bottom: 1px solid var(--vscode-panel-border, #454545);
+        background: color-mix(
+          in srgb,
+          var(--vscode-editor-background, #1e1e1e) 94%,
+          transparent
+        );
+        backdrop-filter: blur(12px);
+      }
+      header h1 {
+        margin: 0 0 4px;
+        font-size: 22px;
+      }
+      header p {
+        margin: 0 0 14px;
+        opacity: 0.75;
+      }
+      .controls,
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .controls label {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      button,
+      select {
+        min-height: 28px;
+        padding: 3px 9px;
+        color: inherit;
+        background: var(--vscode-editor-background);
+        border: 1px solid var(--vscode-panel-border, #666);
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--vscode-focusBorder, #0078d4);
+      }
+      input {
+        min-height: 28px;
+        padding: 3px 7px;
+        color: var(--vscode-input-foreground, var(--vscode-foreground));
+        background: var(
+          --vscode-input-background,
+          var(--vscode-editor-background)
+        );
+        border: 1px solid
+          var(--vscode-input-border, var(--vscode-panel-border, transparent));
+        border-radius: 3px;
+      }
+      input::placeholder {
+        color: var(
+          --vscode-input-placeholderForeground,
+          var(--vscode-descriptionForeground)
+        );
+        opacity: 1;
+      }
+      input:focus-visible {
+        border-color: var(--vscode-focusBorder, #0078d4);
+        outline: 1px solid var(--vscode-focusBorder, #0078d4);
+        outline-offset: -1px;
+      }
+      main {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 20px clamp(16px, 4vw, 48px) 64px;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 20px;
+      }
+      nav a {
+        padding: 5px 9px;
+        color: inherit;
+        border-radius: 3px;
+        text-decoration: none;
+        background: var(--vscode-editor-inactiveSelectionBackground, #2a2d2e);
+        font-size: 12px;
+      }
+      nav a:hover {
+        background: var(--vscode-focusBorder, #0078d4);
+        color: white;
+      }
+      section {
+        scroll-margin-top: 130px;
+        margin: 30px 0 44px;
+      }
+      section > h2 {
+        margin: 0 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--vscode-panel-border, #454545);
+        font-size: 18px;
+      }
+      section > p {
+        opacity: 0.75;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+        align-items: start;
+      }
+      .demo-card {
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid var(--vscode-panel-border, #454545);
+        border-radius: 6px;
+        background: color-mix(
+          in srgb,
+          var(--vscode-editor-background, #1e1e1e) 92%,
+          #888 8%
+        );
+      }
+      .demo-card vscode-textarea,
+      .demo-card vscode-textfield,
+      .demo-card vscode-label,
+      .demo-card vscode-single-select,
+      .demo-card vscode-multi-select,
+      .demo-card vscode-form-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+      .demo-card h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+      }
+      .stack {
+        display: grid;
+        gap: 10px;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .wide {
+        grid-column: 1 / -1;
+      }
+      .split-demo {
+        height: 220px;
+        width: 100%;
+      }
+      .pane {
+        display: grid;
+        place-items: center;
+        height: 100%;
+        min-width: 0;
+        padding: 14px;
+        overflow: auto;
+        background: var(--vscode-editor-inactiveSelectionBackground, #2a2d2e);
+      }
+      .scroll-demo {
+        height: 130px;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .table-demo {
+        width: 100%;
+        height: 260px;
+      }
+      .tree-demo {
+        min-height: 250px;
+      }
+      .vertical-divider {
+        width: 56px;
+        margin: 0 -18px;
+        transform: rotate(90deg);
+      }
+      vscode-progress-ring {
+        width: 26px;
+        height: 26px;
+      }
+      vscode-progress-ring[size='small'] {
+        width: 16px;
+        height: 16px;
+      }
+      vscode-progress-ring[size='large'] {
+        width: 30px;
+        height: 30px;
+      }
+      vscode-toolbar-button[size='small'] {
+        --vsc-icon-size: 14px;
+      }
+      vscode-toolbar-button[size='medium'] {
+        --vsc-icon-size: 16px;
+      }
+      vscode-toolbar-button[size='large'] {
+        --vsc-icon-size: 20px;
+      }
+      vscode-button[block][size='small']::part(base) {
+        min-height: 16px;
+      }
+      vscode-button[block][size='small'] {
+        height: 16px;
+      }
+      vscode-button[block][size='medium']::part(base) {
+        min-height: 26px;
+      }
+      vscode-button[block][size='medium'] {
+        height: 26px;
+      }
+      vscode-button[block][size='large']::part(base) {
+        min-height: 30px;
+      }
+      vscode-button[block][size='large'] {
+        height: 30px;
+      }
+      .event-log {
+        min-height: 34px;
+        max-height: 130px;
+        overflow: auto;
+        padding: 7px;
+        font:
+          12px ui-monospace,
+          monospace;
+        white-space: pre-wrap;
+        color: var(--vscode-editorWidget-foreground, var(--vscode-foreground));
+        background: var(
+          --vscode-editorWidget-background,
+          var(--vscode-editor-background)
+        );
+        border: 1px solid
+          var(--vscode-editorWidget-border, var(--vscode-panel-border));
+        border-radius: 3px;
+      }
+      .muted {
+        opacity: 0.7;
+        font-size: 12px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 640px) {
+        header {
+          position: static;
+        }
+        section {
+          scroll-margin-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body class="vscode-dark">
+    <header>
+      <h1>VSCode Elements · Component gallery</h1>
+      <p>
+        All development scenarios in one page. Use the global controls, then
+        interact with any component below.
+      </p>
+      <div class="controls" aria-label="Global demo controls">
+        <vscode-theme-selector id="theme-control"></vscode-theme-selector>
+        <span>Size</span><button data-global-size="small">Small</button
+        ><button data-global-size="medium">Medium</button
+        ><button data-global-size="large">Large</button> <span>Icon</span
+        ><button data-global-icon-size="small">Small</button
+        ><button data-global-icon-size="medium">Medium</button
+        ><button data-global-icon-size="large">Large</button>
+        <label
+          >Filter
+          <input id="filter-control" type="search" placeholder="component name"
+        /></label>
+        <button id="reset-control" type="button">Reset controls</button>
+      </div>
+    </header>
+    <main>
+      <nav aria-label="Component sections">
+        <a href="#actions">Actions</a><a href="#forms">Forms</a
+        ><a href="#selection">Selection</a><a href="#layout">Layout</a
+        ><a href="#data">Data display</a><a href="#navigation">Navigation</a
+        ><a href="#feedback">Feedback</a>
+      </nav>
+
+      <section id="actions" data-component-section="actions">
+        <h2>Actions, icons and menus</h2>
+        <div class="grid">
+          <article
+            class="demo-card"
+            data-components="vscode-button vscode-icon"
+          >
+            <h3>Button variants</h3>
+            <div class="stack">
+              <div class="row">
+                <vscode-button>Default</vscode-button
+                ><vscode-button secondary>Secondary</vscode-button
+                ><vscode-button
+                  icon="settings-gear"
+                  icon-only
+                  aria-label="Settings"
+                ></vscode-button>
+              </div>
+              <div class="row">
+                <vscode-button disabled>Disabled</vscode-button
+                ><vscode-button icon="sync" icon-spin>Loading</vscode-button
+                ><vscode-button icon="add" icon-after="chevron-right"
+                  >With icons</vscode-button
+                >
+              </div>
+              <vscode-button block icon="check">Block button</vscode-button>
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-button-group vscode-button"
+          >
+            <h3>Button group / dropdown</h3>
+            <vscode-button-group
+              ><vscode-button>Run</vscode-button
+              ><vscode-button>Debug</vscode-button
+              ><vscode-button
+                aria-label="More"
+                icon="ellipsis"
+                icon-only
+              ></vscode-button
+            ></vscode-button-group>
+            <p class="muted">Grouped actions and icon-only action.</p>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-toolbar-container vscode-toolbar-button vscode-icon"
+          >
+            <h3>Toolbar</h3>
+            <vscode-toolbar-container
+              ><vscode-toolbar-button
+                label="New"
+                icon="add"
+              ></vscode-toolbar-button
+              ><vscode-toolbar-button
+                label="Save"
+                icon="save"
+              ></vscode-toolbar-button
+              ><vscode-toolbar-button
+                label="Pin"
+                icon="pin"
+                toggleable
+                checked
+              ></vscode-toolbar-button
+            ></vscode-toolbar-container>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-badge vscode-icon vscode-divider"
+          >
+            <h3>Badge, icon and divider</h3>
+            <div class="row">
+              <vscode-icon name="check" size="large"></vscode-icon
+              ><vscode-badge>3</vscode-badge
+              ><vscode-badge variant="counter">New</vscode-badge
+              ><vscode-badge variant="activity-bar-counter">12</vscode-badge
+              ><vscode-badge variant="tab-header-counter">4</vscode-badge>
+            </div>
+            <vscode-divider></vscode-divider>
+            <div class="row">
+              <vscode-icon name="sync" spin></vscode-icon
+              ><vscode-icon
+                name="warning"
+                action-icon
+                label="Warning"
+              ></vscode-icon
+              ><vscode-icon name="missing-icon"></vscode-icon>
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-context-menu vscode-context-menu-item"
+          >
+            <h3>Context menu</h3>
+            <vscode-button id="context-menu-toggle" icon="menu"
+              >Toggle menu</vscode-button
+            >
+            <vscode-context-menu id="context-menu" prevent-close
+              ><vscode-context-menu-item
+                label="Rename"
+                keybinding="F2"
+              ></vscode-context-menu-item
+              ><vscode-context-menu-item
+                label="Copy"
+                keybinding="Ctrl+C"
+              ></vscode-context-menu-item
+              ><vscode-context-menu-item separator></vscode-context-menu-item
+              ><vscode-context-menu-item
+                label="Delete"
+                keybinding="Delete"
+              ></vscode-context-menu-item
+            ></vscode-context-menu>
+            <p class="muted">
+              Toggle, keyboard navigation, separator and keybindings.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="forms" data-component-section="forms">
+        <h2>Forms and input types</h2>
+        <div class="grid">
+          <article
+            class="demo-card wide"
+            data-components="vscode-textfield vscode-label vscode-icon"
+          >
+            <h3>Textfield · all input types</h3>
+            <div class="grid">
+              <div class="stack">
+                <vscode-label for="tf-text">Text</vscode-label
+                ><vscode-textfield
+                  id="tf-text"
+                  placeholder="Placeholder"
+                  value="Hello"
+                ></vscode-textfield
+                ><vscode-label for="tf-email">Email</vscode-label
+                ><vscode-textfield
+                  id="tf-email"
+                  type="email"
+                  placeholder="name@example.com"
+                ></vscode-textfield
+                ><vscode-label for="tf-password">Password</vscode-label
+                ><vscode-textfield
+                  id="tf-password"
+                  type="password"
+                  value="secret"
+                ></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-number">Number / step</vscode-label
+                ><vscode-textfield
+                  id="tf-number"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value="12.5"
+                ></vscode-textfield
+                ><vscode-label for="tf-date">Date / time</vscode-label
+                ><vscode-textfield id="tf-date" type="date"></vscode-textfield
+                ><vscode-label for="tf-file">File</vscode-label
+                ><vscode-textfield id="tf-file" type="file"></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-search">Search with slots</vscode-label
+                ><vscode-textfield
+                  id="tf-search"
+                  type="search"
+                  clearable
+                  placeholder="Search"
+                  ><vscode-icon
+                    name="search"
+                    slot="content-before"
+                  ></vscode-icon
+                  ><vscode-icon
+                    name="sparkle"
+                    slot="content-after"
+                    action-icon
+                    label="Search action"
+                  ></vscode-icon></vscode-textfield
+                ><vscode-label for="tf-pattern">Required + pattern</vscode-label
+                ><vscode-textfield
+                  id="tf-pattern"
+                  required
+                  pattern="^/.*"
+                  placeholder="/workspace/path"
+                ></vscode-textfield
+                ><vscode-textfield disabled value="Disabled"></vscode-textfield>
+              </div>
+            </div>
+            <h3 style="margin-top: 18px">Remaining supported native types</h3>
+            <div class="grid">
+              <div class="stack">
+                <vscode-label for="tf-color">Color</vscode-label>
+                <vscode-textfield id="tf-color" type="color"></vscode-textfield>
+                <vscode-label for="tf-datetime">Datetime local</vscode-label>
+                <vscode-textfield
+                  id="tf-datetime"
+                  type="datetime-local"
+                ></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-month">Month</vscode-label>
+                <vscode-textfield id="tf-month" type="month"></vscode-textfield>
+                <vscode-label for="tf-time">Time</vscode-label>
+                <vscode-textfield id="tf-time" type="time"></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-tel">Telephone</vscode-label>
+                <vscode-textfield
+                  id="tf-tel"
+                  type="tel"
+                  placeholder="+1 555 0100"
+                ></vscode-textfield>
+                <vscode-label for="tf-url">URL</vscode-label>
+                <vscode-textfield
+                  id="tf-url"
+                  type="url"
+                  placeholder="https://example.com"
+                ></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-week">Week</vscode-label>
+                <vscode-textfield id="tf-week" type="week"></vscode-textfield>
+                <vscode-label for="tf-readonly">Readonly</vscode-label>
+                <vscode-textfield
+                  id="tf-readonly"
+                  readonly
+                  value="Read-only value"
+                ></vscode-textfield>
+              </div>
+            </div>
+          </article>
+          <article class="demo-card" data-components="vscode-textarea">
+            <h3>Textarea</h3>
+            <div class="stack">
+              <vscode-textarea
+                rows="3"
+                placeholder="Short text"
+              ></vscode-textarea
+              ><vscode-textarea
+                rows="3"
+                maxlength="80"
+                resize="vertical"
+                value="Resizable, maxlength and readonly"
+              ></vscode-textarea
+              ><vscode-textarea
+                rows="2"
+                readonly
+                value="Read only"
+              ></vscode-textarea>
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-checkbox vscode-checkbox-group vscode-label"
+          >
+            <h3>Checkboxes</h3>
+            <p class="muted">Horizontal</p>
+            <vscode-checkbox-group label="Preferences"
+              ><vscode-checkbox label="Notifications" checked></vscode-checkbox
+              ><vscode-checkbox
+                label="Telemetry"
+                indeterminate
+              ></vscode-checkbox
+              ><vscode-checkbox
+                label="Disabled option"
+                disabled
+              ></vscode-checkbox
+            ></vscode-checkbox-group>
+            <p class="muted">Vertical</p>
+            <vscode-checkbox-group variant="vertical"
+              ><vscode-checkbox label="Format on save" checked></vscode-checkbox
+              ><vscode-checkbox label="Auto save" toggle></vscode-checkbox
+            ></vscode-checkbox-group>
+            <vscode-checkbox
+              label="Required standalone"
+              required
+            ></vscode-checkbox>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-radio vscode-radio-group"
+          >
+            <h3>Radio group</h3>
+            <p class="muted">Horizontal</p>
+            <vscode-radio-group label="Environment"
+              ><vscode-radio name="env" value="dev">Development</vscode-radio
+              ><vscode-radio name="env" value="stage" default-checked
+                >Staging</vscode-radio
+              ><vscode-radio name="env" value="prod" disabled
+                >Production</vscode-radio
+              ></vscode-radio-group
+            >
+            <p class="muted">Vertical</p>
+            <vscode-radio-group variant="vertical"
+              ><vscode-radio name="channel" value="stable" checked
+                >Stable</vscode-radio
+              ><vscode-radio name="channel" value="insiders"
+                >Insiders</vscode-radio
+              ></vscode-radio-group
+            >
+          </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper vscode-single-select vscode-multi-select vscode-option"
+          >
+            <h3>Form container and validation</h3>
+            <vscode-form-container
+              ><vscode-form-group label="Project"
+                ><vscode-single-select name="project" required
+                  ><vscode-option value="elements"
+                    >VSCode Elements</vscode-option
+                  ><vscode-option value="playground"
+                    >Webview Playground</vscode-option
+                  ><vscode-option value="disabled" disabled
+                    >Unavailable</vscode-option
+                  ></vscode-single-select
+                ><vscode-form-helper
+                  >Required single select.</vscode-form-helper
+                ></vscode-form-group
+              ><vscode-form-group label="Tags"
+                ><vscode-multi-select name="tags" combobox required
+                  ><vscode-option value="web" selected
+                    >Web components</vscode-option
+                  ><vscode-option value="lit">Lit</vscode-option
+                  ><vscode-option value="a11y"
+                    >Accessibility</vscode-option
+                  ></vscode-multi-select
+                ><vscode-form-helper
+                  >Combobox, multiple values and required
+                  validation.</vscode-form-helper
+                ></vscode-form-group
+              >
+              <div class="row">
+                <vscode-button type="submit">Submit</vscode-button
+                ><vscode-button type="reset" secondary>Reset</vscode-button>
+              </div></vscode-form-container
+            >
+          </article>
+        </div>
+      </section>
+
+      <section id="selection" data-component-section="selection">
+        <h2>Selection and disclosure</h2>
+        <div class="grid">
+          <article
+            class="demo-card"
+            data-components="vscode-single-select vscode-option"
+          >
+            <h3>Single select modes</h3>
+            <div class="stack">
+              <vscode-single-select label="Select mode"
+                ><vscode-option value="one">One</vscode-option
+                ><vscode-option value="two" selected
+                  >Two (selected)</vscode-option
+                ><vscode-option value="three" description="With description"
+                  >Three</vscode-option
+                ></vscode-single-select
+              ><vscode-single-select
+                label="Combobox"
+                combobox
+                creatable
+                placeholder="Type or choose"
+                ><vscode-option value="alpha">Alpha</vscode-option
+                ><vscode-option value="beta">Beta</vscode-option
+                ><vscode-option value="gamma" disabled
+                  >Gamma (disabled)</vscode-option
+                ></vscode-single-select
+              >
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-multi-select vscode-option"
+          >
+            <h3>Multi select modes</h3>
+            <div class="stack">
+              <vscode-multi-select label="Select mode"
+                ><vscode-option value="one" selected>One</vscode-option
+                ><vscode-option value="two">Two</vscode-option
+                ><vscode-option value="three"
+                  >Three</vscode-option
+                ></vscode-multi-select
+              ><vscode-multi-select label="Combobox" combobox
+                ><vscode-option value="red">Red</vscode-option
+                ><vscode-option value="green" selected>Green</vscode-option
+                ><vscode-option value="blue"
+                  >Blue</vscode-option
+                ></vscode-multi-select
+              >
+            </div>
+          </article>
+          <article class="demo-card" data-components="vscode-collapsible">
+            <h3>Collapsible</h3>
+            <div class="stack">
+              <vscode-collapsible title="Collapsed by default"
+                ><p>
+                  Hidden content can be toggled with the header.
+                </p></vscode-collapsible
+              ><vscode-collapsible title="Open with actions" open
+                ><span slot="actions"
+                  ><vscode-button
+                    icon-only
+                    aria-label="More"
+                    icon="ellipsis"
+                  ></vscode-button
+                ></span>
+                <p>Header actions and open state.</p></vscode-collapsible
+              >
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="layout" data-component-section="layout">
+        <h2>Layout playground</h2>
+        <p>
+          Resize the handles, switch tabs, and scroll each pane to test
+          interaction between layout primitives.
+        </p>
+        <div class="grid">
+          <article
+            class="demo-card wide"
+            data-components="vscode-tabs vscode-tab-header vscode-tab-panel"
+          >
+            <h3>Tabs · active and panel-style content</h3>
+            <vscode-tabs id="demo-tabs" panel
+              ><vscode-tab-header>Overview</vscode-tab-header
+              ><vscode-tab-panel
+                ><div class="stack">
+                  <vscode-textfield
+                    placeholder="Tab content"
+                  ></vscode-textfield>
+                  <p>Active panel content.</p>
+                </div></vscode-tab-panel
+              ><vscode-tab-header>Settings</vscode-tab-header
+              ><vscode-tab-panel
+                ><vscode-checkbox
+                  label="Enable feature"
+                  checked
+                ></vscode-checkbox></vscode-tab-panel
+              ><vscode-tab-header>Third panel</vscode-tab-header
+              ><vscode-tab-panel
+                >Panel-style tab header.</vscode-tab-panel
+              ></vscode-tabs
+            >
+          </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-split-layout vscode-scrollable"
+          >
+            <h3>Split layout · horizontal, vertical, nested and constrained</h3>
+            <vscode-split-layout
+              class="split-demo"
+              split="horizontal"
+              min-start="120"
+              min-end="120"
+              reset-on-dbl-click
+              ><div slot="start" class="pane">
+                <vscode-scrollable always-visible class="scroll-demo"
+                  >Start pane<br /><br />Drag the divider. Double-click to
+                  reset.<br /><br />Scrollable content.</vscode-scrollable
+                >
+              </div>
+              <div slot="end" class="pane">
+                <vscode-split-layout class="split-demo" split="vertical"
+                  ><div slot="start" class="pane">Nested top</div>
+                  <div slot="end" class="pane">
+                    Nested bottom
+                  </div></vscode-split-layout
+                >
+              </div></vscode-split-layout
+            >
+          </article>
+          <article class="demo-card" data-components="vscode-scrollable">
+            <h3>Scrollable variants</h3>
+            <vscode-scrollable class="scroll-demo" always-visible
+              ><div style="width: 700px; height: 280px; padding: 10px">
+                Oversized content tests both scrollbars and always-visible
+                tracks.
+              </div></vscode-scrollable
+            >
+          </article>
+        </div>
+      </section>
+
+      <section id="data" data-component-section="data">
+        <h2>Data display</h2>
+        <div class="grid">
+          <article
+            class="demo-card wide"
+            data-components="vscode-table vscode-table-header vscode-table-header-cell vscode-table-body vscode-table-row vscode-table-cell"
+          >
+            <h3>Table · bordered, zebra, resize and scroll</h3>
+            <vscode-table
+              class="table-demo"
+              bordered-columns
+              bordered-rows
+              zebra-odd
+              resizable
+              scrollable
+              ><vscode-table-header
+                ><vscode-table-header-cell min-width="140px"
+                  >Package</vscode-table-header-cell
+                ><vscode-table-header-cell min-width="90px"
+                  >Version</vscode-table-header-cell
+                ><vscode-table-header-cell>Downloads</vscode-table-header-cell
+                ><vscode-table-header-cell
+                  >State</vscode-table-header-cell
+                ></vscode-table-header
+              ><vscode-table-body
+                ><vscode-table-row
+                  ><vscode-table-cell>webview-playground</vscode-table-cell
+                  ><vscode-table-cell>2.1.0</vscode-table-cell
+                  ><vscode-table-cell>12,430</vscode-table-cell
+                  ><vscode-table-cell
+                    >Stable</vscode-table-cell
+                  ></vscode-table-row
+                ><vscode-table-row
+                  ><vscode-table-cell>vscode-elements</vscode-table-cell
+                  ><vscode-table-cell>3.0.1</vscode-table-cell
+                  ><vscode-table-cell>8,902</vscode-table-cell
+                  ><vscode-table-cell
+                    >Current</vscode-table-cell
+                  ></vscode-table-row
+                ><vscode-table-row
+                  ><vscode-table-cell>lit</vscode-table-cell
+                  ><vscode-table-cell>3.2.0</vscode-table-cell
+                  ><vscode-table-cell>44,128</vscode-table-cell
+                  ><vscode-table-cell
+                    >Dependency</vscode-table-cell
+                  ></vscode-table-row
+                ></vscode-table-body
+              ></vscode-table
+            >
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-tree vscode-tree-item"
+          >
+            <h3>Tree · nested / active / multi-select</h3>
+            <div class="row">
+              <vscode-button id="tree-expand" icon="expand-all"
+                >Expand all</vscode-button
+              ><vscode-button id="tree-collapse" icon="collapse-all" secondary
+                >Collapse all</vscode-button
+              >
+            </div>
+            <vscode-tree
+              id="tree-demo"
+              class="tree-demo"
+              multi-select
+              expand-mode="singleClick"
+            >
+              <vscode-tree-item branch active
+                >Explorer
+                <vscode-tree-item branch
+                  >src
+                  <vscode-tree-item>index.ts</vscode-tree-item>
+                  <vscode-tree-item>main.ts</vscode-tree-item>
+                </vscode-tree-item>
+              </vscode-tree-item>
+              <vscode-tree-item branch open
+                >Components
+                <vscode-tree-item>Button</vscode-tree-item>
+                <vscode-tree-item>Textfield</vscode-tree-item>
+                <vscode-tree-item>Table</vscode-tree-item>
+              </vscode-tree-item>
+              <vscode-tree-item>README.md</vscode-tree-item>
+            </vscode-tree>
+          </article>
+        </div>
+      </section>
+
+      <section id="navigation" data-component-section="navigation">
+        <h2>Navigation and structure</h2>
+        <div class="grid">
+          <article class="demo-card" data-components="vscode-label">
+            <h3>Label states</h3>
+            <vscode-label>Default label</vscode-label
+            ><vscode-label required>Required label</vscode-label
+            ><vscode-label disabled>Disabled label</vscode-label>
+          </article>
+          <article class="demo-card" data-components="vscode-divider">
+            <h3>Divider orientations</h3>
+            <p class="muted">Vertical</p>
+            <div class="row" style="height: 70px">
+              <span>Before</span
+              ><vscode-divider class="vertical-divider"></vscode-divider
+              ><span>After</span>
+            </div>
+            <p class="muted">Horizontal</p>
+            <vscode-divider></vscode-divider>
+          </article>
+        </div>
+      </section>
+
+      <section id="feedback" data-component-section="feedback">
+        <h2>Progress and event inspection</h2>
+        <div class="grid">
+          <article class="demo-card" data-components="vscode-progress-bar">
+            <h3>Progress bar</h3>
+            <div class="stack">
+              <vscode-progress-bar
+                value="24"
+                max="100"
+                aria-label="Build progress"
+              ></vscode-progress-bar
+              ><vscode-progress-bar
+                indeterminate
+                long-running-threshold="1"
+              ></vscode-progress-bar
+              ><vscode-progress-bar
+                indeterminate
+                aria-label="Loading"
+              ></vscode-progress-bar>
+            </div>
+          </article>
+          <article class="demo-card" data-components="vscode-progress-ring">
+            <h3>Progress ring</h3>
+            <div class="row">
+              <vscode-progress-ring aria-label="Loading"></vscode-progress-ring>
+              <span class="muted">Follows the global form-control size.</span>
+            </div>
+          </article>
+          <article class="demo-card wide">
+            <h3>Event log</h3>
+            <p class="muted">
+              Interact with controls; bubbling component events are captured
+              here.
+            </p>
+            <div id="event-log" class="event-log" role="log">Ready.</div>
+            <vscode-button id="clear-log" type="button" icon="clear-all"
+              >Clear log</vscode-button
+            >
+          </article>
+        </div>
+      </section>
+    </main>
+    <script>
+      const themeControl = document.querySelector('#theme-control');
+      const eventLog = document.querySelector('#event-log');
+      const setTheme = (theme) => {
+        const dropdown = themeControl.shadowRoot?.querySelector('select');
+        if (!dropdown) return;
+        dropdown.value = theme;
+        dropdown.dispatchEvent(new Event('change'));
+      };
+      const setIconSize = (size) =>
+        document
+          .querySelectorAll('main vscode-icon, main vscode-toolbar-button')
+          .forEach((el) => el.setAttribute('size', size));
+      const setSize = (size) => {
+        document
+          .querySelectorAll(
+            'main vscode-button, main vscode-checkbox, main vscode-radio, main vscode-textfield, main vscode-textarea, main vscode-single-select, main vscode-multi-select, main vscode-form-group, main vscode-progress-ring'
+          )
+          .forEach((el) => el.setAttribute('size', size));
+        setIconSize(size);
+      };
+      document
+        .querySelectorAll('[data-global-size]')
+        .forEach((button) =>
+          button.addEventListener('click', () =>
+            setSize(button.dataset.globalSize)
+          )
+        );
+      document
+        .querySelectorAll('[data-global-icon-size]')
+        .forEach((button) =>
+          button.addEventListener('click', () =>
+            setIconSize(button.dataset.globalIconSize)
+          )
+        );
+      document
+        .querySelector('#context-menu-toggle')
+        .addEventListener('click', () => {
+          const menu = document.querySelector('#context-menu');
+          menu.show = !menu.show;
+        });
+      document.querySelector('#tree-expand').addEventListener('click', () => {
+        document.querySelector('#tree-demo').expandAll();
+      });
+      document.querySelector('#tree-collapse').addEventListener('click', () => {
+        document.querySelector('#tree-demo').collapseAll();
+      });
+      document
+        .querySelector('#filter-control')
+        .addEventListener('input', (event) => {
+          const query = event.target.value.toLowerCase().trim();
+          document
+            .querySelectorAll('[data-component-section]')
+            .forEach((section) => {
+              let visible = false;
+              section.querySelectorAll('[data-components]').forEach((card) => {
+                const match = !query || card.dataset.components.includes(query);
+                card.classList.toggle('hidden', !match);
+                visible ||= match;
+              });
+              section.classList.toggle('hidden', !!query && !visible);
+            });
+        });
+      document.querySelector('#reset-control').addEventListener('click', () => {
+        setTheme('dark-v2');
+        setSize('medium');
+        setIconSize('medium');
+        document.querySelector('#filter-control').value = '';
+        document
+          .querySelectorAll('[data-components], [data-component-section]')
+          .forEach((el) => el.classList.remove('hidden'));
+      });
+      document.querySelector('#clear-log').addEventListener('click', () => {
+        eventLog.textContent = 'Cleared.';
+      });
+      document.addEventListener('click', (event) => {
+        const target = event
+          .composedPath()
+          .find(
+            (item) =>
+              item instanceof HTMLElement && item.tagName.startsWith('VSCODE-')
+          );
+        if (!target || target === eventLog) return;
+        const name = target.tagName.toLowerCase();
+        eventLog.textContent =
+          `[${new Date().toLocaleTimeString()}] ${event.type} on <${name}>\n` +
+          eventLog.textContent;
+      });
+    </script>
+  </body>
+</html>
