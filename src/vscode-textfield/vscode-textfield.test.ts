@@ -86,6 +86,25 @@ describe('vscode-textfield', () => {
     expect(el.getBoundingClientRect().height).to.eq(16);
   });
 
+  it('resizes file inputs with the component', async () => {
+    for (const [size, expectedHeight, expectedFontSize] of [
+      ['small', 16, '11px'],
+      ['medium', 26, '13px'],
+      ['large', 30, '15px'],
+    ] as const) {
+      const el = await fixture<VscodeTextfield>(html`
+        <vscode-textfield type="file" .size=${size}></vscode-textfield>
+      `);
+      const input = el.shadowRoot!.querySelector<HTMLInputElement>('input')!;
+
+      expect(el.getBoundingClientRect().height).to.eq(expectedHeight);
+      expect(getComputedStyle(input).fontSize).to.eq(expectedFontSize);
+      expect(getComputedStyle(input, '::file-selector-button').fontSize).to.eq(
+        expectedFontSize
+      );
+    }
+  });
+
   it('should be participated in the form', async () => {
     const form = document.createElement('form');
     await fixture(

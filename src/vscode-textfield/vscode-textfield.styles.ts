@@ -120,10 +120,7 @@ const styles: CSSResultGroup = [
     }
 
     input[type='file'] {
-      line-height: 24px;
-      padding-bottom: 0;
       padding-left: 2px;
-      padding-top: 0;
     }
 
     input[type='file']::file-selector-button {
@@ -133,9 +130,9 @@ const styles: CSSResultGroup = [
       color: var(--vscode-button-foreground, #ffffff);
       cursor: pointer;
       font-family: var(--vscode-font-family, ${defaultFontStack});
-      font-size: var(--vscode-font-size, 13px);
+      font-size: inherit;
       font-weight: var(--vscode-font-weight, normal);
-      line-height: 20px;
+      line-height: inherit;
       padding: 0 14px;
     }
 
