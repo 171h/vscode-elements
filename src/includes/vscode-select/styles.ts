@@ -5,6 +5,8 @@ export default [
   defaultStyles,
   css`
     :host {
+      --vsc-select-option-height: 22px;
+      --vsc-select-options-max-height: 222px;
       display: inline-block;
       max-width: 100%;
       outline: none;
@@ -14,10 +16,14 @@ export default [
 
     :host([size='small']) {
       --vsc-form-control-font-size: 11px;
+      --vsc-select-option-height: 16px;
+      --vsc-select-options-max-height: 162px;
     }
 
     :host([size='large']) {
       --vsc-form-control-font-size: 15px;
+      --vsc-select-option-height: 28px;
+      --vsc-select-options-max-height: 282px;
     }
 
     :host([size='small']) .select-face {
@@ -249,7 +255,7 @@ export default [
 
     .scrollable {
       display: block;
-      max-height: 222px;
+      max-height: var(--vsc-select-options-max-height);
       margin: 0;
       outline: none;
       overflow: hidden;
@@ -268,10 +274,13 @@ export default [
       color: var(--vscode-foreground, #cccccc);
       cursor: pointer;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
-      height: 22px;
-      line-height: 20px;
+      height: var(--vsc-select-option-height);
+      line-height: calc(var(--vsc-select-option-height) - 2px);
       min-height: calc(var(--vscode-font-size) * 1.3);
       padding: 1px 3px;
       user-select: none;
@@ -341,9 +350,13 @@ export default [
       cursor: default;
       display: flex;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
-      line-height: 18px;
+      height: var(--vsc-select-option-height);
+      line-height: calc(var(--vsc-select-option-height) - 4px);
       min-height: calc(var(--vscode-font-size) * 1.3);
       opacity: 0.85;
       padding: 1px 3px;
