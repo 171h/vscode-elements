@@ -30,6 +30,16 @@
         background: var(--vscode-editor-background, #1e1e1e);
         color: var(--vscode-foreground, #ccc);
       }
+      body.vscode-light {
+        color-scheme: light;
+      }
+      body.vscode-dark,
+      body.vscode-high-contrast {
+        color-scheme: dark;
+      }
+      body.vscode-high-contrast-light {
+        color-scheme: light;
+      }
       header {
         position: sticky;
         top: 0;
@@ -80,6 +90,30 @@
       }
       button:hover {
         border-color: var(--vscode-focusBorder, #0078d4);
+      }
+      input {
+        min-height: 28px;
+        padding: 3px 7px;
+        color: var(--vscode-input-foreground, var(--vscode-foreground));
+        background: var(
+          --vscode-input-background,
+          var(--vscode-editor-background)
+        );
+        border: 1px solid
+          var(--vscode-input-border, var(--vscode-panel-border, transparent));
+        border-radius: 3px;
+      }
+      input::placeholder {
+        color: var(
+          --vscode-input-placeholderForeground,
+          var(--vscode-descriptionForeground)
+        );
+        opacity: 1;
+      }
+      input:focus-visible {
+        border-color: var(--vscode-focusBorder, #0078d4);
+        outline: 1px solid var(--vscode-focusBorder, #0078d4);
+        outline-offset: -1px;
       }
       main {
         max-width: 1440px;
@@ -202,6 +236,33 @@
         width: 30px;
         height: 30px;
       }
+      vscode-toolbar-button[size='small'] {
+        --vsc-icon-size: 14px;
+      }
+      vscode-toolbar-button[size='medium'] {
+        --vsc-icon-size: 16px;
+      }
+      vscode-toolbar-button[size='large'] {
+        --vsc-icon-size: 20px;
+      }
+      vscode-button[block][size='small']::part(base) {
+        min-height: 16px;
+      }
+      vscode-button[block][size='small'] {
+        height: 16px;
+      }
+      vscode-button[block][size='medium']::part(base) {
+        min-height: 26px;
+      }
+      vscode-button[block][size='medium'] {
+        height: 26px;
+      }
+      vscode-button[block][size='large']::part(base) {
+        min-height: 30px;
+      }
+      vscode-button[block][size='large'] {
+        height: 30px;
+      }
       .event-log {
         min-height: 34px;
         max-height: 130px;
@@ -211,7 +272,13 @@
           12px ui-monospace,
           monospace;
         white-space: pre-wrap;
-        background: #0008;
+        color: var(--vscode-editorWidget-foreground, var(--vscode-foreground));
+        background: var(
+          --vscode-editorWidget-background,
+          var(--vscode-editor-background)
+        );
+        border: 1px solid
+          var(--vscode-editorWidget-border, var(--vscode-panel-border));
         border-radius: 3px;
       }
       .muted {
@@ -910,16 +977,18 @@
         dropdown.value = theme;
         dropdown.dispatchEvent(new Event('change'));
       };
-      const setSize = (size) =>
+      const setIconSize = (size) =>
+        document
+          .querySelectorAll('main vscode-icon, main vscode-toolbar-button')
+          .forEach((el) => el.setAttribute('size', size));
+      const setSize = (size) => {
         document
           .querySelectorAll(
             'main vscode-button, main vscode-checkbox, main vscode-radio, main vscode-textfield, main vscode-textarea, main vscode-single-select, main vscode-multi-select, main vscode-form-group, main vscode-progress-ring'
           )
           .forEach((el) => el.setAttribute('size', size));
-      const setIconSize = (size) =>
-        document
-          .querySelectorAll('main vscode-icon')
-          .forEach((el) => el.setAttribute('size', size));
+        setIconSize(size);
+      };
       document
         .querySelectorAll('[data-global-size]')
         .forEach((button) =>
