@@ -2,7 +2,7 @@ This directory contains HTML files containing your element for development. By r
 
 ## Unified component gallery
 
-Open [`index.html`](./index.html) (or `http://localhost:8000/dev/index.html` after running `npm run start`) to use the unified development gallery. It contains all public components and their common interaction scenarios in one page.
+After running `npm run start`, open `http://localhost:8000/dev` to browse the individual component test pages, or open [`index.html`](./index.html) at `http://localhost:8000/dev/index.html` to use the unified development gallery. The gallery contains all public components and their common interaction scenarios in one page.
 
 The toolbar at the top applies one of the ten bundled VS Code themes, component size, and icon size globally. Use the component filter to focus on one family; the event log at the bottom captures bubbling component events. The per-component folders below are retained as focused regression fixtures and historical examples.
 
