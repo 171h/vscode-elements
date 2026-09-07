@@ -110,6 +110,41 @@ const styles: CSSResultGroup = [
       padding-top: 5px;
     }
 
+    input:is(
+      [type='color'],
+      [type='date'],
+      [type='datetime-local'],
+      [type='month'],
+      [type='time'],
+      [type='week']
+    ) {
+      height: 24px;
+    }
+
+    :host([size='small'])
+      input:is(
+        [type='color'],
+        [type='date'],
+        [type='datetime-local'],
+        [type='month'],
+        [type='time'],
+        [type='week']
+      ) {
+      height: 14px;
+    }
+
+    :host([size='large'])
+      input:is(
+        [type='color'],
+        [type='date'],
+        [type='datetime-local'],
+        [type='month'],
+        [type='time'],
+        [type='week']
+      ) {
+      height: 28px;
+    }
+
     input:read-only:not([type='file']) {
       cursor: not-allowed;
     }
