@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [3.1.0] - 2026-09-07
+
+### Added
+
+- **dev**: add unified component gallery (c9ee9a9d)
+
+### Fixed
+
+- address size review feedback (63fbfbef)
+- scale form control corner radii (48fe3d00)
+- **dev**: enable split resizing and global sizes (04e646f3)
+- resize tree items with form controls (ea06131f)
+- resize tables with form controls (4e86ccc2)
+- resize select option descriptions (e60a1343)
+- resize checkbox indicators (5375e4ac)
+- resize native picker textfields (822887bb)
+- resize file textfields with form controls (c371dfc6)
+- **dev**: preserve directory index alongside gallery (0f52d5f8)
+- align select option sizes with controls (0e3f46b8)
+- **scrollable**: avoid resize observer race on wheel (fd2d589f)
+- **dev**: sync gallery sizes and theme styles (954e2327)
+
+### Maintenance
+
+- **dev**: make unified gallery the default entry (eabf5681)
+
 ## [3.0.1] - 2026-09-03
 
 ### Fixed
