@@ -70,6 +70,21 @@ describe('vscode-textfield', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '4px'],
+      ['large', '6px'],
+    ] as const) {
+      const el = await fixture<VscodeTextfield>(html`
+        <vscode-textfield .size=${size}></vscode-textfield>
+      `);
+      const root = el.shadowRoot!.querySelector<HTMLElement>('.root')!;
+
+      expect(getComputedStyle(root).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('uses a 16px height at the small size with slotted icons', async () => {
     const el = await fixture<VscodeTextfield>(html`
       <vscode-textfield size="small">
@@ -84,6 +99,50 @@ describe('vscode-textfield', () => {
     `);
 
     expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
+  it('resizes file inputs with the component', async () => {
+    for (const [size, expectedHeight, expectedFontSize] of [
+      ['small', 16, '11px'],
+      ['medium', 26, '13px'],
+      ['large', 30, '15px'],
+    ] as const) {
+      const el = await fixture<VscodeTextfield>(html`
+        <vscode-textfield type="file" .size=${size}></vscode-textfield>
+      `);
+      const input = el.shadowRoot!.querySelector<HTMLInputElement>('input')!;
+
+      expect(el.getBoundingClientRect().height).to.eq(expectedHeight);
+      expect(getComputedStyle(input).fontSize).to.eq(expectedFontSize);
+      expect(getComputedStyle(input, '::file-selector-button').fontSize).to.eq(
+        expectedFontSize
+      );
+    }
+  });
+
+  it('resizes color and date inputs with the component', async () => {
+    for (const type of [
+      'color',
+      'date',
+      'datetime-local',
+      'month',
+      'time',
+      'week',
+    ] as const) {
+      for (const [size, expectedHeight, expectedFontSize] of [
+        ['small', 16, '11px'],
+        ['medium', 26, '13px'],
+        ['large', 30, '15px'],
+      ] as const) {
+        const el = await fixture<VscodeTextfield>(html`
+          <vscode-textfield .type=${type} .size=${size}></vscode-textfield>
+        `);
+        const input = el.shadowRoot!.querySelector<HTMLInputElement>('input')!;
+
+        expect(el.getBoundingClientRect().height).to.eq(expectedHeight);
+        expect(getComputedStyle(input).fontSize).to.eq(expectedFontSize);
+      }
+    }
   });
 
   it('should be participated in the form', async () => {

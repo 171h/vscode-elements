@@ -18,6 +18,11 @@ import '../../vscode-scrollable/vscode-scrollable.js';
 
 export const VISIBLE_OPTS = 10;
 export const OPT_HEIGHT = 22;
+export const OPT_HEIGHTS: Record<FormControlSize, number> = {
+  small: 16,
+  medium: OPT_HEIGHT,
+  large: 28,
+};
 
 export class VscodeSelectBase extends VscElement {
   @property({type: Boolean, reflect: true})
@@ -348,7 +353,7 @@ export class VscodeSelectBase extends VscElement {
 
   protected _scrollActiveElementToTop() {
     this._optionListScrollPos = Math.floor(
-      this._opts.relativeActiveIndex * OPT_HEIGHT
+      this._opts.relativeActiveIndex * OPT_HEIGHTS[this.size]
     );
   }
 
@@ -371,23 +376,24 @@ export class VscodeSelectBase extends VscElement {
     window.addEventListener('mousemove', this._onMouseMove);
 
     const ulScrollTop = this._optionListScrollPos;
-    const liPosY = optionIndex * OPT_HEIGHT;
+    const optionHeight = OPT_HEIGHTS[this.size];
+    const liPosY = optionIndex * optionHeight;
 
     const fullyVisible =
       liPosY >= ulScrollTop &&
-      liPosY <= ulScrollTop + VISIBLE_OPTS * OPT_HEIGHT - OPT_HEIGHT;
+      liPosY <= ulScrollTop + VISIBLE_OPTS * optionHeight - optionHeight;
 
     if (direction === 'down') {
       if (!fullyVisible) {
         this._optionListScrollPos =
-          optionIndex * OPT_HEIGHT - (VISIBLE_OPTS - 1) * OPT_HEIGHT;
+          optionIndex * optionHeight - (VISIBLE_OPTS - 1) * optionHeight;
       }
     }
 
     if (direction === 'up') {
       if (!fullyVisible) {
         this._optionListScrollPos = Math.floor(
-          this._opts.relativeActiveIndex * OPT_HEIGHT
+          this._opts.relativeActiveIndex * optionHeight
         );
       }
     }
@@ -767,10 +773,11 @@ export class VscodeSelectBase extends VscElement {
       this._isSuggestedOptionVisible || this._opts.numOfVisibleOptions === 0
         ? this._opts.numOfVisibleOptions + 1
         : this._opts.numOfVisibleOptions;
+    const optionHeight = OPT_HEIGHTS[this.size];
 
     const scrollPaneHeight = Math.min(
-      visibleOptions * OPT_HEIGHT,
-      VISIBLE_OPTS * OPT_HEIGHT
+      visibleOptions * optionHeight,
+      VISIBLE_OPTS * optionHeight
     );
 
     const cr = this.getBoundingClientRect();

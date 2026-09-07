@@ -5,6 +5,8 @@ const styles: CSSResultGroup = [
   defaultStyles,
   css`
     :host {
+      --vsc-form-control-font-size: var(--vscode-font-size, 13px);
+      --vsc-tree-item-height: 22px;
       --vsc-tree-item-arrow-display: flex;
       --internal-selectionBackground: var(
         --vscode-list-inactiveSelectionBackground,
@@ -19,6 +21,16 @@ const styles: CSSResultGroup = [
       --internal-highlightedIndentGuideDisplay: block;
 
       display: block;
+    }
+
+    :host([size='small']) {
+      --vsc-form-control-font-size: 11px;
+      --vsc-tree-item-height: 16px;
+    }
+
+    :host([size='large']) {
+      --vsc-form-control-font-size: 15px;
+      --vsc-tree-item-height: 28px;
     }
 
     :host(:hover) {

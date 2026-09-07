@@ -8,12 +8,36 @@ const styles: CSSResultGroup = [
   baseStyles,
   css`
     :host {
+      --vsc-form-control-font-size: var(--vscode-font-size, 13px);
+      --vsc-table-compact-edge-padding: 10px;
+      --vsc-table-compact-padding: 5px;
+      --vsc-table-header-height: 30px;
+      --vsc-table-header-line-height: 20px;
+      --vsc-table-row-height: 24px;
       display: block;
       --vsc-row-even-background: transparent;
       --vsc-row-odd-background: transparent;
       --vsc-row-border-bottom-width: 0;
       --vsc-row-border-top-width: 0;
       --vsc-row-display: table-row;
+    }
+
+    :host([size='small']) {
+      --vsc-form-control-font-size: 11px;
+      --vsc-table-compact-edge-padding: 6px;
+      --vsc-table-compact-padding: 3px;
+      --vsc-table-header-height: 24px;
+      --vsc-table-header-line-height: 14px;
+      --vsc-table-row-height: 18px;
+    }
+
+    :host([size='large']) {
+      --vsc-form-control-font-size: 15px;
+      --vsc-table-compact-edge-padding: 14px;
+      --vsc-table-compact-padding: 7px;
+      --vsc-table-header-height: 36px;
+      --vsc-table-header-line-height: 26px;
+      --vsc-table-row-height: 30px;
     }
 
     :host([bordered]),
@@ -123,9 +147,9 @@ const styles: CSSResultGroup = [
         --vscode-editorGroup-border,
         rgba(255, 255, 255, 0.09)
       );
-      height: calc(100% - 30px);
+      height: calc(100% - var(--vsc-table-header-height));
       position: absolute;
-      top: 30px;
+      top: var(--vsc-table-header-height);
       width: ${SPLITTER_VISIBLE_WIDTH}px;
     }
 

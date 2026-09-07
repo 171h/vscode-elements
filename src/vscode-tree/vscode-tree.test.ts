@@ -27,6 +27,34 @@ describe('vscode-tree', () => {
     expect(el).to.instanceOf(VscodeTree);
   });
 
+  it('uses medium size by default', () => {
+    const el = document.createElement('vscode-tree') as VscodeTree;
+
+    expect(el.size).to.eq('medium');
+  });
+
+  it('resizes items with the component', async () => {
+    for (const [size, expectedHeight, expectedFontSize] of [
+      ['small', 16, '11px'],
+      ['medium', 22, '13px'],
+      ['large', 28, '15px'],
+    ] as const) {
+      const el = await fixture<VscodeTree>(html`
+        <vscode-tree .size=${size}>
+          <vscode-tree-item>Item 1</vscode-tree-item>
+          <vscode-tree-item>Item 2</vscode-tree-item>
+        </vscode-tree>
+      `);
+      const item = el.querySelector<VscodeTreeItem>('vscode-tree-item')!;
+      const wrapper = item.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
+
+      expect(el.getAttribute('size')).to.eq(size);
+      expect(item.getBoundingClientRect().height).to.eq(expectedHeight);
+      expect(wrapper.getBoundingClientRect().height).to.eq(expectedHeight);
+      expect(getComputedStyle(wrapper).fontSize).to.eq(expectedFontSize);
+    }
+  });
+
   it('is accessible', async () => {
     const el = await fixture<VscodeTree>(html`
       <vscode-tree>

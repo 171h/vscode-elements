@@ -19,7 +19,7 @@ const styles: CSSResultGroup = [
         --vscode-settings-textInputBorder,
         var(--vscode-settings-textInputBackground, #313131)
       );
-      border-radius: 4px;
+      border-radius: var(--vsc-form-control-border-radius, 4px);
       border-style: solid;
       border-width: 1px;
       box-sizing: border-box;
@@ -110,6 +110,41 @@ const styles: CSSResultGroup = [
       padding-top: 5px;
     }
 
+    input:is(
+      [type='color'],
+      [type='date'],
+      [type='datetime-local'],
+      [type='month'],
+      [type='time'],
+      [type='week']
+    ) {
+      height: 24px;
+    }
+
+    :host([size='small'])
+      input:is(
+        [type='color'],
+        [type='date'],
+        [type='datetime-local'],
+        [type='month'],
+        [type='time'],
+        [type='week']
+      ) {
+      height: 14px;
+    }
+
+    :host([size='large'])
+      input:is(
+        [type='color'],
+        [type='date'],
+        [type='datetime-local'],
+        [type='month'],
+        [type='time'],
+        [type='week']
+      ) {
+      height: 28px;
+    }
+
     input:read-only:not([type='file']) {
       cursor: not-allowed;
     }
@@ -120,22 +155,19 @@ const styles: CSSResultGroup = [
     }
 
     input[type='file'] {
-      line-height: 24px;
-      padding-bottom: 0;
       padding-left: 2px;
-      padding-top: 0;
     }
 
     input[type='file']::file-selector-button {
       background-color: var(--vscode-button-background, #0078d4);
       border: 0;
-      border-radius: 2px;
+      border-radius: var(--vsc-form-control-inner-border-radius, 2px);
       color: var(--vscode-button-foreground, #ffffff);
       cursor: pointer;
       font-family: var(--vscode-font-family, ${defaultFontStack});
-      font-size: var(--vscode-font-size, 13px);
+      font-size: inherit;
       font-weight: var(--vscode-font-weight, normal);
-      line-height: 20px;
+      line-height: inherit;
       padding: 0 14px;
     }
 

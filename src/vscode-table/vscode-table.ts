@@ -23,6 +23,7 @@ import {
 import styles from './vscode-table.styles.js';
 import {ColumnResizeController} from './ColumnResizeController.js';
 import {VscTableChangeMinColumnWidthEvent} from '../vscode-table-header-cell/vscode-table-header-cell.js';
+import {FormControlSize} from '../includes/form-control-size.js';
 
 /**
  * @tag vscode-table
@@ -44,6 +45,12 @@ export class VscodeTable extends VscElement {
 
   @property({type: Boolean, reflect: true})
   responsive = false;
+
+  /**
+   * The size of the table rows and text. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   /**
    * Both rows and columns are separated by borders.

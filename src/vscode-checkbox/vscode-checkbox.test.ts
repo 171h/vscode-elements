@@ -43,12 +43,76 @@ describe('vscode-checkbox', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '3px'],
+      ['large', '3px'],
+    ] as const) {
+      const el = await fixture<VscodeCheckbox>(html`
+        <vscode-checkbox .size=${size}>Checkbox</vscode-checkbox>
+      `);
+      const icon = el.shadowRoot!.querySelector<HTMLElement>('.icon')!;
+
+      expect(getComputedStyle(icon).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('uses a 16px height at the small size', async () => {
     const el = await fixture<VscodeCheckbox>(
       html`<vscode-checkbox size="small">Checkbox</vscode-checkbox>`
     );
 
     expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
+  it('resizes checkbox indicators with the component', async () => {
+    for (const [
+      size,
+      expectedControlHeight,
+      expectedWrapperHeight,
+      expectedIconSize,
+      expectedFontSize,
+    ] of [
+      ['small', 16, 16, 14, '11px'],
+      ['medium', 26, 18, 18, '13px'],
+      ['large', 30, 20, 20, '15px'],
+    ] as const) {
+      const el = await fixture<VscodeCheckbox>(html`
+        <vscode-checkbox .size=${size} checked>Checkbox</vscode-checkbox>
+      `);
+      const icon = el.shadowRoot!.querySelector<HTMLElement>('.icon')!;
+      const checkIcon =
+        el.shadowRoot!.querySelector<SVGElement>('.check-icon')!;
+      const wrapper = el.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
+
+      expect(el.getBoundingClientRect().height).to.eq(expectedControlHeight);
+      expect(wrapper.getBoundingClientRect().height).to.eq(
+        expectedWrapperHeight
+      );
+      expect(icon.getBoundingClientRect().height).to.eq(expectedIconSize);
+      expect(checkIcon.getBoundingClientRect().height).to.eq(
+        expectedIconSize - 2
+      );
+      expect(getComputedStyle(wrapper).fontSize).to.eq(expectedFontSize);
+    }
+  });
+
+  it('resizes toggle indicators with the component', async () => {
+    for (const [size, expectedControlHeight, expectedWidth, expectedHeight] of [
+      ['small', 16, 28, 14],
+      ['medium', 26, 36, 18],
+      ['large', 30, 40, 20],
+    ] as const) {
+      const el = await fixture<VscodeCheckbox>(html`
+        <vscode-checkbox .size=${size} toggle checked>Toggle</vscode-checkbox>
+      `);
+      const icon = el.shadowRoot!.querySelector<HTMLElement>('.icon')!;
+
+      expect(el.getBoundingClientRect().height).to.eq(expectedControlHeight);
+      expect(icon.getBoundingClientRect().width).to.eq(expectedWidth);
+      expect(icon.getBoundingClientRect().height).to.eq(expectedHeight);
+    }
   });
 
   it('should be participated in the form', async () => {

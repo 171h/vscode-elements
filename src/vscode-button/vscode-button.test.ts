@@ -43,6 +43,21 @@ describe('vscode-button', () => {
     expect(el.getAttribute('size')).to.eq('large');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '4px'],
+      ['large', '6px'],
+    ] as const) {
+      const el = await fixture<VscodeButton>(html`
+        <vscode-button .size=${size}>Button</vscode-button>
+      `);
+      const base = el.shadowRoot!.querySelector<HTMLElement>('.base')!;
+
+      expect(getComputedStyle(base).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('resizes every icon button variation when its size changes', async () => {
     const wrapper = await fixture<HTMLDivElement>(html`
       <div>

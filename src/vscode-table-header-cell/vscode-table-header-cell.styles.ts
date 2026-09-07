@@ -9,9 +9,13 @@ const styles: CSSResultGroup = [
       color: var(--vscode-foreground, #cccccc);
       display: table-cell;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: bold;
-      line-height: 20px;
+      height: var(--vsc-table-header-height, 30px);
+      line-height: var(--vsc-table-header-line-height, 20px);
       overflow: hidden;
       padding-bottom: 5px;
       padding-left: 10px;

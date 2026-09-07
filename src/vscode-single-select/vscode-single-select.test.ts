@@ -48,6 +48,25 @@ describe('vscode-single-select', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '4px'],
+      ['large', '6px'],
+    ] as const) {
+      const el = await fixture<VscodeSingleSelect>(html`
+        <vscode-single-select .size=${size} open>
+          <vscode-option selected>Option</vscode-option>
+        </vscode-single-select>
+      `);
+      const face = el.shadowRoot!.querySelector<HTMLElement>('.select-face')!;
+      const dropdown = el.shadowRoot!.querySelector<HTMLElement>('.dropdown')!;
+
+      expect(getComputedStyle(face).borderRadius).to.eq(expectedRadius);
+      expect(getComputedStyle(dropdown).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('uses a 16px height at the small size', async () => {
     const el = await fixture<VscodeSingleSelect>(html`
       <vscode-single-select size="small">
@@ -56,6 +75,73 @@ describe('vscode-single-select', () => {
     `);
 
     expect(el.getBoundingClientRect().height).to.eq(16);
+  });
+
+  it('resizes dropdown options and the scroll pane with the component', async () => {
+    for (const [size, expectedHeight, expectedFontSize] of [
+      ['small', 16, '11px'],
+      ['medium', 22, '13px'],
+      ['large', 28, '15px'],
+    ] as const) {
+      const el = await fixture<VscodeSingleSelect>(html`
+        <vscode-single-select .size=${size} open>
+          <vscode-option>First</vscode-option>
+          <vscode-option>Second</vscode-option>
+        </vscode-single-select>
+      `);
+      const option = el.shadowRoot!.querySelector<HTMLLIElement>('.option')!;
+      const scrollable =
+        el.shadowRoot!.querySelector<HTMLElement>('.scrollable')!;
+
+      expect(option.getBoundingClientRect().height).to.eq(expectedHeight);
+      expect(getComputedStyle(option).fontSize).to.eq(expectedFontSize);
+      expect(scrollable.getBoundingClientRect().height).to.eq(
+        expectedHeight * 2
+      );
+    }
+  });
+
+  it('keeps small option and scroll pane heights aligned with the VS Code font size', async () => {
+    const el = await fixture<VscodeSingleSelect>(html`
+      <vscode-single-select size="small" open style="--vscode-font-size: 13px">
+        <vscode-option>First</vscode-option>
+        <vscode-option>Second</vscode-option>
+        <vscode-option>Third</vscode-option>
+      </vscode-single-select>
+    `);
+    const options = Array.from(
+      el.shadowRoot!.querySelectorAll<HTMLElement>('.option')
+    );
+    const scrollable =
+      el.shadowRoot!.querySelector<HTMLElement>('.scrollable')!;
+
+    expect(
+      options.map((option) => option.getBoundingClientRect().height)
+    ).to.eql([16, 16, 16]);
+    expect(scrollable.getBoundingClientRect().height).to.eq(48);
+  });
+
+  it('resizes option descriptions with the component', async () => {
+    for (const [size, expectedFontSize, expectedPadding] of [
+      ['small', '11px', '3px'],
+      ['medium', '13px', '6px'],
+      ['large', '15px', '8px'],
+    ] as const) {
+      const el = await fixture<VscodeSingleSelect>(html`
+        <vscode-single-select .size=${size} open>
+          <vscode-option selected description="Description"
+            >Option</vscode-option
+          >
+        </vscode-single-select>
+      `);
+      const description =
+        el.shadowRoot!.querySelector<HTMLElement>('.description')!;
+      const style = getComputedStyle(description);
+
+      expect(style.fontSize).to.eq(expectedFontSize);
+      expect(style.paddingTop).to.eq(expectedPadding);
+      expect(style.paddingBottom).to.eq(expectedPadding);
+    }
   });
 
   describe('select mode', () => {
