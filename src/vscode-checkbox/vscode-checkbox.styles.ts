@@ -20,7 +20,12 @@ const styles: CSSResultGroup = [
       background-color: currentColor;
       position: absolute;
       height: 1px;
-      width: 12px;
+      width: 67%;
+    }
+
+    .check-icon {
+      height: 100%;
+      width: 100%;
     }
 
     :host(:focus):host(:not([disabled])) .icon {
@@ -32,7 +37,7 @@ const styles: CSSResultGroup = [
     :host([toggle]) .icon {
       /* Track */
       width: 36px;
-      height: 20px;
+      height: 18px;
       border-radius: 999px;
       background-color: var(--vscode-button-secondaryBackground, #313131);
       border-color: var(--vscode-button-border, transparent);
@@ -49,21 +54,12 @@ const styles: CSSResultGroup = [
       padding-left: 45px; /* 36px track + 9px spacing */
     }
 
-    :host([toggle]) .label {
-      min-height: 20px;
-    }
-
-    :host([toggle]) .wrapper {
-      min-height: 20px;
-      line-height: 20px;
-    }
-
     :host([toggle]) .thumb {
       /* Thumb */
       box-sizing: border-box;
       display: block;
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
       background-color: var(--vscode-button-secondaryForeground, #cccccc);
       margin-left: 1px;
@@ -76,7 +72,7 @@ const styles: CSSResultGroup = [
     }
 
     :host([toggle][checked]) .thumb {
-      transform: translateX(16px);
+      transform: translateX(19px);
       background-color: var(--vscode-button-foreground, #ffffff);
     }
 
@@ -97,6 +93,42 @@ const styles: CSSResultGroup = [
     :host([toggle]:focus):host(:not([disabled])) .icon {
       outline: 1px solid var(--vscode-focusBorder, #0078d4);
       outline-offset: -1px;
+    }
+
+    :host([size='small'][toggle]) .icon {
+      height: 14px;
+      width: 28px;
+    }
+
+    :host([size='small'][toggle]) .label-inner {
+      padding-left: 37px;
+    }
+
+    :host([size='small'][toggle]) .thumb {
+      height: 10px;
+      width: 10px;
+    }
+
+    :host([size='small'][toggle][checked]) .thumb {
+      transform: translateX(15px);
+    }
+
+    :host([size='large'][toggle]) .icon {
+      height: 20px;
+      width: 40px;
+    }
+
+    :host([size='large'][toggle]) .label-inner {
+      padding-left: 49px;
+    }
+
+    :host([size='large'][toggle]) .thumb {
+      height: 16px;
+      width: 16px;
+    }
+
+    :host([size='large'][toggle][checked]) .thumb {
+      transform: translateX(21px);
     }
   `,
 ];
