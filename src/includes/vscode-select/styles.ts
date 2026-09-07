@@ -80,7 +80,7 @@ export default [
     .combobox-face {
       background-color: var(--vscode-settings-dropdownBackground, #313131);
       border-color: var(--vscode-settings-dropdownBorder, #3c3c3c);
-      border-radius: 4px;
+      border-radius: var(--vsc-form-control-border-radius, 4px);
       border-style: solid;
       border-width: 1px;
       box-sizing: border-box;
@@ -126,7 +126,7 @@ export default [
 
     .select-face-badge {
       background-color: var(--vscode-badge-background, #616161);
-      border-radius: 2px;
+      border-radius: var(--vsc-form-control-inner-border-radius, 2px);
       color: var(--vscode-badge-foreground, #f8f8f8);
       display: inline-block;
       flex-shrink: 0;
@@ -184,7 +184,7 @@ export default [
       align-items: center;
       background-color: transparent;
       border: 0;
-      border-radius: 2px;
+      border-radius: var(--vsc-form-control-inner-border-radius, 2px);
       box-sizing: content-box;
       color: var(--vscode-foreground, #cccccc);
       cursor: pointer;
@@ -234,7 +234,7 @@ export default [
     .dropdown {
       background-color: var(--vscode-settings-dropdownBackground, #313131);
       border-color: var(--vscode-settings-dropdownListBorder, #454545);
-      border-radius: 4px;
+      border-radius: var(--vsc-form-control-border-radius, 4px);
       border-style: solid;
       border-width: 1px;
       bottom: unset;
@@ -411,7 +411,7 @@ export default [
     .checkbox-icon {
       align-items: center;
       background-color: var(--vscode-checkbox-background, #313131);
-      border-radius: 2px;
+      border-radius: var(--vsc-form-control-inner-border-radius, 2px);
       border: 1px solid var(--vscode-checkbox-border);
       box-sizing: border-box;
       color: var(--vscode-checkbox-foreground);

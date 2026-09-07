@@ -57,6 +57,21 @@ describe('vscode-textarea', () => {
     expect(el.getAttribute('size')).to.eq('large');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '4px'],
+      ['large', '6px'],
+    ] as const) {
+      const el = await fixture<VscodeTextarea>(html`
+        <vscode-textarea .size=${size}></vscode-textarea>
+      `);
+      const textarea = el.shadowRoot!.querySelector('textarea')!;
+
+      expect(getComputedStyle(textarea).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('should forward "autocomplete" attribute to the inner textarea', async () => {
     const el = await fixture(
       html`<vscode-textarea autocomplete="on"></vscode-textarea>`

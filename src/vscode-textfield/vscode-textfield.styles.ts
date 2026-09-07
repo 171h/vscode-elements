@@ -19,7 +19,7 @@ const styles: CSSResultGroup = [
         --vscode-settings-textInputBorder,
         var(--vscode-settings-textInputBackground, #313131)
       );
-      border-radius: 4px;
+      border-radius: var(--vsc-form-control-border-radius, 4px);
       border-style: solid;
       border-width: 1px;
       box-sizing: border-box;
@@ -161,7 +161,7 @@ const styles: CSSResultGroup = [
     input[type='file']::file-selector-button {
       background-color: var(--vscode-button-background, #0078d4);
       border: 0;
-      border-radius: 2px;
+      border-radius: var(--vsc-form-control-inner-border-radius, 2px);
       color: var(--vscode-button-foreground, #ffffff);
       cursor: pointer;
       font-family: var(--vscode-font-family, ${defaultFontStack});

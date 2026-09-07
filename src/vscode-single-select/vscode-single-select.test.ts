@@ -48,6 +48,25 @@ describe('vscode-single-select', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '4px'],
+      ['large', '6px'],
+    ] as const) {
+      const el = await fixture<VscodeSingleSelect>(html`
+        <vscode-single-select .size=${size} open>
+          <vscode-option selected>Option</vscode-option>
+        </vscode-single-select>
+      `);
+      const face = el.shadowRoot!.querySelector<HTMLElement>('.select-face')!;
+      const dropdown = el.shadowRoot!.querySelector<HTMLElement>('.dropdown')!;
+
+      expect(getComputedStyle(face).borderRadius).to.eq(expectedRadius);
+      expect(getComputedStyle(dropdown).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('uses a 16px height at the small size', async () => {
     const el = await fixture<VscodeSingleSelect>(html`
       <vscode-single-select size="small">

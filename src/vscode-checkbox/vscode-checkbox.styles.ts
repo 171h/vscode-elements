@@ -13,7 +13,7 @@ const styles: CSSResultGroup = [
     }
 
     .icon {
-      border-radius: 3px;
+      border-radius: var(--vsc-form-control-inner-border-radius, 3px);
     }
 
     .indeterminate-icon {

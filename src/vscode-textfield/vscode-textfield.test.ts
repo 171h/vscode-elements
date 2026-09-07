@@ -70,6 +70,21 @@ describe('vscode-textfield', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '4px'],
+      ['large', '6px'],
+    ] as const) {
+      const el = await fixture<VscodeTextfield>(html`
+        <vscode-textfield .size=${size}></vscode-textfield>
+      `);
+      const root = el.shadowRoot!.querySelector<HTMLElement>('.root')!;
+
+      expect(getComputedStyle(root).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('uses a 16px height at the small size with slotted icons', async () => {
     const el = await fixture<VscodeTextfield>(html`
       <vscode-textfield size="small">

@@ -43,6 +43,21 @@ describe('vscode-checkbox', () => {
     expect(el.getAttribute('size')).to.eq('small');
   });
 
+  it('adjusts the corner radius with the component size', async () => {
+    for (const [size, expectedRadius] of [
+      ['small', '1px'],
+      ['medium', '3px'],
+      ['large', '3px'],
+    ] as const) {
+      const el = await fixture<VscodeCheckbox>(html`
+        <vscode-checkbox .size=${size}>Checkbox</vscode-checkbox>
+      `);
+      const icon = el.shadowRoot!.querySelector<HTMLElement>('.icon')!;
+
+      expect(getComputedStyle(icon).borderRadius).to.eq(expectedRadius);
+    }
+  });
+
   it('uses a 16px height at the small size', async () => {
     const el = await fixture<VscodeCheckbox>(
       html`<vscode-checkbox size="small">Checkbox</vscode-checkbox>`
