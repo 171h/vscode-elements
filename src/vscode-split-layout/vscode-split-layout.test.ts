@@ -482,6 +482,26 @@ describe('vscode-split-layout', () => {
       expect(endPane.offsetHeight).to.eq(250);
     });
 
+    it('allows vertical movement when horizontal minimums fit the layout', async () => {
+      const el = await fixture<VscodeSplitLayout>(
+        html`<vscode-split-layout
+          style="width: 400px; height: 220px;"
+          split="horizontal"
+          min-start="60px"
+          min-end="60px"
+        ></vscode-split-layout>`
+      );
+      const handle = el.shadowRoot!.querySelector('.handle') as HTMLDivElement;
+      const startPane = el.shadowRoot!.querySelector(
+        '.start'
+      ) as HTMLDivElement;
+      const initialHeight = startPane.offsetHeight;
+
+      await dragElement(handle, 0, 30);
+
+      expect(startPane.offsetHeight).to.be.greaterThan(initialHeight);
+    });
+
     it('handles overlapping minimums without crashing', async () => {
       const el = await fixture<VscodeSplitLayout>(
         html`<vscode-split-layout

@@ -784,8 +784,8 @@
             <vscode-split-layout
               class="split-demo"
               split="horizontal"
-              min-start="120"
-              min-end="120"
+              min-start="60"
+              min-end="60"
               reset-on-dbl-click
               ><div slot="start" class="pane">
                 <vscode-scrollable always-visible class="scroll-demo"
@@ -984,7 +984,7 @@
       const setSize = (size) => {
         document
           .querySelectorAll(
-            'main vscode-button, main vscode-checkbox, main vscode-radio, main vscode-textfield, main vscode-textarea, main vscode-single-select, main vscode-multi-select, main vscode-form-group, main vscode-progress-ring'
+            'main vscode-button, main vscode-checkbox, main vscode-radio, main vscode-textfield, main vscode-textarea, main vscode-single-select, main vscode-multi-select, main vscode-form-group, main vscode-progress-ring, main vscode-table, main vscode-tree'
           )
           .forEach((el) => el.setAttribute('size', size));
         setIconSize(size);
