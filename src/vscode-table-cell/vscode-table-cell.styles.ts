@@ -15,8 +15,11 @@ const styles: CSSResultGroup = [
       color: var(--vscode-foreground, #cccccc);
       display: table-cell;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
-      height: 24px;
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
+      height: var(--vsc-table-row-height, 24px);
       overflow: hidden;
       padding-left: 10px;
       text-overflow: ellipsis;
@@ -27,16 +30,16 @@ const styles: CSSResultGroup = [
     :host([compact]) {
       display: block;
       height: auto;
-      padding-bottom: 5px;
+      padding-bottom: var(--vsc-table-compact-padding, 5px);
       width: 100% !important;
     }
 
     :host([compact]:first-child) {
-      padding-top: 10px;
+      padding-top: var(--vsc-table-compact-edge-padding, 10px);
     }
 
     :host([compact]:last-child) {
-      padding-bottom: 10px;
+      padding-bottom: var(--vsc-table-compact-edge-padding, 10px);
     }
 
     .wrapper {
