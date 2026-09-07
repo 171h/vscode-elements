@@ -101,6 +101,26 @@ describe('vscode-single-select', () => {
     }
   });
 
+  it('keeps small option and scroll pane heights aligned with the VS Code font size', async () => {
+    const el = await fixture<VscodeSingleSelect>(html`
+      <vscode-single-select size="small" open style="--vscode-font-size: 13px">
+        <vscode-option>First</vscode-option>
+        <vscode-option>Second</vscode-option>
+        <vscode-option>Third</vscode-option>
+      </vscode-single-select>
+    `);
+    const options = Array.from(
+      el.shadowRoot!.querySelectorAll<HTMLElement>('.option')
+    );
+    const scrollable =
+      el.shadowRoot!.querySelector<HTMLElement>('.scrollable')!;
+
+    expect(
+      options.map((option) => option.getBoundingClientRect().height)
+    ).to.eql([16, 16, 16]);
+    expect(scrollable.getBoundingClientRect().height).to.eq(48);
+  });
+
   it('resizes option descriptions with the component', async () => {
     for (const [size, expectedFontSize, expectedPadding] of [
       ['small', '11px', '3px'],

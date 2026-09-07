@@ -118,6 +118,17 @@ const styles: CSSResultGroup = [
       width: 40px;
     }
 
+    :host([size='large']) .wrapper {
+      line-height: 20px;
+      margin-bottom: 5px;
+      margin-top: 5px;
+      min-height: 20px;
+    }
+
+    :host([size='large']) .label {
+      min-height: 20px;
+    }
+
     :host([size='large'][toggle]) .label-inner {
       padding-left: 49px;
     }

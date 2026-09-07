@@ -284,7 +284,6 @@ export default [
       font-weight: var(--vscode-font-weight, normal);
       height: var(--vsc-select-option-height);
       line-height: calc(var(--vsc-select-option-height) - 2px);
-      min-height: calc(var(--vscode-font-size) * 1.3);
       padding: 1px 3px;
       user-select: none;
       outline-color: transparent;
@@ -360,7 +359,6 @@ export default [
       font-weight: var(--vscode-font-weight, normal);
       height: var(--vsc-select-option-height);
       line-height: calc(var(--vsc-select-option-height) - 4px);
-      min-height: calc(var(--vscode-font-size) * 1.3);
       opacity: 0.85;
       padding: 1px 3px;
       user-select: none;

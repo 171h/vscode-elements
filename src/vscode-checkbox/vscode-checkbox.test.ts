@@ -67,10 +67,16 @@ describe('vscode-checkbox', () => {
   });
 
   it('resizes checkbox indicators with the component', async () => {
-    for (const [size, expectedIconSize, expectedFontSize] of [
-      ['small', 14, '11px'],
-      ['medium', 18, '13px'],
-      ['large', 20, '15px'],
+    for (const [
+      size,
+      expectedControlHeight,
+      expectedWrapperHeight,
+      expectedIconSize,
+      expectedFontSize,
+    ] of [
+      ['small', 16, 16, 14, '11px'],
+      ['medium', 26, 18, 18, '13px'],
+      ['large', 30, 20, 20, '15px'],
     ] as const) {
       const el = await fixture<VscodeCheckbox>(html`
         <vscode-checkbox .size=${size} checked>Checkbox</vscode-checkbox>
@@ -80,6 +86,10 @@ describe('vscode-checkbox', () => {
         el.shadowRoot!.querySelector<SVGElement>('.check-icon')!;
       const wrapper = el.shadowRoot!.querySelector<HTMLElement>('.wrapper')!;
 
+      expect(el.getBoundingClientRect().height).to.eq(expectedControlHeight);
+      expect(wrapper.getBoundingClientRect().height).to.eq(
+        expectedWrapperHeight
+      );
       expect(icon.getBoundingClientRect().height).to.eq(expectedIconSize);
       expect(checkIcon.getBoundingClientRect().height).to.eq(
         expectedIconSize - 2
@@ -89,16 +99,17 @@ describe('vscode-checkbox', () => {
   });
 
   it('resizes toggle indicators with the component', async () => {
-    for (const [size, expectedWidth, expectedHeight] of [
-      ['small', 28, 14],
-      ['medium', 36, 18],
-      ['large', 40, 20],
+    for (const [size, expectedControlHeight, expectedWidth, expectedHeight] of [
+      ['small', 16, 28, 14],
+      ['medium', 26, 36, 18],
+      ['large', 30, 40, 20],
     ] as const) {
       const el = await fixture<VscodeCheckbox>(html`
         <vscode-checkbox .size=${size} toggle checked>Toggle</vscode-checkbox>
       `);
       const icon = el.shadowRoot!.querySelector<HTMLElement>('.icon')!;
 
+      expect(el.getBoundingClientRect().height).to.eq(expectedControlHeight);
       expect(icon.getBoundingClientRect().width).to.eq(expectedWidth);
       expect(icon.getBoundingClientRect().height).to.eq(expectedHeight);
     }
