@@ -5,6 +5,7 @@ export default [
   defaultStyles,
   css`
     :host {
+      --vsc-select-description-padding-block: 6px;
       --vsc-select-option-height: 22px;
       --vsc-select-options-max-height: 222px;
       display: inline-block;
@@ -16,12 +17,14 @@ export default [
 
     :host([size='small']) {
       --vsc-form-control-font-size: 11px;
+      --vsc-select-description-padding-block: 3px;
       --vsc-select-option-height: 16px;
       --vsc-select-options-max-height: 162px;
     }
 
     :host([size='large']) {
       --vsc-form-control-font-size: 15px;
+      --vsc-select-description-padding-block: 8px;
       --vsc-select-option-height: 28px;
       --vsc-select-options-max-height: 282px;
     }
@@ -471,10 +474,13 @@ export default [
       border-width: 1px 0 0;
       color: var(--vscode-foreground, #cccccc);
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
       line-height: 1.3;
-      padding: 6px 4px;
+      padding: var(--vsc-select-description-padding-block) 4px;
       word-wrap: break-word;
     }
 

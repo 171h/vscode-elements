@@ -82,6 +82,29 @@ describe('vscode-single-select', () => {
     }
   });
 
+  it('resizes option descriptions with the component', async () => {
+    for (const [size, expectedFontSize, expectedPadding] of [
+      ['small', '11px', '3px'],
+      ['medium', '13px', '6px'],
+      ['large', '15px', '8px'],
+    ] as const) {
+      const el = await fixture<VscodeSingleSelect>(html`
+        <vscode-single-select .size=${size} open>
+          <vscode-option selected description="Description"
+            >Option</vscode-option
+          >
+        </vscode-single-select>
+      `);
+      const description =
+        el.shadowRoot!.querySelector<HTMLElement>('.description')!;
+      const style = getComputedStyle(description);
+
+      expect(style.fontSize).to.eq(expectedFontSize);
+      expect(style.paddingTop).to.eq(expectedPadding);
+      expect(style.paddingBottom).to.eq(expectedPadding);
+    }
+  });
+
   describe('select mode', () => {
     it('should display selected value', async () => {
       const el = (await fixture(html`
