@@ -32,10 +32,13 @@ const styles: CSSResultGroup = [
       display: flex;
       flex-wrap: nowrap;
       font-family: var(--vscode-font-family, sans-serif);
-      font-size: var(--vscode-font-size, 13px);
+      font-size: var(
+        --vsc-form-control-font-size,
+        var(--vscode-font-size, 13px)
+      );
       font-weight: var(--vscode-font-weight, normal);
-      line-height: 22px;
-      min-height: 22px;
+      line-height: var(--vsc-tree-item-height, 22px);
+      min-height: var(--vsc-tree-item-height, 22px);
       outline-offset: -1px;
       padding-right: 12px;
     }
@@ -73,7 +76,7 @@ const styles: CSSResultGroup = [
     .arrow-container {
       align-items: center;
       display: var(--vsc-tree-item-arrow-display);
-      height: 22px;
+      height: var(--vsc-tree-item-height, 22px);
       justify-content: center;
       padding-left: 8px;
       padding-right: 6px;
@@ -98,7 +101,7 @@ const styles: CSSResultGroup = [
       display: flex;
       justify-content: center;
       margin-right: 3px;
-      min-height: 22px;
+      min-height: var(--vsc-tree-item-height, 22px);
       overflow: hidden;
     }
 
@@ -107,9 +110,9 @@ const styles: CSSResultGroup = [
     }
 
     .icon-container.has-icon {
-      min-width: 22px;
-      max-width: 22px;
-      max-height: 22px;
+      min-width: var(--vsc-tree-item-height, 22px);
+      max-width: var(--vsc-tree-item-height, 22px);
+      max-height: var(--vsc-tree-item-height, 22px);
     }
 
     :host(:is(:--show-actions, :state(show-actions))) .icon-container {
@@ -150,7 +153,7 @@ const styles: CSSResultGroup = [
       flex-wrap: nowrap; /* prevent wrapping; allow ellipses via min-width: 0 */
       min-width: 0;
       width: 100%;
-      line-height: 22px;
+      line-height: var(--vsc-tree-item-height, 22px);
     }
 
     .label {
@@ -220,14 +223,14 @@ const styles: CSSResultGroup = [
       flex: 0 0 auto;
       gap: 2px;
       margin-left: auto;
-      min-height: 22px;
+      min-height: var(--vsc-tree-item-height, 22px);
       color: inherit;
     }
 
     .actions ::slotted(*) {
       align-items: center;
       display: inline-flex;
-      height: 22px;
+      height: var(--vsc-tree-item-height, 22px);
     }
 
     .actions ::slotted(button) {
@@ -258,7 +261,7 @@ const styles: CSSResultGroup = [
       flex: 0 0 auto;
       gap: 4px;
       margin-left: auto;
-      min-height: 22px;
+      min-height: var(--vsc-tree-item-height, 22px);
     }
 
     :host(:is(:--has-decoration, :state(has-decoration))) .decoration {

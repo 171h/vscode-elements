@@ -16,6 +16,7 @@ import {
   findParentItem,
   initPathTrackerProps,
 } from './helpers.js';
+import {FormControlSize} from '../includes/form-control-size.js';
 
 export type VscTreeSelectEvent = CustomEvent<{selectedItems: VscodeTreeItem[]}>;
 
@@ -76,6 +77,12 @@ export class VscodeTree extends VscElement {
   static override styles = styles;
 
   //#region properties
+
+  /**
+   * The size of the tree items. The `medium` size is the default.
+   */
+  @property({reflect: true})
+  size: FormControlSize = 'medium';
 
   /**
    * Controls how tree folders are expanded when clicked. This property is designed to use
