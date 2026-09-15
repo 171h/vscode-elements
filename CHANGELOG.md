@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [3.1.1] - 2026-09-15
+
+### Fixed
+
+- **dev**: populate context menu items (71cc581a)
+- prevent small textfield vertical scrolling (c71a9d1c)
+
 ## [3.1.0] - 2026-09-07
 
 ### Added
