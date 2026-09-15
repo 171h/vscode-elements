@@ -425,20 +425,9 @@
             <vscode-button id="context-menu-toggle" icon="menu"
               >Toggle menu</vscode-button
             >
-            <vscode-context-menu id="context-menu" prevent-close
-              ><vscode-context-menu-item
-                label="Rename"
-                keybinding="F2"
-              ></vscode-context-menu-item
-              ><vscode-context-menu-item
-                label="Copy"
-                keybinding="Ctrl+C"
-              ></vscode-context-menu-item
-              ><vscode-context-menu-item separator></vscode-context-menu-item
-              ><vscode-context-menu-item
-                label="Delete"
-                keybinding="Delete"
-              ></vscode-context-menu-item
+            <vscode-context-menu
+              id="context-menu"
+              prevent-close
             ></vscode-context-menu>
             <p class="muted">
               Toggle, keyboard navigation, separator and keybindings.
@@ -1003,11 +992,17 @@
             setIconSize(button.dataset.globalIconSize)
           )
         );
+      const contextMenu = document.querySelector('#context-menu');
+      contextMenu.data = [
+        {label: 'Rename', keybinding: 'F2'},
+        {label: 'Copy', keybinding: 'Ctrl+C'},
+        {separator: true},
+        {label: 'Delete', keybinding: 'Delete'},
+      ];
       document
         .querySelector('#context-menu-toggle')
         .addEventListener('click', () => {
-          const menu = document.querySelector('#context-menu');
-          menu.show = !menu.show;
+          contextMenu.show = !contextMenu.show;
         });
       document.querySelector('#tree-expand').addEventListener('click', () => {
         document.querySelector('#tree-demo').expandAll();
