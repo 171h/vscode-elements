@@ -1,5 +1,6 @@
 import {html, LitElement, nothing, TemplateResult} from 'lit';
-import {property, query} from 'lit/decorators.js';
+import {property, query, state} from 'lit/decorators.js';
+import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../includes/VscElement.js';
 import {chevronDownIcon} from '../includes/vscode-select/template-elements.js';
@@ -7,10 +8,20 @@ import {VscodeSelectBase} from '../includes/vscode-select/vscode-select-base.js'
 import styles from './vscode-multi-select.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
+const SELECTED_LABELS_GAP_FALLBACK = 2;
+
+/** Minimum width of a label which is truncated by the fitting. */
+const MIN_TAG_WIDTH = 24;
+
 export type VscMultiSelectCreateOptionEvent = CustomEvent<{value: string}>;
 
 /**
  * Allows to select multiple items from a list of options.
+ *
+ * The face shows the labels of the selected options in the order of the
+ * selection. When the labels do not fit into the face, they are collapsed into
+ * a "+N" badge and the complete list of the selected items is available as a
+ * tooltip.
  *
  * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
  * can be applied through the `invalid` property.
@@ -147,6 +158,16 @@ export class VscodeMultiSelect
     });
   }
 
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
+    this._resizeObserver?.disconnect();
+    this._observedFaceValues = undefined;
+  }
+
+  protected override updated(): void {
+    this._updateFaceValues();
+  }
+
   /** @internal */
   formResetCallback(): void {
     this.updateComplete.then(() => {
@@ -168,6 +189,32 @@ export class VscodeMultiSelect
 
   @query('.face')
   private _faceElement!: HTMLDivElement;
+
+  @query('.face-values')
+  private _faceValuesElement!: HTMLDivElement;
+
+  /**
+   * Number of the selected labels which fit into the face. The labels above
+   * this limit are collapsed and summarized by a "+N" badge.
+   */
+  @state()
+  private _visibleTagCount = Number.POSITIVE_INFINITY;
+
+  /**
+   * True when not every selected label is fully visible. In this case the
+   * complete list is available as a tooltip on hover.
+   */
+  @state()
+  private _isFaceValuesTruncated = false;
+
+  /**
+   * Width of the rendered labels by size and text. The collapsed labels are
+   * not part of the layout, their last measured width is used instead.
+   */
+  private _tagWidths = new Map<string, number>();
+
+  private _resizeObserver: ResizeObserver | undefined;
+  private _observedFaceValues: HTMLElement | undefined;
 
   private _setDefaultValue() {
     if (Array.isArray(this.defaultValue) && this.defaultValue.length > 0) {
@@ -328,16 +375,178 @@ export class VscodeMultiSelect
   }
   //#endregion
 
-  //#region render functions
-  private _renderLabel() {
-    switch (this._opts.selectedIndexes.length) {
-      case 0:
-        return html`<span class="select-face-badge no-item">0 Selected</span>`;
-      default:
-        return html`<span class="select-face-badge"
-          >${this._opts.selectedIndexes.length} Selected</span
-        >`;
+  //#region selected labels in the face
+
+  private _getSelectedLabels(): string[] {
+    const labels: string[] = [];
+
+    this._opts.selectedIndexes.forEach((index) => {
+      const op = this._opts.getOptionByIndex(index);
+
+      if (op) {
+        labels.push(op.label || op.value);
+      }
+    });
+
+    return labels;
+  }
+
+  private _getTagWidth(tag: HTMLElement) {
+    const key = `${this.size}:${tag.textContent ?? ''}`;
+    const measured = tag.getBoundingClientRect().width;
+
+    if (measured > 0) {
+      this._tagWidths.set(key, measured);
+
+      return measured;
     }
+
+    // The collapsed labels are not part of the layout, the width measured
+    // before the collapse is used instead.
+    return this._tagWidths.get(key) ?? 0;
+  }
+
+  private _getTagGap(container: HTMLElement) {
+    const gap = Number.parseFloat(getComputedStyle(container).columnGap);
+
+    return Number.isFinite(gap) ? gap : SELECTED_LABELS_GAP_FALLBACK;
+  }
+
+  private _updateFaceValues(): void {
+    const container = this._faceValuesElement;
+
+    if (container !== this._observedFaceValues) {
+      this._resizeObserver?.disconnect();
+      this._observedFaceValues = container;
+
+      if (container && typeof ResizeObserver !== 'undefined') {
+        this._resizeObserver ??= new ResizeObserver(() => {
+          this._fitSelectedLabels();
+        });
+        this._resizeObserver.observe(container);
+      }
+    }
+
+    this._fitSelectedLabels();
+  }
+
+  /**
+   * The selected labels are placed in a single row in the order of the
+   * selection. When they do not fit into the face, the labels above the
+   * available space are collapsed and summarized by a "+N" badge.
+   */
+  private _fitSelectedLabels(): void {
+    const container = this._faceValuesElement;
+
+    if (!container) {
+      this._visibleTagCount = Number.POSITIVE_INFINITY;
+      this._isFaceValuesTruncated = false;
+
+      return;
+    }
+
+    const tags = Array.from(
+      container.querySelectorAll<HTMLElement>('.option-tag:not(.more-tag)')
+    );
+
+    if (tags.length === 0) {
+      this._visibleTagCount = Number.POSITIVE_INFINITY;
+      this._isFaceValuesTruncated = false;
+
+      return;
+    }
+
+    const widths = tags.map((tag) => this._getTagWidth(tag));
+    const gap = this._getTagGap(container);
+    const available = container.clientWidth;
+
+    // The "+N" badge is rendered even when every label is visible, so its
+    // width is known before the first label has to be collapsed.
+    const moreTag = container.querySelector<HTMLElement>('.more-tag');
+    const moreTagWidth = moreTag ? this._getTagWidth(moreTag) : 0;
+
+    let used = 0;
+    let visibleCount = 0;
+
+    for (const width of widths) {
+      const nextUsed = used + (visibleCount > 0 ? gap : 0) + width;
+
+      if (nextUsed > available) {
+        break;
+      }
+
+      used = nextUsed;
+      visibleCount += 1;
+    }
+
+    let hiddenCount = widths.length - visibleCount;
+
+    if (hiddenCount > 0) {
+      // the "+N" badge takes up space as well
+      while (visibleCount > 0 && used + gap + moreTagWidth > available) {
+        visibleCount -= 1;
+        hiddenCount += 1;
+        used = visibleCount === 0 ? 0 : used - widths[visibleCount] - gap;
+      }
+
+      // A truncated label is still more useful than no label at all.
+      if (
+        visibleCount === 0 &&
+        available >= moreTagWidth + gap + MIN_TAG_WIDTH
+      ) {
+        visibleCount = 1;
+      }
+    }
+
+    let truncated = hiddenCount > 0;
+
+    if (!truncated) {
+      truncated = tags.some((tag) => tag.scrollWidth > tag.clientWidth + 1);
+    }
+
+    this._visibleTagCount = visibleCount;
+    this._isFaceValuesTruncated = truncated;
+  }
+  //#endregion
+
+  //#region render functions
+  private _renderSelectedLabels() {
+    const labels = this._getSelectedLabels();
+    const visibleCount = Math.min(this._visibleTagCount, labels.length);
+    const hiddenCount = labels.length - visibleCount;
+    const moreTagClasses = {
+      'option-tag': true,
+      'more-tag': true,
+      measuring: hiddenCount === 0,
+    };
+    // one label per line, the labels can contain line breaks in the markup
+    const tooltip = labels
+      .map((label) => label.replace(/\s+/g, ' ').trim())
+      .join('\n');
+
+    return html`
+      <div
+        class="face-values"
+        title=${ifDefined(this._isFaceValuesTruncated ? tooltip : undefined)}
+      >
+        ${labels.map((label, index) => {
+          const classes = {
+            'option-tag': true,
+            collapsed: index >= visibleCount,
+            'option-tag-last': index === visibleCount - 1,
+          };
+
+          return html`<span class="select-face-badge ${classMap(classes)}"
+            >${label}</span
+          >`;
+        })}
+        ${labels.length > 0
+          ? html`<span class="select-face-badge ${classMap(moreTagClasses)}"
+              >+${hiddenCount > 0 ? hiddenCount : labels.length}</span
+            >`
+          : nothing}
+      </div>
+    `;
   }
 
   protected override _renderComboboxFace(): TemplateResult {
@@ -346,8 +555,8 @@ export class VscodeMultiSelect
     const expanded = this.open ? 'true' : 'false';
 
     return html`
-      <div class="combobox-face face">
-        ${this._opts.multiSelect ? this._renderLabel() : nothing}
+      <div class="combobox-face face multiselect">
+        ${this._renderSelectedLabels()}
         <input
           aria-activedescendant=${activeDescendant}
           aria-autocomplete="list"
@@ -401,7 +610,7 @@ export class VscodeMultiSelect
         @click=${this._onFaceClick}
         .tabIndex=${this.disabled ? -1 : 0}
       >
-        ${this._renderLabel()} ${chevronDownIcon}
+        ${this._renderSelectedLabels()} ${chevronDownIcon}
       </div>
     `;
   }

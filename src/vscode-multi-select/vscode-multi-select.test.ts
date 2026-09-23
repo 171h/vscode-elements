@@ -7,6 +7,34 @@ import {clickOnElement, moveMouseOnElement} from '../includes/test-helpers.js';
 import {VscodeOption} from '../vscode-option/index.js';
 import {VscodeMultiSelect} from './index.js';
 
+const LONG_LABEL = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
+
+async function waitForSelectFace(el: VscodeMultiSelect) {
+  // the labels are fitted into the face after the update, the fitting can
+  // trigger another update
+  for (let i = 0; i < 5; i++) {
+    await el.updateComplete;
+  }
+}
+
+function getVisibleLabels(el: VscodeMultiSelect) {
+  return Array.from(
+    el.shadowRoot!.querySelectorAll<HTMLElement>(
+      '.option-tag:not(.collapsed):not(.more-tag)'
+    )
+  ).map((tag) => tag.textContent);
+}
+
+function getCollapsedLabels(el: VscodeMultiSelect) {
+  return Array.from(
+    el.shadowRoot!.querySelectorAll<HTMLElement>('.option-tag.collapsed')
+  ).map((tag) => tag.textContent);
+}
+
+function getMoreTag(el: VscodeMultiSelect) {
+  return el.shadowRoot!.querySelector<HTMLElement>('.more-tag:not(.measuring)');
+}
+
 describe('vscode-multi-select', () => {
   it('is defined', () => {
     const el = document.createElement('vscode-multi-select');
@@ -74,12 +102,192 @@ describe('vscode-multi-select', () => {
         <vscode-option>Dolor</vscode-option>
       </vscode-multi-select>
     `)) as VscodeMultiSelect;
+    await waitForSelectFace(el);
 
-    const badge = el.shadowRoot?.querySelector('.select-face-badge');
-
-    expect(badge).lightDom.to.eq('1 Selected');
+    expect(getVisibleLabels(el)).to.eql(['Ipsum']);
     expect(el.selectedIndexes).to.eql([1]);
     expect(el.value).to.eql(['Ipsum']);
+  });
+
+  it('should display the label of every selected option', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option>Lorem</vscode-option>
+        <vscode-option selected>Ipsum</vscode-option>
+        <vscode-option selected>Dolor</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['Ipsum', 'Dolor']);
+    expect(getCollapsedLabels(el)).to.eql([]);
+    expect(getMoreTag(el)).to.be.null;
+  });
+
+  it('should display the labels in the order of the selection', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option>Alpha</vscode-option>
+        <vscode-option>Bravo</vscode-option>
+        <vscode-option>Charlie</vscode-option>
+      </vscode-multi-select>
+    `);
+    const optionIndexes = [2, 0, 1];
+
+    await clickOnElement(el);
+    await el.updateComplete;
+
+    for (const index of optionIndexes) {
+      const option =
+        el.shadowRoot!.querySelectorAll<HTMLLIElement>('.option')[index];
+      option.click();
+      await el.updateComplete;
+    }
+
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['Charlie', 'Alpha', 'Bravo']);
+  });
+
+  it('should not display anything when nothing is selected', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option>Lorem</vscode-option>
+        <vscode-option>Ipsum</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql([]);
+    expect(el.shadowRoot?.querySelector('.face-values')?.textContent?.trim()).to
+      .be.empty;
+  });
+
+  it('should display the label of every selected option in combobox mode', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select combobox>
+        <vscode-option selected>Lorem</vscode-option>
+        <vscode-option selected>Ipsum</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['Lorem', 'Ipsum']);
+  });
+
+  it('should not collapse the labels when they fit into the face', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option selected>Lorem</vscode-option>
+        <vscode-option selected>Ipsum</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    const faceValues = el.shadowRoot!.querySelector('.face-values');
+
+    expect(faceValues?.hasAttribute('title')).to.be.false;
+  });
+
+  it('should collapse the labels which do not fit into the face', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select style="width: 140px">
+        <vscode-option selected>Alpha</vscode-option>
+        <vscode-option selected>Bravo</vscode-option>
+        <vscode-option selected>Charlie</vscode-option>
+        <vscode-option selected>Delta</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    const visibleLabels = getVisibleLabels(el);
+    const collapsedLabels = getCollapsedLabels(el);
+    const moreTag = getMoreTag(el);
+    const faceValues = el.shadowRoot!.querySelector('.face-values');
+
+    expect(visibleLabels.length).to.be.greaterThan(0);
+    expect(collapsedLabels.length).to.be.greaterThan(0);
+    expect(visibleLabels.length + collapsedLabels.length).to.eq(4);
+    expect(moreTag?.textContent).to.eq(`+${collapsedLabels.length}`);
+    expect(faceValues?.getAttribute('title')).to.eq(
+      'Alpha\nBravo\nCharlie\nDelta'
+    );
+  });
+
+  it('should show a truncated label when the face is too narrow', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select style="width: 160px">
+        <vscode-option selected>Lorem ipsum dolor sit amet</vscode-option>
+        <vscode-option selected>Ipsum</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['Lorem ipsum dolor sit amet']);
+    expect(getCollapsedLabels(el)).to.eql(['Ipsum']);
+    expect(getMoreTag(el)?.textContent).to.eq('+1');
+    expect(el.shadowRoot!.querySelector('.face-values')?.getAttribute('title'))
+      .to.eq(`Lorem ipsum dolor sit amet
+Ipsum`);
+  });
+
+  it('should show the full label in the tooltip when it is truncated', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select style="width: 240px">
+        <vscode-option selected>${LONG_LABEL}</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getCollapsedLabels(el)).to.eql([]);
+    expect(getMoreTag(el)).to.be.null;
+    expect(
+      el.shadowRoot!.querySelector('.face-values')?.getAttribute('title')
+    ).to.eq(LONG_LABEL);
+  });
+
+  it('should show the collapsed labels when the face grows', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select style="width: 140px">
+        <vscode-option selected>Alpha</vscode-option>
+        <vscode-option selected>Bravo</vscode-option>
+        <vscode-option selected>Charlie</vscode-option>
+        <vscode-option selected>Delta</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getCollapsedLabels(el).length).to.be.greaterThan(0);
+
+    el.style.width = '320px';
+
+    for (let i = 0; i < 2; i++) {
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    }
+
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['Alpha', 'Bravo', 'Charlie', 'Delta']);
+  });
+
+  it('should keep the height of the face when the labels are displayed', async () => {
+    const empty = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option>Lorem</vscode-option>
+        <vscode-option>Ipsum</vscode-option>
+      </vscode-multi-select>
+    `);
+    const selected = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option selected>Lorem</vscode-option>
+        <vscode-option selected>Ipsum</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(selected);
+
+    expect(selected.getBoundingClientRect().height).to.eq(
+      empty.getBoundingClientRect().height
+    );
   });
 
   it('selectedIndexes should be set', async () => {
@@ -169,11 +377,9 @@ describe('vscode-multi-select', () => {
     );
 
     el.selectAll();
-    await el.updateComplete;
+    await waitForSelectFace(el);
 
-    expect(el.shadowRoot?.querySelector('.select-face-badge')).lightDom.to.eq(
-      '3 Selected'
-    );
+    expect(getVisibleLabels(el)).to.eql(['One', 'Two', 'Three']);
   });
 
   it('de-selects all options', async () => {
@@ -184,17 +390,16 @@ describe('vscode-multi-select', () => {
         <vscode-option value="3" selected>Three</vscode-option>
       </vscode-multi-select>`
     );
+    await waitForSelectFace(el);
 
-    expect(el.shadowRoot?.querySelector('.select-face-badge')).lightDom.to.eq(
-      '3 Selected'
-    );
+    expect(getVisibleLabels(el)).to.eql(['One', 'Two', 'Three']);
 
     el.selectNone();
-    await el.updateComplete;
+    await waitForSelectFace(el);
 
-    expect(el.shadowRoot?.querySelector('.select-face-badge')).lightDom.to.eq(
-      '0 Selected'
-    );
+    expect(getVisibleLabels(el)).to.eql([]);
+    expect(el.shadowRoot?.querySelector('.face-values')?.textContent?.trim()).to
+      .be.empty;
   });
 
   it('should be unfocusable when it is disabled', () => {
