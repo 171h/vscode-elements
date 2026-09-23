@@ -5,6 +5,14 @@ import {customElement, VscElement} from '../includes/VscElement.js';
 import {FormControlSize} from '../includes/form-control-size.js';
 import styles from './vscode-textfield.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
+import {
+  formatPercentDisplay,
+  fractionToPercent,
+  normalizePercentInput,
+  percentToFraction,
+  sanitizePercentInput,
+  validatePercentValue,
+} from './percentage.js';
 
 type InputType =
   | 'color'
@@ -27,6 +35,10 @@ type InputType =
  *
  * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
  * can be applied through the `invalid` property.
+ *
+ * The `percentage` property turns the component into a percent field. The input displays the
+ * percent sign, while the `value` property and the value submitted with the form use the fraction
+ * form: entering `1` displays `1%` and reads back as `0.01`.
  *
  * @tag vscode-textfield
  *
@@ -122,6 +134,37 @@ export class VscodeTextfield
   @property()
   pattern: string | undefined = undefined;
 
+  /**
+   * Treats the value of the component as a percentage. The editable text is a percent number which
+   * is displayed with a percent sign: entering `1` displays `1%`. The `value` property, the
+   * submitted form value, and the `min`, `max`, and `step` constraints use the fraction form of
+   * that number, so `1%` is `0.01`.
+   *
+   * The inner input is rendered as a text field in this mode, because a native number field does
+   * not accept a percent sign.
+   */
+  @property({type: Boolean, reflect: true})
+  get percentage(): boolean {
+    return this._percentage;
+  }
+  set percentage(val: boolean) {
+    if (val === this._percentage) {
+      return;
+    }
+
+    this._percentage = val;
+
+    if (val) {
+      const percentText = fractionToPercent(this._value);
+      this._value = percentText === '' ? '' : percentToFraction(percentText);
+      this._displayText = percentText;
+    } else {
+      this._displayText = this._value;
+    }
+
+    this._internals.setFormValue(this._value);
+  }
+
   @property()
   placeholder: string | undefined = undefined;
 
@@ -174,8 +217,11 @@ export class VscodeTextfield
   @property()
   set value(val: string) {
     if (this.type !== 'file') {
-      this._value = val;
-      this._internals.setFormValue(val);
+      this._value = this._normalizeValue(val);
+      this._displayText = this.percentage
+        ? fractionToPercent(this._value)
+        : this._value;
+      this._internals.setFormValue(this._value);
     }
 
     this.updateComplete.then(() => {
@@ -256,7 +302,9 @@ export class VscodeTextfield
     this.updateComplete.then(() => {
       this._inputEl.checkValidity();
       this._setValidityFromInput();
-      this._internals.setFormValue(this._inputEl.value);
+      this._internals.setFormValue(
+        this.percentage ? this._value : this._inputEl.value
+      );
     });
   }
 
@@ -301,16 +349,62 @@ export class VscodeTextfield
   @query('#input')
   private _inputEl!: HTMLInputElement;
 
+  /**
+   * The value of the component. In percentage mode it is the fraction form of
+   * the percent number which is displayed in the input.
+   */
   @state()
   private _value = '';
+
+  /**
+   * The text of the input without the percent sign. It can be an incomplete
+   * percent number like `'-'` or `'1.'` while the user is typing.
+   */
+  @state()
+  private _displayText = '';
 
   @state()
   private _type: InputType = 'text';
 
+  private _percentage = false;
+
+  /**
+   * The caret position of the input which has to be restored after the masked
+   * text is rendered, or null when the caret does not have to be restored.
+   */
+  private _caretBeforeUpdate: number | null = null;
+
   private _internals: ElementInternals;
 
+  /**
+   * In percentage mode the value is always a valid fraction or an empty string.
+   */
+  private _normalizeValue(val: string): string {
+    if (!this.percentage) {
+      return val;
+    }
+
+    const percentText = fractionToPercent(val);
+
+    return percentText === '' ? '' : percentToFraction(percentText);
+  }
+
+  private get _displayValue(): string {
+    return this.percentage
+      ? formatPercentDisplay(this._displayText)
+      : this._displayText;
+  }
+
   private _dataChanged() {
+    if (this.percentage) {
+      this._displayText = sanitizePercentInput(this._inputEl.value);
+      this._value = percentToFraction(this._displayText);
+      this._internals.setFormValue(this._value);
+      return;
+    }
+
     this._value = this._inputEl.value;
+    this._displayText = this._value;
 
     if (this.type === 'file' && this._inputEl.files) {
       for (const f of this._inputEl.files) {
@@ -321,24 +415,118 @@ export class VscodeTextfield
     }
   }
 
-  private _setValidityFromInput() {
-    if (this._inputEl) {
-      this._internals.setValidity(
-        this._inputEl.validity,
-        this._inputEl.validationMessage,
-        this._inputEl
-      );
+  /**
+   * Applies the final form of the editable text: `'05'` becomes `'5%'` and
+   * `'1.'` becomes `'1%'`.
+   */
+  private _commitPercentInput() {
+    const text = normalizePercentInput(this._inputEl.value);
+    const display = formatPercentDisplay(text);
+
+    if (display !== this._inputEl.value) {
+      this._inputEl.value = display;
+    }
+
+    this._displayText = text;
+    this._value = percentToFraction(text);
+    this._internals.setFormValue(this._value);
+  }
+
+  /**
+   * Maps a caret position of the raw text to the position inside the masked
+   * text. A caret after the percent sign is moved to the end of the number,
+   * because everything which is typed there belongs to the end of the number.
+   */
+  private _caretFromRaw(raw: string, caret: number, sanitized: string): number {
+    const percentIndex = raw.indexOf('%');
+
+    if (percentIndex !== -1 && caret > percentIndex) {
+      return sanitized.length;
+    }
+
+    return sanitizePercentInput(raw.slice(0, caret)).length;
+  }
+
+  private _setCaret(position: number) {
+    if (!this.percentage || !this._inputEl) {
+      return;
+    }
+
+    const caret = Math.min(Math.max(position, 0), this._inputEl.value.length);
+
+    this._inputEl.setSelectionRange(caret, caret);
+  }
+
+  private _onPercentInput() {
+    const raw = this._inputEl.value;
+    const caret = this._inputEl.selectionStart ?? raw.length;
+    const sanitized = sanitizePercentInput(raw);
+    const display = formatPercentDisplay(sanitized);
+
+    this._dataChanged();
+
+    if (display !== raw) {
+      const position = this._caretFromRaw(raw, caret, sanitized);
+
+      this._inputEl.value = display;
+      this._setCaret(position);
     }
   }
 
+  private _setValidityFromInput() {
+    if (!this._inputEl) {
+      return;
+    }
+
+    const validity = this._inputEl.validity;
+    const flags: ValidityStateFlags = {
+      badInput: validity.badInput,
+      customError: validity.customError,
+      patternMismatch: validity.patternMismatch,
+      rangeOverflow: validity.rangeOverflow,
+      rangeUnderflow: validity.rangeUnderflow,
+      stepMismatch: validity.stepMismatch,
+      tooLong: validity.tooLong,
+      tooShort: validity.tooShort,
+      typeMismatch: validity.typeMismatch,
+      valueMissing: validity.valueMissing,
+    };
+    let message = this._inputEl.validationMessage;
+
+    if (this.percentage) {
+      const violation = validatePercentValue(this._value, {
+        min: this.min,
+        max: this.max,
+        step: this.step,
+      });
+
+      if (violation) {
+        flags[violation.flag] = true;
+        message = violation.message;
+      }
+    }
+
+    this._internals.setValidity(flags, message, this._inputEl);
+  }
+
   private _onInput() {
-    this._dataChanged();
+    if (this.percentage) {
+      this._onPercentInput();
+    } else {
+      this._dataChanged();
+    }
+
     this._setValidityFromInput();
     // native input event dispatched automatically
   }
 
   private _onChange() {
-    this._dataChanged();
+    if (this.percentage) {
+      this._commitPercentInput();
+    } else {
+      this._dataChanged();
+    }
+
     this._setValidityFromInput();
     this.dispatchEvent(new Event('change'));
   }
@@ -357,13 +545,39 @@ export class VscodeTextfield
     }
   }
 
+  /**
+   * The masked text is rendered into the input, which moves the caret to the
+   * end of the text, so the position is saved before the update and restored
+   * afterwards.
+   */
+  protected override willUpdate(): void {
+    if (!this.percentage || !this._inputEl) {
+      return;
+    }
+
+    this._caretBeforeUpdate = this._inputEl.matches(':focus')
+      ? this._inputEl.selectionStart
+      : null;
+  }
+
+  override updated(): void {
+    const caret = this._caretBeforeUpdate;
+
+    this._caretBeforeUpdate = null;
+
+    if (caret !== null) {
+      this._setCaret(caret);
+    }
+  }
+
   override render(): TemplateResult {
     return html`
       <div class="root">
         <slot name="content-before"></slot>
         <input
           id="input"
-          type=${this.type}
+          type=${this.percentage ? 'text' : this.type}
+          inputmode=${ifDefined(this.percentage ? 'decimal' : undefined)}
           ?autofocus=${this.autofocus}
           autocomplete=${ifDefined(this.autocomplete)}
           aria-label=${this.label}
@@ -379,7 +593,7 @@ export class VscodeTextfield
           ?readonly=${this.readonly}
           ?required=${this.required}
           step=${ifDefined(this.step)}
-          .value=${this._value}
+          .value=${this._displayValue}
           @blur=${this._onBlur}
           @change=${this._onChange}
           @focus=${this._onFocus}

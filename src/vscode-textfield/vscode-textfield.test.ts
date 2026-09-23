@@ -403,4 +403,255 @@ describe('vscode-textfield', () => {
 
     expect(el.hasAttribute('invalid')).to.be.false;
   });
+
+  describe('percentage mode', () => {
+    const typeText = async (el: VscodeTextfield, text: string) => {
+      el.focus();
+      await sendKeys({type: text});
+      await el.updateComplete;
+    };
+
+    it('shows the percent sign of a programmatically set value', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage value="0.01"></vscode-textfield>`
+      );
+
+      expect(el.value).to.eq('0.01');
+      expect(el.wrappedElement.value).to.eq('1%');
+    });
+
+    it('displays a typed number as a percentage and reports the fraction', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      await typeText(el, '1');
+
+      expect(el.wrappedElement.value).to.eq('1%');
+      expect(el.value).to.eq('0.01');
+    });
+
+    it('keeps typing after the masked number', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      el.focus();
+
+      for (const digit of ['1', '2', '.', '5']) {
+        await sendKeys({type: digit});
+        await el.updateComplete;
+      }
+
+      expect(el.wrappedElement.value).to.eq('12.5%');
+      expect(el.value).to.eq('0.125');
+    });
+
+    it('keeps the percent sign when digits are deleted', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      await typeText(el, '12');
+      await sendKeys({press: 'Backspace'});
+      await el.updateComplete;
+
+      expect(el.wrappedElement.value).to.eq('1%');
+      expect(el.value).to.eq('0.01');
+    });
+
+    it('keeps the order of the digits and the caret when typing is fast', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+      // Emulates the keystrokes without waiting for the update in between, like
+      // a user who types faster than the component re-renders.
+      const pressKey = (char: string) => {
+        const input = el.wrappedElement;
+        const caret = input.selectionStart ?? input.value.length;
+
+        input.setRangeText(char, caret, caret, 'end');
+        input.dispatchEvent(new InputEvent('input', {data: char}));
+      };
+
+      el.focus();
+
+      for (const char of ['1', 'a', '2', ',', '5']) {
+        pressKey(char);
+      }
+
+      await el.updateComplete;
+
+      expect(el.wrappedElement.value).to.eq('12.5%');
+      expect(el.value).to.eq('0.125');
+      expect(el.wrappedElement.selectionStart).to.eq(4);
+    });
+
+    it('ignores characters which are not part of a number', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      await typeText(el, '1a2');
+
+      expect(el.wrappedElement.value).to.eq('12%');
+      expect(el.value).to.eq('0.12');
+    });
+
+    it('does not show the percent sign in an empty field', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      expect(el.wrappedElement.value).to.eq('');
+      expect(el.value).to.eq('');
+    });
+
+    it('normalizes the text when the editing is finished', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      await typeText(el, '05');
+      await sendMouse({type: 'click', position: [1000, 1000]});
+      await el.updateComplete;
+
+      expect(el.wrappedElement.value).to.eq('5%');
+      expect(el.value).to.eq('0.05');
+    });
+
+    it('uses the fraction form in the value property', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      el.value = '0.5';
+      await el.updateComplete;
+
+      expect(el.value).to.eq('0.5');
+      expect(el.wrappedElement.value).to.eq('50%');
+    });
+
+    it('clears the value when it is not a number', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage value="1"></vscode-textfield>`
+      );
+
+      el.value = 'not a number';
+      await el.updateComplete;
+
+      expect(el.value).to.eq('');
+      expect(el.wrappedElement.value).to.eq('');
+    });
+
+    it('reflects the percentage property to the attribute', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield></vscode-textfield>`
+      );
+
+      expect(el.percentage).to.be.false;
+
+      el.percentage = true;
+      await el.updateComplete;
+
+      expect(el.hasAttribute('percentage')).to.be.true;
+    });
+
+    it('converts the value when the mode is changed at runtime', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield value="0.25"></vscode-textfield>`
+      );
+
+      expect(el.wrappedElement.value).to.eq('0.25');
+
+      el.percentage = true;
+      await el.updateComplete;
+
+      expect(el.value).to.eq('0.25');
+      expect(el.wrappedElement.value).to.eq('25%');
+
+      el.percentage = false;
+      await el.updateComplete;
+
+      expect(el.value).to.eq('0.25');
+      expect(el.wrappedElement.value).to.eq('0.25');
+    });
+
+    it('renders a text input regardless of the type property', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage type="number"></vscode-textfield>`
+      );
+
+      expect(el.type).to.eq('number');
+      expect(el.wrappedElement.type).to.eq('text');
+    });
+
+    it('submits the fraction form with the form', async () => {
+      const form = document.createElement('form');
+      await fixture(
+        html`<vscode-textfield
+          percentage
+          name="ratio"
+          value="0.01"
+        ></vscode-textfield>`,
+        {parentNode: form}
+      );
+
+      const data = new FormData(form);
+
+      expect(data.get('ratio')).to.eq('0.01');
+    });
+
+    it('validates the fraction value against the min and max constraints', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield
+          percentage
+          min="0"
+          max="1"
+          value="1.5"
+        ></vscode-textfield>`
+      );
+
+      expect(el.wrappedElement.value).to.eq('150%');
+      expect(el.checkValidity()).to.be.false;
+      expect(el.validity.rangeOverflow).to.be.true;
+
+      el.value = '0.5';
+      await el.updateComplete;
+
+      expect(el.checkValidity()).to.be.true;
+    });
+
+    it('restores the default value on reset', async () => {
+      const form = document.createElement('form');
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield
+          percentage
+          value="0.5"
+          default-value="0.2"
+        ></vscode-textfield>`,
+        {parentNode: form}
+      );
+
+      expect(el.wrappedElement.value).to.eq('50%');
+
+      form.reset();
+      await el.updateComplete;
+
+      expect(el.value).to.eq('0.2');
+      expect(el.wrappedElement.value).to.eq('20%');
+    });
+
+    it('restores the fraction form of a submitted state', async () => {
+      const el = await fixture<VscodeTextfield>(
+        html`<vscode-textfield percentage></vscode-textfield>`
+      );
+
+      el.formStateRestoreCallback('0.01', 'restore');
+      await el.updateComplete;
+
+      expect(el.value).to.eq('0.01');
+      expect(el.wrappedElement.value).to.eq('1%');
+    });
+  });
 });
