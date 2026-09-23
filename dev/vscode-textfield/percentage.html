@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>textfield/percentage</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/vscode-icon/index.js"></script>
+    <script type="module" src="/dist/vscode-label/index.js"></script>
+    <script type="module" src="/dist/vscode-textfield/index.js"></script>
+  </head>
+
+  <body>
+    <h1>Textfield</h1>
+    <h2>Percentage mode</h2>
+    <vscode-demo id="size-demo-target">
+      <vscode-label for="opacity">Opacity</vscode-label>
+      <vscode-textfield
+        id="opacity"
+        percentage
+        name="opacity"
+        value="0.5"
+      ></vscode-textfield>
+      <p>
+        Typed text: <span id="typed-text">50%</span> &nbsp; Value read by the
+        program: <span id="program-value">0.5</span>
+      </p>
+
+      <h3>Editing</h3>
+      <p>
+        The percent sign is a mask: it appears as soon as the number has a
+        digit, <code>05</code> becomes <code>5%</code> when the field loses the
+        focus, and a typed comma is converted to a period.
+      </p>
+      <vscode-label for="zoom">Zoom (required)</vscode-label>
+      <vscode-textfield
+        id="zoom"
+        percentage
+        required
+        placeholder="Type a number"
+      ></vscode-textfield>
+
+      <h3>Validation</h3>
+      <p>
+        <code>min</code>, <code>max</code>, and <code>step</code> use the
+        fraction form, so <code>min="0" max="1"</code> accepts 0% - 100% and
+        <code>step="0.05"</code> means steps of 5%.
+      </p>
+      <vscode-textfield
+        id="ratio"
+        percentage
+        min="0"
+        max="1"
+        step="0.05"
+        value="0.5"
+      ></vscode-textfield>
+      <p>
+        Valid: <span id="ratio-valid">true</span> &nbsp;
+        <button type="button" id="ratio-check">checkValidity()</button>
+      </p>
+
+      <h3>Toggle the mode at runtime</h3>
+      <vscode-textfield id="toggle" value="0.25"></vscode-textfield>
+      <button type="button" id="toggle-button">Enable percentage mode</button>
+
+      <h3>Form participation</h3>
+      <form action="#" id="percentage-form">
+        <vscode-textfield
+          percentage
+          name="scale"
+          value="0.75"
+        ></vscode-textfield>
+        <vscode-textfield
+          percentage
+          name="offset"
+          value="-0.1"
+        ></vscode-textfield>
+        <button type="submit">Submit</button>
+      </form>
+      <p>Submitted entries: <span id="form-data">-</span></p>
+
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
+    </vscode-demo>
+
+    <script type="module">
+      const opacity = document.querySelector('#opacity');
+      const typedText = document.querySelector('#typed-text');
+      const programValue = document.querySelector('#program-value');
+
+      const showValue = () => {
+        typedText.textContent = opacity.wrappedElement.value;
+        programValue.textContent = opacity.value;
+      };
+
+      opacity.addEventListener('input', showValue);
+      opacity.addEventListener('change', showValue);
+      showValue();
+
+      const ratio = document.querySelector('#ratio');
+      const ratioValid = document.querySelector('#ratio-valid');
+
+      document.querySelector('#ratio-check').addEventListener('click', () => {
+        ratioValid.textContent = ratio.checkValidity();
+        ratio.invalid = !ratio.checkValidity();
+      });
+
+      const toggle = document.querySelector('#toggle');
+      const toggleButton = document.querySelector('#toggle-button');
+
+      toggleButton.addEventListener('click', () => {
+        toggle.percentage = !toggle.percentage;
+        toggleButton.textContent = toggle.percentage
+          ? 'Disable percentage mode'
+          : 'Enable percentage mode';
+      });
+
+      const form = document.querySelector('#percentage-form');
+      const formData = document.querySelector('#form-data');
+
+      form.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const entries = [...new FormData(form)].map(
+          ([key, value]) => `${key}=${value}`
+        );
+
+        formData.textContent = entries.join(', ');
+      });
+    </script>
+
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-textfield')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
