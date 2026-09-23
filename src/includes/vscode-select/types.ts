@@ -1,6 +1,8 @@
 export interface Option {
   label?: string;
   value?: string;
+  /** Short form of the label, displayed in the face of the multi-select. */
+  abbreviation?: string;
   description?: string;
   selected?: boolean;
   disabled?: boolean;

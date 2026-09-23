@@ -139,9 +139,10 @@ export class VscodeSelectBase extends VscElement {
   }
   get options(): Option[] {
     return this._opts.options.map(
-      ({label, value, description, selected, disabled}) => ({
+      ({label, value, abbreviation, description, selected, disabled}) => ({
         label,
         value,
+        abbreviation,
         description,
         selected,
         disabled,
@@ -314,12 +315,13 @@ export class VscodeSelectBase extends VscElement {
     this._opts.clear();
 
     optionElements.forEach((el) => {
-      const {innerText, description, disabled} = el;
+      const {innerText, abbreviation, description, disabled} = el;
       const value = typeof el.value === 'string' ? el.value : innerText.trim();
       const selected = el.selected ?? false;
       const op: Option = {
         label: innerText.trim(),
         value,
+        abbreviation,
         description,
         selected,
         disabled,

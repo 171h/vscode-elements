@@ -5,6 +5,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../includes/VscElement.js';
 import {chevronDownIcon} from '../includes/vscode-select/template-elements.js';
 import {VscodeSelectBase} from '../includes/vscode-select/vscode-select-base.js';
+import type {InternalOption} from '../includes/vscode-select/types.js';
 import styles from './vscode-multi-select.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
@@ -19,9 +20,9 @@ export type VscMultiSelectCreateOptionEvent = CustomEvent<{value: string}>;
  * Allows to select multiple items from a list of options.
  *
  * The face shows the labels of the selected options in the order of the
- * selection. When the labels do not fit into the face, they are collapsed into
- * a "+N" badge and the complete list of the selected items is available as a
- * tooltip.
+ * selection. An option which has an `abbreviation` is displayed with it. When
+ * the labels do not fit into the face, they are collapsed into a "+N" badge and
+ * the complete list of the selected items is available as a tooltip.
  *
  * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
  * can be applied through the `invalid` property.
@@ -377,18 +378,28 @@ export class VscodeMultiSelect
 
   //#region selected labels in the face
 
-  private _getSelectedLabels(): string[] {
-    const labels: string[] = [];
+  private _getSelectedOptions(): InternalOption[] {
+    const options: InternalOption[] = [];
 
     this._opts.selectedIndexes.forEach((index) => {
       const op = this._opts.getOptionByIndex(index);
 
       if (op) {
-        labels.push(op.label || op.value);
+        options.push(op);
       }
     });
 
-    return labels;
+    return options;
+  }
+
+  /** The face displays the abbreviation when the option has one. */
+  private _getFaceLabel(op: InternalOption) {
+    return op.abbreviation || op.label || op.value;
+  }
+
+  /** The option list and the tooltip display the complete label. */
+  private _getFullLabel(op: InternalOption) {
+    return op.label || op.value;
   }
 
   private _getTagWidth(tag: HTMLElement) {
@@ -511,7 +522,8 @@ export class VscodeMultiSelect
 
   //#region render functions
   private _renderSelectedLabels() {
-    const labels = this._getSelectedLabels();
+    const options = this._getSelectedOptions();
+    const labels = options.map((op) => this._getFaceLabel(op));
     const visibleCount = Math.min(this._visibleTagCount, labels.length);
     const hiddenCount = labels.length - visibleCount;
     const moreTagClasses = {
@@ -519,15 +531,19 @@ export class VscodeMultiSelect
       'more-tag': true,
       measuring: hiddenCount === 0,
     };
-    // one label per line, the labels can contain line breaks in the markup
-    const tooltip = labels
-      .map((label) => label.replace(/\s+/g, ' ').trim())
+    const hasAbbreviation = options.some((op) => op.abbreviation !== '');
+    // The tooltip reveals the collapsed labels and the abbreviated ones, so it
+    // lists the complete labels, one per line.
+    const showFullLabels =
+      labels.length > 0 && (this._isFaceValuesTruncated || hasAbbreviation);
+    const tooltip = options
+      .map((op) => this._getFullLabel(op).replace(/\s+/g, ' ').trim())
       .join('\n');
 
     return html`
       <div
         class="face-values"
-        title=${ifDefined(this._isFaceValuesTruncated ? tooltip : undefined)}
+        title=${ifDefined(showFullLabels ? tooltip : undefined)}
       >
         ${labels.map((label, index) => {
           const classes = {

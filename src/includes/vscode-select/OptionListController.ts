@@ -187,6 +187,7 @@ export class OptionListController implements ReactiveController {
       this._indexByLabel.set(op.label ?? '', index);
 
       return {
+        abbreviation: op.abbreviation ?? '',
         description: op.description ?? '',
         disabled: op.disabled ?? false,
         label: op.label ?? '',
@@ -204,7 +205,8 @@ export class OptionListController implements ReactiveController {
 
   add(option: Option) {
     const nextIndex = this._options.length;
-    const {description, disabled, label, selected, value} = option;
+    const {abbreviation, description, disabled, label, selected, value} =
+      option;
     let visible = true;
     let ranges: [number, number][] = [];
 
@@ -226,6 +228,7 @@ export class OptionListController implements ReactiveController {
     this._options.push({
       index: nextIndex,
       filteredIndex: nextIndex,
+      abbreviation: abbreviation ?? '',
       description: description ?? '',
       disabled: disabled ?? false,
       label: label ?? '',

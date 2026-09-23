@@ -124,6 +124,86 @@ describe('vscode-multi-select', () => {
     expect(getMoreTag(el)).to.be.null;
   });
 
+  it('should display the abbreviation of the selected option', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option abbreviation="DB">Database</vscode-option>
+        <vscode-option selected abbreviation="SRV">Server</vscode-option>
+        <vscode-option selected>Cache</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['SRV', 'Cache']);
+    // the tooltip and the option list keep the complete labels
+    expect(el.shadowRoot!.querySelector('.face-values')?.getAttribute('title'))
+      .to.eq(`Server
+Cache`);
+
+    await clickOnElement(el);
+    await el.updateComplete;
+
+    const optionLabels = Array.from(
+      el.shadowRoot!.querySelectorAll('.option-label')
+    ).map((label) => label.textContent);
+
+    expect(optionLabels).to.eql(['Database', 'Server', 'Cache']);
+  });
+
+  it('should display the abbreviation of the options set by property', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select></vscode-multi-select>
+    `);
+
+    el.options = [
+      {label: 'Database', value: 'db', abbreviation: 'DB'},
+      {label: 'Server', value: 'srv', abbreviation: 'SRV'},
+    ];
+    el.value = ['db', 'srv'];
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['DB', 'SRV']);
+  });
+
+  it('should display the abbreviation which is set at runtime', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option selected>Database</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['Database']);
+
+    const option = el.querySelector<VscodeOption>('vscode-option')!;
+
+    option.abbreviation = 'DB';
+    await waitForSelectFace(el);
+    expect(getVisibleLabels(el)).to.eql(['DB']);
+
+    option.abbreviation = '';
+    await waitForSelectFace(el);
+    expect(getVisibleLabels(el)).to.eql(['Database']);
+  });
+
+  it('should display the label when the abbreviation attribute is removed', async () => {
+    const el = await fixture<VscodeMultiSelect>(html`
+      <vscode-multi-select>
+        <vscode-option selected abbreviation="DB">Database</vscode-option>
+      </vscode-multi-select>
+    `);
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['DB']);
+
+    el.querySelector<VscodeOption>('vscode-option')!.removeAttribute(
+      'abbreviation'
+    );
+    await waitForSelectFace(el);
+
+    expect(getVisibleLabels(el)).to.eql(['Database']);
+  });
+
   it('should display the labels in the order of the selection', async () => {
     const el = await fixture<VscodeMultiSelect>(html`
       <vscode-multi-select>
