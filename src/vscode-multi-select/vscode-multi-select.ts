@@ -14,6 +14,14 @@ const SELECTED_LABELS_GAP_FALLBACK = 2;
 /** Minimum width of a label which is truncated by the fitting. */
 const MIN_TAG_WIDTH = 24;
 
+/**
+ * The labels are measured with subpixel precision, but `clientWidth` is rounded
+ * to an integer. Without a tolerance a label which fits into the face can be
+ * collapsed when the widths add up to a fraction above the rounded width, which
+ * depends on the font metrics of the environment.
+ */
+const FIT_TOLERANCE = 1;
+
 export type VscMultiSelectCreateOptionEvent = CustomEvent<{value: string}>;
 
 /**
@@ -469,7 +477,7 @@ export class VscodeMultiSelect
 
     const widths = tags.map((tag) => this._getTagWidth(tag));
     const gap = this._getTagGap(container);
-    const available = container.clientWidth;
+    const available = container.clientWidth + FIT_TOLERANCE;
 
     // The "+N" badge is rendered even when every label is visible, so its
     // width is known before the first label has to be collapsed.
