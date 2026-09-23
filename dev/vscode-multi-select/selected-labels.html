@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>multi-select/selected-labels</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+  </head>
+
+  <body>
+    <main>
+      <vscode-demo id="size-demo-target">
+        <vscode-multi-select label="Nothing selected">
+          <vscode-option>Apple</vscode-option>
+          <vscode-option>Banana</vscode-option>
+        </vscode-multi-select>
+
+        <vscode-multi-select label="A few selected options">
+          <vscode-option selected>Apple</vscode-option>
+          <vscode-option selected>Banana</vscode-option>
+          <vscode-option>Cherry</vscode-option>
+        </vscode-multi-select>
+
+        <vscode-multi-select label="Many selected options">
+          <vscode-option selected>Apple</vscode-option>
+          <vscode-option selected>Banana</vscode-option>
+          <vscode-option selected>Cherry</vscode-option>
+          <vscode-option selected>Strawberry</vscode-option>
+          <vscode-option selected>Lemon</vscode-option>
+          <vscode-option selected>Orange</vscode-option>
+          <vscode-option selected>Peach</vscode-option>
+          <vscode-option selected>Raspberry</vscode-option>
+        </vscode-multi-select>
+
+        <vscode-multi-select label="Long label" style="width: 220px">
+          <vscode-option selected
+            >Lorem ipsum dolor sit amet, consectetur adipiscing
+            elit.</vscode-option
+          >
+          <vscode-option selected>Ipsum</vscode-option>
+        </vscode-multi-select>
+
+        <vscode-multi-select combobox label="Combobox mode">
+          <vscode-option selected>Apple</vscode-option>
+          <vscode-option selected>Banana</vscode-option>
+          <vscode-option selected>Cherry</vscode-option>
+          <vscode-option>Strawberry</vscode-option>
+        </vscode-multi-select>
+
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
+      </vscode-demo>
+    </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-multi-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>
