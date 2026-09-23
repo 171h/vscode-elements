@@ -13,6 +13,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - **vscode-option**: add the abbreviation property (d049473c)
 - **vscode-multi-select**: show the selected labels in the face (f901951b)
 
+### Fixed
+
+- **vscode-multi-select**: keep the labels which fit into the face visible (a5922c8b)
+
 ### Documentation
 
 - **dev**: add a percentage mode example (96be193e)
