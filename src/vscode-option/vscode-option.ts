@@ -13,6 +13,16 @@ export class VscodeOption extends VscElement {
   @property({type: String})
   value?: string | undefined;
 
+  /**
+   * Short form of the label.
+   *
+   * The face of the `vscode-multi-select` component displays it instead of the
+   * label when the option is selected. The full label remains visible in the
+   * option list and in the tooltip of the selected labels.
+   */
+  @property({type: String})
+  abbreviation = '';
+
   @property({type: String})
   description = '';
 
@@ -36,6 +46,7 @@ export class VscodeOption extends VscElement {
     if (
       this._initialized &&
       (changedProperties.has('description') ||
+        changedProperties.has('abbreviation') ||
         changedProperties.has('value') ||
         changedProperties.has('selected') ||
         changedProperties.has('disabled'))
