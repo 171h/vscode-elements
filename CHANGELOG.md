@@ -4,6 +4,25 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [3.2.0] - 2026-09-23
+
+### Added
+
+- **vscode-textfield**: add the percentage mode (a227c24b)
+- **vscode-multi-select**: display the abbreviation of the selected options (2be55224)
+- **vscode-option**: add the abbreviation property (d049473c)
+- **vscode-multi-select**: show the selected labels in the face (f901951b)
+
+### Documentation
+
+- **dev**: add a percentage mode example (96be193e)
+- **vscode-textfield**: document the percentage mode (1c98e65a)
+- **dev**: add a percentage mode example (ebfa3997)
+- **vscode-textfield**: document the percentage mode (c7cfaf98)
+- **dev**: add abbreviation and collapsed label examples (cff3566f)
+- **vscode-multi-select**: document the face labels and abbreviations (00451bf0)
+- **dev**: add multi-select selected labels example (292b36f2)
+
 ## [3.1.1] - 2026-09-15
 
 ### Fixed
