@@ -11,6 +11,9 @@ Details of the changes made in this repository are documented in the [`docs`](do
 - [Form control sizes](docs/form-size.md) explains the shared `small`,
   `medium`, and `large` sizes, supported components, runtime usage, form groups,
   and icon sizing.
+- [Multi-select face labels](docs/multi-select-labels.md) explains the
+  `abbreviation` of `vscode-option`, the display priority of the
+  `vscode-multi-select` face, and the collapsing and tooltip behaviour.
 
 VSCode Elements is based on the [Lit](https://lit.dev/) library. The local development environment requires `NodeJS 22` or newer. If you want to use a local copy of the library in your codebase, you can use the `npm link` command. First, navigate to the VSCode Elements directory and run:
 
