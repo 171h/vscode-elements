@@ -3,6 +3,7 @@ import {property, query, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement} from '../includes/VscElement.js';
+import {MarkableFormControl} from '../includes/form-control-dirty.styles.js';
 import {chevronDownIcon} from '../includes/vscode-select/template-elements.js';
 import {VscodeSelectBase} from '../includes/vscode-select/vscode-select-base.js';
 import type {InternalOption} from '../includes/vscode-select/types.js';
@@ -67,7 +68,7 @@ export type VscMultiSelectCreateOptionEvent = CustomEvent<{value: string}>;
 @customElement('vscode-multi-select')
 export class VscodeMultiSelect
   extends VscodeSelectBase
-  implements AssociatedFormControl
+  implements AssociatedFormControl, MarkableFormControl
 {
   static override styles = styles;
 
@@ -78,6 +79,13 @@ export class VscodeMultiSelect
   };
 
   static formAssociated = true;
+
+  /**
+   * Whether the form of the component has been modified. The state is managed
+   * by `vscode-form-container` and it is shown with a light blue background.
+   */
+  @property({type: Boolean, reflect: true})
+  dirty = false;
 
   @property({type: Array, attribute: 'default-value'})
   defaultValue: string[] = [];

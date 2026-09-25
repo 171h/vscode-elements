@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>form-container/dirty-highlight</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+    <style>
+      body {
+        font-family: var(--vscode-font-family);
+        color: var(--vscode-foreground);
+      }
+
+      section {
+        margin-bottom: 28px;
+        max-width: 727px;
+      }
+
+      vscode-form-container {
+        border: 1px solid var(--vscode-panel-border, #3c3c3c);
+        padding: 12px;
+      }
+
+      .state {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Modified state of the form container</h1>
+    <p class="state">
+      Modify a control of a form, the background of every form control of that
+      form turns light blue. Only one form is highlighted at a time: modify
+      another form and the previous one returns to its normal state immediately.
+    </p>
+    <p class="state">
+      The light theme uses <code>#eff3ff</code>. The dark and the high contrast
+      themes use the matching tones of the palette, which the playground theme
+      selector below applies to the page.
+    </p>
+
+    <section>
+      <h2>Theme</h2>
+      <vscode-form-group variant="vertical">
+        <vscode-label for="theme-control">Kind of the theme</vscode-label>
+        <vscode-single-select id="theme-control">
+          <vscode-option value="vscode-light">Light</vscode-option>
+          <vscode-option value="vscode-dark">Dark</vscode-option>
+          <vscode-option value="vscode-high-contrast"
+            >High contrast</vscode-option
+          >
+          <vscode-option value="vscode-high-contrast-light"
+            >High contrast light</vscode-option
+          >
+        </vscode-single-select>
+        <vscode-form-helper
+          >The kind is published on the body element, like VS Code does it.
+          Modify a control to see the state of the selected
+          theme.</vscode-form-helper
+        >
+      </vscode-form-group>
+    </section>
+
+    <section>
+      <h2>Every kind of form control</h2>
+      <vscode-form-container id="form-controls" mark-duration="10000">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="control-text">Textfield</vscode-label>
+          <vscode-textfield id="control-text"></vscode-textfield>
+          <vscode-label for="control-area">Textarea</vscode-label>
+          <vscode-textarea id="control-area" rows="2"></vscode-textarea>
+          <vscode-label for="control-single">Single select</vscode-label>
+          <vscode-single-select id="control-single">
+            <vscode-option value="one">One</vscode-option>
+            <vscode-option value="two" selected>Two</vscode-option>
+          </vscode-single-select>
+          <vscode-label for="control-multi">Multi select</vscode-label>
+          <vscode-multi-select id="control-multi">
+            <vscode-option value="one" selected>One</vscode-option>
+            <vscode-option value="two">Two</vscode-option>
+          </vscode-multi-select>
+          <vscode-checkbox label="Checkbox"></vscode-checkbox>
+          <vscode-checkbox label="Toggle" toggle></vscode-checkbox>
+          <vscode-radio-group>
+            <vscode-radio name="radio" value="one" checked>One</vscode-radio>
+            <vscode-radio name="radio" value="two">Two</vscode-radio>
+          </vscode-radio-group>
+          <vscode-form-helper
+            >The controls are highlighted for 10 seconds, so the state is easy
+            to inspect.</vscode-form-helper
+          >
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
+
+    <section>
+      <h2>Default duration (5s)</h2>
+      <vscode-form-container id="form-default">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="default-name">Name</vscode-label>
+          <vscode-textfield id="default-name"></vscode-textfield>
+          <vscode-checkbox label="Enabled"></vscode-checkbox>
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
+
+    <section>
+      <h2>Custom duration (1.5s)</h2>
+      <vscode-form-container id="form-custom" mark-duration="1.5s">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="custom-query">Query</vscode-label>
+          <vscode-textfield id="custom-query"></vscode-textfield>
+          <vscode-form-helper>Highlighted for 1.5 seconds.</vscode-form-helper>
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
+
+    <section>
+      <h2>Endless highlight</h2>
+      <vscode-form-container id="form-forever" mark-duration="forever">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="forever-query">Query</vscode-label>
+          <vscode-textfield id="forever-query"></vscode-textfield>
+          <vscode-form-helper
+            >The highlight is removed by another modified form or by the reset
+            button.</vscode-form-helper
+          >
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
+
+    <section>
+      <h2>Automatic marking turned off</h2>
+      <vscode-form-container id="form-manual" markable="false">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="manual-query">Query</vscode-label>
+          <vscode-textfield id="manual-query"></vscode-textfield>
+          <vscode-form-helper
+            >Only the buttons below change the state.</vscode-form-helper
+          >
+        </vscode-form-group>
+      </vscode-form-container>
+      <div class="row">
+        <vscode-button id="mark-button">mark()</vscode-button>
+        <vscode-button id="reset-button" secondary>reset()</vscode-button>
+      </div>
+    </section>
+
+    <section>
+      <h2>State of every form of the page</h2>
+      <vscode-button id="refresh-button">Refresh</vscode-button>
+      <pre id="states"></pre>
+    </section>
+
+    <script type="module">
+      import {VscodeFormContainer} from '/dist/main.js';
+
+      const themeKinds = [
+        'vscode-light',
+        'vscode-dark',
+        'vscode-high-contrast',
+        'vscode-high-contrast-light',
+      ];
+
+      const showStates = () => {
+        const states = VscodeFormContainer.getFormStates().map((state) => ({
+          id: state.id,
+          dirty: state.dirty,
+          markDuration: state.markDuration,
+        }));
+
+        document.querySelector('#states').textContent = JSON.stringify(
+          states,
+          null,
+          2
+        );
+      };
+
+      // The playground publishes the kind of the theme on the body, the same
+      // way a VS Code webview does it.
+      const select = document.querySelector('#theme-control');
+
+      select.addEventListener('change', () => {
+        const kind = select.value;
+
+        document.body.classList.remove(...themeKinds);
+        document.body.classList.add(kind);
+        document.body.dataset.vscodeThemeKind = kind;
+      });
+
+      select.value = 'vscode-dark';
+      select.dispatchEvent(new Event('change'));
+
+      document
+        .querySelector('#form-manual')
+        .addEventListener('vsc-dirty-change', (ev) => {
+          console.log('vsc-dirty-change', ev.detail.dirty);
+        });
+
+      // The states are refreshed when a form changes them. The query walks the
+      // whole tree, so it is not polled. The event does not bubble, but it is
+      // composed, so the capture phase of the document reports it.
+      document.addEventListener('vsc-dirty-change', showStates, true);
+
+      document.querySelector('#mark-button').addEventListener('click', () => {
+        document.querySelector('#form-manual').mark();
+      });
+
+      document.querySelector('#reset-button').addEventListener('click', () => {
+        document.querySelector('#form-manual').reset();
+      });
+
+      document
+        .querySelector('#refresh-button')
+        .addEventListener('click', () => {
+          showStates();
+        });
+
+      showStates();
+    </script>
+  </body>
+</html>

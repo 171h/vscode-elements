@@ -341,9 +341,13 @@ export class VscodeSelectBase extends VscElement {
     return nextSelectedIndex;
   }
 
+  /**
+   * The events bubble, so a parent element, e.g. a `vscode-form-container`,
+   * can detect that the selection has changed.
+   */
   protected _dispatchChangeEvent(): void {
-    this.dispatchEvent(new Event('change'));
-    this.dispatchEvent(new Event('input'));
+    this.dispatchEvent(new Event('change', {bubbles: true}));
+    this.dispatchEvent(new Event('input', {bubbles: true}));
   }
 
   protected async _createAndSelectSuggestedOption() {}
@@ -596,7 +600,15 @@ export class VscodeSelectBase extends VscElement {
     this._isBeingFiltered = false;
   }
 
+  /**
+   * The pattern of the filter is not a value of the component: the event of the
+   * internal input does not leave the shadow root, so the elements above the
+   * component, e.g. a `vscode-form-container`, react only to the selection.
+   * The `change` and the `input` event of the component itself are dispatched
+   * by {@link _dispatchChangeEvent} when the selection changes.
+   */
   protected _onComboboxInputInput(ev: InputEvent): void {
+    ev.stopPropagation();
     this._isBeingFiltered = true;
     this._opts.filterPattern = (ev.target as HTMLInputElement).value;
     this._opts.activeIndex = -1;

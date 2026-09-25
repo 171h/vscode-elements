@@ -3,6 +3,7 @@ import {property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import {FormControlSize} from '../includes/form-control-size.js';
+import {MarkableFormControl} from '../includes/form-control-dirty.styles.js';
 import styles from './vscode-textfield.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 import {
@@ -66,7 +67,7 @@ type InputType =
 @customElement('vscode-textfield')
 export class VscodeTextfield
   extends VscElement
-  implements AssociatedFormControl
+  implements AssociatedFormControl, MarkableFormControl
 {
   static override styles = styles;
 
@@ -348,6 +349,13 @@ export class VscodeTextfield
 
   @query('#input')
   private _inputEl!: HTMLInputElement;
+
+  /**
+   * Whether the form of the component has been modified. The state is managed
+   * by `vscode-form-container` and it is shown with a light blue background.
+   */
+  @property({type: Boolean, reflect: true})
+  dirty = false;
 
   /**
    * The value of the component. In percentage mode it is the fraction form of

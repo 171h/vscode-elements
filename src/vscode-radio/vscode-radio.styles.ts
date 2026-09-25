@@ -1,10 +1,18 @@
 import {css, CSSResultGroup} from 'lit';
 import defaultStyles from '../includes/default.styles.js';
 import baseStyles from '../includes/form-button-widget/base.styles.js';
+import {
+  FORM_CONTROL_DIRTY_BOX_STYLES,
+  FORM_CONTROL_DIRTY_PALETTE,
+  formControlDirtyVariables,
+} from '../includes/form-control-dirty.styles.js';
 
 const styles: CSSResultGroup = [
   defaultStyles,
   baseStyles,
+  formControlDirtyVariables,
+  FORM_CONTROL_DIRTY_PALETTE,
+  FORM_CONTROL_DIRTY_BOX_STYLES,
   css`
     :host(:invalid) .icon,
     :host([invalid]) .icon {

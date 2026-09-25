@@ -1,3 +1,4 @@
+import {emulateMediaPlugin} from '@web/test-runner-commands/plugins';
 import {playwrightLauncher} from '@web/test-runner-playwright';
 
 export default {
@@ -6,6 +7,7 @@ export default {
   preserveSymlinks: true,
   browsers: [playwrightLauncher({product: 'chromium'})],
   testsFinishTimeout: 10000,
+  plugins: [emulateMediaPlugin()],
   filterBrowserLogs: ({args}) =>
     !(
       typeof args[0] === 'string' &&

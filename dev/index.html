@@ -182,6 +182,14 @@
         margin: 0 0 10px;
         font-size: 14px;
       }
+      .demo-card h4 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+      }
       .stack {
         display: grid;
         gap: 10px;
@@ -663,6 +671,192 @@
               </div></vscode-form-container
             >
           </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper"
+          >
+            <h3>Modified state of the form container</h3>
+            <p class="muted">
+              Modify a form: the background of its form controls turns light
+              blue and fades back to the normal state after the configured
+              duration. Only one form is highlighted at a time.
+            </p>
+            <div class="grid">
+              <vscode-form-container id="dirty-form-default">
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-default">Default (5s)</vscode-label>
+                  <vscode-textfield id="dirty-default"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+              <vscode-form-container id="dirty-form-fast" mark-duration="1.5s">
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-fast">1.5s</vscode-label>
+                  <vscode-textfield id="dirty-fast"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+              <vscode-form-container
+                id="dirty-form-forever"
+                mark-duration="forever"
+              >
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-forever">forever</vscode-label>
+                  <vscode-textfield id="dirty-forever"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+            </div>
+          </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper vscode-single-select vscode-multi-select vscode-option vscode-button"
+          >
+            <h3>Modified state of the dropdown selects</h3>
+            <p class="muted">
+              Select an option of one of the dropdowns: the face of every
+              dropdown of that form turns light blue, in select mode as well as
+              in combobox mode, with an empty, a preselected, or a multiple
+              selection. The dropdowns below show the three ways the state can
+              end.
+            </p>
+            <div class="grid">
+              <div class="stack">
+                <h4>Default duration</h4>
+                <p class="muted">
+                  The state fades back to the normal state of the theme after 5
+                  seconds.
+                </p>
+                <vscode-form-container id="dirty-form-dropdowns">
+                  <div class="grid">
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-empty"
+                        >Empty select</vscode-label
+                      >
+                      <vscode-single-select id="dirty-drop-empty">
+                        <vscode-option value="one">One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-single-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-selected"
+                        >Preselected select</vscode-label
+                      >
+                      <vscode-single-select id="dirty-drop-selected">
+                        <vscode-option value="one">One</vscode-option>
+                        <vscode-option value="two" selected>Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-single-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-combobox"
+                        >Combobox</vscode-label
+                      >
+                      <vscode-single-select id="dirty-drop-combobox" combobox>
+                        <vscode-option value="one">One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-single-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-multi"
+                        >Multiple</vscode-label
+                      >
+                      <vscode-multi-select id="dirty-drop-multi">
+                        <vscode-option value="one" selected>One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-multi-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-multi-combobox"
+                        >Multiple combobox</vscode-label
+                      >
+                      <vscode-multi-select
+                        id="dirty-drop-multi-combobox"
+                        combobox
+                      >
+                        <vscode-option value="one" selected>One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-multi-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-open">Open</vscode-label>
+                      <vscode-multi-select id="dirty-drop-open" open>
+                        <vscode-option value="one" selected>One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-multi-select>
+                    </vscode-form-group>
+                  </div>
+                  <div class="row">
+                    <vscode-button id="dirty-drop-select" type="button"
+                      >Select a value</vscode-button
+                    >
+                  </div>
+                </vscode-form-container>
+              </div>
+
+              <div class="stack">
+                <h4>Perpetual state</h4>
+                <p class="muted">
+                  No duration: the state stays until another form is modified,
+                  or until <code>reset()</code> is called.
+                </p>
+                <vscode-form-container
+                  id="dirty-form-dropdown-forever"
+                  mark-duration="forever"
+                >
+                  <vscode-form-group variant="vertical" size="small">
+                    <vscode-label for="dirty-drop-forever"
+                      >Perpetual</vscode-label
+                    >
+                    <vscode-single-select id="dirty-drop-forever">
+                      <vscode-option value="one">One</vscode-option>
+                      <vscode-option value="two">Two</vscode-option>
+                    </vscode-single-select>
+                  </vscode-form-group>
+                </vscode-form-container>
+                <div class="row">
+                  <vscode-button id="dirty-drop-reset" secondary type="button"
+                    >reset()</vscode-button
+                  >
+                </div>
+              </div>
+
+              <div class="stack">
+                <h4>Short duration and exclusivity</h4>
+                <p class="muted">
+                  The state ends after 1.5 seconds. Selecting a dropdown of this
+                  form restores the perpetual form above immediately, so only
+                  one form of the page is highlighted.
+                </p>
+                <vscode-form-container
+                  id="dirty-form-dropdown-short"
+                  mark-duration="1.5s"
+                >
+                  <vscode-form-group variant="vertical" size="small">
+                    <vscode-label for="dirty-drop-short">1.5s</vscode-label>
+                    <vscode-multi-select id="dirty-drop-short" open>
+                      <vscode-option value="one" selected>One</vscode-option>
+                      <vscode-option value="two">Two</vscode-option>
+                    </vscode-multi-select>
+                  </vscode-form-group>
+                  <vscode-form-group variant="vertical" size="small">
+                    <vscode-label for="dirty-drop-short-combobox"
+                      >1.5s combobox</vscode-label
+                    >
+                    <vscode-single-select
+                      id="dirty-drop-short-combobox"
+                      combobox
+                    >
+                      <vscode-option value="one">One</vscode-option>
+                      <vscode-option value="two">Two</vscode-option>
+                    </vscode-single-select>
+                  </vscode-form-group>
+                </vscode-form-container>
+              </div>
+            </div>
+          </article>
         </div>
       </section>
 
@@ -1041,6 +1235,27 @@
           .querySelectorAll('[data-components], [data-component-section]')
           .forEach((el) => el.classList.remove('hidden'));
       });
+      // The options of a closed dropdown cannot be clicked, so the state of a
+      // dropdown is shown with a value which is selected from code. The change
+      // event bubbles, like the event of a real selection, and it marks the
+      // form.
+      document
+        .querySelector('#dirty-drop-select')
+        .addEventListener('click', () => {
+          const dropdown = document.querySelector('#dirty-drop-empty');
+          const options = Array.from(
+            dropdown.querySelectorAll('vscode-option')
+          ).map((option) => option.value);
+          const index = options.indexOf(dropdown.value);
+
+          dropdown.value = options[(index + 1) % options.length];
+          dropdown.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+      document
+        .querySelector('#dirty-drop-reset')
+        .addEventListener('click', () => {
+          document.querySelector('#dirty-form-dropdown-forever').reset();
+        });
       document.querySelector('#clear-log').addEventListener('click', () => {
         eventLog.textContent = 'Cleared.';
       });

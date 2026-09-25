@@ -5,6 +5,8 @@ const styles: CSSResultGroup = [
   defaultStyles,
   css`
     :host {
+      --vsc-form-control-dirty-duration: 5000ms;
+
       display: block;
       max-width: 727px;
     }
