@@ -1,6 +1,7 @@
 import {css} from 'lit';
 import defaultStyles from '../default.styles.js';
 import {
+  FORM_CONTROL_DIRTY_PALETTE,
   FORM_CONTROL_DIRTY_SURFACE_STYLES,
   formControlDirtyVariables,
 } from '../form-control-dirty.styles.js';
@@ -8,6 +9,7 @@ import {
 export default [
   defaultStyles,
   formControlDirtyVariables,
+  FORM_CONTROL_DIRTY_PALETTE,
   FORM_CONTROL_DIRTY_SURFACE_STYLES,
   css`
     :host {
