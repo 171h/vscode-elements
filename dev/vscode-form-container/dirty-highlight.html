@@ -34,23 +34,6 @@
         font-size: 12px;
         opacity: 0.8;
       }
-
-      .row {
-        align-items: center;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 10px;
-      }
-
-      vscode-single-select,
-      vscode-multi-select {
-        width: 320px;
-      }
-
-      code {
-        font-family: var(--vscode-editor-font-family, monospace);
-      }
     </style>
   </head>
 
@@ -122,102 +105,11 @@
     </section>
 
     <section>
-      <h2>Dropdown select states</h2>
-      <p class="state">
-        The face of every dropdown variant is highlighted, not only the face of
-        the plain select mode. Select an option, or use the buttons, and watch
-        the corresponding dropdowns.
-      </p>
-      <vscode-form-container id="form-dropdowns" mark-duration="10000">
-        <vscode-form-group variant="vertical">
-          <vscode-label for="drop-empty">Empty single select</vscode-label>
-          <vscode-single-select id="drop-empty">
-            <vscode-option value="one">One</vscode-option>
-            <vscode-option value="two">Two</vscode-option>
-            <vscode-option value="three">Three</vscode-option>
-          </vscode-single-select>
-          <vscode-form-helper
-            >An empty select shows the placeholder until an option is
-            selected.</vscode-form-helper
-          >
-
-          <vscode-label for="drop-preselected"
-            >Preselected single select</vscode-label
-          >
-          <vscode-single-select id="drop-preselected">
-            <vscode-option value="one">One</vscode-option>
-            <vscode-option value="two" selected>Two</vscode-option>
-            <vscode-option value="three">Three</vscode-option>
-          </vscode-single-select>
-          <vscode-form-helper
-            >Selecting another option marks the form as
-            modified.</vscode-form-helper
-          >
-
-          <vscode-label for="drop-combobox">Combobox mode</vscode-label>
-          <vscode-single-select id="drop-combobox" combobox>
-            <vscode-option value="one">One</vscode-option>
-            <vscode-option value="two">Two</vscode-option>
-            <vscode-option value="three">Three</vscode-option>
-          </vscode-single-select>
-          <vscode-form-helper
-            >The combobox face is highlighted as well, the typed pattern does
-            not change the state.</vscode-form-helper
-          >
-
-          <vscode-label for="drop-multi">Multi select</vscode-label>
-          <vscode-multi-select id="drop-multi">
-            <vscode-option value="one" selected>One</vscode-option>
-            <vscode-option value="two">Two</vscode-option>
-            <vscode-option value="three">Three</vscode-option>
-          </vscode-multi-select>
-          <vscode-form-helper
-            >Selecting another option marks the form as
-            modified.</vscode-form-helper
-          >
-
-          <vscode-label for="drop-multi-combobox"
-            >Multi select combobox mode</vscode-label
-          >
-          <vscode-multi-select id="drop-multi-combobox" combobox>
-            <vscode-option value="one">One</vscode-option>
-            <vscode-option value="two">Two</vscode-option>
-            <vscode-option value="three">Three</vscode-option>
-          </vscode-multi-select>
-          <vscode-form-helper
-            >The labels of the selected options share the face with the filter
-            pattern.</vscode-form-helper
-          >
-
-          <vscode-label for="drop-open">Open dropdown</vscode-label>
-          <vscode-multi-select id="drop-open" open>
-            <vscode-option value="one" selected>One</vscode-option>
-            <vscode-option value="two">Two</vscode-option>
-            <vscode-option value="three">Three</vscode-option>
-          </vscode-multi-select>
-          <vscode-form-helper
-            >The face stays highlighted while the options are
-            open.</vscode-form-helper
-          >
-        </vscode-form-group>
-      </vscode-form-container>
-      <div class="row">
-        <vscode-button id="select-option">Select an option</vscode-button>
-        <vscode-button id="reset-dropdowns" secondary>reset()</vscode-button>
-      </div>
-    </section>
-
-    <section>
       <h2>Default duration (5s)</h2>
       <vscode-form-container id="form-default">
         <vscode-form-group variant="vertical">
           <vscode-label for="default-name">Name</vscode-label>
           <vscode-textfield id="default-name"></vscode-textfield>
-          <vscode-label for="default-kind">Kind</vscode-label>
-          <vscode-single-select id="default-kind">
-            <vscode-option value="one">One</vscode-option>
-            <vscode-option value="two" selected>Two</vscode-option>
-          </vscode-single-select>
           <vscode-checkbox label="Enabled"></vscode-checkbox>
         </vscode-form-group>
       </vscode-form-container>
@@ -229,11 +121,6 @@
         <vscode-form-group variant="vertical">
           <vscode-label for="custom-query">Query</vscode-label>
           <vscode-textfield id="custom-query"></vscode-textfield>
-          <vscode-label for="custom-target">Target</vscode-label>
-          <vscode-multi-select id="custom-target">
-            <vscode-option value="one" selected>One</vscode-option>
-            <vscode-option value="two">Two</vscode-option>
-          </vscode-multi-select>
           <vscode-form-helper>Highlighted for 1.5 seconds.</vscode-form-helper>
         </vscode-form-group>
       </vscode-form-container>
@@ -329,32 +216,6 @@
       document.querySelector('#reset-button').addEventListener('click', () => {
         document.querySelector('#form-manual').reset();
       });
-
-      // The change event of a dropdown bubbles, so selecting a value from code
-      // marks the form like a user selection does, the way the component
-      // dispatches the event.
-      document.querySelector('#select-option').addEventListener('click', () => {
-        const form = document.querySelector('#form-dropdowns');
-        const dropdown = form.querySelector('vscode-single-select');
-
-        if (!dropdown) {
-          return;
-        }
-
-        const options = Array.from(
-          dropdown.querySelectorAll('vscode-option')
-        ).map((option) => option.value);
-        const index = options.indexOf(dropdown.value);
-
-        dropdown.value = options[(index + 1) % options.length];
-        dropdown.dispatchEvent(new Event('change', {bubbles: true}));
-      });
-
-      document
-        .querySelector('#reset-dropdowns')
-        .addEventListener('click', () => {
-          document.querySelector('#form-dropdowns').reset();
-        });
 
       document
         .querySelector('#refresh-button')
