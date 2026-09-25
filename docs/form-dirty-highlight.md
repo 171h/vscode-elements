@@ -86,6 +86,10 @@ and the `markDuration` property accept:
 | `'2.5s'`, `'500ms'` | A string with a CSS time unit |
 | `'forever'` | The highlight is removed only by another modified form or by `reset()` |
 
+The rules are the same for every kind of form control: a dropdown follows them
+exactly like a textfield, whether the option is selected in select mode or in
+combobox mode.
+
 ```html
 <!-- 2 seconds -->
 <vscode-form-container mark-duration="2000"></vscode-form-container>
@@ -143,6 +147,16 @@ containers. A `Document` returns the forms of the document itself; the forms of
 a shadow root are returned when the shadow root is passed. The query walks the
 whole tree and it descends into the shadow roots, so it is not cheap and it
 should not be called on a hot path.
+
+The state of a form which holds a modified dropdown is reported like the state
+of a form which holds a modified textfield, and the button of the gallery uses
+the query to find the forms:
+
+```js
+// The dropdown of the second form is selected, so the first form is restored.
+VscodeFormContainer.getFormStates().map((state) => [state.id, state.dirty]);
+// [['profile', false], ['account', true]]
+```
 
 ## Manual control
 
