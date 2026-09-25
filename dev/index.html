@@ -697,6 +697,87 @@
               </vscode-form-container>
             </div>
           </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper vscode-single-select vscode-multi-select vscode-option vscode-button"
+          >
+            <h3>Modified state of the dropdown selects</h3>
+            <p class="muted">
+              Select an option of one of the dropdowns: the face of every
+              dropdown of the form turns light blue, in select mode as well as
+              in combobox mode, with an empty, a preselected, or a multiple
+              selection. Selecting an option with the button shows the state of
+              a closed dropdown.
+            </p>
+            <vscode-form-container
+              id="dirty-form-dropdowns"
+              mark-duration="10000"
+            >
+              <div class="grid">
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-drop-empty"
+                    >Empty select</vscode-label
+                  >
+                  <vscode-single-select id="dirty-drop-empty">
+                    <vscode-option value="one">One</vscode-option>
+                    <vscode-option value="two">Two</vscode-option>
+                    <vscode-option value="three">Three</vscode-option>
+                  </vscode-single-select>
+                </vscode-form-group>
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-drop-selected"
+                    >Preselected select</vscode-label
+                  >
+                  <vscode-single-select id="dirty-drop-selected">
+                    <vscode-option value="one">One</vscode-option>
+                    <vscode-option value="two" selected>Two</vscode-option>
+                    <vscode-option value="three">Three</vscode-option>
+                  </vscode-single-select>
+                </vscode-form-group>
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-drop-combobox"
+                    >Combobox</vscode-label
+                  >
+                  <vscode-single-select id="dirty-drop-combobox" combobox>
+                    <vscode-option value="one">One</vscode-option>
+                    <vscode-option value="two">Two</vscode-option>
+                    <vscode-option value="three">Three</vscode-option>
+                  </vscode-single-select>
+                </vscode-form-group>
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-drop-multi">Multiple</vscode-label>
+                  <vscode-multi-select id="dirty-drop-multi">
+                    <vscode-option value="one" selected>One</vscode-option>
+                    <vscode-option value="two">Two</vscode-option>
+                    <vscode-option value="three">Three</vscode-option>
+                  </vscode-multi-select>
+                </vscode-form-group>
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-drop-multi-combobox"
+                    >Multiple combobox</vscode-label
+                  >
+                  <vscode-multi-select id="dirty-drop-multi-combobox" combobox>
+                    <vscode-option value="one" selected>One</vscode-option>
+                    <vscode-option value="two">Two</vscode-option>
+                    <vscode-option value="three">Three</vscode-option>
+                  </vscode-multi-select>
+                </vscode-form-group>
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-drop-open">Open</vscode-label>
+                  <vscode-multi-select id="dirty-drop-open" open>
+                    <vscode-option value="one" selected>One</vscode-option>
+                    <vscode-option value="two">Two</vscode-option>
+                    <vscode-option value="three">Three</vscode-option>
+                  </vscode-multi-select>
+                </vscode-form-group>
+              </div>
+              <div class="row">
+                <vscode-button id="dirty-drop-select" type="button"
+                  >Select a value</vscode-button
+                >
+              </div>
+            </vscode-form-container>
+          </article>
         </div>
       </section>
 
@@ -1075,6 +1156,22 @@
           .querySelectorAll('[data-components], [data-component-section]')
           .forEach((el) => el.classList.remove('hidden'));
       });
+      // The options of a closed dropdown cannot be clicked, so the state of a
+      // dropdown is shown with a value which is selected from code. The change
+      // event bubbles, like the event of a real selection, and it marks the
+      // form.
+      document
+        .querySelector('#dirty-drop-select')
+        .addEventListener('click', () => {
+          const dropdown = document.querySelector('#dirty-drop-empty');
+          const options = Array.from(
+            dropdown.querySelectorAll('vscode-option')
+          ).map((option) => option.value);
+          const index = options.indexOf(dropdown.value);
+
+          dropdown.value = options[(index + 1) % options.length];
+          dropdown.dispatchEvent(new Event('change', {bubbles: true}));
+        });
       document.querySelector('#clear-log').addEventListener('click', () => {
         eventLog.textContent = 'Cleared.';
       });
