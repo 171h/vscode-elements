@@ -1,9 +1,11 @@
 # Modified state of a form
 
-`vscode-form-container` highlights itself with a light green background when
-one of its form controls is modified. The highlight makes the change visible
-even when the modified control is outside of the viewport, and it disappears
+`vscode-form-container` shows the modified state of a form with a light green
+background on its form controls. The highlight makes the change visible even
+when the modified control is outside of the viewport, and it disappears
 automatically after a timeout.
+
+The background of the container itself is not changed.
 
 ## Mark a form as modified
 
@@ -25,15 +27,38 @@ Only a user interaction marks a form. Setting the `value` property or the
 </vscode-form-container>
 ```
 
-The state is visible on the element as the `dirty` attribute and on the
-`dirty` property:
+The state is available on the container and on every form control of the form.
+It is reflected as the `dirty` attribute, which is also the hook of the
+highlight styles:
 
 ```js
 const form = document.querySelector('vscode-form-container');
+const textfield = form.querySelector('vscode-textfield');
 
 form.dirty; // false
-form.dirty; // true after the user types into the textfield
+textfield.dirty; // false
+
+textfield.dirty; // true after the user types into the field
+form.dirty; // true, the form of the field is marked as well
 ```
+
+## The modified form controls
+
+Every control which takes part in the state shows the light green background on
+its own surface:
+
+| Control | The highlighted surface |
+| --- | --- |
+| `vscode-textfield` | The box of the input |
+| `vscode-textarea` | The box of the textarea |
+| `vscode-single-select` | The face of the dropdown |
+| `vscode-multi-select` | The face of the dropdown |
+| `vscode-checkbox` | The box of the checkbox, with a ring |
+| `vscode-radio` | The box of the radio button, with a ring |
+
+The small controls draw the background on a small box, so a ring makes the
+state visible around the box as well. The controls which are not part of a
+form container, e.g. a standalone `vscode-textfield`, are never marked.
 
 ## Duration of the highlight
 
@@ -101,7 +126,7 @@ containers.
 ```js
 const form = document.querySelector('vscode-form-container');
 
-// Highlight the form and start the countdown.
+// Mark the form and start the countdown.
 form.mark();
 
 // Restore the normal state immediately.
@@ -127,26 +152,28 @@ Automatic marking can be turned off with the `markable` attribute, while
 
 ## Styling
 
-The highlight fades from a stronger green to a subtle green over the whole
-duration of the state, and the removal of the state is animated as well. The
-animation is disabled when the user prefers the reduced motion.
+The background of the controls fades from a stronger green to a subtle green
+over the whole duration of the state, and it fades back to the original
+background of the control when the state is removed. The animation is disabled
+when the user prefers the reduced motion.
 
-The colors can be customized with CSS custom properties:
+The colors can be customized with CSS custom properties, which the form
+container passes to its controls:
 
 | Property | Default | Purpose |
 | --- | --- | --- |
-| `--vsc-form-dirty-color` | `#2ea0431a` | Background color of the modified state |
-| `--vsc-form-dirty-color-peak` | `#2ea04340` | Background color at the beginning of the animation |
-| `--vsc-form-dirty-ring-color` | `#2ea04300` | Start and end color of the ring |
-| `--vsc-form-dirty-ring-color-peak` | `#2ea04366` | Ring color at the beginning of the animation |
-| `--vsc-form-dirty-border-radius` | `4px` | Corner radius of the highlight |
+| `--vsc-form-control-dirty-background` | `rgba(46, 160, 67, 0.3)` | Background color of the modified controls |
+| `--vsc-form-control-dirty-background-peak` | `rgba(46, 160, 67, 0.55)` | Background color at the beginning of the animation |
+| `--vsc-form-control-dirty-border-color` | `rgba(63, 185, 80, 0.5)` | Border color of the modified controls |
+| `--vsc-form-control-dirty-ring-color` | `rgba(63, 185, 80, 0.45)` | Ring color of the modified checkbox and radio buttons |
+| `--vsc-form-control-dirty-duration` | `5000ms` | Duration of the animation, it is set automatically by the `markDuration` property |
 
 ```css
 vscode-form-container {
-  --vsc-form-dirty-color: #3fb95033;
-  --vsc-form-dirty-color-peak: #3fb95066;
+  --vsc-form-control-dirty-background: rgba(63, 185, 80, 0.35);
+  --vsc-form-control-dirty-background-peak: rgba(63, 185, 80, 0.6);
 }
 ```
 
 The background color is applied only in the modified state, so a form that has
-never been modified keeps its original background.
+never been modified keeps the original background of its controls.

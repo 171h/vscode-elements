@@ -40,10 +40,42 @@
   <body>
     <h1>Modified state of the form container</h1>
     <p class="state">
-      Modify a control of a form, the background of the form turns light green.
-      Only one form is highlighted at a time: modify another form and the
-      previous one returns to its normal state immediately.
+      Modify a control of a form, the background of every form control of that
+      form turns light green. Only one form is highlighted at a time: modify
+      another form and the previous one returns to its normal state immediately.
     </p>
+
+    <section>
+      <h2>Every kind of form control</h2>
+      <vscode-form-container id="form-controls" mark-duration="10000">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="control-text">Textfield</vscode-label>
+          <vscode-textfield id="control-text"></vscode-textfield>
+          <vscode-label for="control-area">Textarea</vscode-label>
+          <vscode-textarea id="control-area" rows="2"></vscode-textarea>
+          <vscode-label for="control-single">Single select</vscode-label>
+          <vscode-single-select id="control-single">
+            <vscode-option value="one">One</vscode-option>
+            <vscode-option value="two" selected>Two</vscode-option>
+          </vscode-single-select>
+          <vscode-label for="control-multi">Multi select</vscode-label>
+          <vscode-multi-select id="control-multi">
+            <vscode-option value="one" selected>One</vscode-option>
+            <vscode-option value="two">Two</vscode-option>
+          </vscode-multi-select>
+          <vscode-checkbox label="Checkbox"></vscode-checkbox>
+          <vscode-checkbox label="Toggle" toggle></vscode-checkbox>
+          <vscode-radio-group>
+            <vscode-radio name="radio" value="one" checked>One</vscode-radio>
+            <vscode-radio name="radio" value="two">Two</vscode-radio>
+          </vscode-radio-group>
+          <vscode-form-helper
+            >The controls are highlighted for 10 seconds, so the state is easy
+            to inspect.</vscode-form-helper
+          >
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
 
     <section>
       <h2>Default duration (5s)</h2>
