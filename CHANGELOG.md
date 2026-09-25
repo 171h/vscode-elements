@@ -4,6 +4,45 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [3.3.0] - 2026-09-25
+
+### Added
+
+- **vscode-form-container**: use a light blue wash with a palette per theme (6ac609aa)
+- **vscode-form-container**: animate the modified state with a light green background (ca7d96db)
+- **vscode-form-container**: highlight the form when its content is modified (e6bd81f6)
+
+### Fixed
+
+- **vscode-form-container**: address the review of the modified state (398d6fd3)
+- **vscode-form-container**: address the review of the modified state (72542475)
+- **vscode-form-container**: mark the controls instead of the container (bdd5dcab)
+- **vscode-form-container**: show the modified state on the form controls (d2543a4a)
+
+### Documentation
+
+- **vscode-form-container**: note that the dropdowns follow the same rules (46fc96f0)
+- **dev**: show the three ends of the dropdown state in the gallery (3cdf261b)
+- **dev**: add the dropdown select states to the unified gallery (e18a11cc)
+- **vscode-form-container**: describe the highlighted face of a dropdown (5fd355a6)
+- **dev**: add the dropdown select states to the modified state example (e57e948d)
+- **vscode-form-container**: describe the color of the state in each theme (12617b28)
+- **vscode-form-container**: document the modified state of the controls (e89870eb)
+- **vscode-form-container**: document the modified state (2ae39d29)
+
+### Tests
+
+- **vscode-form-container**: follow the same state rules for a dropdown (1d1a1ff5)
+- **vscode-form-container**: cover the states of a dropdown (b6ce4a47)
+- **vscode-form-container**: cover the combobox face of the dropdowns (3386abb2)
+- **vscode-form-container**: cover the colors of the four theme kinds (e945f6c3)
+- **vscode-form-container**: cover the modified state of every form control (44c343cb)
+- **vscode-form-container**: cover the modified state of the form (c7cb4f88)
+
+### Maintenance
+
+- Revert "docs(dev): add the dropdown select states to the modified state example" (e9708854)
+
 ## [3.2.0] - 2026-09-23
 
 ### Added
