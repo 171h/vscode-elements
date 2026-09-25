@@ -57,10 +57,15 @@ its own surface:
 | --- | --- |
 | `vscode-textfield` | The box of the input |
 | `vscode-textarea` | The box of the textarea |
-| `vscode-single-select` | The face of the dropdown |
-| `vscode-multi-select` | The face of the dropdown |
+| `vscode-single-select` | The face of the dropdown, in both select and combobox mode |
+| `vscode-multi-select` | The face of the dropdown, in both select and combobox mode |
 | `vscode-checkbox` | The box of the checkbox, with a ring |
 | `vscode-radio` | The box of the radio button, with a ring |
+
+The face of a dropdown is highlighted whether it shows the selected option, the
+labels of a multiple selection, or the placeholder of an empty selection, and
+it stays highlighted while the options are open. Typing a filter pattern into a
+combobox does not mark the form; selecting an option does.
 
 The small controls draw the background on a small box, so a ring makes the
 state visible around the box as well. The controls which are not part of a
