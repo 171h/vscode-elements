@@ -152,28 +152,64 @@ Automatic marking can be turned off with the `markable` attribute, while
 
 ## Styling
 
-The background of the controls fades from a stronger green to a subtle green
+The background of the controls fades from a peak color to the resting color
 over the whole duration of the state, and it fades back to the original
 background of the control when the state is removed. The animation is disabled
 when the user prefers the reduced motion.
 
-The colors can be customized with CSS custom properties, which the form
-container passes to its controls:
-
-| Property | Default | Purpose |
-| --- | --- | --- |
-| `--vsc-form-control-dirty-background` | `rgba(46, 160, 67, 0.3)` | Background color of the modified controls |
-| `--vsc-form-control-dirty-background-peak` | `rgba(46, 160, 67, 0.55)` | Background color at the beginning of the animation |
-| `--vsc-form-control-dirty-border-color` | `rgba(63, 185, 80, 0.5)` | Border color of the modified controls |
-| `--vsc-form-control-dirty-ring-color` | `rgba(63, 185, 80, 0.45)` | Ring color of the modified checkbox and radio buttons |
-| `--vsc-form-control-dirty-duration` | `5000ms` | Duration of the animation, it is set automatically by the `markDuration` property |
-
-```css
-vscode-form-container {
-  --vsc-form-control-dirty-background: rgba(63, 185, 80, 0.35);
-  --vsc-form-control-dirty-background-peak: rgba(63, 185, 80, 0.6);
-}
-```
-
 The background color is applied only in the modified state, so a form that has
 never been modified keeps the original background of its controls.
+
+### Colors of the themes
+
+The state is a light blue wash, and the palette follows the kind of the VS Code
+theme. `#eff3ff` is the resting color of the light themes; the dark and the
+high contrast themes use a color of the same hue with the lightness of their
+surfaces, so the state stays visible without glaring.
+
+| Theme kind | Resting color | Peak color | Border and ring |
+| --- | --- | --- | --- |
+| `vscode-light` (default) | `#eff3ff` | `#dbe4ff` | `#93a9f0`, `#6784de` |
+| `vscode-dark` | `#243a5e` | `#2f4c7a` | `#4a6ea8` |
+| `vscode-high-contrast` | `#243a5e` | `#3a5c8f` | `#7aa2e3` |
+| `vscode-high-contrast-light` | `#dbe4ff` | `#b9c9ff` | `#0a3d91` |
+
+The kind of the theme is published by VS Code on the `body` element as the
+`data-vscode-theme-kind` attribute, with the `vscode-light`, `vscode-dark`,
+`vscode-high-contrast`, and `vscode-high-contrast-light` values, and the
+`vscode-light`, `vscode-dark`, and `vscode-high-contrast` classes. The styles
+match with `:host-context`, so the colors follow the theme of the page, and
+they are recalculated when the theme changes.
+
+When the kind of the theme is not published, the light palette is used. A dark
+page which does not publish the kind of the theme can ask for the dark palette
+with the `prefers-color-scheme` media query of the page:
+
+```html
+<body class="vscode-dark"></body>
+```
+
+### Custom properties
+
+The form container passes the custom properties to its controls. Each of them
+can be set on a control as well, which overrides the value of the container:
+
+| Property | Purpose |
+| --- | --- |
+| `--vsc-form-control-dirty-background` | Resting background color of the modified controls |
+| `--vsc-form-control-dirty-background-peak` | Background color at the beginning of the animation |
+| `--vsc-form-control-dirty-border-color` | Border color of the modified checkbox and radio buttons |
+| `--vsc-form-control-dirty-ring-color` | Ring color of the modified checkbox and radio buttons |
+| `--vsc-form-control-dirty-duration` | Duration of the animation, it is set automatically by the `markDuration` property |
+
+```css
+/* the whole page */
+body {
+  --vsc-form-control-dirty-background: #e8f0ff;
+}
+
+/* one control */
+vscode-textfield {
+  --vsc-form-control-dirty-background: #f0e8ff;
+}
+```

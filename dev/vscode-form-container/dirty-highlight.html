@@ -41,9 +41,36 @@
     <h1>Modified state of the form container</h1>
     <p class="state">
       Modify a control of a form, the background of every form control of that
-      form turns light green. Only one form is highlighted at a time: modify
+      form turns light blue. Only one form is highlighted at a time: modify
       another form and the previous one returns to its normal state immediately.
     </p>
+    <p class="state">
+      The light theme uses <code>#eff3ff</code>. The dark and the high contrast
+      themes use the matching tones of the palette, which the playground theme
+      selector below applies to the page.
+    </p>
+
+    <section>
+      <h2>Theme</h2>
+      <vscode-form-group variant="vertical">
+        <vscode-label for="theme-control">Kind of the theme</vscode-label>
+        <vscode-single-select id="theme-control">
+          <vscode-option value="vscode-light">Light</vscode-option>
+          <vscode-option value="vscode-dark">Dark</vscode-option>
+          <vscode-option value="vscode-high-contrast"
+            >High contrast</vscode-option
+          >
+          <vscode-option value="vscode-high-contrast-light"
+            >High contrast light</vscode-option
+          >
+        </vscode-single-select>
+        <vscode-form-helper
+          >The kind is published on the body element, like VS Code does it.
+          Modify a control to see the state of the selected
+          theme.</vscode-form-helper
+        >
+      </vscode-form-group>
+    </section>
 
     <section>
       <h2>Every kind of form control</h2>
@@ -139,6 +166,13 @@
     <script type="module">
       import {VscodeFormContainer} from '/dist/main.js';
 
+      const themeKinds = [
+        'vscode-light',
+        'vscode-dark',
+        'vscode-high-contrast',
+        'vscode-high-contrast-light',
+      ];
+
       const showStates = () => {
         const states = VscodeFormContainer.getFormStates().map((state) => ({
           id: state.id,
@@ -152,6 +186,21 @@
           2
         );
       };
+
+      // The playground publishes the kind of the theme on the body, the same
+      // way a VS Code webview does it.
+      const select = document.querySelector('#theme-control');
+
+      select.addEventListener('change', () => {
+        const kind = select.value;
+
+        document.body.classList.remove(...themeKinds);
+        document.body.classList.add(kind);
+        document.body.dataset.vscodeThemeKind = kind;
+      });
+
+      select.value = 'vscode-dark';
+      select.dispatchEvent(new Event('change'));
 
       document
         .querySelector('#form-manual')

@@ -109,10 +109,15 @@ const isInRoot = (
 /**
  * @tag vscode-form-container
  *
- * @cssprop [--vsc-form-control-dirty-background=rgba(46, 160, 67, 0.3)] - Background color of the modified form controls
- * @cssprop [--vsc-form-control-dirty-background-peak=rgba(46, 160, 67, 0.55)] - Background color of the modified form controls at the beginning of the animation
- * @cssprop [--vsc-form-control-dirty-border-color=rgba(63, 185, 80, 0.5)] - Border color of the modified form controls
- * @cssprop [--vsc-form-control-dirty-ring-color=rgba(63, 185, 80, 0.45)] - Ring color of the modified checkbox and radio buttons
+ * The modified state of the form is shown on its controls with a light blue
+ * wash. The colors follow the kind of the VS Code theme: `#eff3ff` is the
+ * resting color of the light themes, the dark and the high contrast themes use
+ * a color of the same hue with the lightness of their surfaces.
+ *
+ * @cssprop [--vsc-form-control-dirty-background=#eff3ff] - Resting background color of the modified form controls
+ * @cssprop [--vsc-form-control-dirty-background-peak=#dbe4ff] - Background color of the modified form controls at the beginning of the animation
+ * @cssprop [--vsc-form-control-dirty-border-color=#93a9f0] - Border color of the modified form controls
+ * @cssprop [--vsc-form-control-dirty-ring-color=#6784de] - Ring color of the modified checkbox and radio buttons
  * @cssprop [--vsc-form-control-dirty-duration=5000ms] - Duration of the modified state, it is set automatically by the `markDuration` property
  */
 @customElement('vscode-form-container')
