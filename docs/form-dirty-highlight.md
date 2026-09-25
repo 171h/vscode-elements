@@ -67,6 +67,10 @@ labels of a multiple selection, or the placeholder of an empty selection, and
 it stays highlighted while the options are open. Typing a filter pattern into a
 combobox does not mark the form; selecting an option does.
 
+A control which is added to the form while it is highlighted takes part in the
+state as well, so a form which is built dynamically shows the state on its new
+fields.
+
 The small controls draw the background on a small box, so a ring makes the
 state visible around the box as well. The controls which are not part of a
 form container, e.g. a standalone `vscode-textfield`, are never marked.
@@ -85,6 +89,7 @@ and the `markDuration` property accept:
 | `5000` | A number or a unitless string is interpreted as milliseconds |
 | `'2.5s'`, `'500ms'` | A string with a CSS time unit |
 | `'forever'` | The highlight is removed only by another modified form or by `reset()` |
+| no value | The bare `mark-duration` attribute and the removal of the attribute restore the default duration |
 
 The rules are the same for every kind of form control: a dropdown follows them
 exactly like a textfield, whether the option is selected in select mode or in
@@ -99,6 +104,9 @@ combobox mode.
 
 <!-- stays highlighted -->
 <vscode-form-container mark-duration="forever"></vscode-form-container>
+
+<!-- the default duration, like the removal of the attribute -->
+<vscode-form-container mark-duration></vscode-form-container>
 ```
 
 ```js
@@ -108,17 +116,23 @@ form.markDuration = 3000;
 ```
 
 `VscodeFormContainer.defaultMarkDuration` is the fallback for the containers
-without a `mark-duration` attribute. Changing it affects only the containers
-that are marked afterwards.
+without a `mark-duration` attribute. The value is read when a container is
+created, so changing it affects only the containers which are created
+afterwards.
 
 A value that cannot be interpreted, e.g. `'slow'`, keeps the highlight until
 it is reset. A negative duration is interpreted as zero, so the highlight is
 removed immediately.
 
-Every modification restarts the countdown, but the events that belong to the
-same keystroke — and the keystrokes a user types faster than 500ms — do not
-extend the highlight. That delay belongs to the automatic marking: a `mark()`
-call always restarts the countdown.
+The countdown is restarted by every modification, but the modifications which
+follow each other within 500ms share one restart: the events of a single
+keystroke do not restart it, and neither do the keystrokes of a user who types
+faster than two characters a second. The highlight disappears within
+`markDuration` after the last modification, and it stays on the screen while
+the user keeps modifying the form. A duration which is shorter than the 500ms
+interval shortens the interval as well, so the countdown is always restarted
+before it expires and the state does not blink. That interval belongs to the
+automatic marking: a `mark()` call always restarts the countdown.
 
 The fade-out of the `'forever'` duration is far beyond a page visit, so the
 controls keep the peak color of the animation while the state is on the screen.
@@ -143,10 +157,11 @@ const states = VscodeFormContainer.getFormStates();
 
 `VscodeFormContainer.getFormStates(root)` accepts a `Document`, a `ShadowRoot`,
 or an `Element` as the optional argument, and it includes the nested
-containers. A `Document` returns the forms of the document itself; the forms of
-a shadow root are returned when the shadow root is passed. The query walks the
-whole tree and it descends into the shadow roots, so it is not cheap and it
-should not be called on a hot path.
+containers. The root itself is included when it is a form container. A
+`Document` returns the forms of the document itself; the forms of a shadow root
+are returned when the shadow root is passed. The query walks the whole tree and
+it descends into the shadow roots, so it is not cheap and it should not be
+called on a hot path.
 
 The state of a form which holds a modified dropdown is reported like the state
 of a form which holds a modified textfield, and the button of the gallery uses
@@ -171,14 +186,20 @@ form.reset();
 ```
 
 `vscode-form-container` also dispatches a `vsc-dirty-change` event when the
-state changes. The event does not bubble, and its `detail` contains the
-`form` and the new `dirty` value:
+state of the form changes. The event does not bubble, and its `detail` contains
+the `form` and the new `dirty` value:
 
 ```js
 form.addEventListener('vsc-dirty-change', (ev) => {
   console.log(ev.detail.form, ev.detail.dirty);
 });
 ```
+
+The event reports the changes of the state, so `mark()` dispatches it only when
+the form was not modified yet: the restart of the countdown of a form which is
+already highlighted does not dispatch it again. The state of a modified form
+which is removed from the DOM becomes `false`, and that change is reported as
+well.
 
 Automatic marking can be turned off with the `markable` attribute, while
 `mark()` and `reset()` keep working:
@@ -243,10 +264,10 @@ adding the class of the kind to the `body` element:
 
 ### Custom properties
 
-The form container passes the custom properties to its controls. Each of them
-can be set on a control as well, which overrides the value of the container. A
-value which is set on an ancestor of the container or on the `body` element is
-used as well:
+The form container passes the colors to its controls. Each of them can be set
+on a control as well, which overrides the value of the container. A value which
+is set on an ancestor of the container or on the `body` element is used as
+well:
 
 | Property | Purpose |
 | --- | --- |
@@ -254,7 +275,14 @@ used as well:
 | `--vsc-form-control-dirty-background-peak` | Background color at the beginning of the animation |
 | `--vsc-form-control-dirty-border-color` | Border color of the modified checkbox and radio buttons |
 | `--vsc-form-control-dirty-ring-color` | Ring color of the modified checkbox and radio buttons |
-| `--vsc-form-control-dirty-duration` | Duration of the animation, it is set automatically by the `markDuration` property |
+| `--vsc-form-control-dirty-duration` | Length of the animation of the modified control |
+
+The duration is an exception of the rule above: the form container writes the
+value of its `markDuration` property on itself, so a value which is set on an
+ancestor of the container or on the `body` element does not reach the controls.
+Use `markDuration` or the `mark-duration` attribute to set the length of the
+state, and set the property on a single control to change the length of its
+animation only.
 
 The colors of the theme come from the internal
 `--vsc-form-control-dirty-palette-*` variables, which are only the fallback of

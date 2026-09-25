@@ -206,8 +206,12 @@
         .querySelector('#form-manual')
         .addEventListener('vsc-dirty-change', (ev) => {
           console.log('vsc-dirty-change', ev.detail.dirty);
-          showStates();
         });
+
+      // The states are refreshed when a form changes them. The query walks the
+      // whole tree, so it is not polled. The event does not bubble, but it is
+      // composed, so the capture phase of the document reports it.
+      document.addEventListener('vsc-dirty-change', showStates, true);
 
       document.querySelector('#mark-button').addEventListener('click', () => {
         document.querySelector('#form-manual').mark();
@@ -223,7 +227,6 @@
           showStates();
         });
 
-      window.setInterval(showStates, 500);
       showStates();
     </script>
   </body>

@@ -377,6 +377,31 @@ describe('vscode-form-container', () => {
       expect(el.dirty).to.be.false;
     });
 
+    it('keeps the duration of the property above a value of the page', async () => {
+      document.body.style.setProperty(
+        '--vsc-form-control-dirty-duration',
+        '1s'
+      );
+
+      try {
+        const id = nextFormId('duration-of-the-page');
+        const el = await createForm(id);
+        const textfield = el.querySelector('vscode-textfield')!;
+
+        typeIntoTextfield(el, 'a');
+        await el.updateComplete;
+        await nextFrame();
+
+        expect(
+          getComputedStyle(textfield.shadowRoot!.querySelector('.root')!)
+            .animationDuration,
+          'the container writes its own duration on itself'
+        ).to.eq('5s');
+      } finally {
+        document.body.style.removeProperty('--vsc-form-control-dirty-duration');
+      }
+    });
+
     it('keeps the modified state with the forever duration', async () => {
       const id = nextFormId('forever');
       const el = await createForm(id, 'mark-duration="forever"');
@@ -548,6 +573,126 @@ describe('vscode-form-container', () => {
       expect(el.dirty).to.be.true;
 
       await waitFor(() => !el.dirty);
+    });
+
+    it('dispatches the event only when the state changes', async () => {
+      const id = nextFormId('event-changes');
+      const el = await createForm(id, 'mark-duration="10000"');
+      const events: boolean[] = [];
+
+      el.addEventListener('vsc-dirty-change', (ev) => {
+        events.push((ev as CustomEvent<{dirty: boolean}>).detail.dirty);
+      });
+
+      el.mark();
+      await el.updateComplete;
+      // The countdown of a form which is already highlighted is restarted
+      // without a change of the state.
+      el.mark();
+      await el.updateComplete;
+      await delay(20);
+
+      expect(events, 'the state changed once').to.deep.eq([true]);
+
+      el.remove();
+      await delay(20);
+
+      expect(el.dirty, 'the state of a form which is removed').to.be.false;
+      expect(events, 'the removal of a modified form is reported').to.deep.eq([
+        true,
+        false,
+      ]);
+    });
+
+    it('keeps the state while the modifications follow each other quickly', async () => {
+      const id = nextFormId('short-duration');
+      const el = await createForm(id, 'mark-duration="400"');
+      const textfield = el.querySelector('vscode-textfield')!;
+      const events: boolean[] = [];
+
+      el.addEventListener('vsc-dirty-change', (ev) => {
+        events.push((ev as CustomEvent<{dirty: boolean}>).detail.dirty);
+      });
+
+      textfield.focus();
+      await sendKeys({type: 'a'});
+
+      // The keystrokes follow each other faster than the duration of the
+      // state, so the countdown has to be restarted before it expires.
+      for (const character of 'bcdef') {
+        await delay(100);
+        await sendKeys({type: character});
+      }
+
+      expect(
+        events,
+        'the state is not turned off while the user types'
+      ).to.deep.eq([true]);
+      expect(el.dirty).to.be.true;
+
+      await waitFor(() => !el.dirty);
+      expect(events, 'the state is turned off after the typing').to.deep.eq([
+        true,
+        false,
+      ]);
+    });
+
+    it('uses the default duration for a bare mark-duration attribute', async () => {
+      const id = nextFormId('bare-duration');
+      const el = await createForm(id, 'mark-duration');
+
+      expect(el.markDuration).to.eq(5000);
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration')
+      ).to.eq('5000ms');
+
+      el.markDuration = '2s';
+      await el.updateComplete;
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration')
+      ).to.eq('2000ms');
+
+      el.removeAttribute('mark-duration');
+      await el.updateComplete;
+
+      expect(el.markDuration, 'the attribute is removed').to.eq(5000);
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration')
+      ).to.eq('5000ms');
+    });
+
+    it('marks a control which is added while the form is modified', async () => {
+      const id = nextFormId('added-control');
+      const el = await createForm(id, 'mark-duration="10000"');
+      const added = document.createElement(
+        'vscode-textfield'
+      ) as HTMLElement & {
+        dirty: boolean;
+      };
+
+      el.mark();
+      await el.updateComplete;
+
+      el.appendChild(added);
+      await delay(20);
+
+      expect(el.dirty).to.be.true;
+      expect(added.dirty, 'the added control takes part in the state').to.be
+        .true;
+
+      el.reset();
+      await el.updateComplete;
+
+      const afterReset = document.createElement(
+        'vscode-checkbox'
+      ) as HTMLElement & {dirty: boolean};
+
+      el.appendChild(afterReset);
+      await delay(20);
+
+      expect(added.dirty, 'the state is removed from the added control').to.be
+        .false;
+      expect(afterReset.dirty, 'the state is over').to.be.false;
     });
 
     it('marks the form when an option of a select is clicked', async () => {
@@ -790,6 +935,30 @@ describe('vscode-form-container', () => {
       const states = VscodeFormContainer.getFormStates(shadowRoot);
 
       expect(states.map((state) => state.id)).to.deep.eq([innerId]);
+    });
+
+    it('finds the container which is the root of the query', async () => {
+      const innerId = nextFormId('root-self-inner');
+
+      const outer = await fixture<VscodeFormContainer>(html`
+        <vscode-form-container>
+          <vscode-form-group variant="vertical">
+            <vscode-form-container id=${innerId}>
+              <vscode-form-group variant="vertical">
+                <vscode-textfield></vscode-textfield>
+              </vscode-form-group>
+            </vscode-form-container>
+          </vscode-form-group>
+        </vscode-form-container>
+      `);
+
+      await outer.updateComplete;
+
+      const states = VscodeFormContainer.getFormStates(outer);
+
+      expect(states, 'the root and the nested form').to.have.lengthOf(2);
+      expect(states[0].element, 'the root itself').to.eq(outer);
+      expect(states[1].element.id).to.eq(innerId);
     });
   });
 });

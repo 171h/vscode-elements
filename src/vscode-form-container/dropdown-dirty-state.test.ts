@@ -133,6 +133,45 @@ describe('modified state of a dropdown', () => {
     expect(backgroundOf(dropdown).isBlue, 'the face is blue').to.be.true;
   });
 
+  it('does not mark the form when a filter pattern is typed into a combobox', async () => {
+    const id = `dropdown-filter-${formIndex++}`;
+    const form = await createForm(
+      formMarkup(
+        '1000',
+        `<vscode-single-select combobox>${OPTIONS}</vscode-single-select>`,
+        id
+      )
+    );
+    const dropdown = getControl(form, 'vscode-single-select')!;
+    const input =
+      dropdown.shadowRoot!.querySelector<HTMLInputElement>('.combobox-input')!;
+
+    input.focus();
+    await dropdown.updateComplete;
+    await sendKeys({type: 'tw'});
+    await dropdown.updateComplete;
+    await delay(50);
+
+    expect(input.value, 'the pattern was typed').to.eq('tw');
+    expect(form.dirty, 'the pattern is not a modification of the form').to.be
+      .false;
+    expect(dropdown.dirty, 'the dropdown is not marked').to.be.false;
+    expect(backgroundOf(dropdown).isBlue, 'the face is not blue').to.be.false;
+
+    // The selection of an option marks the form, the pattern is only a way to
+    // find the option.
+    const option =
+      dropdown.shadowRoot!.querySelector<HTMLElement>('li.option')!;
+
+    option.click();
+    await dropdown.updateComplete;
+    await delay(20);
+
+    expect(dropdown.value, 'the filtered option is selected').to.eq('two');
+    expect(form.dirty, 'the selection marks the form').to.be.true;
+    expect(dropdown.dirty).to.be.true;
+  });
+
   it('uses 5 seconds as the default duration, like a textfield', async () => {
     const id = `dropdown-default-${formIndex++}`;
     const form = await createForm(

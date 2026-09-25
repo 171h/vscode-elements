@@ -35,8 +35,13 @@ export type FormMarkDuration = MarkDuration | typeof FOREVER;
 /**
  * The automatic marking ignores a new modification for this long. The events
  * which belong to the same keystroke, and the keystrokes which follow each
- * other quickly, would otherwise restart the countdown on every event and the
- * highlight would stay on the screen for the whole time the user types.
+ * other quickly, would otherwise restart the countdown on every event, so the
+ * countdown is restarted about twice a second at the most.
+ *
+ * The delay is shortened by {@link VscodeFormContainer._automaticMarkDelay}
+ * when the duration of the state is shorter, otherwise the countdown would
+ * expire before a new modification is able to restart it and the state would
+ * blink while the user types.
  */
 const RE_MARK_DELAY = 500;
 
@@ -81,6 +86,12 @@ const collectFormContainers = (
   root: Document | ShadowRoot | Element,
   result: Set<VscodeFormContainer> = new Set()
 ): Set<VscodeFormContainer> => {
+  // The walk starts below the root, so the root itself is not returned by the
+  // tree walker.
+  if (root instanceof VscodeFormContainer) {
+    result.add(root);
+  }
+
   const treeWalker = document.createTreeWalker(
     root as Node,
     NodeFilter.SHOW_ELEMENT
@@ -122,12 +133,12 @@ const isInRoot = (
  * which shows an error keeps its error colors, the modified state is not
  * painted on it.
  *
- * @fires {CustomEvent<FormDirtyChangeDetail>} vsc-dirty-change - Dispatched when the modified state of the form is turned on or off. The event does not bubble, its `detail` contains the `form` and the new `dirty` value.
+ * @fires {CustomEvent<FormDirtyChangeDetail>} vsc-dirty-change - Dispatched when the modified state of the form changes, and not when the countdown of an already modified form is restarted. The event does not bubble, its `detail` contains the `form` and the new `dirty` value. The state of a modified form which is removed from the DOM becomes `false` and the event is dispatched as well.
  * @cssprop [--vsc-form-control-dirty-background=#eff3ff] - Resting background color of the modified form controls
  * @cssprop [--vsc-form-control-dirty-background-peak=#dbe4ff] - Background color of the modified form controls at the beginning of the animation
  * @cssprop [--vsc-form-control-dirty-border-color=#93a9f0] - Border color of the modified form controls
  * @cssprop [--vsc-form-control-dirty-ring-color=#6784de] - Ring color of the modified checkbox and radio buttons
- * @cssprop [--vsc-form-control-dirty-duration=5000ms] - Duration of the modified state, it is set automatically by the `markDuration` property
+ * @cssprop [--vsc-form-control-dirty-duration=5000ms] - Length of the animation of the modified controls. It is written on the container from the `markDuration` property, so a value of an ancestor of the container does not apply. The countdown of the state follows `markDuration` as well.
  */
 @customElement('vscode-form-container')
 export class VscodeFormContainer extends VscElement {
@@ -138,9 +149,9 @@ export class VscodeFormContainer extends VscElement {
 
   /**
    * Every form container of a root with its current modified state. The nested
-   * form containers are included as well. A `Document` returns the forms of the
-   * document, the forms of a shadow root are returned when the shadow root is
-   * passed.
+   * form containers are included as well, and the root itself when it is a
+   * form container. A `Document` returns the forms of the document, the forms
+   * of a shadow root are returned when the shadow root is passed.
    *
    * The query walks the whole tree and it descends into the shadow roots, so it
    * is not cheap and it should not be called on a hot path.
@@ -186,8 +197,19 @@ export class VscodeFormContainer extends VscElement {
    * `forever` value disables the automatic reset. A negative duration is
    * interpreted as zero. Defaults to
    * `VscodeFormContainer.defaultMarkDuration`, 5 seconds.
+   *
+   * An empty value, e.g. the bare `mark-duration` attribute, and the removal
+   * of the attribute restore the default duration as well.
    */
-  @property({attribute: 'mark-duration'})
+  @property({
+    attribute: 'mark-duration',
+    converter: {
+      fromAttribute: (value: string | null) =>
+        value === null || value.trim() === ''
+          ? VscodeFormContainer.defaultMarkDuration
+          : value,
+    },
+  })
   markDuration: FormMarkDuration = VscodeFormContainer.defaultMarkDuration;
 
   /**
@@ -211,6 +233,9 @@ export class VscodeFormContainer extends VscElement {
   private _resetTimer: ReturnType<typeof setTimeout> | null = null;
 
   private _lastMarkTime = -Infinity;
+
+  /** Watches the form while it is modified, so its new controls join the state. */
+  private _controlObserver: MutationObserver | null = null;
 
   private _firstUpdateComplete = false;
 
@@ -240,7 +265,13 @@ export class VscodeFormContainer extends VscElement {
     super.disconnectedCallback();
     formMarkRegistry.delete(this);
     this._clearResetTimer();
-    this._dirty = false;
+    this._stopObservingControls();
+
+    if (this._dirty) {
+      this._dirty = false;
+      unmarkFormControls(this);
+      this._dispatchDirtyChange(false);
+    }
   }
 
   override firstUpdated(): void {
@@ -270,21 +301,26 @@ export class VscodeFormContainer extends VscElement {
    * Every other form of the same root is restored to its normal state
    * immediately. The call always restarts the countdown, the delay which
    * ignores the events of the automatic marking does not apply to it.
+   *
+   * The `vsc-dirty-change` event is dispatched only when the form was not
+   * modified yet: the restart of the countdown does not change the state.
    */
   mark(): void {
+    const wasDirty = this._dirty;
+
     this._lastMarkTime = performance.now();
     this._clearResetTimer();
     this._dirty = true;
     this._unmarkOthers();
     this._reflectDirty();
+    this._observeControls();
     this._scheduleResetTimer();
 
-    if (this._firstUpdateComplete) {
-      this.requestUpdate();
-      void this.updateComplete.then(() => this._dispatchDirtyChange(true));
-    } else {
-      this._dispatchDirtyChange(true);
+    if (wasDirty) {
+      return;
     }
+
+    this._dispatchDirtyChangeWhenUpdated(true);
   }
 
   /**
@@ -292,6 +328,7 @@ export class VscodeFormContainer extends VscElement {
    */
   reset(): void {
     this._clearResetTimer();
+    this._stopObservingControls();
     this._lastMarkTime = -Infinity;
 
     if (!this._dirty) {
@@ -300,13 +337,7 @@ export class VscodeFormContainer extends VscElement {
 
     this._dirty = false;
     this._reflectDirty();
-
-    if (this._firstUpdateComplete) {
-      this.requestUpdate();
-      void this.updateComplete.then(() => this._dispatchDirtyChange(false));
-    } else {
-      this._dispatchDirtyChange(false);
-    }
+    this._dispatchDirtyChangeWhenUpdated(false);
   }
 
   /**
@@ -319,6 +350,29 @@ export class VscodeFormContainer extends VscElement {
     } else {
       unmarkFormControls(this);
     }
+  }
+
+  /**
+   * The controls which are added to the form while it is modified show the
+   * state as well. The observer runs only while the state is on the screen.
+   */
+  private _observeControls(): void {
+    if (this._controlObserver) {
+      return;
+    }
+
+    this._controlObserver = new MutationObserver(() => {
+      if (this._dirty) {
+        markFormControls(this);
+      }
+    });
+
+    this._controlObserver.observe(this, {childList: true, subtree: true});
+  }
+
+  private _stopObservingControls(): void {
+    this._controlObserver?.disconnect();
+    this._controlObserver = null;
   }
 
   /**
@@ -343,6 +397,19 @@ export class VscodeFormContainer extends VscElement {
         composed: true,
       })
     );
+  }
+
+  /**
+   * The state is reflected to the DOM by the next update, so the event waits
+   * for it as well.
+   */
+  private _dispatchDirtyChangeWhenUpdated(dirty: boolean): void {
+    if (this._firstUpdateComplete) {
+      this.requestUpdate();
+      void this.updateComplete.then(() => this._dispatchDirtyChange(dirty));
+    } else {
+      this._dispatchDirtyChange(dirty);
+    }
   }
 
   /**
@@ -410,6 +477,22 @@ export class VscodeFormContainer extends VscElement {
     return false;
   }
 
+  /**
+   * The interval which ignores a new modification of the automatic marking.
+   *
+   * It is never longer than the half of the duration of the state: the
+   * countdown is restarted before it can expire while the user keeps modifying
+   * the form, so a duration which is shorter than `RE_MARK_DELAY` does not make
+   * the state blink. A duration which never expires keeps the standard delay.
+   */
+  private _automaticMarkDelay(): number {
+    const milliseconds = toMilliseconds(this.markDuration);
+
+    return milliseconds === null
+      ? RE_MARK_DELAY
+      : Math.min(RE_MARK_DELAY, milliseconds / 2);
+  }
+
   private _handleFormControlStateChange = (ev: Event): void => {
     if (!this._markableFormControl(ev)) {
       return;
@@ -417,7 +500,10 @@ export class VscodeFormContainer extends VscElement {
 
     // The events of a keystroke and the keystrokes which follow each other
     // quickly do not restart the countdown.
-    if (this.dirty && performance.now() - this._lastMarkTime < RE_MARK_DELAY) {
+    if (
+      this.dirty &&
+      performance.now() - this._lastMarkTime < this._automaticMarkDelay()
+    ) {
       return;
     }
 

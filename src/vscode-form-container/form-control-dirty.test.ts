@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import {expect, fixture, html} from '@open-wc/testing';
+import {emulateMedia} from '@web/test-runner-commands';
 import {literal, unsafeStatic} from 'lit/static-html.js';
 import '../vscode-checkbox/index.js';
 import '../vscode-multi-select/index.js';
@@ -373,6 +374,36 @@ describe('modified state of the form controls', () => {
       getComputedStyle(surface).backgroundColor,
       'the error color is not covered by the state'
     ).to.eq(errorColor);
+  });
+
+  it('shows the state without an animation when the motion is reduced', async () => {
+    const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+    const control = form.querySelector('vscode-textfield') as TestControl;
+    const surface = control.shadowRoot!.querySelector('.root')!;
+
+    await emulateMedia({reducedMotion: 'reduce'});
+
+    try {
+      form.mark();
+      await form.updateComplete;
+      await nextFrame();
+
+      const style = getComputedStyle(surface);
+
+      expect(control.dirty).to.be.true;
+      expect(style.animationName, 'the animation is turned off').to.eq('none');
+      expect(style.transitionDuration, 'the transition is turned off').to.eq(
+        '0s'
+      );
+      expect(
+        style.backgroundColor,
+        'the color of the state is still shown'
+      ).to.eq('rgb(239, 243, 255)');
+    } finally {
+      await emulateMedia({reducedMotion: 'no-preference'});
+      form.reset();
+      await form.updateComplete;
+    }
   });
 
   describe('theme of the page', () => {
