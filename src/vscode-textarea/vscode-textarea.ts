@@ -4,6 +4,7 @@ import {ifDefined} from 'lit/directives/if-defined.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import {FormControlSize} from '../includes/form-control-size.js';
+import {MarkableFormControl} from '../includes/form-control-dirty.styles.js';
 import {stylePropertyMap} from '../includes/style-property-map.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 import styles from './vscode-textarea.styles.js';
@@ -42,7 +43,7 @@ import styles from './vscode-textarea.styles.js';
 @customElement('vscode-textarea')
 export class VscodeTextarea
   extends VscElement
-  implements AssociatedFormControl
+  implements AssociatedFormControl, MarkableFormControl
 {
   static override styles = styles;
 
@@ -60,6 +61,13 @@ export class VscodeTextarea
   // #region properties, setters/getters
   @property()
   autocomplete: 'on' | 'off' | undefined = undefined;
+
+  /**
+   * Whether the form of the component has been modified. The state is managed
+   * by `vscode-form-container` and it is shown with a light green background.
+   */
+  @property({type: Boolean, reflect: true})
+  dirty = false;
 
   @property({type: Boolean, reflect: true})
   override autofocus = false;

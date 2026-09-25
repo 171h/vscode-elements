@@ -4,6 +4,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../includes/VscElement.js';
 import {FormButtonWidgetBase} from '../includes/form-button-widget/FormButtonWidgetBase.js';
 import {LabelledCheckboxOrRadioMixin} from '../includes/form-button-widget/LabelledCheckboxOrRadio.js';
+import {MarkableFormControl} from '../includes/form-control-dirty.styles.js';
 import styles from './vscode-radio.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
@@ -36,7 +37,7 @@ import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 @customElement('vscode-radio')
 export class VscodeRadio
   extends LabelledCheckboxOrRadioMixin(FormButtonWidgetBase)
-  implements AssociatedFormControl
+  implements AssociatedFormControl, MarkableFormControl
 {
   static override styles = styles;
 
@@ -50,6 +51,13 @@ export class VscodeRadio
   };
 
   //#region properties
+
+  /**
+   * Whether the form of the component has been modified. The state is managed
+   * by `vscode-form-container` and it is shown with a light green box.
+   */
+  @property({type: Boolean, reflect: true})
+  dirty = false;
 
   @property({type: Boolean, reflect: true})
   override autofocus = false;

@@ -1,11 +1,17 @@
 import {css, CSSResultGroup, unsafeCSS} from 'lit';
 import defaultStyles from '../includes/default.styles.js';
+import {
+  FORM_CONTROL_DIRTY_SURFACE_STYLES,
+  formControlDirtyVariables,
+} from '../includes/form-control-dirty.styles.js';
 import {getDefaultFontStack} from '../includes/helpers.js';
 
 const defaultFontStack = unsafeCSS(getDefaultFontStack());
 
 const styles: CSSResultGroup = [
   defaultStyles,
+  formControlDirtyVariables,
+  FORM_CONTROL_DIRTY_SURFACE_STYLES,
   css`
     :host {
       display: inline-block;

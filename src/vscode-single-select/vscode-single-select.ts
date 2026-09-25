@@ -3,6 +3,7 @@ import {property, query} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 import {customElement} from '../includes/VscElement.js';
+import {MarkableFormControl} from '../includes/form-control-dirty.styles.js';
 import {chevronDownIcon} from '../includes/vscode-select/template-elements.js';
 import {VscodeSelectBase} from '../includes/vscode-select/vscode-select-base.js';
 import styles from './vscode-single-select.styles.js';
@@ -58,7 +59,7 @@ export type VscSingleSelectCreateOptionEvent = CustomEvent<{value: string}>;
 @customElement('vscode-single-select')
 export class VscodeSingleSelect
   extends VscodeSelectBase
-  implements AssociatedFormControl
+  implements AssociatedFormControl, MarkableFormControl
 {
   static override styles = styles;
 
@@ -70,6 +71,13 @@ export class VscodeSingleSelect
 
   /** @internal */
   static formAssociated = true;
+
+  /**
+   * Whether the form of the component has been modified. The state is managed
+   * by `vscode-form-container` and it is shown with a light green background.
+   */
+  @property({type: Boolean, reflect: true})
+  dirty = false;
 
   @property({attribute: 'default-value'})
   defaultValue = '';

@@ -5,6 +5,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {customElement} from '../includes/VscElement.js';
 import {FormButtonWidgetBase} from '../includes/form-button-widget/FormButtonWidgetBase.js';
 import {LabelledCheckboxOrRadioMixin} from '../includes/form-button-widget/LabelledCheckboxOrRadio.js';
+import {MarkableFormControl} from '../includes/form-control-dirty.styles.js';
 import styles from './vscode-checkbox.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
@@ -38,7 +39,7 @@ import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 @customElement('vscode-checkbox')
 export class VscodeCheckbox
   extends LabelledCheckboxOrRadioMixin(FormButtonWidgetBase)
-  implements AssociatedFormControl
+  implements AssociatedFormControl, MarkableFormControl
 {
   static override styles = styles;
 
@@ -50,6 +51,13 @@ export class VscodeCheckbox
     ...LitElement.shadowRootOptions,
     delegatesFocus: true,
   };
+
+  /**
+   * Whether the form of the component has been modified. The state is managed
+   * by `vscode-form-container` and it is shown with a light green box.
+   */
+  @property({type: Boolean, reflect: true})
+  dirty = false;
 
   /**
    * Automatically focus on the element when the page loads.
