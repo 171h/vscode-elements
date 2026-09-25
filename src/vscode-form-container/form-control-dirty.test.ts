@@ -18,12 +18,12 @@ const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 /**
- * The keyframes of the fading animation of a surface. The browser resolves
- * the custom properties, so the colors of the keyframes show what the control
- * actually paints.
+ * The fading animation of a surface. The browser resolves the custom
+ * properties, so the colors of the keyframes show what the control actually
+ * paints.
  */
-const getFadeKeyframes = (surface: Element): Keyframe[] => {
-  const animation = (
+const getFadeAnimation = (surface: Element) =>
+  (
     surface.getAnimations() as unknown as Array<{
       animationName?: string;
       effect?: {getKeyframes: () => Keyframe[]};
@@ -31,6 +31,12 @@ const getFadeKeyframes = (surface: Element): Keyframe[] => {
   ).find((item) =>
     (item.animationName ?? '').includes('vsc-form-control-dirty-fade')
   );
+
+/**
+ * The keyframes of the fading animation of a surface.
+ */
+const getFadeKeyframes = (surface: Element): Keyframe[] => {
+  const animation = getFadeAnimation(surface);
 
   if (!animation?.effect) {
     throw new Error('the fading animation of the surface is not running');
@@ -238,6 +244,121 @@ describe('modified state of the form controls', () => {
     expect(keyframes[1].backgroundColor, 'the resting color is replaced').to.eq(
       'rgb(1, 2, 3)'
     );
+  });
+
+  it('takes the colors from the custom properties of the container', async () => {
+    const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+    const control = form.querySelector('vscode-textfield') as TestControl;
+    const surface = control.shadowRoot!.querySelector('.root')!;
+
+    form.style.setProperty(
+      '--vsc-form-control-dirty-background',
+      'rgb(1, 2, 3)'
+    );
+    form.style.setProperty(
+      '--vsc-form-control-dirty-background-peak',
+      'rgb(9, 9, 9)'
+    );
+
+    form.mark();
+    await form.updateComplete;
+    await nextFrame();
+
+    const keyframes = getFadeKeyframes(surface);
+
+    expect(
+      keyframes[0].backgroundColor,
+      'the peak color of the theme is replaced'
+    ).to.eq('rgb(9, 9, 9)');
+    expect(
+      keyframes[1].backgroundColor,
+      'the resting color of the theme is replaced'
+    ).to.eq('rgb(1, 2, 3)');
+  });
+
+  it('takes the border and the ring color from the container', async () => {
+    const form = await createForm(
+      `<vscode-checkbox>Checkbox</vscode-checkbox>`
+    );
+    const control = form.querySelector('vscode-checkbox') as TestControl;
+    const box = control.shadowRoot!.querySelector('.icon')!;
+
+    form.style.setProperty(
+      '--vsc-form-control-dirty-border-color',
+      'rgb(4, 5, 6)'
+    );
+    form.style.setProperty(
+      '--vsc-form-control-dirty-ring-color',
+      'rgb(7, 8, 9)'
+    );
+
+    form.mark();
+    await form.updateComplete;
+    await nextFrame();
+
+    expect(
+      getComputedStyle(box).boxShadow,
+      'the ring color of the container'
+    ).to.contain('rgb(7, 8, 9)');
+
+    // The border fades into the color of the state.
+    await delay(400);
+
+    expect(
+      getComputedStyle(box).borderTopColor,
+      'the border color of the container'
+    ).to.eq('rgb(4, 5, 6)');
+  });
+
+  it('takes the colors from the custom properties of the body', async () => {
+    const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+    const control = form.querySelector('vscode-textfield') as TestControl;
+    const surface = control.shadowRoot!.querySelector('.root')!;
+
+    document.body.style.setProperty(
+      '--vsc-form-control-dirty-background',
+      'rgb(1, 2, 3)'
+    );
+
+    try {
+      form.mark();
+      await form.updateComplete;
+      await nextFrame();
+
+      expect(
+        getFadeKeyframes(surface)[1].backgroundColor,
+        'the color of the page is used'
+      ).to.eq('rgb(1, 2, 3)');
+    } finally {
+      document.body.style.removeProperty('--vsc-form-control-dirty-background');
+    }
+  });
+
+  it('keeps the error colors of an invalid control', async () => {
+    const form = await createForm(
+      `<vscode-textfield invalid></vscode-textfield>`
+    );
+    const control = form.querySelector('vscode-textfield') as TestControl;
+    const surface = control.shadowRoot!.querySelector('.root')!;
+    const errorColor = 'rgb(90, 29, 29)';
+
+    expect(getComputedStyle(surface).backgroundColor, 'the error color').to.eq(
+      errorColor
+    );
+
+    form.mark();
+    await form.updateComplete;
+    await nextFrame();
+    await delay(400);
+
+    expect(
+      getFadeAnimation(surface),
+      'the state is not animated on the control'
+    ).to.be.undefined;
+    expect(
+      getComputedStyle(surface).backgroundColor,
+      'the error color is not covered by the state'
+    ).to.eq(errorColor);
   });
 
   describe('theme of the page', () => {

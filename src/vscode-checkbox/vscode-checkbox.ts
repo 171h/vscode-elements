@@ -54,7 +54,7 @@ export class VscodeCheckbox
 
   /**
    * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light green box.
+   * by `vscode-form-container` and it is shown with a light blue box.
    */
   @property({type: Boolean, reflect: true})
   dirty = false;

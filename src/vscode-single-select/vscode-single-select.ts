@@ -74,7 +74,7 @@ export class VscodeSingleSelect
 
   /**
    * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light green background.
+   * by `vscode-form-container` and it is shown with a light blue background.
    */
   @property({type: Boolean, reflect: true})
   dirty = false;

@@ -8,12 +8,17 @@ export type MarkDuration = number | string;
 export const FOREVER = 'forever';
 
 /** A plain number in a string, e.g. the `mark-duration="2500"` attribute. */
-const MILLISECOND_PATTERN = /^\d+(\.\d+)?$/;
+const MILLISECOND_PATTERN = /^-?\d+(\.\d+)?$/;
 
-const CSS_TIME_PATTERN = /^\d+(\.\d+)?(ms|s)$/;
+const CSS_TIME_PATTERN = /^-?\d+(\.\d+)?(ms|s)$/;
 
 /**
  * Converts a duration to milliseconds.
+ *
+ * A negative duration is interpreted as zero, so the attribute and the property
+ * behave the same way and the highlight is removed immediately. It is never
+ * treated as a duration which cannot be interpreted, that would keep the
+ * highlight on the screen without a way to tell why.
  *
  * @returns The duration in milliseconds, or `null` when the value means that
  * the highlight never expires or when it cannot be interpreted.
@@ -31,7 +36,7 @@ export const toMilliseconds = (value: MarkDuration): number | null => {
 
   // An attribute value without a unit is a millisecond value.
   if (MILLISECOND_PATTERN.test(trimmed)) {
-    return Number.parseFloat(trimmed);
+    return Math.max(0, Number.parseFloat(trimmed));
   }
 
   if (!CSS_TIME_PATTERN.test(trimmed)) {

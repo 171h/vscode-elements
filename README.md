@@ -17,6 +17,9 @@ Details of the changes made in this repository are documented in the [`docs`](do
 - [Textfield percentage mode](docs/textfield-percentage.md) explains the
   `percentage` property of `vscode-textfield`, the displayed percent sign, the
   fraction form of the value, and the editing and validation behaviour.
+- [Modified state of a form](docs/form-dirty-highlight.md) explains the
+  highlight of `vscode-form-container`, its duration, the form controls which
+  take part, and the colors of the themes.
 
 VSCode Elements is based on the [Lit](https://lit.dev/) library. The local development environment requires `NodeJS 22` or newer. If you want to use a local copy of the library in your codebase, you can use the `npm link` command. First, navigate to the VSCode Elements directory and run:
 

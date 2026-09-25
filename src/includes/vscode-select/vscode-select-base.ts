@@ -341,9 +341,13 @@ export class VscodeSelectBase extends VscElement {
     return nextSelectedIndex;
   }
 
+  /**
+   * The events bubble, so a parent element, e.g. a `vscode-form-container`,
+   * can detect that the selection has changed.
+   */
   protected _dispatchChangeEvent(): void {
-    this.dispatchEvent(new Event('change'));
-    this.dispatchEvent(new Event('input'));
+    this.dispatchEvent(new Event('change', {bubbles: true}));
+    this.dispatchEvent(new Event('input', {bubbles: true}));
   }
 
   protected async _createAndSelectSuggestedOption() {}

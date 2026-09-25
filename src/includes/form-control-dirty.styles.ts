@@ -23,15 +23,62 @@ export const MARKABLE_FORM_CONTROL_TAGS = [
 export const MARKABLE_FORM_CONTROL_SELECTOR =
   MARKABLE_FORM_CONTROL_TAGS.join(',');
 
+const MARKABLE_FORM_CONTROL_TAG_NAMES: ReadonlySet<string> = new Set(
+  MARKABLE_FORM_CONTROL_TAGS
+);
+
+/**
+ * Whether an element is a form control which takes part in the modified state
+ * of a form container.
+ */
+export const isMarkableFormControl = (node: Element): boolean =>
+  MARKABLE_FORM_CONTROL_TAG_NAMES.has(node.localName);
+
+/** The parent of a node, which crosses the boundary of a shadow root. */
+const parentOf = (node: Element): Element | null => {
+  if (node.parentElement) {
+    return node.parentElement;
+  }
+
+  const root = node.getRootNode();
+
+  return root instanceof ShadowRoot ? root.host : null;
+};
+
+/**
+ * The form container which owns a control, or `null` when the control does not
+ * belong to a form.
+ */
+const owningForm = (control: Element): Element | null => {
+  let node = parentOf(control);
+
+  while (node) {
+    if (node.localName === 'vscode-form-container') {
+      return node;
+    }
+
+    node = parentOf(node);
+  }
+
+  return null;
+};
+
+/**
+ * The controls of a form. The controls of a nested form container belong to the
+ * nested form, so the outer form does not mark them.
+ */
+const controlsOf = (form: HTMLElement): MarkableFormControl[] =>
+  [
+    ...form.querySelectorAll<MarkableFormControl>(
+      MARKABLE_FORM_CONTROL_SELECTOR
+    ),
+  ].filter((control) => owningForm(control) === form);
+
 /**
  * Marks the form controls of a form as modified.
  */
 export const markFormControls = (form: HTMLElement): void => {
-  const controls = form.querySelectorAll<MarkableFormControl>(
-    MARKABLE_FORM_CONTROL_SELECTOR
-  );
-
-  controls.forEach((control) => {
+  controlsOf(form).forEach((control) => {
     control.dirty = true;
   });
 };
@@ -40,11 +87,7 @@ export const markFormControls = (form: HTMLElement): void => {
  * Restores the form controls of a form to their normal state.
  */
 export const unmarkFormControls = (form: HTMLElement): void => {
-  const controls = form.querySelectorAll<MarkableFormControl>(
-    MARKABLE_FORM_CONTROL_SELECTOR
-  );
-
-  controls.forEach((control) => {
+  controlsOf(form).forEach((control) => {
     control.dirty = false;
   });
 };
@@ -101,17 +144,42 @@ const body = (kind: string) =>
   `:host-context(body[data-vscode-theme-kind='${kind}']), :host-context(body.${kind})`;
 
 /**
+ * The value of a color of the modified state.
+ *
+ * The public custom property is read first, so the color can be replaced on
+ * the form container, on an ancestor, on the `body` element or on the control
+ * itself. The colors of the theme palette are declared with the separate
+ * `--vsc-form-control-dirty-palette-*` names: a declaration with the public
+ * name would shadow the value which the control inherits, and the color could
+ * not be replaced above the control any more.
+ */
+const dirtyColor = (name: string, fallback: string) => css`var(
+    --vsc-form-control-dirty-${unsafeCSS(name)},
+    var(
+      --vsc-form-control-dirty-palette-${unsafeCSS(name)},
+      ${unsafeCSS(fallback)}
+    )
+  )`;
+
+/**
  * The colors of the modified state of a theme. The kind of the theme is
  * published by VS Code and by the webview playground on the `body` element,
  * and `:host-context` is used, because it also matches from a shadow root.
+ *
+ * The palette is an internal fallback of the public custom properties, see
+ * {@link dirtyColor}.
  */
 const themeColors = (selector: string, value: DirtyColors): CSSResultGroup => [
   css`
     ${unsafeCSS(selector)} {
-      --vsc-form-control-dirty-background: ${unsafeCSS(value.background)};
-      --vsc-form-control-dirty-background-peak: ${unsafeCSS(value.peak)};
-      --vsc-form-control-dirty-border-color: ${unsafeCSS(value.border)};
-      --vsc-form-control-dirty-ring-color: ${unsafeCSS(value.ring)};
+      --vsc-form-control-dirty-palette-background: ${unsafeCSS(
+        value.background
+      )};
+      --vsc-form-control-dirty-palette-background-peak: ${unsafeCSS(
+        value.peak
+      )};
+      --vsc-form-control-dirty-palette-border-color: ${unsafeCSS(value.border)};
+      --vsc-form-control-dirty-palette-ring-color: ${unsafeCSS(value.ring)};
     }
   `,
 ];
@@ -132,17 +200,11 @@ export const FORM_CONTROL_DIRTY_PALETTE: CSSResultGroup = [
  * background fades from the peak color to the resting color of the theme, and
  * it fades back to the original background of the control when the state is
  * removed.
- *
- * The colors come from custom properties, so any of them can be replaced on
- * an ancestor of the control, e.g. on a form container.
  */
 export const formControlDirtyVariables = css`
   @keyframes vsc-form-control-dirty-fade {
     from {
-      background-color: var(
-        --vsc-form-control-dirty-background-peak,
-        ${unsafeCSS(LIGHT.peak)}
-      );
+      background-color: ${dirtyColor('background-peak', LIGHT.peak)};
     }
   }
 `;
@@ -158,10 +220,7 @@ const dirtySurface = css`
   animation: vsc-form-control-dirty-fade
     var(--vsc-form-control-dirty-duration, 5000ms)
     cubic-bezier(0.33, 0, 0.67, 1) both;
-  background-color: var(
-    --vsc-form-control-dirty-background,
-    ${unsafeCSS(LIGHT.background)}
-  );
+  background-color: ${dirtyColor('background', LIGHT.background)};
   transition: background-color 320ms ease-out;
 `;
 
@@ -176,16 +235,9 @@ const dirtyBox = css`
       cubic-bezier(0.33, 0, 0.67, 1) both,
     vsc-form-control-dirty-ring var(--vsc-form-control-dirty-duration, 5000ms)
       cubic-bezier(0.33, 0, 0.67, 1) both;
-  background-color: var(
-    --vsc-form-control-dirty-background,
-    ${unsafeCSS(LIGHT.background)}
-  );
-  border-color: var(
-    --vsc-form-control-dirty-border-color,
-    ${unsafeCSS(LIGHT.border)}
-  );
-  box-shadow: 0 0 0 2px
-    var(--vsc-form-control-dirty-ring-color, ${unsafeCSS(LIGHT.ring)});
+  background-color: ${dirtyColor('background', LIGHT.background)};
+  border-color: ${dirtyColor('border-color', LIGHT.border)};
+  box-shadow: 0 0 0 2px ${dirtyColor('ring-color', LIGHT.ring)};
   transition:
     background-color 320ms ease-out,
     border-color 320ms ease-out,
@@ -194,20 +246,24 @@ const dirtyBox = css`
 
 /**
  * The modified state of a control which fills its whole surface.
+ *
+ * A control which shows an error keeps the error colors: the modified state is
+ * not painted on it, so the error is not covered by the wash during the whole
+ * highlight.
  */
 export const FORM_CONTROL_DIRTY_SURFACE_STYLES = css`
-  :host([dirty]) .root,
-  :host([dirty]) .combobox-face,
-  :host([dirty]) .select-face,
-  :host([dirty]) textarea {
+  :host([dirty]:not([invalid]):not(:invalid)) .root,
+  :host([dirty]:not([invalid]):not(:invalid)) .combobox-face,
+  :host([dirty]:not([invalid]):not(:invalid)) .select-face,
+  :host([dirty]:not([invalid]):not(:invalid)) textarea {
     ${dirtySurface}
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :host([dirty]) .root,
-    :host([dirty]) .combobox-face,
-    :host([dirty]) .select-face,
-    :host([dirty]) textarea {
+    :host([dirty]:not([invalid]):not(:invalid)) .root,
+    :host([dirty]:not([invalid]):not(:invalid)) .combobox-face,
+    :host([dirty]:not([invalid]):not(:invalid)) .select-face,
+    :host([dirty]:not([invalid]):not(:invalid)) textarea {
       animation: none;
       transition: none;
     }
@@ -221,17 +277,16 @@ export const FORM_CONTROL_DIRTY_SURFACE_STYLES = css`
 export const FORM_CONTROL_DIRTY_BOX_STYLES = css`
   @keyframes vsc-form-control-dirty-ring {
     from {
-      box-shadow: 0 0 0 4px
-        var(--vsc-form-control-dirty-ring-color, ${unsafeCSS(LIGHT.ring)});
+      box-shadow: 0 0 0 4px ${dirtyColor('ring-color', LIGHT.ring)};
     }
   }
 
-  :host([dirty]) .icon {
+  :host([dirty]:not([invalid]):not(:invalid)) .icon {
     ${dirtyBox}
   }
 
   @media (prefers-reduced-motion: reduce) {
-    :host([dirty]) .icon {
+    :host([dirty]:not([invalid]):not(:invalid)) .icon {
       animation: none;
       transition: none;
     }

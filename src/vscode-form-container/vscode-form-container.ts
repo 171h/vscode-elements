@@ -7,6 +7,7 @@ import {
   toMilliseconds,
 } from '../includes/form-mark-duration.js';
 import {
+  isMarkableFormControl,
   markFormControls,
   unmarkFormControls,
 } from '../includes/form-control-dirty.styles.js';
@@ -32,16 +33,21 @@ type CheckboxOrRadioGroup = VscodeRadioGroup | VscodeCheckboxGroup;
 export type FormMarkDuration = MarkDuration | typeof FOREVER;
 
 /**
- * Restarting the countdown on every keystroke would make the highlight
- * permanent while the user types, so a new mark is ignored for this long.
+ * The automatic marking ignores a new modification for this long. The events
+ * which belong to the same keystroke, and the keystrokes which follow each
+ * other quickly, would otherwise restart the countdown on every event and the
+ * highlight would stay on the screen for the whole time the user types.
  */
 const RE_MARK_DELAY = 500;
 
 /**
- * Animation length for the durations that cannot be expressed as a CSS time,
- * effectively about a day.
+ * The animation length of the durations which cannot be expressed as a CSS
+ * time, about a day. It is not an infinite animation: the colors are resolved
+ * from the keyframes and the animation rests on the peak color, so a
+ * `forever` state is visible and it is removed only by another modified form
+ * or by `reset()`.
  */
-const FOREVER_DURATION = 86400000;
+const UNBOUNDED_DURATION = 86400000;
 
 /**
  * The state of a single `vscode-form-container` at the time of the query.
@@ -112,8 +118,11 @@ const isInRoot = (
  * The modified state of the form is shown on its controls with a light blue
  * wash. The colors follow the kind of the VS Code theme: `#eff3ff` is the
  * resting color of the light themes, the dark and the high contrast themes use
- * a color of the same hue with the lightness of their surfaces.
+ * a color of the same hue with the lightness of their surfaces. A control
+ * which shows an error keeps its error colors, the modified state is not
+ * painted on it.
  *
+ * @fires {CustomEvent<FormDirtyChangeDetail>} vsc-dirty-change - Dispatched when the modified state of the form is turned on or off. The event does not bubble, its `detail` contains the `form` and the new `dirty` value.
  * @cssprop [--vsc-form-control-dirty-background=#eff3ff] - Resting background color of the modified form controls
  * @cssprop [--vsc-form-control-dirty-background-peak=#dbe4ff] - Background color of the modified form controls at the beginning of the animation
  * @cssprop [--vsc-form-control-dirty-border-color=#93a9f0] - Border color of the modified form controls
@@ -129,7 +138,12 @@ export class VscodeFormContainer extends VscElement {
 
   /**
    * Every form container of a root with its current modified state. The nested
-   * form containers are included as well.
+   * form containers are included as well. A `Document` returns the forms of the
+   * document, the forms of a shadow root are returned when the shadow root is
+   * passed.
+   *
+   * The query walks the whole tree and it descends into the shadow roots, so it
+   * is not cheap and it should not be called on a hot path.
    *
    * @param root Defaults to the whole document.
    */
@@ -169,23 +183,25 @@ export class VscodeFormContainer extends VscElement {
   /**
    * How long the form stays highlighted after it has been modified. A number
    * is interpreted as milliseconds, a string as CSS time (`'2.5s'`), the
-   * `forever` value disables the automatic reset. Defaults to
+   * `forever` value disables the automatic reset. A negative duration is
+   * interpreted as zero. Defaults to
    * `VscodeFormContainer.defaultMarkDuration`, 5 seconds.
    */
-  @property({attribute: 'mark-duration', reflect: true})
+  @property({attribute: 'mark-duration'})
   markDuration: FormMarkDuration = VscodeFormContainer.defaultMarkDuration;
 
   /**
    * When the property is `false`, the form is not marked automatically on user
-   * interaction. It can still be marked by calling `mark()`.
+   * interaction. It can still be marked by calling `mark()`. The attribute is
+   * `markable="false"` to turn the automatic marking off, and the state is not
+   * written back to the DOM, so `vscode-form-container[markable]` matches the
+   * containers with the attribute only.
    */
   @property({
     attribute: 'markable',
     converter: {
       fromAttribute: (value: string | null) => value !== 'false',
-      toAttribute: (value: boolean) => (value ? '' : 'false'),
     },
-    reflect: true,
   })
   markable = true;
 
@@ -251,13 +267,11 @@ export class VscodeFormContainer extends VscElement {
 
   /**
    * Highlights the form as modified and starts the countdown of the reset.
-   * Every other form of the page is restored to its normal state immediately.
+   * Every other form of the same root is restored to its normal state
+   * immediately. The call always restarts the countdown, the delay which
+   * ignores the events of the automatic marking does not apply to it.
    */
   mark(): void {
-    if (this.dirty && performance.now() - this._lastMarkTime < RE_MARK_DELAY) {
-      return;
-    }
-
     this._lastMarkTime = performance.now();
     this._clearResetTimer();
     this._dirty = true;
@@ -316,7 +330,7 @@ export class VscodeFormContainer extends VscElement {
 
     this.style.setProperty(
       '--vsc-form-control-dirty-duration',
-      cssTime ?? `${FOREVER_DURATION}ms`
+      cssTime ?? `${UNBOUNDED_DURATION}ms`
     );
   }
 
@@ -367,34 +381,29 @@ export class VscodeFormContainer extends VscElement {
     this._resetTimer = null;
   }
 
+  /**
+   * Whether the event comes from a form control of this form. The nearest form
+   * container owns a control, so the form does not mark itself when the event
+   * comes from a control of a nested form container.
+   */
   private _markableFormControl(ev: Event): boolean {
     if (!this.markable) {
       return false;
     }
 
+    let controlWasFound = false;
+
     for (const node of ev.composedPath()) {
-      if (node === this) {
-        return false;
+      if (!(node instanceof HTMLElement)) {
+        continue;
       }
 
-      if (node instanceof HTMLElement) {
-        const tagName = node.tagName.toLowerCase();
+      if (node.localName === 'vscode-form-container') {
+        return node === this && controlWasFound;
+      }
 
-        if (
-          tagName.startsWith('vscode-') &&
-          !tagName.endsWith('-group') &&
-          !tagName.endsWith('-button')
-        ) {
-          return true;
-        }
-
-        if (
-          tagName === 'input' ||
-          tagName === 'select' ||
-          tagName === 'textarea'
-        ) {
-          return true;
-        }
+      if (isMarkableFormControl(node)) {
+        controlWasFound = true;
       }
     }
 
@@ -402,9 +411,17 @@ export class VscodeFormContainer extends VscElement {
   }
 
   private _handleFormControlStateChange = (ev: Event): void => {
-    if (this._markableFormControl(ev)) {
-      this.mark();
+    if (!this._markableFormControl(ev)) {
+      return;
     }
+
+    // The events of a keystroke and the keystrokes which follow each other
+    // quickly do not restart the countdown.
+    if (this.dirty && performance.now() - this._lastMarkTime < RE_MARK_DELAY) {
+      return;
+    }
+
+    this.mark();
   };
 
   private _toggleCompactLayout(layout: FormGroupLayout) {

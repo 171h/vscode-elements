@@ -4,7 +4,11 @@ import {sendKeys} from '@web/test-runner-commands';
 import {literal, unsafeStatic} from 'lit/static-html.js';
 import sinon from 'sinon';
 import {toCssTime, toMilliseconds} from '../includes/form-mark-duration.js';
+import {clickOnElement} from '../includes/test-helpers.js';
 import '../vscode-checkbox/index.js';
+import '../vscode-multi-select/index.js';
+import '../vscode-option/index.js';
+import '../vscode-single-select/index.js';
 import '../vscode-textfield/index.js';
 import {VscodeFormContainer} from './index.js';
 
@@ -104,18 +108,22 @@ describe('vscode-form-container', () => {
     it('interprets a number as milliseconds', () => {
       expect(toMilliseconds(5000)).to.eq(5000);
       expect(toMilliseconds(0)).to.eq(0);
+      expect(toMilliseconds(-1000), 'a negative value').to.eq(0);
     });
 
     it('interprets a string as CSS time', () => {
       expect(toMilliseconds('2.5s')).to.eq(2500);
       expect(toMilliseconds('500ms')).to.eq(500);
       expect(toMilliseconds('0s')).to.eq(0);
+      expect(toMilliseconds('-2.5s'), 'a negative value').to.eq(0);
+      expect(toMilliseconds('-2500'), 'a negative value').to.eq(0);
     });
 
     it('converts a duration to a CSS time value', () => {
       expect(toCssTime(5000)).to.eq('5000ms');
       expect(toCssTime('1.5s')).to.eq('1500ms');
       expect(toCssTime('forever')).to.be.null;
+      expect(toCssTime('-1000')).to.eq('0ms');
     });
   });
 
@@ -393,6 +401,24 @@ describe('vscode-form-container', () => {
 
       expect(el.dirty).to.be.true;
     });
+
+    it('removes the highlight immediately with a negative duration', async () => {
+      const id = nextFormId('negative-duration');
+      const el = await createForm(id, 'mark-duration="-1000"');
+
+      expect(el.markDuration).to.eq('-1000');
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration'),
+        'the negative duration is not used as an animation length'
+      ).to.eq('0ms');
+
+      typeIntoTextfield(el, 'a');
+      await el.updateComplete;
+
+      await waitFor(() => !el.dirty);
+      expect(el.dirty).to.be.false;
+      expect(el.querySelector('vscode-textfield')!.dirty).to.be.false;
+    });
   });
 
   describe('mark and reset', () => {
@@ -489,7 +515,124 @@ describe('vscode-form-container', () => {
       const el = await createForm(id);
 
       expect(el.markable).to.be.true;
-      expect(el.hasAttribute('markable')).to.be.true;
+      expect(
+        el.hasAttribute('markable'),
+        'the default is not written to the DOM'
+      ).to.be.false;
+      expect(el.matches('[markable]'), 'the attribute is not reflected').to.be
+        .false;
+    });
+
+    it('does not write the default duration to the DOM', async () => {
+      const id = nextFormId('default-duration-attribute');
+      const el = await createForm(id);
+
+      expect(el.markDuration).to.eq(5000);
+      expect(el.hasAttribute('mark-duration')).to.be.false;
+    });
+
+    it('restarts the countdown when it is marked again', async () => {
+      const id = nextFormId('mark-again');
+      const el = await createForm(id, 'mark-duration="400"');
+
+      el.mark();
+      await el.updateComplete;
+      await delay(250);
+
+      // The second call is inside the delay which ignores the events of the
+      // automatic marking, but a direct call is never ignored.
+      el.mark();
+      await el.updateComplete;
+      await delay(250);
+
+      expect(el.dirty).to.be.true;
+
+      await waitFor(() => !el.dirty);
+    });
+
+    it('marks the form when an option of a select is clicked', async () => {
+      const id = nextFormId('select-click');
+      const el = await createForm(id, 'mark-duration="600"');
+
+      const select = document.createElement('vscode-single-select');
+      select.innerHTML = `
+        <vscode-option>Lorem</vscode-option>
+        <vscode-option>Ipsum</vscode-option>
+      `;
+      el.querySelector('vscode-form-group')!.appendChild(select);
+      await select.updateComplete;
+      await el.updateComplete;
+
+      const events: string[] = [];
+      el.addEventListener('change', () => events.push('change'));
+
+      await clickOnElement(
+        select.shadowRoot!.querySelector('.select-face') as HTMLElement
+      );
+      await select.updateComplete;
+
+      await clickOnElement(
+        select.shadowRoot!.querySelector(
+          '.options li:nth-of-type(2)'
+        ) as HTMLElement
+      );
+      await select.updateComplete;
+      await el.updateComplete;
+
+      expect(select.value).to.eq('Ipsum');
+      expect(events, 'the change event reaches the form container').to.deep.eq([
+        'change',
+      ]);
+      expect(el.dirty).to.be.true;
+      expect(el.querySelector('vscode-single-select')!.dirty).to.be.true;
+    });
+
+    it('marks the form when an option of a multi-select is clicked', async () => {
+      const id = nextFormId('multi-select-click');
+      const el = await createForm(id, 'mark-duration="600"');
+
+      const select = document.createElement('vscode-multi-select');
+      select.innerHTML = `
+        <vscode-option>Lorem</vscode-option>
+        <vscode-option>Ipsum</vscode-option>
+      `;
+      el.querySelector('vscode-form-group')!.appendChild(select);
+      await select.updateComplete;
+      await el.updateComplete;
+
+      await clickOnElement(
+        select.shadowRoot!.querySelector('.select-face') as HTMLElement
+      );
+      await select.updateComplete;
+
+      await clickOnElement(
+        select.shadowRoot!.querySelector(
+          '.options li:nth-of-type(1)'
+        ) as HTMLElement
+      );
+      await select.updateComplete;
+      await el.updateComplete;
+
+      expect(el.dirty).to.be.true;
+      expect(el.querySelector('vscode-multi-select')!.dirty).to.be.true;
+    });
+
+    it('does not mark the form when a native control is modified', async () => {
+      const id = nextFormId('native-control');
+      const el = await createForm(id, 'mark-duration="600"');
+
+      const native = document.createElement('input');
+      el.querySelector('vscode-form-group')!.appendChild(native);
+      await el.updateComplete;
+
+      native.focus();
+      await sendKeys({type: 'a'});
+      await el.updateComplete;
+      await delay(50);
+
+      expect(native.value, 'the native control was modified').to.eq('a');
+      expect(el.dirty, 'only the form controls of the container mark it').to.be
+        .false;
     });
   });
 
@@ -558,6 +701,43 @@ describe('vscode-form-container', () => {
         false,
         true,
       ]);
+    });
+
+    it('marks the inner form only when the form containers are nested', async () => {
+      const innerId = nextFormId('nested-inner');
+
+      const outer = await fixture<VscodeFormContainer>(html`
+        <vscode-form-container mark-duration="10000">
+          <vscode-form-group variant="vertical">
+            <vscode-form-container id=${innerId} mark-duration="10000">
+              <vscode-form-group variant="vertical">
+                <vscode-textfield></vscode-textfield>
+              </vscode-form-group>
+            </vscode-form-container>
+          </vscode-form-group>
+        </vscode-form-container>
+      `);
+
+      const inner = outer.querySelector<VscodeFormContainer>(`#${innerId}`)!;
+      const textfield = inner.querySelector('vscode-textfield')!;
+
+      await outer.updateComplete;
+      await inner.updateComplete;
+
+      textfield.focus();
+      await sendKeys({type: 'a'});
+      await textfield.updateComplete;
+      await inner.updateComplete;
+      await outer.updateComplete;
+
+      expect(textfield.value, 'the control was modified').to.eq('a');
+      expect(inner.dirty, 'the form of the modified control is marked').to.be
+        .true;
+      expect(textfield.dirty, 'the modified control is marked').to.be.true;
+      expect(
+        outer.dirty,
+        'the form which contains the other form is not marked'
+      ).to.be.false;
     });
 
     it('does not restore a form of another root', async () => {
