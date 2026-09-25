@@ -76,11 +76,25 @@ const CASES: ControlCase[] = [
     background: 'rgb(49, 49, 49)',
   },
   {
+    tagName: 'vscode-single-select',
+    markup: `<vscode-single-select combobox></vscode-single-select>`,
+    surface: '.combobox-face',
+    background: 'rgb(49, 49, 49)',
+  },
+  {
     tagName: 'vscode-multi-select',
     markup: `<vscode-multi-select>
         <vscode-option value="one" selected>One</vscode-option>
       </vscode-multi-select>`,
     surface: '.select-face',
+    background: 'rgb(49, 49, 49)',
+  },
+  {
+    tagName: 'vscode-multi-select',
+    markup: `<vscode-multi-select combobox>
+        <vscode-option value="one" selected>One</vscode-option>
+      </vscode-multi-select>`,
+    surface: '.combobox-face',
     background: 'rgb(49, 49, 49)',
   },
   {
