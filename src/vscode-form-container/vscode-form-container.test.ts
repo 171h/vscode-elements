@@ -119,9 +119,9 @@ describe('vscode-form-container', () => {
 
       expect(VscodeFormContainer.defaultMarkDuration).to.eq(5000);
       expect(el.markDuration).to.eq(5000);
-      expect(el.style.getPropertyValue('--vsc-form-dirty-duration')).to.eq(
-        '5000ms'
-      );
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration')
+      ).to.eq('5000ms');
     });
 
     it('is marked when a form control is modified', async () => {
@@ -132,7 +132,6 @@ describe('vscode-form-container', () => {
       await el.updateComplete;
 
       expect(el.dirty).to.be.true;
-      expect(el.hasAttribute('dirty')).to.be.true;
       expect(getState(id)!.dirty).to.be.true;
     });
 
@@ -147,29 +146,6 @@ describe('vscode-form-container', () => {
       expect(el.dirty).to.be.true;
     });
 
-    it('is marked when the user types into a field', async () => {
-      const id = nextFormId('keystroke');
-      const el = await createForm(id, 'mark-duration="600"');
-      const textfield = el.querySelector('vscode-textfield')!;
-
-      textfield.focus();
-      await sendKeys({type: 'hello'});
-      await textfield.updateComplete;
-      await el.updateComplete;
-
-      expect(textfield.value).to.eq('hello');
-      expect(el.dirty).to.be.true;
-      expect(getComputedStyle(el).animationName).to.eq('vsc-form-dirty-fade');
-      expect(getComputedStyle(el).backgroundColor).to.not.eq(
-        'rgba(0, 0, 0, 0)'
-      );
-
-      await waitFor(() => !el.dirty);
-
-      expect(el.dirty).to.be.false;
-      expect(getComputedStyle(el).animationName).to.eq('none');
-    });
-
     it('is not marked by a programmatic value change', async () => {
       const id = nextFormId('programmatic');
       const el = await createForm(id);
@@ -181,18 +157,58 @@ describe('vscode-form-container', () => {
       expect(el.dirty).to.be.false;
     });
 
-    it('shows a light green background with an animation', async () => {
-      const id = nextFormId('animation');
+    it('marks every form control of the modified form', async () => {
+      const id = nextFormId('controls');
       const el = await createForm(id);
+
+      typeIntoTextfield(el, 'a');
+      await el.updateComplete;
+
+      expect(el.querySelector('vscode-textfield')!.dirty).to.be.true;
+      expect(el.querySelector('vscode-checkbox')!.dirty).to.be.true;
+    });
+
+    it('marks the control which was modified by the user', async () => {
+      const id = nextFormId('keystroke');
+      const el = await createForm(id, 'mark-duration="600"');
+      const textfield = el.querySelector('vscode-textfield')!;
+
+      textfield.focus();
+      await sendKeys({type: 'hello'});
+      await textfield.updateComplete;
+      await el.updateComplete;
+
+      expect(textfield.value).to.eq('hello');
+      expect(el.dirty).to.be.true;
+      expect(textfield.dirty).to.be.true;
+      expect(textfield.hasAttribute('dirty')).to.be.true;
+
+      await waitFor(() => !el.dirty);
+
+      expect(el.dirty).to.be.false;
+      expect(textfield.dirty).to.be.false;
+      expect(textfield.hasAttribute('dirty')).to.be.false;
+    });
+  });
+
+  describe('modified state of the form controls', () => {
+    it('shows a light green background on the textfield', async () => {
+      const id = nextFormId('control-background');
+      const el = await createForm(id);
+      const textfield = el.querySelector('vscode-textfield')!;
+      const surface = () =>
+        getComputedStyle(textfield.shadowRoot!.querySelector('.root')!);
+
+      expect(surface().backgroundColor).to.eq('rgb(49, 49, 49)');
 
       typeIntoTextfield(el, 'a');
       await el.updateComplete;
       await nextFrame();
 
-      const style = getComputedStyle(el);
+      const style = surface();
       const background = style.backgroundColor.match(/[\d.]+/g)!.map(Number);
 
-      expect(style.animationName).to.eq('vsc-form-dirty-fade');
+      expect(style.animationName).to.eq('vsc-form-control-dirty-fade');
       expect(style.animationDuration).to.eq('5s');
       // A translucent green: the green channel is the strongest one.
       expect(background[1]).to.be.greaterThan(background[0]);
@@ -200,14 +216,70 @@ describe('vscode-form-container', () => {
       expect(background[3]).to.be.greaterThan(0);
     });
 
-    it('animates the state change, not only the color', async () => {
-      const id = nextFormId('transition');
+    it('animates the state change of the control, not only the color', async () => {
+      const id = nextFormId('control-transition');
       const el = await createForm(id);
-      const style = getComputedStyle(el);
+      const textfield = el.querySelector('vscode-textfield')!;
+      const surface = textfield.shadowRoot!.querySelector('.root')!;
+
+      typeIntoTextfield(el, 'a');
+      await el.updateComplete;
+      await nextFrame();
+
+      const style = getComputedStyle(surface);
 
       expect(style.transitionProperty).to.contain('background-color');
       expect(style.transitionProperty).to.contain('box-shadow');
       expect(style.transitionDuration).to.not.eq('0s');
+    });
+
+    it('marks the box of the checkbox and the radio button', async () => {
+      const id = nextFormId('control-box');
+      const el = await createForm(id);
+      const checkbox = el.querySelector('vscode-checkbox')!;
+
+      checkbox.shadowRoot!.querySelector('input')!.click();
+      await el.updateComplete;
+      await nextFrame();
+
+      const box = getComputedStyle(
+        checkbox.shadowRoot!.querySelector('.icon')!
+      );
+
+      expect(box.animationName).to.contain('vsc-form-control-dirty-fade');
+      expect(box.animationName).to.contain('vsc-form-control-dirty-ring');
+      expect(box.boxShadow).to.not.eq('none');
+    });
+
+    it('does not change the background of the container', async () => {
+      const id = nextFormId('container-background');
+      const el = await createForm(id);
+
+      typeIntoTextfield(el, 'a');
+      await el.updateComplete;
+      await nextFrame();
+
+      expect(getComputedStyle(el).backgroundColor).to.eq('rgba(0, 0, 0, 0)');
+    });
+
+    it('restores the controls when the duration has passed', async () => {
+      const id = nextFormId('control-expire');
+      const el = await createForm(id, 'mark-duration="100"');
+      const textfield = el.querySelector('vscode-textfield')!;
+
+      typeIntoTextfield(el, 'a');
+      await el.updateComplete;
+      expect(textfield.dirty).to.be.true;
+
+      await waitFor(() => !textfield.dirty);
+      await nextFrame();
+
+      const surface = getComputedStyle(
+        textfield.shadowRoot!.querySelector('.root')!
+      );
+
+      expect(surface.backgroundColor).to.eq('rgb(49, 49, 49)');
+      expect(surface.animationName).to.eq('none');
     });
 
     it('restores the normal state when the duration has passed', async () => {
@@ -220,7 +292,7 @@ describe('vscode-form-container', () => {
 
       await waitFor(() => !el.dirty);
 
-      expect(el.hasAttribute('dirty')).to.be.false;
+      expect(el.querySelector('vscode-textfield')!.dirty).to.be.false;
       expect(getState(id)!.dirty).to.be.false;
     });
 
@@ -229,9 +301,9 @@ describe('vscode-form-container', () => {
       const el = await createForm(id, 'mark-duration="150ms"');
 
       expect(el.markDuration).to.eq('150ms');
-      expect(el.style.getPropertyValue('--vsc-form-dirty-duration')).to.eq(
-        '150ms'
-      );
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration')
+      ).to.eq('150ms');
       expect(el.getAttribute('mark-duration')).to.eq('150ms');
     });
 
@@ -242,19 +314,23 @@ describe('vscode-form-container', () => {
 
       const id = nextFormId('property');
       const el = await createForm(id);
+      const textfield = el.querySelector('vscode-textfield')!;
 
       el.markDuration = '2.5s';
       await el.updateComplete;
 
-      expect(el.style.getPropertyValue('--vsc-form-dirty-duration')).to.eq(
-        '2500ms'
-      );
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration')
+      ).to.eq('2500ms');
 
       typeIntoTextfield(el, 'a');
       await el.updateComplete;
       await nextFrame();
 
-      expect(getComputedStyle(el).animationDuration).to.eq('2.5s');
+      expect(
+        getComputedStyle(textfield.shadowRoot!.querySelector('.root')!)
+          .animationDuration
+      ).to.eq('2.5s');
 
       // The countdown is not over after 1.5 seconds, but it is after the
       // remaining second.
@@ -273,9 +349,9 @@ describe('vscode-form-container', () => {
       await delay(300);
 
       expect(el.dirty).to.be.true;
-      expect(el.style.getPropertyValue('--vsc-form-dirty-duration')).to.eq(
-        '86400000ms'
-      );
+      expect(
+        el.style.getPropertyValue('--vsc-form-control-dirty-duration')
+      ).to.eq('86400000ms');
     });
 
     it('keeps the modified state when the duration cannot be interpreted', async () => {
@@ -302,7 +378,7 @@ describe('vscode-form-container', () => {
       el.reset();
       await el.updateComplete;
       expect(el.dirty).to.be.false;
-      expect(el.hasAttribute('dirty')).to.be.false;
+      expect(el.querySelector('vscode-checkbox')!.dirty).to.be.false;
     });
 
     it('dispatches the vsc-dirty-change event', async () => {
@@ -428,7 +504,8 @@ describe('vscode-form-container', () => {
 
       expect(second.dirty).to.be.true;
       expect(first.dirty).to.be.false;
-      expect(first.hasAttribute('dirty')).to.be.false;
+      expect(first.querySelector('vscode-textfield')!.dirty).to.be.false;
+      expect(first.querySelector('vscode-checkbox')!.dirty).to.be.false;
     });
 
     it('keeps only one form highlighted when a third one is modified', async () => {
