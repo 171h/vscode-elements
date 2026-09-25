@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import {expect, fixture, html} from '@open-wc/testing';
+import {sendKeys} from '@web/test-runner-commands';
 import {literal, unsafeStatic} from 'lit/static-html.js';
+import '../vscode-textfield/index.js';
 import '../vscode-multi-select/index.js';
 import '../vscode-option/index.js';
 import '../vscode-single-select/index.js';
@@ -46,11 +48,13 @@ const OPTIONS = `
  * which is surrounded by whitespace.
  */
 const formMarkup = (
-  duration: string,
+  duration: string | null,
   dropdownMarkup: string,
   id: string
 ): string => `
-  <vscode-form-container id="${id}" mark-duration="${duration}">
+  <vscode-form-container id="${id}"${
+    duration === null ? '' : ` mark-duration="${duration}"`
+  }>
     <vscode-form-group variant="vertical">
       ${dropdownMarkup}
     </vscode-form-group>
@@ -129,6 +133,38 @@ describe('modified state of a dropdown', () => {
     expect(backgroundOf(dropdown).isBlue, 'the face is blue').to.be.true;
   });
 
+  it('uses 5 seconds as the default duration, like a textfield', async () => {
+    const id = `dropdown-default-${formIndex++}`;
+    const form = await createForm(
+      formMarkup(
+        null,
+        `<vscode-single-select>${OPTIONS}</vscode-single-select>`,
+        id
+      )
+    );
+    const dropdown = getControl(form, 'vscode-single-select')!;
+
+    expect(VscodeFormContainer.defaultMarkDuration).to.eq(5000);
+    expect(form.markDuration, 'the default duration').to.eq(
+      VscodeFormContainer.defaultMarkDuration
+    );
+    // The duration of the state is driven with the custom property of the
+    // controls, like it is for a textfield.
+    expect(
+      form.style.getPropertyValue('--vsc-form-control-dirty-duration')
+    ).to.eq('5000ms');
+
+    await selectOption(dropdown, 1);
+
+    const face = dropdown.shadowRoot!.querySelector('.select-face')!;
+
+    expect(form.dirty, 'the form is marked').to.be.true;
+    expect(
+      getComputedStyle(face).animationDuration,
+      'the state of the dropdown runs for the default duration'
+    ).to.eq('5s');
+  });
+
   it('restores the dropdown when the duration has passed', async () => {
     const id = `dropdown-expire-${formIndex++}`;
     const form = await createForm(
@@ -145,7 +181,7 @@ describe('modified state of a dropdown', () => {
     expect(form.dirty).to.be.true;
 
     // The state is still there after half of the duration.
-    await delay(500);
+    await delay(400);
     expect(form.dirty, 'the state is still there').to.be.true;
 
     await waitFor(() => !form.dirty);
@@ -158,6 +194,97 @@ describe('modified state of a dropdown', () => {
 
     expect(restored.background).to.eq(background);
     expect(restored.isBlue).to.be.false;
+  });
+
+  it('takes the duration from the property', async () => {
+    const id = `dropdown-property-${formIndex++}`;
+    const form = await createForm(
+      formMarkup(
+        null,
+        `<vscode-single-select>${OPTIONS}</vscode-single-select>`,
+        id
+      )
+    );
+    const dropdown = getControl(form, 'vscode-single-select')!;
+
+    form.markDuration = 800;
+    await form.updateComplete;
+
+    // The property is not written back to the DOM, it drives the duration of
+    // the state through the custom property of the controls.
+    expect(form.getAttribute('mark-duration')).to.be.null;
+    expect(form.markDuration).to.eq(800);
+    expect(
+      form.style.getPropertyValue('--vsc-form-control-dirty-duration')
+    ).to.eq('800ms');
+
+    await selectOption(dropdown, 1);
+    expect(form.dirty).to.be.true;
+
+    await waitFor(() => !form.dirty, 3000);
+
+    expect(form.dirty, 'the duration of the property ends the state').to.be
+      .false;
+    expect(dropdown.dirty).to.be.false;
+  });
+
+  it('reports the state of the dropdown forms of the page', async () => {
+    const firstId = `dropdown-states-first-${formIndex++}`;
+    const secondId = `dropdown-states-second-${formIndex++}`;
+    const fieldId = `dropdown-states-field-${formIndex++}`;
+
+    const first = await createForm(
+      formMarkup(
+        'forever',
+        `<vscode-single-select>${OPTIONS}</vscode-single-select>`,
+        firstId
+      )
+    );
+    const second = await createForm(
+      formMarkup(
+        'forever',
+        `<vscode-multi-select open>${OPTIONS}</vscode-multi-select>`,
+        secondId
+      )
+    );
+    const third = await createForm(
+      formMarkup('forever', `<vscode-textfield></vscode-textfield>`, fieldId)
+    );
+
+    const firstDropdown = getControl(first, 'vscode-single-select')!;
+    const thirdField = third.querySelector('vscode-textfield')!;
+
+    const stateOf = (id: string) =>
+      VscodeFormContainer.getFormStates().find((state) => state.id === id)!;
+
+    expect(stateOf(firstId).dirty, 'no form is modified').to.be.false;
+
+    await selectOption(firstDropdown, 1);
+
+    expect(stateOf(firstId).dirty, 'the first dropdown form is modified').to.be
+      .true;
+    expect(stateOf(secondId).dirty).to.be.false;
+
+    // The modification of another form of the page restores the first one.
+    thirdField.focus();
+    await sendKeys({type: 'a'});
+    await thirdField.updateComplete;
+    await third.updateComplete;
+
+    expect(third.dirty, 'the field form is modified').to.be.true;
+    expect(stateOf(firstId).dirty, 'the dropdown form is restored at once').to
+      .be.false;
+    expect(firstDropdown.dirty, 'the dropdown is restored as well').to.be.false;
+    expect(backgroundOf(firstDropdown).isBlue).to.be.false;
+
+    expect(
+      VscodeFormContainer.getFormStates()
+        .filter((state) => state.dirty)
+        .map((state) => state.id),
+      'only the last modified form is highlighted'
+    ).to.deep.eq([fieldId]);
+
+    expect(second.dirty).to.be.false;
   });
 
   it('keeps the state of a multiple select until the duration has passed', async () => {
@@ -198,7 +325,7 @@ describe('modified state of a dropdown', () => {
     await selectOption(dropdown, 0);
 
     // Longer than the duration of the other cases of the suite.
-    await delay(1500);
+    await delay(1000);
 
     expect(form.dirty, 'the form is still marked').to.be.true;
     expect(dropdown.dirty, 'the dropdown is still marked').to.be.true;
