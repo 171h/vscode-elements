@@ -663,6 +663,40 @@
               </div></vscode-form-container
             >
           </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper"
+          >
+            <h3>Modified state of the form container</h3>
+            <p class="muted">
+              Modify a form: the background turns light green and fades back to
+              the normal state after the configured duration. Only one form is
+              highlighted at a time.
+            </p>
+            <div class="grid">
+              <vscode-form-container id="dirty-form-default">
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-default">Default (5s)</vscode-label>
+                  <vscode-textfield id="dirty-default"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+              <vscode-form-container id="dirty-form-fast" mark-duration="1.5s">
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-fast">1.5s</vscode-label>
+                  <vscode-textfield id="dirty-fast"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+              <vscode-form-container
+                id="dirty-form-forever"
+                mark-duration="forever"
+              >
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-forever">forever</vscode-label>
+                  <vscode-textfield id="dirty-forever"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+            </div>
+          </article>
         </div>
       </section>
 

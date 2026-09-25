@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>form-container/dirty-highlight</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+    <style>
+      body {
+        font-family: var(--vscode-font-family);
+        color: var(--vscode-foreground);
+      }
+
+      section {
+        margin-bottom: 28px;
+        max-width: 727px;
+      }
+
+      vscode-form-container {
+        border: 1px solid var(--vscode-panel-border, #3c3c3c);
+        padding: 12px;
+      }
+
+      .state {
+        font-size: 12px;
+        opacity: 0.8;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Modified state of the form container</h1>
+    <p class="state">
+      Modify a control of a form, the background of the form turns light green.
+      Only one form is highlighted at a time: modify another form and the
+      previous one returns to its normal state immediately.
+    </p>
+
+    <section>
+      <h2>Default duration (5s)</h2>
+      <vscode-form-container id="form-default">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="default-name">Name</vscode-label>
+          <vscode-textfield id="default-name"></vscode-textfield>
+          <vscode-checkbox label="Enabled"></vscode-checkbox>
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
+
+    <section>
+      <h2>Custom duration (1.5s)</h2>
+      <vscode-form-container id="form-custom" mark-duration="1.5s">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="custom-query">Query</vscode-label>
+          <vscode-textfield id="custom-query"></vscode-textfield>
+          <vscode-form-helper>Highlighted for 1.5 seconds.</vscode-form-helper>
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
+
+    <section>
+      <h2>Endless highlight</h2>
+      <vscode-form-container id="form-forever" mark-duration="forever">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="forever-query">Query</vscode-label>
+          <vscode-textfield id="forever-query"></vscode-textfield>
+          <vscode-form-helper
+            >The highlight is removed by another modified form or by the reset
+            button.</vscode-form-helper
+          >
+        </vscode-form-group>
+      </vscode-form-container>
+    </section>
+
+    <section>
+      <h2>Automatic marking turned off</h2>
+      <vscode-form-container id="form-manual" markable="false">
+        <vscode-form-group variant="vertical">
+          <vscode-label for="manual-query">Query</vscode-label>
+          <vscode-textfield id="manual-query"></vscode-textfield>
+          <vscode-form-helper
+            >Only the buttons below change the state.</vscode-form-helper
+          >
+        </vscode-form-group>
+      </vscode-form-container>
+      <div class="row">
+        <vscode-button id="mark-button">mark()</vscode-button>
+        <vscode-button id="reset-button" secondary>reset()</vscode-button>
+      </div>
+    </section>
+
+    <section>
+      <h2>State of every form of the page</h2>
+      <vscode-button id="refresh-button">Refresh</vscode-button>
+      <pre id="states"></pre>
+    </section>
+
+    <script type="module">
+      import {VscodeFormContainer} from '/dist/main.js';
+
+      const showStates = () => {
+        const states = VscodeFormContainer.getFormStates().map((state) => ({
+          id: state.id,
+          dirty: state.dirty,
+          markDuration: state.markDuration,
+        }));
+
+        document.querySelector('#states').textContent = JSON.stringify(
+          states,
+          null,
+          2
+        );
+      };
+
+      document
+        .querySelector('#form-manual')
+        .addEventListener('vsc-dirty-change', (ev) => {
+          console.log('vsc-dirty-change', ev.detail.dirty);
+          showStates();
+        });
+
+      document.querySelector('#mark-button').addEventListener('click', () => {
+        document.querySelector('#form-manual').mark();
+      });
+
+      document.querySelector('#reset-button').addEventListener('click', () => {
+        document.querySelector('#form-manual').reset();
+      });
+
+      document
+        .querySelector('#refresh-button')
+        .addEventListener('click', () => {
+          showStates();
+        });
+
+      window.setInterval(showStates, 500);
+      showStates();
+    </script>
+  </body>
+</html>
