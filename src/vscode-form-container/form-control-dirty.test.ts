@@ -148,20 +148,36 @@ describe('modified state of the form controls', () => {
         .true;
 
       const style = getComputedStyle(surface());
-      const background = style.backgroundColor.match(/[\d.]+/g)!.map(Number);
+      const keyframes = getFadeKeyframes(surface());
 
       expect(style.animationName).to.contain('vsc-form-control-dirty-fade');
       expect(
         style.animationDuration.split(',').map((part) => part.trim())
       ).to.deep.eq(testCase.box ? ['10s', '10s'] : ['10s']);
-      // A translucent green: the green channel is the strongest one.
-      expect(background[1]).to.be.greaterThan(background[0]);
-      expect(background[1]).to.be.greaterThan(background[2]);
-      expect(background[3]).to.be.greaterThan(0);
+      // The animation paints the colors of the state, so the resolved
+      // keyframes show the color of the theme.
+      expect(keyframes[0].backgroundColor, 'the peak color').to.eq(
+        'rgb(219, 228, 255)'
+      );
+      expect(keyframes[1].backgroundColor, 'the resting color').to.eq(
+        'rgb(239, 243, 255)'
+      );
 
       if (testCase.box) {
         expect(style.boxShadow, 'the box has a ring').to.not.eq('none');
         expect(style.animationName).to.contain('vsc-form-control-dirty-ring');
+        expect(style.borderTopColor, 'the border before the transition').to.eq(
+          'rgb(60, 60, 60)'
+        );
+
+        // The border fades into the color of the state, so its value is read
+        // after the transition is over.
+        await delay(400);
+
+        expect(
+          getComputedStyle(surface()).borderTopColor,
+          'the border of the box'
+        ).to.eq('rgb(147, 169, 240)');
       }
 
       form.reset();
@@ -176,7 +192,7 @@ describe('modified state of the form controls', () => {
     });
   }
 
-  it('fades from the peak color to the resting color', async () => {
+  it('fades from the peak color to the resting color of the light theme', async () => {
     const form = await createForm(`<vscode-textfield></vscode-textfield>`);
     const control = form.querySelector('vscode-textfield') as TestControl;
     const surface = control.shadowRoot!.querySelector('.root')!;
@@ -188,20 +204,24 @@ describe('modified state of the form controls', () => {
     const keyframes = getFadeKeyframes(surface);
 
     expect(keyframes).to.have.lengthOf(2);
-    expect(keyframes[0].backgroundColor).to.eq('rgba(46, 160, 67, 0.55)');
-    expect(keyframes[1].backgroundColor).to.eq('rgba(46, 160, 67, 0.3)');
+    expect(keyframes[0].backgroundColor, 'the peak color').to.eq(
+      'rgb(219, 228, 255)'
+    );
+    expect(keyframes[1].backgroundColor, 'the resting color').to.eq(
+      'rgb(239, 243, 255)'
+    );
   });
 
-  it('takes the colors from the custom properties of the container', async () => {
+  it('takes the colors from the custom properties of the control', async () => {
     const form = await createForm(`<vscode-textfield></vscode-textfield>`);
     const control = form.querySelector('vscode-textfield') as TestControl;
     const surface = control.shadowRoot!.querySelector('.root')!;
 
-    form.style.setProperty(
+    control.style.setProperty(
       '--vsc-form-control-dirty-background',
       'rgb(1, 2, 3)'
     );
-    form.style.setProperty(
+    control.style.setProperty(
       '--vsc-form-control-dirty-background-peak',
       'rgb(9, 9, 9)'
     );
@@ -212,14 +232,112 @@ describe('modified state of the form controls', () => {
 
     const keyframes = getFadeKeyframes(surface);
 
-    expect(
-      keyframes[0].backgroundColor,
-      'the peak color of the container is used'
-    ).to.eq('rgb(9, 9, 9)');
-    expect(
-      keyframes[1].backgroundColor,
-      'the resting color of the container is used'
-    ).to.eq('rgb(1, 2, 3)');
+    expect(keyframes[0].backgroundColor, 'the peak color is replaced').to.eq(
+      'rgb(9, 9, 9)'
+    );
+    expect(keyframes[1].backgroundColor, 'the resting color is replaced').to.eq(
+      'rgb(1, 2, 3)'
+    );
+  });
+
+  describe('theme of the page', () => {
+    const setThemeKind = (kind: string) => {
+      document.body.dataset.vscodeThemeKind = kind;
+    };
+
+    const clearThemeKind = () => {
+      delete document.body.dataset.vscodeThemeKind;
+    };
+
+    const restingColor = async (form: VscodeFormContainer) => {
+      const control = form.querySelector('vscode-textfield') as TestControl;
+      const surface = control.shadowRoot!.querySelector('.root')!;
+
+      form.mark();
+      await form.updateComplete;
+      await nextFrame();
+
+      return getFadeKeyframes(surface)[1].backgroundColor;
+    };
+
+    afterEach(() => {
+      clearThemeKind();
+    });
+
+    it('uses the light color in the light theme', async () => {
+      setThemeKind('vscode-light');
+      const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+
+      expect(await restingColor(form)).to.eq('rgb(239, 243, 255)');
+    });
+
+    it('uses the dark color in the dark theme', async () => {
+      setThemeKind('vscode-dark');
+      const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+
+      expect(await restingColor(form)).to.eq('rgb(36, 58, 94)');
+    });
+
+    it('uses the high contrast color in the high contrast theme', async () => {
+      setThemeKind('vscode-high-contrast');
+      const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+
+      expect(await restingColor(form)).to.eq('rgb(36, 58, 94)');
+    });
+
+    it('uses the light high contrast color in the light high contrast theme', async () => {
+      setThemeKind('vscode-high-contrast-light');
+      const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+
+      expect(await restingColor(form)).to.eq('rgb(219, 228, 255)');
+    });
+
+    it('uses the light color when the theme is not published', async () => {
+      clearThemeKind();
+      const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+
+      expect(await restingColor(form)).to.eq('rgb(239, 243, 255)');
+    });
+
+    it('follows the theme of the page when it changes', async () => {
+      const form = await createForm(`<vscode-textfield></vscode-textfield>`);
+
+      expect(await restingColor(form), 'the light theme by default').to.eq(
+        'rgb(239, 243, 255)'
+      );
+
+      setThemeKind('vscode-dark');
+      form.reset();
+      await form.updateComplete;
+
+      expect(await restingColor(form), 'the dark theme after the change').to.eq(
+        'rgb(36, 58, 94)'
+      );
+    });
+
+    it('keeps the box of the checkbox visible in the dark theme', async () => {
+      setThemeKind('vscode-dark');
+      const form = await createForm(
+        `<vscode-checkbox>Checkbox</vscode-checkbox>`
+      );
+      const checkbox = form.querySelector('vscode-checkbox') as TestControl;
+      const box = checkbox.shadowRoot!.querySelector('.icon')!;
+
+      form.mark();
+      await form.updateComplete;
+      await nextFrame();
+
+      const style = getComputedStyle(box);
+      const keyframes = getFadeKeyframes(box);
+
+      expect(keyframes[1].backgroundColor, 'the dark resting color').to.eq(
+        'rgb(36, 58, 94)'
+      );
+      expect(style.borderTopColor, 'the dark border color').to.eq(
+        'rgb(74, 110, 168)'
+      );
+      expect(style.boxShadow, 'the ring of the dark theme').to.not.eq('none');
+    });
   });
 
   it('marks every control of the form', async () => {

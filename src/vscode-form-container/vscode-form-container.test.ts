@@ -11,6 +11,27 @@ import {VscodeFormContainer} from './index.js';
 const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
+/**
+ * The keyframes of the fading animation of a surface. The browser resolves the
+ * custom properties, so the keyframes show the colors of the active theme.
+ */
+const getFadeKeyframes = (surface: Element): Keyframe[] => {
+  const animation = (
+    surface.getAnimations() as unknown as Array<{
+      animationName?: string;
+      effect?: {getKeyframes: () => Keyframe[]};
+    }>
+  ).find((item) =>
+    (item.animationName ?? '').includes('vsc-form-control-dirty-fade')
+  );
+
+  if (!animation?.effect) {
+    throw new Error('the fading animation of the surface is not running');
+  }
+
+  return animation.effect.getKeyframes();
+};
+
 const delay = (milliseconds: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 
@@ -192,7 +213,7 @@ describe('vscode-form-container', () => {
   });
 
   describe('modified state of the form controls', () => {
-    it('shows a light green background on the textfield', async () => {
+    it('shows the light theme background on the textfield', async () => {
       const id = nextFormId('control-background');
       const el = await createForm(id);
       const textfield = el.querySelector('vscode-textfield')!;
@@ -206,14 +227,22 @@ describe('vscode-form-container', () => {
       await nextFrame();
 
       const style = surface();
-      const background = style.backgroundColor.match(/[\d.]+/g)!.map(Number);
+      // The animation paints the color of the state, the resolved keyframes
+      // show the colors of the theme.
+      const keyframes = getFadeKeyframes(
+        textfield.shadowRoot!.querySelector('.root')!
+      );
 
       expect(style.animationName).to.eq('vsc-form-control-dirty-fade');
       expect(style.animationDuration).to.eq('5s');
-      // A translucent green: the green channel is the strongest one.
-      expect(background[1]).to.be.greaterThan(background[0]);
-      expect(background[1]).to.be.greaterThan(background[2]);
-      expect(background[3]).to.be.greaterThan(0);
+      expect(
+        keyframes[0].backgroundColor,
+        'the peak color of the light theme'
+      ).to.eq('rgb(219, 228, 255)');
+      expect(
+        keyframes[1].backgroundColor,
+        'the resting color of the light theme'
+      ).to.eq('rgb(239, 243, 255)');
     });
 
     it('animates the state change of the control, not only the color', async () => {
@@ -229,8 +258,8 @@ describe('vscode-form-container', () => {
       const style = getComputedStyle(surface);
 
       expect(style.transitionProperty).to.contain('background-color');
-      expect(style.transitionProperty).to.contain('box-shadow');
       expect(style.transitionDuration).to.not.eq('0s');
+      expect(style.animationDuration).to.eq('5s');
     });
 
     it('marks the box of the checkbox and the radio button', async () => {
