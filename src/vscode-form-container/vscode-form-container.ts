@@ -6,6 +6,10 @@ import {
   toCssTime,
   toMilliseconds,
 } from '../includes/form-mark-duration.js';
+import {
+  markFormControls,
+  unmarkFormControls,
+} from '../includes/form-control-dirty.styles.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import {VscodeCheckboxGroup} from '../vscode-checkbox-group/index.js';
 import {VscodeFormGroup, FormGroupVariant} from '../vscode-form-group/index.js';
@@ -105,10 +109,11 @@ const isInRoot = (
 /**
  * @tag vscode-form-container
  *
- * @cssprop [--vsc-form-dirty-color=#2ea0431a] - Background color of the modified state
- * @cssprop [--vsc-form-dirty-color-peak=#2ea04340] - Peak color of the modified state animation
- * @cssprop [--vsc-form-dirty-ring-color=#2ea04300] - Start and end ring color of the modified state animation
- * @cssprop [--vsc-form-dirty-ring-color-peak=#2ea04366] - Peak ring color of the modified state animation
+ * @cssprop [--vsc-form-control-dirty-background=rgba(46, 160, 67, 0.3)] - Background color of the modified form controls
+ * @cssprop [--vsc-form-control-dirty-background-peak=rgba(46, 160, 67, 0.55)] - Background color of the modified form controls at the beginning of the animation
+ * @cssprop [--vsc-form-control-dirty-border-color=rgba(63, 185, 80, 0.5)] - Border color of the modified form controls
+ * @cssprop [--vsc-form-control-dirty-ring-color=rgba(63, 185, 80, 0.45)] - Ring color of the modified checkbox and radio buttons
+ * @cssprop [--vsc-form-control-dirty-duration=5000ms] - Duration of the modified state, it is set automatically by the `markDuration` property
  */
 @customElement('vscode-form-container')
 export class VscodeFormContainer extends VscElement {
@@ -285,25 +290,27 @@ export class VscodeFormContainer extends VscElement {
     }
   }
 
+  /**
+   * The modified state is shown by the form controls of the form. The
+   * container itself keeps its own background.
+   */
   private _reflectDirty(): void {
     if (this._dirty) {
-      if (!this.hasAttribute('dirty')) {
-        this.setAttribute('dirty', '');
-      }
-    } else if (this.hasAttribute('dirty')) {
-      this.removeAttribute('dirty');
+      markFormControls(this);
+    } else {
+      unmarkFormControls(this);
     }
   }
 
   /**
-   * The animation of the highlight lasts as long as the modified state, so
-   * the color changes gradually and the end of the countdown is visible.
+   * The animation of the modified state lasts as long as the state, so the
+   * color changes gradually and the end of the countdown is visible.
    */
   private _reflectMarkDuration(): void {
     const cssTime = toCssTime(this.markDuration);
 
     this.style.setProperty(
-      '--vsc-form-dirty-duration',
+      '--vsc-form-control-dirty-duration',
       cssTime ?? `${FOREVER_DURATION}ms`
     );
   }
