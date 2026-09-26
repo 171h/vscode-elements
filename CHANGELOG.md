@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [3.3.1] - 2026-09-26
+
+### Maintenance
+
+- **deps**: bump @vscode/codicons to 0.0.46-24 (198c6021)
+
 ## [3.3.0] - 2026-09-25
 
 ### Added
