@@ -157,7 +157,7 @@
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
     "@vscode-elements/webview-playground": "^1.6.0",
-    "@vscode/codicons": "^0.0.45",
+    "@vscode/codicons": "^0.0.46-24",
     "@web/dev-server": "^1.0.0",
     "@web/dev-server-esbuild": "^2.0.0",
     "@web/dev-server-legacy": "^3.0.0",
