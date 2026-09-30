@@ -7,6 +7,7 @@ export {VscodeCollapsible} from './vscode-collapsible/index.js';
 export {VscodeContextMenuItem} from './vscode-context-menu-item/index.js';
 export {VscodeContextMenu} from './vscode-context-menu/index.js';
 export {VscodeDivider} from './vscode-divider/index.js';
+export {VscodeFieldset} from './vscode-fieldset/index.js';
 export {VscodeFormContainer} from './vscode-form-container/index.js';
 export {VscodeFormGroup} from './vscode-form-group/index.js';
 export {VscodeFormHelper} from './vscode-form-helper/index.js';
