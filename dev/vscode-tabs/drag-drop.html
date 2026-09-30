@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sidebar drag and drop</title>
+    <script type="module" src="/dist/main.js"></script>
+    <style>
+      body {
+        margin: 32px;
+        background: #181818;
+        color: #ccc;
+        font: 13px sans-serif;
+      }
+      main {
+        display: flex;
+        gap: 32px;
+      }
+      vscode-tabs {
+        width: 400px;
+        border: 1px solid #444;
+      }
+      vscode-tab-panel {
+        min-height: 280px;
+        padding: 8px;
+      }
+      fieldset {
+        min-width: 0;
+        margin: 0 0 8px;
+        min-height: 90px;
+        border: 1px solid #444;
+      }
+      legend {
+        background: #383838;
+        padding: 6px 12px;
+        cursor: grab;
+      }
+      label {
+        display: block;
+        margin: 12px 0;
+      }
+      input {
+        background: #292929;
+        color: #ccc;
+        border: 1px solid #555;
+      }
+      #events {
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sidebar drag and drop</h1>
+    <p>
+      Drag tab titles to reorder. Drag legends to move views. Hover over the
+      center of a tab to open it; drop near its edges to create a tab. Drop a
+      tab title into another panel to merge its views.
+    </p>
+    <main>
+      <vscode-tabs>
+        <vscode-tab-header>Explorer</vscode-tab-header>
+        <vscode-tab-panel>
+          <vscode-fieldset
+            ><fieldset>
+              <legend>Files</legend>
+              <label
+                >Filter <input value="Preserved when moved"
+              /></label></fieldset
+          ></vscode-fieldset>
+          <fieldset>
+            <legend>Outline</legend>
+            <p>Class and function outline</p>
+          </fieldset>
+          <fieldset>
+            <legend>Timeline</legend>
+            <p>Recent edits</p>
+          </fieldset>
+        </vscode-tab-panel>
+        <vscode-tab-header>Search</vscode-tab-header>
+        <vscode-tab-panel
+          ><fieldset>
+            <legend>Search results</legend>
+            <label>Query <input /></label></fieldset
+        ></vscode-tab-panel>
+        <vscode-tab-header>Empty</vscode-tab-header>
+        <vscode-tab-panel></vscode-tab-panel>
+      </vscode-tabs>
+      <vscode-tabs>
+        <vscode-tab-header>Secondary sidebar</vscode-tab-header>
+        <vscode-tab-panel
+          ><fieldset>
+            <legend>Notes</legend>
+            <p>Drop views from either sidebar here.</p>
+          </fieldset></vscode-tab-panel
+        >
+      </vscode-tabs>
+    </main>
+    <p id="events" aria-live="polite">Move a view to see the layout event.</p>
+    <script>
+      document.addEventListener('vsc-tabs-layout-change', (event) => {
+        document.querySelector('#events').textContent =
+          `Moved ${event.detail.views.length} views; layout can now be saved.`;
+      });
+    </script>
+  </body>
+</html>
