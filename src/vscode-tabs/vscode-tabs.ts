@@ -6,8 +6,15 @@ import {customElement, VscElement} from '../includes/VscElement.js';
 import {VscodeTabHeader} from '../vscode-tab-header/index.js';
 import {VscodeTabPanel} from '../vscode-tab-panel/index.js';
 import styles from './vscode-tabs.styles.js';
+import {TabsDragController} from './drag-controller.js';
 
 export type VscTabsSelectEvent = CustomEvent<{selectedIndex: number}>;
+export type VscTabsLayoutChangeEvent = CustomEvent<{
+  source: VscodeTabs;
+  destination: VscodeTabs;
+  views: HTMLElement[];
+  header?: VscodeTabHeader;
+}>;
 
 /**
  * @tag vscode-tabs
@@ -17,6 +24,7 @@ export type VscTabsSelectEvent = CustomEvent<{selectedIndex: number}>;
  * @slot addons - Right aligned area in the header.
  *
  * @fires {VscTabSelectEvent} vsc-tabs-select - Dispatched when the active tab is changed
+ * @fires {VscTabsLayoutChangeEvent} vsc-tabs-layout-change - Dispatched after moving tabs or views
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]
@@ -35,6 +43,31 @@ export class VscodeTabs extends VscElement {
 
   @property({type: Number, reflect: true, attribute: 'selected-index'})
   selectedIndex = 0;
+
+  private _dragController = new TabsDragController(this);
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this._dragController.connect();
+  }
+
+  override disconnectedCallback() {
+    this._dragController.disconnect();
+    super.disconnectedCallback();
+  }
+
+  /** @internal Refresh paired headers/panels after a DOM move. */
+  syncDragTabs(activePanel = this._tabPanels[this.selectedIndex]) {
+    this._onMainSlotChange();
+    this._onHeaderSlotChange();
+    const index = activePanel ? this._tabPanels.indexOf(activePanel) : -1;
+    this.selectedIndex =
+      index >= 0
+        ? index
+        : Math.max(0, Math.min(this.selectedIndex, this._tabPanels.length - 1));
+    this._setActiveTab();
+    this._dragController.refresh();
+  }
 
   constructor() {
     super();
@@ -212,5 +245,6 @@ declare global {
 
   interface GlobalEventHandlersEventMap {
     'vsc-tabs-select': VscTabsSelectEvent;
+    'vsc-tabs-layout-change': VscTabsLayoutChangeEvent;
   }
 }
