@@ -55,7 +55,12 @@ const styles = css`
         var(--vscode-foreground, CanvasText)
       )
     );
-    background: inherit;
+    /* The legend sits in the fieldset border notch, where the fieldset
+       background is not painted. An opaque background would cover the
+       surface behind the border with a rectangle, which is especially
+       visible on dark themes. Transparent blends with the surface and the
+       theme foreground keeps the title readable. */
+    background: transparent;
     border: 0;
     font-family: inherit;
     font-size: 11px;

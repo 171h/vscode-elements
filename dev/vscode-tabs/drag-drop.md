@@ -66,7 +66,9 @@ foreground/border, `--vscode-contrastBorder`, `--vscode-focusBorder`
 and `--vscode-disabledForeground`. Missing sidebar tokens fall back to editor
 and foreground tokens, then system colors. High contrast borders and Windows
 forced colors remain visible. Theme changes update existing views immediately.
-Legends have no border and inherit the fieldset background.
+Legends have no border and a transparent background, so they blend with the
+surface behind the fieldset border instead of painting a dark rectangle in dark
+themes; their theme foreground stays readable on light and dark surfaces.
 Use `size="small"`, `size="medium"` (default) or `size="large"` on
 `vscode-fieldset` or a direct native panel fieldset. Their border radii match the
 project's form controls: 1px, 4px and 6px. Applications can override

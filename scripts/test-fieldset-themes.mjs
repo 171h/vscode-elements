@@ -89,8 +89,8 @@ try {
       assert.equal(field.titleColor, result.titleColor, `${theme}: title`);
       assert.equal(
         field.titleBackground,
-        field.background,
-        `${theme}: title background`
+        'rgba(0, 0, 0, 0)',
+        `${theme}: title background blends with the surface`
       );
       assert.equal(
         field.titleBorderWidth,

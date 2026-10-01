@@ -25,7 +25,7 @@ describe('fieldset theme', () => {
       'rgb(255, 255, 0)'
     );
     expect(getComputedStyle(legend).backgroundColor).to.equal(
-      'rgb(10, 20, 30)'
+      'rgba(0, 0, 0, 0)'
     );
     expect(getComputedStyle(legend).borderTopWidth).to.equal('0px');
     expect(getComputedStyle(legend).color).to.equal('rgb(200, 210, 220)');
@@ -34,6 +34,24 @@ describe('fieldset theme', () => {
     expect(new FormData(form).get('value')).to.equal('kept');
     fieldset.disabled = true;
     expect(new FormData(form).has('value')).to.equal(false);
+  });
+
+  it('keeps a dark theme legend transparent and readable', async () => {
+    const el = await fixture<HTMLElement>(
+      html` <vscode-fieldset
+        style="--vscode-sideBar-background: #181818; --vscode-sideBarSectionHeader-foreground: #cccccc"
+      >
+        <fieldset>
+          <legend>Dark view</legend>
+          <input />
+        </fieldset>
+      </vscode-fieldset>`
+    );
+    const legend = el.querySelector('legend')!;
+    expect(getComputedStyle(legend).backgroundColor).to.equal(
+      'rgba(0, 0, 0, 0)'
+    );
+    expect(getComputedStyle(legend).color).to.equal('rgb(204, 204, 204)');
   });
 
   it('responds to live theme changes and preserves caller overrides', async () => {
@@ -90,9 +108,15 @@ describe('fieldset theme', () => {
     root.innerHTML =
       '<vscode-fieldset><fieldset><legend>Shadow view</legend></fieldset></vscode-fieldset>';
     await Promise.resolve();
-    expect(
-      getComputedStyle(root.querySelector('legend')!).backgroundColor
-    ).to.equal('rgb(20, 30, 40)');
+    const fieldset = root.querySelector('fieldset')!;
+    const legend = root.querySelector('legend')!;
+    expect(getComputedStyle(fieldset).backgroundColor).to.equal(
+      'rgb(20, 30, 40)'
+    );
+    expect(getComputedStyle(legend).backgroundColor).to.equal(
+      'rgba(0, 0, 0, 0)'
+    );
+    expect(getComputedStyle(legend).fontWeight).to.equal('600');
     expect(root.querySelectorAll('[data-vsc-fieldset-styles]')).to.have.length(
       1
     );
