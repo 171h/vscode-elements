@@ -207,6 +207,25 @@
         height: 220px;
         width: 100%;
       }
+      .sidebar-drag-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+      }
+      .sidebar-drag-demo vscode-tabs {
+        min-width: 0;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .sidebar-drag-demo vscode-tab-panel {
+        min-height: 300px;
+        padding: 8px;
+      }
+      .sidebar-drag-demo fieldset {
+        min-height: 80px;
+      }
+      .demo-card a {
+        color: var(--vscode-textLink-foreground, #3794ff);
+      }
       .pane {
         display: grid;
         place-items: center;
@@ -966,6 +985,63 @@
             >
           </article>
           <article
+            id="sidebar-drag-card"
+            class="demo-card wide"
+            data-components="vscode-tabs vscode-tab-header vscode-tab-panel vscode-fieldset fieldset drag drop"
+          >
+            <h3>Tabs / fieldsets · sidebar drag and drop</h3>
+            <p class="muted">
+              Drag tab titles to reorder, or legends to move views. Hover over a
+              tab's center to reveal its panel; drop near its edges to create a
+              tab. Drop a tab title into another panel to merge its views. Views
+              can also move between the two sidebars below.
+              <a href="./vscode-tabs/drag-drop.html"
+                >Open standalone test page</a
+              >
+            </p>
+            <div class="sidebar-drag-demo">
+              <vscode-tabs id="sidebar-drag-primary">
+                <vscode-tab-header>Explorer</vscode-tab-header>
+                <vscode-tab-panel>
+                  <vscode-fieldset>
+                    <fieldset>
+                      <legend>Files</legend>
+                      <label
+                        >Filter <input value="Preserved when moved"
+                      /></label>
+                    </fieldset>
+                  </vscode-fieldset>
+                  <fieldset>
+                    <legend>Outline</legend>
+                    <p>Class and function outline</p>
+                  </fieldset>
+                  <fieldset>
+                    <legend>Timeline</legend>
+                    <p>Recent edits</p>
+                  </fieldset>
+                </vscode-tab-panel>
+                <vscode-tab-header>Search</vscode-tab-header>
+                <vscode-tab-panel>
+                  <fieldset>
+                    <legend>Search results</legend>
+                    <label>Query <input /></label>
+                  </fieldset>
+                </vscode-tab-panel>
+                <vscode-tab-header>Empty</vscode-tab-header>
+                <vscode-tab-panel></vscode-tab-panel>
+              </vscode-tabs>
+              <vscode-tabs id="sidebar-drag-secondary">
+                <vscode-tab-header>Secondary sidebar</vscode-tab-header>
+                <vscode-tab-panel>
+                  <fieldset>
+                    <legend>Notes</legend>
+                    <p>Drop views from either sidebar here.</p>
+                  </fieldset>
+                </vscode-tab-panel>
+              </vscode-tabs>
+            </div>
+          </article>
+          <article
             class="demo-card wide"
             data-components="vscode-split-layout vscode-scrollable"
           >
@@ -1258,6 +1334,11 @@
         });
       document.querySelector('#clear-log').addEventListener('click', () => {
         eventLog.textContent = 'Cleared.';
+      });
+      document.addEventListener('vsc-tabs-layout-change', (event) => {
+        eventLog.textContent =
+          `[${new Date().toLocaleTimeString()}] ${event.type}: moved ${event.detail.views.length} views\n` +
+          eventLog.textContent;
       });
       document.addEventListener('click', (event) => {
         const target = event

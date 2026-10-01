@@ -61,6 +61,21 @@ Theme tokens: `--vscode-activityBar-dropBorder`, `--vscode-sideBar-dropBackgroun
 `--vscode-sideBarSectionHeader-background`, `--vscode-foreground`,
 `--vscode-focusBorder`, `--vscode-contrastActiveBorder`.
 
+Fieldsets and their legends use sidebar background/foreground, section header
+foreground/border, `--vscode-contrastBorder`, `--vscode-focusBorder`
+and `--vscode-disabledForeground`. Missing sidebar tokens fall back to editor
+and foreground tokens, then system colors. High contrast borders and Windows
+forced colors remain visible. Theme changes update existing views immediately.
+Legends have no border and inherit the fieldset background.
+The same styles cover wrapped fieldsets and direct native panel children without
+styling nested form fieldsets. Low specificity allows application CSS overrides.
+Styles are installed once per containing document or shadow root, because a
+shadow slot cannot style the native fieldset's legend descendants.
+
+The standalone demo includes the project's theme selector. Run
+`node scripts/test-fieldset-themes.mjs` against the development server to check
+all ten bundled themes and produce screenshots under `.wireit/`.
+
 ## VS Code references
 
 The implementation follows the behavior in these MIT-licensed Microsoft sources;
