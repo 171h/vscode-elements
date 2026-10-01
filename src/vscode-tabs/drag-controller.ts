@@ -1,6 +1,7 @@
 import {VscodeTabHeader} from '../vscode-tab-header/index.js';
 import {VscodeTabPanel} from '../vscode-tab-panel/index.js';
 import type {VscodeTabs} from './vscode-tabs.js';
+import {installFieldsetStyles} from '../includes/fieldset.styles.js';
 
 type View = HTMLElement;
 type Session = {
@@ -39,6 +40,7 @@ export class TabsDragController {
   constructor(private tabs: VscodeTabs) {}
 
   connect() {
+    installFieldsetStyles(this.tabs);
     controllers.add(this);
     this.tabs.addEventListener('dragstart', this.start);
     this.tabs.addEventListener('dragover', this.over);
@@ -159,12 +161,15 @@ export class TabsDragController {
       position: 'fixed',
       top: '-1000px',
       padding: '6px 12px',
-      background: 'var(--vscode-sideBarSectionHeader-background, #383838)',
-      color: 'var(--vscode-foreground, #ccc)',
+      background:
+        'var(--vscode-sideBarSectionHeader-background, var(--vscode-sideBar-background, var(--vscode-editor-background, Canvas)))',
+      color:
+        'var(--vscode-sideBarSectionHeader-foreground, var(--vscode-foreground, CanvasText))',
       font: '13px var(--vscode-font-family, sans-serif)',
-      border: '1px solid var(--vscode-focusBorder, #0078d4)',
+      border:
+        '1px solid var(--vscode-contrastActiveBorder, var(--vscode-focusBorder, Highlight))',
     });
-    this.tabs.ownerDocument.body.append(image);
+    (this.tabs.shadowRoot || this.tabs.ownerDocument.body).append(image);
     this.image = image;
     event.dataTransfer.setDragImage(image, 12, 12);
   };
