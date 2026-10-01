@@ -69,6 +69,19 @@ export class VscodeTabs extends VscElement {
     this._dragController.refresh();
   }
 
+  /**
+   * @internal Header bar that moves the whole tabs component when it is inside
+   * a `vscode-tabs-group`.
+   */
+  get dragBar(): HTMLElement | null {
+    return this.shadowRoot?.querySelector<HTMLElement>('.header') ?? null;
+  }
+
+  /** @internal Registers a panel created by the drag and drop system. */
+  markGeneratedPanel(panel: VscodeTabPanel) {
+    this._dragController.markGenerated(panel);
+  }
+
   constructor() {
     super();
     this._componentId = uniqueId();

@@ -50,6 +50,46 @@ handles. Provide a legend for each movable view.
 - Scrollable content scrolls when dragged near its top/bottom edge. Indicators
   respect `prefers-reduced-motion`.
 
+## Tabs groups
+
+`vscode-tabs-group` stacks `vscode-tabs` children and adds group level drag and
+drop. The container shows a hint while no tabs group is assigned:
+
+```html
+<vscode-tabs-group empty-text="Drop a tabs group here">
+  <vscode-tabs>
+    <vscode-tab-header>Explorer</vscode-tab-header>
+    <vscode-tab-panel>
+      <fieldset><legend>Files</legend></fieldset>
+    </vscode-tab-panel>
+  </vscode-tabs>
+  <vscode-tabs>...</vscode-tabs>
+</vscode-tabs-group>
+```
+
+- Drag the empty background of a tab strip (the part of the header bar that is
+  not a tab title or an addon control) to move the whole tabs group. A drag
+  image with every tab title follows the pointer and a placeholder shows the
+  insertion point. Groups can be reordered in place or moved into another
+  `vscode-tabs-group`. Sibling groups slide to the side with a short animation.
+- Tab titles keep their existing behavior inside their own group. Dropping one
+  on the container background promotes it to a new tabs group at that position.
+  Removing the source group's last tab removes the emptied `vscode-tabs`.
+- Dropping a fieldset legend on the container creates a new tabs group whose
+  generated tab is named after the legend and whose panel contains the view.
+  Moving the last view out removes the generated group again.
+- While a tab or view is dragged over the container, the placeholder shows the
+  title(s) that will become the new group. Dropping the pointer over one of the
+  existing `vscode-tabs` components keeps the inner tab and view behaviors.
+- Listen for `vsc-tabs-group-layout-change` (bubbling/composed) to persist
+  grouping. Its detail contains `source` (the previous group or `null`),
+  `destination`, `tabs` (the moved or created component), and the optional
+  `header` and `views` that were moved.
+
+The container is only a layout and drop target. It does not implement VS Code
+workbench persistence; persist the layout from the events. `empty-text` can
+replace the built-in hint text.
+
 Moves retain original nodes, input values and listeners. No automatic storage is
 performed. Listen for `vsc-tabs-layout-change` (bubbling/composed) to persist layout.
 Its detail contains `source` and `destination` tabs elements, `views` (moved view

@@ -3,23 +3,48 @@ import {VscodeTabPanel} from '../vscode-tab-panel/index.js';
 import type {VscodeTabs} from './vscode-tabs.js';
 import {installFieldsetStyles} from '../includes/fieldset.styles.js';
 
-type View = HTMLElement;
-type Session = {
+export type TabsDragSession = {
   owner: TabsDragController;
   header?: VscodeTabHeader;
   panel: VscodeTabPanel;
-  views: View[];
+  views: HTMLElement[];
 };
 type Target = {panel?: VscodeTabPanel; before?: HTMLElement; index?: number};
-let session: Session | undefined;
+let session: TabsDragSession | undefined;
 const controllers = new Set<TabsDragController>();
 
 /** Direct sidebar views only: nested form fieldsets are never separate views. */
-export function panelViews(panel: VscodeTabPanel): View[] {
+export function panelViews(panel: VscodeTabPanel): HTMLElement[] {
   return Array.from(panel.children).filter(
     (el): el is HTMLElement =>
       el instanceof HTMLElement && el.matches('fieldset, vscode-fieldset')
   );
+}
+
+/** @internal Active tab or view drag, shared by every tabs component. */
+export function getTabsDragSession(): TabsDragSession | undefined {
+  return session;
+}
+
+/** @internal Clears drop feedback in every tabs component. */
+export function clearTabsDragFeedback() {
+  controllers.forEach((controller) => controller.clear());
+}
+
+/**
+ * Removes an emptied tabs component from its tabs group. Standalone tabs are
+ * kept as authored, because the caller owns their lifecycle.
+ */
+function removeEmptyGroupTabs(tabs: VscodeTabs) {
+  if (tabs.parentElement?.localName !== 'vscode-tabs-group') {
+    return;
+  }
+  const hasPair = Array.from(tabs.children).some(
+    (el) => el instanceof VscodeTabHeader || el instanceof VscodeTabPanel
+  );
+  if (!hasPair && !tabs.textContent?.trim()) {
+    tabs.remove();
+  }
 }
 
 /**
@@ -37,7 +62,12 @@ export class TabsDragController {
   private timer?: ReturnType<typeof setTimeout>;
   private generated = new Set<VscodeTabPanel>();
 
-  constructor(private tabs: VscodeTabs) {}
+  /** @internal Tabs component this controller belongs to. */
+  readonly tabs: VscodeTabs;
+
+  constructor(tabs: VscodeTabs) {
+    this.tabs = tabs;
+  }
 
   connect() {
     installFieldsetStyles(this.tabs);
@@ -436,17 +466,8 @@ export class TabsDragController {
     if (drag.owner !== this || !drag.header) {
       drag.owner.tabs.syncDragTabs();
     }
-    for (const controller of controllers) {
-      for (const panel of controller.generated) {
-        if (controller.empty(panel) && panel.isConnected) {
-          controller.headers()[controller.panels().indexOf(panel)]?.remove();
-          panel.remove();
-          controller.generated.delete(panel);
-          controller.tabs.syncDragTabs();
-        }
-      }
-      controller.refresh();
-    }
+    this.cleanGenerated();
+    removeEmptyGroupTabs(drag.owner.tabs);
     this.tabs.dispatchEvent(
       new CustomEvent('vsc-tabs-layout-change', {
         bubbles: true,
@@ -478,11 +499,99 @@ export class TabsDragController {
     }
   };
 
-  private clear() {
+  /** @internal Clears the drop overlay and pending activation. */
+  clear() {
     this.cancelHover();
     this.target = undefined;
     this.overlay?.remove();
     this.overlay = undefined;
+  }
+
+  /** @internal Registers a panel created by the drag and drop system. */
+  markGenerated(panel: VscodeTabPanel) {
+    this.generated.add(panel);
+  }
+
+  /**
+   * @internal Moves the active drag operation into a new tabs component placed
+   * inside a tabs group container. Returns the created tabs component.
+   */
+  moveToNewGroup(
+    container: Element,
+    before: Element | null
+  ): VscodeTabs | undefined {
+    const drag = session;
+    if (!drag || drag.owner !== this) {
+      return undefined;
+    }
+    const header =
+      drag.header ?? this.tabs.ownerDocument.createElement('vscode-tab-header');
+    const panel = drag.header
+      ? drag.panel
+      : this.tabs.ownerDocument.createElement('vscode-tab-panel');
+
+    if (!drag.header) {
+      header.textContent =
+        drag.views[0].querySelector('legend')?.textContent?.trim() || 'View';
+      panel.append(...drag.views);
+    }
+
+    const tabs = this.tabs.ownerDocument.createElement('vscode-tabs');
+    tabs.panel = this.tabs.panel;
+    tabs.append(header, panel);
+    if (drag.header) {
+      if (this.generated.delete(panel)) {
+        tabs.markGeneratedPanel(panel);
+      }
+    } else {
+      tabs.markGeneratedPanel(panel);
+    }
+    container.insertBefore(tabs, before);
+
+    if (
+      !drag.header &&
+      this.generated.has(drag.panel) &&
+      this.empty(drag.panel)
+    ) {
+      const index = this.panels().indexOf(drag.panel);
+      this.headers()[index]?.remove();
+      drag.panel.remove();
+      this.generated.delete(drag.panel);
+    }
+
+    this.tabs.syncDragTabs();
+    this.cleanGenerated();
+    removeEmptyGroupTabs(this.tabs);
+
+    tabs.dispatchEvent(
+      new CustomEvent('vsc-tabs-layout-change', {
+        bubbles: true,
+        composed: true,
+        detail: {
+          source: this.tabs,
+          destination: tabs,
+          views: drag.views,
+          header: drag.header,
+        },
+      })
+    );
+    this.end();
+    return tabs;
+  }
+
+  /** Removes generated tabs whose last view was moved out. */
+  private cleanGenerated() {
+    for (const controller of controllers) {
+      for (const panel of controller.generated) {
+        if (controller.empty(panel) && panel.isConnected) {
+          controller.headers()[controller.panels().indexOf(panel)]?.remove();
+          panel.remove();
+          controller.generated.delete(panel);
+          controller.tabs.syncDragTabs();
+        }
+      }
+      controller.refresh();
+    }
   }
 
   private end = () => {

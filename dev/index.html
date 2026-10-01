@@ -223,6 +223,24 @@
       .sidebar-drag-demo fieldset {
         min-height: 80px;
       }
+      .tabs-group-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+      .tabs-group-demo vscode-tabs-group {
+        min-width: 0;
+        padding: 8px;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .tabs-group-demo vscode-tab-panel {
+        min-height: 160px;
+        padding: 8px;
+      }
+      .tabs-group-demo fieldset {
+        min-height: 64px;
+      }
       .demo-card a {
         color: var(--vscode-textLink-foreground, #3794ff);
       }
@@ -1039,6 +1057,64 @@
                   </fieldset>
                 </vscode-tab-panel>
               </vscode-tabs>
+            </div>
+          </article>
+          <article
+            id="tabs-group-card"
+            class="demo-card wide"
+            data-components="vscode-tabs-group vscode-tabs vscode-tab-header vscode-tab-panel drag drop"
+          >
+            <h3>Tabs groups · containers and cross container moves</h3>
+            <p class="muted">
+              Drag the background of a tab strip to move a whole tabs group,
+              drop a tab title on a container to pull it out as a new group, and
+              drag a fieldset legend out to create a group for that view. An
+              empty container shows where groups can be dropped.
+              <a href="./vscode-tabs/group-drag-drop.html"
+                >Open standalone test page</a
+              >
+            </p>
+            <div class="tabs-group-demo">
+              <vscode-tabs-group id="gallery-group-primary">
+                <vscode-tabs>
+                  <vscode-tab-header>Explorer</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>Files</legend>
+                      <label>Filter <input value="Preserved" /></label>
+                    </fieldset>
+                  </vscode-tab-panel>
+                  <vscode-tab-header>Search</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>Search results</legend>
+                      <p>Drag the tab strip background to reorder groups.</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+                <vscode-tabs>
+                  <vscode-tab-header>Notes</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>Draft</legend>
+                      <p>
+                        Drop a tab or view onto a container to split it out.
+                      </p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+              </vscode-tabs-group>
+              <vscode-tabs-group id="gallery-group-secondary">
+                <vscode-tabs>
+                  <vscode-tab-header>Secondary</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>Inbox</legend>
+                      <p>Move groups between the two containers.</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+              </vscode-tabs-group>
             </div>
           </article>
           <article

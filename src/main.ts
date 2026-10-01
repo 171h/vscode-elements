@@ -31,10 +31,12 @@ export {VscodeTableHeaderCell} from './vscode-table-header-cell/index.js';
 export {VscodeTableRow} from './vscode-table-row/index.js';
 export {VscodeTable} from './vscode-table/index.js';
 export {VscodeTabs} from './vscode-tabs/index.js';
+export {VscodeTabsGroup} from './vscode-tabs-group/index.js';
 export type {
   VscTabsSelectEvent,
   VscTabsLayoutChangeEvent,
 } from './vscode-tabs/index.js';
+export type {VscTabsGroupLayoutChangeEvent} from './vscode-tabs-group/index.js';
 export {VscodeTextarea} from './vscode-textarea/index.js';
 export {VscodeTextfield} from './vscode-textfield/index.js';
 export {VscodeToolbarButton} from './vscode-toolbar-button/index.js';

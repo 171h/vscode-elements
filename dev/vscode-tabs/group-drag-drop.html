@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tabs groups drag and drop</title>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+    <style>
+      body {
+        margin: 32px;
+        background: var(--vscode-editor-background, Canvas);
+        color: var(--vscode-foreground, CanvasText);
+        font: var(--vscode-font-size, 13px)
+          var(--vscode-font-family, sans-serif);
+      }
+      main {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+        gap: 32px;
+        align-items: start;
+      }
+      vscode-tabs-group {
+        min-width: 0;
+        padding: 8px;
+        border: 1px solid
+          var(--vscode-contrastBorder, var(--vscode-panel-border, currentColor));
+      }
+      vscode-tab-panel {
+        min-height: 180px;
+        padding: 8px;
+      }
+      fieldset {
+        min-height: 72px;
+      }
+      label {
+        display: block;
+        margin: 12px 0;
+      }
+      input {
+        background: var(--vscode-input-background, Canvas);
+        color: var(--vscode-input-foreground, CanvasText);
+        border: 1px solid
+          var(
+            --vscode-contrastBorder,
+            var(--vscode-input-border, var(--vscode-panel-border, currentColor))
+          );
+        font: inherit;
+      }
+      input:focus-visible {
+        outline: 1px solid var(--vscode-focusBorder, Highlight);
+      }
+      #events {
+        white-space: pre-wrap;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Tabs groups drag and drop</h1>
+    <vscode-theme-selector></vscode-theme-selector>
+    <p>
+      Drag the empty background of a tab strip to move a whole tabs group
+      between the containers. Drag a tab title onto a container to pull it out
+      as its own group, and drag a fieldset legend onto a container to create a
+      group for that view. Drop into the dashed area of an empty container.
+    </p>
+    <main>
+      <vscode-tabs-group id="primary">
+        <vscode-tabs>
+          <vscode-tab-header>Explorer</vscode-tab-header>
+          <vscode-tab-panel>
+            <vscode-fieldset
+              ><fieldset>
+                <legend>Files</legend>
+                <label
+                  >Filter <input value="Preserved when moved"
+                /></label></fieldset
+            ></vscode-fieldset>
+            <fieldset>
+              <legend>Outline</legend>
+              <p>Class and function outline</p>
+            </fieldset>
+          </vscode-tab-panel>
+          <vscode-tab-header>Search</vscode-tab-header>
+          <vscode-tab-panel
+            ><fieldset>
+              <legend>Search results</legend>
+              <label>Query <input /></label></fieldset
+          ></vscode-tab-panel>
+        </vscode-tabs>
+        <vscode-tabs>
+          <vscode-tab-header>Notes</vscode-tab-header>
+          <vscode-tab-panel
+            ><fieldset>
+              <legend>Draft</legend>
+              <p>Drag the tab strip background to reorder this group.</p>
+            </fieldset></vscode-tab-panel
+          >
+        </vscode-tabs>
+      </vscode-tabs-group>
+      <vscode-tabs-group id="secondary">
+        <vscode-tabs>
+          <vscode-tab-header>Secondary sidebar</vscode-tab-header>
+          <vscode-tab-panel
+            ><fieldset>
+              <legend>Inbox</legend>
+              <p>Drop a tab, view or whole group here.</p>
+            </fieldset></vscode-tab-panel
+          >
+        </vscode-tabs>
+        <vscode-tabs>
+          <vscode-tab-header>Empty</vscode-tab-header>
+          <vscode-tab-panel></vscode-tab-panel>
+        </vscode-tabs>
+      </vscode-tabs-group>
+    </main>
+    <p id="events" aria-live="polite">Move a group to see the layout event.</p>
+    <script>
+      document.addEventListener('vsc-tabs-group-layout-change', (event) => {
+        const {source, destination, tabs, header, views} = event.detail;
+        document.querySelector('#events').textContent =
+          `Moved "${tabs.textContent.trim()}" from ${source?.id || 'outside'} ` +
+          `to ${destination.id}; header: ${header ? `"${header.textContent.trim()}"` : 'none'}, ` +
+          `views: ${views.length}.`;
+      });
+      document.addEventListener('vsc-tabs-layout-change', (event) => {
+        const {source, destination, views} = event.detail;
+        document.querySelector('#events').textContent =
+          `Moved ${views.length} view(s) from one tabs group to another; ` +
+          `layout can now be saved (${source === destination ? 'same' : 'new'} destination).`;
+      });
+    </script>
+  </body>
+</html>
