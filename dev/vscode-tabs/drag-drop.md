@@ -67,6 +67,11 @@ and `--vscode-disabledForeground`. Missing sidebar tokens fall back to editor
 and foreground tokens, then system colors. High contrast borders and Windows
 forced colors remain visible. Theme changes update existing views immediately.
 Legends have no border and inherit the fieldset background.
+Use `size="small"`, `size="medium"` (default) or `size="large"` on
+`vscode-fieldset` or a direct native panel fieldset. Their border radii match the
+project's form controls: 1px, 4px and 6px. Applications can override
+`--vsc-form-control-border-radius`. The gallery's global Size buttons and the
+standalone demo's Size buttons update both wrapped and native fieldsets.
 The same styles cover wrapped fieldsets and direct native panel children without
 styling nested form fieldsets. Low specificity allows application CSS overrides.
 Styles are installed once per containing document or shadow root, because a

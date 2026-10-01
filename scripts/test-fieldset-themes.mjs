@@ -100,6 +100,22 @@ try {
       assert.equal(field.border, result.border, `${theme}: border`);
     }
     assert.equal(result.outline, result.focus, `${theme}: focus`);
+    for (const [size, radius] of [
+      ['small', '1px'],
+      ['medium', '4px'],
+      ['large', '6px'],
+    ]) {
+      await page.locator(`[data-fieldset-size="${size}"]`).click();
+      const radii = await page
+        .locator('fieldset')
+        .evaluateAll((fields) =>
+          fields.map((field) => getComputedStyle(field).borderTopLeftRadius)
+        );
+      assert.ok(
+        radii.every((value) => value === radius),
+        `${theme}/${size}: wrapped and native radius`
+      );
+    }
     await page
       .locator('main')
       .screenshot({path: `.wireit/fieldset-${theme}.png`});

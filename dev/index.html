@@ -1252,6 +1252,11 @@
             'main vscode-button, main vscode-checkbox, main vscode-radio, main vscode-textfield, main vscode-textarea, main vscode-single-select, main vscode-multi-select, main vscode-form-group, main vscode-progress-ring, main vscode-table, main vscode-tree'
           )
           .forEach((el) => el.setAttribute('size', size));
+        document
+          .querySelectorAll(
+            'main vscode-fieldset, main vscode-fieldset > fieldset, main vscode-tab-panel > fieldset'
+          )
+          .forEach((el) => el.setAttribute('size', size));
         setIconSize(size);
       };
       document

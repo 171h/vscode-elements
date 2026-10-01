@@ -59,6 +59,12 @@
   <body>
     <h1>Sidebar drag and drop</h1>
     <vscode-theme-selector></vscode-theme-selector>
+    <p aria-label="Fieldset size">
+      Size:
+      <vscode-button data-fieldset-size="small">Small</vscode-button>
+      <vscode-button data-fieldset-size="medium">Medium</vscode-button>
+      <vscode-button data-fieldset-size="large">Large</vscode-button>
+    </p>
     <p>
       Drag tab titles to reorder. Drag legends to move views. Hover over the
       center of a tab to open it; drop near its edges to create a tab. Drop a
@@ -105,6 +111,15 @@
     </main>
     <p id="events" aria-live="polite">Move a view to see the layout event.</p>
     <script>
+      document.querySelectorAll('[data-fieldset-size]').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('vscode-fieldset, vscode-tab-panel > fieldset')
+            .forEach((fieldset) => {
+              fieldset.setAttribute('size', button.dataset.fieldsetSize);
+            });
+        });
+      });
       document.addEventListener('vsc-tabs-layout-change', (event) => {
         document.querySelector('#events').textContent =
           `Moved ${event.detail.views.length} views; layout can now be saved.`;
