@@ -24,9 +24,24 @@ const styles = css`
           var(--vscode-panel-border, var(--vscode-widget-border, currentColor))
         )
       );
+    border-radius: var(--vsc-form-control-border-radius, 4px);
     font-family: var(--vscode-font-family, sans-serif);
     font-size: var(--vscode-font-size, 13px);
     font-weight: var(--vscode-font-weight, normal);
+  }
+
+  :where(
+    vscode-tab-panel > fieldset[size='small'],
+    vscode-fieldset > fieldset[size='small']
+  ) {
+    --vsc-form-control-border-radius: 1px;
+  }
+
+  :where(
+    vscode-tab-panel > fieldset[size='large'],
+    vscode-fieldset > fieldset[size='large']
+  ) {
+    --vsc-form-control-border-radius: 6px;
   }
 
   :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) > legend {
