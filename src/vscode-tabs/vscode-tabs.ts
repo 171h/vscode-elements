@@ -327,7 +327,8 @@ export class VscodeTabs extends VscElement {
 
   private async _onMenuSelect(event: VscContextMenuSelectEvent) {
     const index = Number(event.detail.value);
-    if (!this._tabHeaders[index]) {
+    const header = this._tabHeaders[index];
+    if (!header || header.hidden || header.inert) {
       return;
     }
     this.selectedIndex = index;
@@ -676,11 +677,13 @@ export class VscodeTabs extends VscElement {
       >
         <vscode-context-menu
           .tabIndex=${-1}
-          .data=${this._hiddenHeaders.map((header) => ({
-            label: this._headerLabel(header),
-            value: String(header.tabId),
-            tabindex: -1,
-          }))}
+          .data=${this._hiddenHeaders
+            .filter((header) => !header.inert)
+            .map((header) => ({
+              label: this._headerLabel(header),
+              value: String(header.tabId),
+              tabindex: -1,
+            }))}
           @vsc-context-menu-select=${this._onMenuSelect}
         ></vscode-context-menu>
       </div>

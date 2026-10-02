@@ -659,3 +659,76 @@ describe('隐藏期间调用方更新 inert', () => {
     }
   });
 });
+
+describe('溢出菜单尊重调用方 inert', () => {
+  it('动态禁用项从菜单移除，拒绝旧选择，重新启用后可键盘激活', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 180px" overflow="menu">
+        ${[1, 2, 3].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    const headers = el.querySelectorAll('vscode-tab-header');
+    const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
+    await waitUntil(() => menu.data.length === 2);
+    el.shadowRoot!.querySelector<HTMLButtonElement>(
+      '.overflow-button'
+    )!.click();
+    await elementUpdated(menu);
+    headers[2].inert = true;
+    menu.dispatchEvent(
+      new CustomEvent('vsc-context-menu-select', {
+        detail: {value: '2'},
+        bubbles: true,
+        composed: true,
+      })
+    );
+    expect(el.selectedIndex).to.equal(0);
+    await waitUntil(() => menu.data.length === 1);
+    expect(menu.data.map((item) => item.value)).to.deep.equal(['1']);
+    menu.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowUp',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    menu.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    await waitUntil(() => el.selectedIndex === 1);
+    expect(headers[2].active).to.equal(false);
+    headers[2].inert = false;
+    await waitUntil(() => menu.data.some((item) => item.value === '2'));
+    el.shadowRoot!.querySelector<HTMLButtonElement>(
+      '.overflow-button'
+    )!.click();
+    await elementUpdated(menu);
+    menu.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowUp',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    menu.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    await waitUntil(() => el.selectedIndex === 2);
+    expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
+  });
+});
