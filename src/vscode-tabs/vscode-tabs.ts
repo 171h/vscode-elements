@@ -403,6 +403,24 @@ export class VscodeTabs extends VscElement {
     this._syncScroll();
   }
 
+  protected override willUpdate(changed: PropertyValues) {
+    super.willUpdate(changed);
+    const button = this.shadowRoot?.querySelector('.overflow-button');
+    if (button?.matches(':focus') && !this._hasMenuItems) {
+      const visible = this._tabHeaders.filter(
+        (header) =>
+          !header.hidden &&
+          !header.inert &&
+          !header.hasAttribute('data-vsc-overflow-hidden')
+      );
+      (
+        visible.find((header) => header.tabIndex === 0) ??
+        visible.find((header) => header.active) ??
+        visible[0]
+      )?.focus({preventScroll: true});
+    }
+  }
+
   protected override updated(changed: PropertyValues) {
     super.updated(changed);
     this._scheduleLayout();

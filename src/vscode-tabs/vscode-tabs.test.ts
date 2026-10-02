@@ -870,3 +870,36 @@ describe('无可操作隐藏项时的菜单入口', () => {
     button.click();
   });
 });
+
+describe('溢出触发按钮动态禁用时的焦点', () => {
+  it('在禁用已聚焦按钮前转移到可见标签，保留外部焦点', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 180px" overflow="menu">
+        ${[1, 2].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    const headers = el.querySelectorAll('vscode-tab-header');
+    const button =
+      el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+    await waitUntil(() => !button.hidden && !button.disabled);
+    button.focus();
+    headers[1].inert = true;
+    await waitUntil(() => button.disabled);
+    expect(document.activeElement).to.equal(headers[0]);
+    expect(headers[0].tabIndex).to.equal(0);
+    headers[1].inert = false;
+    await waitUntil(() => !button.disabled);
+    const outside = document.createElement('button');
+    el.parentElement!.append(outside);
+    outside.focus();
+    headers[1].inert = true;
+    await waitUntil(() => button.disabled);
+    expect(document.activeElement).to.equal(outside);
+    outside.remove();
+  });
+});
