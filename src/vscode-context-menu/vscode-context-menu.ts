@@ -51,6 +51,9 @@ export class VscodeContextMenu extends VscElement {
     });
 
     this._clickableItemIndexes = indexes;
+    if (this._selectedClickableItemIndex >= indexes.length) {
+      this._selectedClickableItemIndex = -1;
+    }
   }
   get data(): MenuItemData[] {
     return this._data;
@@ -155,22 +158,29 @@ export class VscodeContextMenu extends VscElement {
   }
 
   private _handleArrowUp() {
-    if (this._selectedClickableItemIndex === 0) {
-      this._selectedClickableItemIndex = this._clickableItemIndexes.length - 1;
+    const count = this._clickableItemIndexes.length;
+    if (count === 0) {
+      this._selectedClickableItemIndex = -1;
+      return;
+    }
+    if (
+      this._selectedClickableItemIndex <= 0 ||
+      this._selectedClickableItemIndex >= count
+    ) {
+      this._selectedClickableItemIndex = count - 1;
     } else {
       this._selectedClickableItemIndex -= 1;
     }
   }
 
   private _handleArrowDown() {
-    if (
-      this._selectedClickableItemIndex + 1 <
-      this._clickableItemIndexes.length
-    ) {
-      this._selectedClickableItemIndex += 1;
-    } else {
-      this._selectedClickableItemIndex = 0;
+    const count = this._clickableItemIndexes.length;
+    if (count === 0) {
+      this._selectedClickableItemIndex = -1;
+      return;
     }
+    this._selectedClickableItemIndex =
+      (this._selectedClickableItemIndex + 1) % count;
   }
 
   private _handleEscape() {
@@ -195,7 +205,7 @@ export class VscodeContextMenu extends VscElement {
   }
 
   private _handleEnter() {
-    if (this._selectedClickableItemIndex === -1) {
+    if (this._selectedClickableItemIndex < 0) {
       return;
     }
 
@@ -205,6 +215,9 @@ export class VscodeContextMenu extends VscElement {
       'vscode-context-menu-item'
     );
     const selectedOption = options[realItemIndex];
+    if (!selectedOption || selectedOption.separator) {
+      return;
+    }
 
     this._dispatchSelectEvent(selectedOption);
 

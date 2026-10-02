@@ -345,3 +345,88 @@ describe('溢出边界与键盘操作', () => {
     expect(headers[1].inert).to.equal(true);
   });
 });
+
+describe('溢出菜单首次向上导航', () => {
+  it('首次按向上键和 Enter 激活最后一个隐藏标签', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 180px" overflow="menu">
+        ${[1, 2, 3].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    const button =
+      el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+    await waitUntil(() => !button.hidden);
+    button.click();
+    const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
+    await elementUpdated(menu);
+    menu.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowUp',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    await elementUpdated(menu);
+    menu.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Enter',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    await waitUntil(
+      () =>
+        el.selectedIndex === 2 &&
+        !el.querySelectorAll('vscode-tab-header')[2].inert
+    );
+    expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
+    expect(menu.show).to.equal(false);
+  });
+});
+
+describe('打开菜单时缩放容器', () => {
+  it('隐藏项减少后忽略失效高亮，重新导航仍能激活标签', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 180px" overflow="menu">
+        ${[1, 2, 3, 4].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    const button =
+      el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+    await waitUntil(() => !button.hidden);
+    button.click();
+    const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
+    await elementUpdated(menu);
+    const press = (key: string) =>
+      menu.dispatchEvent(
+        new KeyboardEvent('keydown', {key, bubbles: true, composed: true})
+      );
+    press('ArrowUp');
+    await elementUpdated(menu);
+    el.style.width = '280px';
+    await waitUntil(() => menu.data.length === 2);
+    await elementUpdated(menu);
+    press('Enter');
+    expect(el.selectedIndex).to.equal(0);
+    expect(menu.show).to.equal(true);
+    press('ArrowDown');
+    await elementUpdated(menu);
+    press('Enter');
+    await waitUntil(() => el.selectedIndex === 2);
+    expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
+  });
+});
