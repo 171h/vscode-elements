@@ -76,6 +76,8 @@ VSCode Elements 是基于 Lit 的 Web Components 组件库，用于开发 VS Cod
 | `pnpm prettier`      | 检查仓库文件格式                                          |
 | `npm test`           | 使用 Vitest 执行 Chromium 组件测试与 Node.js 发布工具测试 |
 | `pnpm test:coverage` | 执行浏览器测试并生成覆盖率报告                            |
+| `pnpm build:demo`    | 通过 Vite 构建生产示例                                    |
+| `pnpm test:build`    | 检查开发页、生产页、原生拖拽、主题、CSP 和单文件包        |
 | `pnpm test:release`  | 执行发布工具测试                                          |
 
 组件修改交付前，应执行 lint、格式检查、构建和浏览器测试。发布工具修改还应执行 `pnpm test:release`。仅修改文档时，检查格式与本地链接即可，无需运行完整组件测试。优先格式化本次修改的文件，避免使用 `pnpm prettier:fix` 修改无关文件。

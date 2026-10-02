@@ -28,7 +28,7 @@ try {
       .querySelector('vscode-tabs')
       .shadowRoot.querySelector('[data-vsc-drop-indicator]')
   );
-  await page.screenshot({path: '.wireit/tabs-drag-overlay.png'});
+  await page.screenshot({path: 'coverage/screenshots/tabs-drag-overlay.png'});
   await page.mouse.up();
   assert.deepEqual(await legends.allTextContents(), [
     '大纲',
@@ -67,7 +67,7 @@ try {
       .allTextContents(),
     ['搜索结果', '文件']
   );
-  await page.screenshot({path: '.wireit/tabs-drag-result.png'});
+  await page.screenshot({path: 'coverage/screenshots/tabs-drag-result.png'});
   // 拖拽容器时可显示另一标签页面板，并将全部视图合并到其中。
   const searchHeader = await tabs
     .locator('vscode-tab-header')

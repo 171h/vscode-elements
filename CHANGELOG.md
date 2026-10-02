@@ -6,6 +6,10 @@
 
 ## 未发布
 
+### 构建
+
+- **tooling**：使用 pnpm、Vite 和 Vitest 替换原包管理、构建和测试流程，移除 Wireit、独立 Rollup 配置、Web Test Runner 与上游演示依赖。开发者需使用新的 pnpm 命令，详见工具链迁移报告。
+
 ### 修复
 
 - **fieldset**：拖拽重连时保留取消默认处理后的状态，修复嵌套组件的禁用状态恢复。

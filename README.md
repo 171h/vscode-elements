@@ -47,7 +47,7 @@ Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup �
 
 ## 文档
 
-功能说明位于 [docs](docs/)；开发要求参见 [AGENTS.md](AGENTS.md) 和 [CONTRIBUTING.md](CONTRIBUTING.md)。
+功能说明位于 [docs](docs/)；开发要求参见 [AGENTS.md](AGENTS.md) 和 [CONTRIBUTING.md](CONTRIBUTING.md)。工具链迁移与功能、性能验证结果参见 [迁移报告](docs/toolchain-migration.md)。
 
 ### release
 
