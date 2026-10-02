@@ -207,17 +207,13 @@ export class VscodeTabs extends VscElement {
       hidden.some((header, i) => header !== this._hiddenHeaders[i])
     ) {
       this._hiddenHeaders = hidden;
-      if (!hidden.length) {
-        this._closeMenu(false);
-      }
     }
-    if (this.overflow !== 'menu') {
-      this._closeMenu(false);
-    }
-    if (this._menuOpen && !this._hasMenuItems) {
-      const hadFocus = this.shadowRoot!.querySelector(
-        'vscode-context-menu'
-      )!.matches(':focus-within');
+    if (this.overflow !== 'menu' || !this._hasMenuItems) {
+      const hadFocus =
+        this._menuOpen &&
+        this.shadowRoot!.querySelector('vscode-context-menu')!.matches(
+          ':focus-within'
+        );
       this._closeMenu(false);
       if (hadFocus) {
         tabStop?.focus({preventScroll: true});

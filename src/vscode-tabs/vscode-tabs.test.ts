@@ -1000,3 +1000,50 @@ describe('面板动态内容与标题观察', () => {
     expect(el.updateComplete).not.to.equal(headerUpdate);
   });
 });
+
+describe('布局变化关闭菜单时的焦点', () => {
+  it('不再溢出或切换模式时恢复菜单内焦点，并保留外部焦点', async () => {
+    for (const action of ['resize', 'wrap', 'scroll']) {
+      for (const external of [false, true]) {
+        const el = await fixture<VscodeTabs>(html`
+          <vscode-tabs style="width: 180px" overflow="menu">
+            ${[1, 2, 3].map(
+              (i) =>
+                html`<vscode-tab-header style="width: 100px"
+                    >标题 ${i}</vscode-tab-header
+                  ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+            )}
+          </vscode-tabs>
+        `);
+        const button =
+          el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+        const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+          'vscode-context-menu'
+        )!;
+        await waitUntil(() => !button.hidden);
+        button.click();
+        await elementUpdated(menu);
+        await waitUntil(() => menu.matches(':focus-within'));
+        const outside = document.createElement('button');
+        el.parentElement!.append(outside);
+        if (external) {
+          outside.focus();
+        }
+        if (action === 'resize') {
+          el.style.width = '500px';
+        } else {
+          el.overflow = action as 'wrap' | 'scroll';
+        }
+        await waitUntil(() => button.hidden && !menu.show);
+        expect(document.activeElement, `${action}: ${external}`).to.equal(
+          external ? outside : el.querySelector('vscode-tab-header')
+        );
+        expect(button.getAttribute('aria-expanded')).to.equal('false');
+        expect(
+          el.shadowRoot!.querySelector('.menu-layer')!.matches(':popover-open')
+        ).to.equal(false);
+        outside.remove();
+      }
+    }
+  });
+});
