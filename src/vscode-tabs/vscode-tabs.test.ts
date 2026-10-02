@@ -1047,3 +1047,53 @@ describe('布局变化关闭菜单时的焦点', () => {
     }
   });
 });
+
+describe('变换缩放下的菜单容量', () => {
+  it('标题与容器统一使用布局尺寸，保留小数、内边距、边框和外边距', async () => {
+    for (const scale of [0.5, 1, 2]) {
+      for (const boxSizing of ['content-box', 'border-box']) {
+        const host = await fixture<HTMLDivElement>(html`
+          <div style="transform: scale(${scale}); transform-origin: top left">
+            <vscode-tabs style="width: 280px" overflow="menu">
+              ${[1, 2, 3, 4].map(
+                (i) =>
+                  html`<vscode-tab-header
+                      style="width: 100.25px; padding: 0 2.5px; border: 1px solid; margin: 0 1.125px; box-sizing: ${boxSizing}"
+                      >标题 ${i}</vscode-tab-header
+                    ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+              )}
+            </vscode-tabs>
+          </div>
+        `);
+        const el = host.querySelector('vscode-tabs')!;
+        const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+          'vscode-context-menu'
+        )!;
+        const button =
+          el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+        await waitUntil(() => !button.hidden && menu.data.length === 2);
+        expect(
+          menu.data.map((item) => item.value),
+          `${scale}: ${boxSizing}`
+        ).to.deep.equal(['2', '3']);
+        expect(
+          [...el.querySelectorAll('vscode-tab-header')]
+            .filter(
+              (header) => !header.hasAttribute('data-vsc-overflow-hidden')
+            )
+            .map((header) => header.tabId)
+        ).to.deep.equal([0, 1]);
+        button.click();
+        await elementUpdated(menu);
+        menu
+          .shadowRoot!.querySelectorAll('vscode-context-menu-item')[1]
+          .shadowRoot!.querySelector('a')!
+          .click();
+        await waitUntil(() => el.selectedIndex === 3);
+        expect(el.querySelectorAll('vscode-tab-panel')[3].hidden).to.equal(
+          false
+        );
+      }
+    }
+  });
+});

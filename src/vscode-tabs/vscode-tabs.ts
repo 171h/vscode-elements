@@ -138,8 +138,18 @@ export class VscodeTabs extends VscElement {
     );
     const widths = headers.map((header) => {
       const style = getComputedStyle(header);
+      const width = parseFloat(style.width);
+      const contentBox =
+        style.boxSizing === 'border-box'
+          ? 0
+          : [
+              style.paddingLeft,
+              style.paddingRight,
+              style.borderLeftWidth,
+              style.borderRightWidth,
+            ].reduce((sum, value) => sum + (parseFloat(value) || 0), 0);
       return (
-        header.getBoundingClientRect().width +
+        (Number.isFinite(width) ? width + contentBox : header.offsetWidth) +
         (parseFloat(style.marginLeft) || 0) +
         (parseFloat(style.marginRight) || 0)
       );
