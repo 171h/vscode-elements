@@ -572,11 +572,13 @@ export class VscodeMultiSelect
             >${label}</span
           >`;
         })}
-        ${labels.length > 0
-          ? html`<span class="select-face-badge ${classMap(moreTagClasses)}"
-              >+${hiddenCount > 0 ? hiddenCount : labels.length}</span
-            >`
-          : nothing}
+        ${
+          labels.length > 0
+            ? html`<span class="select-face-badge ${classMap(moreTagClasses)}"
+                >+${hiddenCount > 0 ? hiddenCount : labels.length}</span
+              >`
+            : nothing
+        }
       </div>
     `;
   }

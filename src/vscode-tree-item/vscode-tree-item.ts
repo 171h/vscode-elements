@@ -689,36 +689,44 @@ export class VscodeTreeItem extends VscElement {
         @dblclick=${this._handleDoubleClick}
         .style=${stylePropertyMap({paddingLeft: `${indentation}px`})}
       >
-        ${this.branch && !hideArrows
-          ? html`<div
-              class=${classMap({
-                'arrow-container': true,
-                'icon-rotated': this.open,
-              })}
-              part="arrow-icon-container"
-            >
-              ${arrowIcon}
-            </div>`
-          : nothing}
+        ${
+          this.branch && !hideArrows
+            ? html`<div
+                class=${classMap({
+                  'arrow-container': true,
+                  'icon-rotated': this.open,
+                })}
+                part="arrow-icon-container"
+              >
+                ${arrowIcon}
+              </div>`
+            : nothing
+        }
         <div class=${classMap(iconContainerClasses)} part="icon-container">
-          ${this.branch && !this.open
-            ? html`<slot
-                name="icon-branch"
-                @slotchange=${this._handleIconSlotChange}
-              ></slot>`
-            : nothing}
-          ${this.branch && this.open
-            ? html`<slot
-                name="icon-branch-opened"
-                @slotchange=${this._handleIconSlotChange}
-              ></slot>`
-            : nothing}
-          ${!this.branch
-            ? html`<slot
-                name="icon-leaf"
-                @slotchange=${this._handleIconSlotChange}
-              ></slot>`
-            : nothing}
+          ${
+            this.branch && !this.open
+              ? html`<slot
+                  name="icon-branch"
+                  @slotchange=${this._handleIconSlotChange}
+                ></slot>`
+              : nothing
+          }
+          ${
+            this.branch && this.open
+              ? html`<slot
+                  name="icon-branch-opened"
+                  @slotchange=${this._handleIconSlotChange}
+                ></slot>`
+              : nothing
+          }
+          ${
+            !this.branch
+              ? html`<slot
+                  name="icon-leaf"
+                  @slotchange=${this._handleIconSlotChange}
+                ></slot>`
+              : nothing
+          }
         </div>
         <div class=${classMap(contentClasses)} part="content">
           <span class="label" part="label">
