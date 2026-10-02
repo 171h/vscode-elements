@@ -127,3 +127,77 @@ describe('菜单键盘索引', () => {
     expect(selected).to.deep.equal(['1']);
   });
 });
+
+describe('菜单外部点击监听器生命周期', () => {
+  const frame = () =>
+    new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+  const createMenu = () =>
+    fixture<VscodeContextMenu>(
+      html`<vscode-context-menu
+        .data=${[{label: '菜单项', value: 'item'}]}
+      ></vscode-context-menu>`
+    );
+
+  it('程序关闭后可通过外部按钮重新打开', async () => {
+    const el = await createMenu();
+    el.show = true;
+    await el.updateComplete;
+    await frame();
+    el.show = false;
+    await el.updateComplete;
+    const trigger = document.createElement('button');
+    el.parentElement!.append(trigger);
+    trigger.addEventListener('click', () => (el.show = true));
+    trigger.click();
+    await el.updateComplete;
+    expect(el.show).to.equal(true);
+    expect(
+      el.shadowRoot!.querySelector('vscode-context-menu-item')
+    ).not.to.equal(null);
+  });
+
+  it('打开后立即关闭不会延迟注册过期监听器', async () => {
+    const el = await createMenu();
+    el.show = true;
+    await el.updateComplete;
+    el.show = false;
+    await frame();
+    const trigger = document.createElement('button');
+    el.parentElement!.append(trigger);
+    trigger.addEventListener('click', () => (el.show = true));
+    trigger.click();
+    await el.updateComplete;
+    expect(el.show).to.equal(true);
+  });
+
+  it('断开连接后清理监听器，重连仍能正常打开', async () => {
+    const el = await createMenu();
+    const parent = el.parentElement!;
+    el.show = true;
+    await el.updateComplete;
+    await frame();
+    el.remove();
+    const trigger = document.createElement('button');
+    parent.append(trigger);
+    trigger.addEventListener('click', () => parent.append(el));
+    trigger.click();
+    await el.updateComplete;
+    expect(el.show).to.equal(true);
+    await frame();
+    document.body.click();
+    await el.updateComplete;
+    expect(el.show).to.equal(false);
+  });
+
+  it('点击内部空白后，外部点击仍能关闭菜单', async () => {
+    const el = await createMenu();
+    el.show = true;
+    await el.updateComplete;
+    await frame();
+    el.shadowRoot!.querySelector<HTMLElement>('.context-menu')!.click();
+    expect(el.show).to.equal(true);
+    document.body.click();
+    await el.updateComplete;
+    expect(el.show).to.equal(false);
+  });
+});

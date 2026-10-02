@@ -430,3 +430,59 @@ describe('打开菜单时缩放容器', () => {
     expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
   });
 });
+
+describe('程序关闭溢出菜单后的重新打开', () => {
+  it('容器变宽、切换模式和重连后，菜单与 Popover 保持同步', async () => {
+    for (const action of ['resize', 'mode', 'reconnect']) {
+      const el = await fixture<VscodeTabs>(html`
+        <vscode-tabs style="width: 180px" overflow="menu">
+          ${[1, 2, 3].map(
+            (i) =>
+              html`<vscode-tab-header style="width: 100px"
+                  >标题 ${i}</vscode-tab-header
+                ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+          )}
+        </vscode-tabs>
+      `);
+      const button =
+        el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+      const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+        'vscode-context-menu'
+      )!;
+      await waitUntil(() => !button.hidden);
+      button.click();
+      await elementUpdated(menu);
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => resolve())
+      );
+      if (action === 'resize') {
+        el.style.width = '500px';
+        await waitUntil(() => !menu.show);
+        el.style.width = '180px';
+      } else if (action === 'mode') {
+        el.overflow = 'wrap';
+        await waitUntil(() => !menu.show);
+        el.overflow = 'menu';
+      } else {
+        const parent = el.parentElement!;
+        el.remove();
+        parent.append(el);
+      }
+      await waitUntil(() => !button.hidden);
+      button.click();
+      await elementUpdated(menu);
+      expect(menu.show, action).to.equal(true);
+      expect(button.getAttribute('aria-expanded'), action).to.equal('true');
+      expect(
+        el.shadowRoot!.querySelector('.menu-layer')!.matches(':popover-open'),
+        action
+      ).to.equal(true);
+      expect(
+        menu.shadowRoot!.querySelector('vscode-context-menu-item'),
+        action
+      ).not.to.equal(null);
+      button.click();
+      await elementUpdated(menu);
+    }
+  });
+});
