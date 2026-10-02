@@ -1,4 +1,10 @@
 import DefaultTheme from 'vitepress/theme';
+import ExamplePreview from './ExamplePreview.vue';
 import './style.css';
 
-export default DefaultTheme;
+export default {
+  extends: DefaultTheme,
+  enhanceApp({app}) {
+    app.component('ExamplePreview', ExamplePreview);
+  },
+};

@@ -1,5 +1,7 @@
 # 表单已修改状态
 
+<ExamplePreview example="form" />
+
 `vscode-form-container` 在表单控件上显示浅蓝色背景，标识表单已修改。即使被修改的控件位于视口之外，高亮也能提示变化，并在超时后自动消失。
 
 容器自身的背景不变。

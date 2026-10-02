@@ -44,6 +44,19 @@ export default defineConfig({
           .map((c) => ({text: c.title, link: `/components/${c.id}`})),
       })),
       {
+        text: '扩展功能',
+        collapsed: true,
+        items: [
+          {text: '统一尺寸', link: '/form-size'},
+          {text: '百分比输入', link: '/textfield-percentage'},
+          {text: '多选标签', link: '/multi-select-labels'},
+          {text: '表单已修改状态', link: '/form-dirty-highlight'},
+          {text: '分区复选框', link: '/fieldset-checkbox'},
+          {text: '标签页与视图拖拽', link: '/tabs-drag-drop'},
+          {text: 'CSP 检查模板', link: '/examples/csp'},
+        ],
+      },
+      {
         text: '参考与维护',
         items: [
           {text: 'API 索引', link: '/api/'},

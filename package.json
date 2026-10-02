@@ -36,9 +36,12 @@
     "release": "node scripts/release.mjs",
     "test:release": "node --test scripts/release-lib.test.mjs",
     "prepare": "npx playwright install chromium --only-shell",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "docs:dev": "npm run docs:prepare && vitepress dev docs",
+    "docs:build": "npm run docs:prepare && vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:prepare": "npm run build && node scripts/docs-prepare.mjs",
+    "docs:check": "npm run docs:prepare && node scripts/docs-check.mjs",
+    "docs:test": "node scripts/docs-browser.mjs"
   },
   "wireit": {
     "analyze": {
