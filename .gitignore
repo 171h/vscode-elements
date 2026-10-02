@@ -3,7 +3,10 @@ node_modules
 /lib/
 /test/
 .wireit/
-docs/
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/
+/docs/public/assets/
+/docs/api/generated/
 .vscode/settings.json
 
 /dist/
