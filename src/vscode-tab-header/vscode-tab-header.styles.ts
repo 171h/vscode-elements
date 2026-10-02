@@ -15,7 +15,7 @@ const styles: CSSResultGroup = [
       border-bottom: 1px solid transparent;
       color: var(--vscode-foreground, #cccccc);
       display: flex;
-      min-height: 20px;
+      min-height: var(--vsc-tab-header-height, 20px);
       overflow: hidden;
       padding: 7px 8px;
       position: relative;
@@ -42,7 +42,7 @@ const styles: CSSResultGroup = [
       align-items: center;
       color: var(--vscode-foreground, #cccccc);
       display: flex;
-      min-height: 20px;
+      min-height: var(--vsc-tab-header-height, 20px);
       overflow: inherit;
       text-overflow: inherit;
       position: relative;
@@ -60,7 +60,7 @@ const styles: CSSResultGroup = [
     :host([panel]) .wrapper {
       display: flex;
       font-size: 11px;
-      height: 31px;
+      min-height: var(--vsc-tab-header-height, 31px);
       padding: 2px 10px;
       text-transform: uppercase;
     }
@@ -68,6 +68,60 @@ const styles: CSSResultGroup = [
     .main {
       overflow: inherit;
       text-overflow: inherit;
+    }
+
+    .before {
+      order: 0;
+    }
+    .main {
+      order: 2;
+    }
+    .after {
+      order: 4;
+    }
+
+    .icon {
+      order: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      margin-right: 8px;
+      line-height: 1;
+    }
+
+    .icon.trailing {
+      order: 3;
+      margin-right: 0;
+      margin-left: 8px;
+    }
+
+    .icon[hidden] {
+      display: none;
+    }
+
+    .icon vscode-icon,
+    .icon ::slotted(vscode-icon) {
+      --vsc-icon-size: 1em;
+    }
+
+    .icon ::slotted(*) {
+      width: 100%;
+      height: 100%;
+      font-size: inherit;
+      fill: currentColor;
+    }
+
+    :host([icon-display='icon']) .main {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    :host([icon-display='icon']) .icon {
+      margin: 0;
     }
 
     .active-indicator {

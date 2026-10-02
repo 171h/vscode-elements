@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>标签页溢出与图标</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+    <style>
+      body {
+        margin: 24px;
+        font: 13px var(--vscode-font-family, sans-serif);
+      }
+      .controls {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      #container {
+        width: 420px;
+        max-width: 100%;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      vscode-tab-panel {
+        padding: 20px;
+        min-height: 90px;
+      }
+      #status {
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>标签页溢出与图标</h1>
+    <p>
+      调整容器宽度，切换溢出方式。悬停组件查看覆盖式滚动条；使用方向键、Enter
+      和更多标签页菜单验证键盘操作。
+    </p>
+    <vscode-demo>
+      <div class="controls">
+        <label
+          >溢出方式<select id="overflow">
+            <option value="wrap">换行</option>
+            <option value="scroll">水平滚动</option>
+            <option value="menu">上下文菜单</option>
+          </select></label
+        >
+        <label
+          >换行对齐<select id="alignment">
+            <option value="start">左对齐</option>
+            <option value="center">居中</option>
+          </select></label
+        >
+        <label
+          >图文模式<select id="display">
+            <option value="icon-text">图标和文字</option>
+            <option value="icon">仅图标</option>
+            <option value="text">仅文字</option>
+          </select></label
+        >
+        <label
+          >图标位置<select id="position">
+            <option value="start">左侧</option>
+            <option value="end">右侧</option>
+          </select></label
+        >
+        <label
+          >内容高度<select id="height">
+            <option value="20">20px</option>
+            <option value="32">32px</option>
+            <option value="40">40px</option>
+          </select></label
+        >
+        <label
+          >容器宽度<input
+            id="width"
+            type="range"
+            min="160"
+            max="800"
+            value="420"
+        /></label>
+        <label><input id="panel" type="checkbox" />面板风格</label>
+      </div>
+      <div id="container">
+        <vscode-tabs id="tabs">
+          <vscode-tab-header icon="files">文件</vscode-tab-header
+          ><vscode-tab-panel>文件内容</vscode-tab-panel>
+          <vscode-tab-header icon="search">搜索</vscode-tab-header
+          ><vscode-tab-panel>搜索内容</vscode-tab-panel>
+          <vscode-tab-header icon="source-control">源代码管理</vscode-tab-header
+          ><vscode-tab-panel>源代码管理内容</vscode-tab-panel>
+          <vscode-tab-header icon="debug-alt">运行与调试</vscode-tab-header
+          ><vscode-tab-panel>运行与调试内容</vscode-tab-panel>
+          <vscode-tab-header icon="extensions">扩展</vscode-tab-header
+          ><vscode-tab-panel>扩展内容</vscode-tab-panel>
+          <vscode-tab-header
+            ><svg slot="icon" viewBox="0 0 16 16" aria-hidden="true">
+              <path fill="currentColor" d="M2 2h12v12H2zM4 4v8h8V4z" /></svg
+            >自定义 SVG</vscode-tab-header
+          ><vscode-tab-panel>自定义 SVG 图标</vscode-tab-panel>
+          <vscode-tab-header
+            ><span
+              slot="icon"
+              class="codicon codicon-terminal"
+              aria-hidden="true"
+            ></span
+            >自定义字体</vscode-tab-header
+          ><vscode-tab-panel>通过插槽使用字体图标</vscode-tab-panel>
+          <vscode-tab-header icon="gear">设置</vscode-tab-header
+          ><vscode-tab-panel>设置内容</vscode-tab-panel>
+          <vscode-tab-header icon="history">历史记录</vscode-tab-header
+          ><vscode-tab-panel>历史记录内容</vscode-tab-panel>
+          <vscode-tab-header icon="info">帮助与反馈</vscode-tab-header
+          ><vscode-tab-panel>帮助与反馈内容</vscode-tab-panel>
+          <vscode-button slot="addons" id="last">末项</vscode-button>
+        </vscode-tabs>
+      </div>
+      <p id="status" role="status">当前选中：文件</p>
+    </vscode-demo>
+    <script type="module">
+      await customElements.whenDefined('vscode-tabs');
+      const tabs = document.querySelector('#tabs');
+      const headers = [...tabs.querySelectorAll('vscode-tab-header')];
+      const controls = [
+        'overflow',
+        'alignment',
+        'display',
+        'position',
+        'height',
+        'width',
+        'panel',
+      ];
+      const update = () => {
+        tabs.overflow = document.querySelector('#overflow').value;
+        tabs.wrapAlignment = document.querySelector('#alignment').value;
+        tabs.panel = document.querySelector('#panel').checked;
+        document.querySelector('#container').style.width =
+          document.querySelector('#width').value + 'px';
+        headers.forEach((header) => {
+          header.iconDisplay = document.querySelector('#display').value;
+          header.iconPosition = document.querySelector('#position').value;
+          header.style.setProperty(
+            '--vsc-tab-header-height',
+            document.querySelector('#height').value + 'px'
+          );
+        });
+      };
+      controls.forEach((id) =>
+        document.querySelector('#' + id).addEventListener('input', update)
+      );
+      document
+        .querySelector('#last')
+        .addEventListener(
+          'click',
+          () => (tabs.selectedIndex = headers.length - 1)
+        );
+      tabs.addEventListener(
+        'vsc-tabs-select',
+        (event) =>
+          (document.querySelector('#status').textContent =
+            '当前选中：' +
+            headers[event.detail.selectedIndex].textContent.trim())
+      );
+      update();
+    </script>
+  </body>
+</html>

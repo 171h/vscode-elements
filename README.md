@@ -9,6 +9,7 @@
 本仓库的功能变更说明位于 [`docs`](docs/) 目录。其他使用说明请访问[文档站点](https://vscode-elements.github.io/)。
 
 - [表单控件尺寸](docs/form-size.md)：说明统一的 `small`、`medium`、`large` 尺寸、支持的组件、运行时用法、表单组及图标尺寸。
+- [标签页溢出与图标](docs/tabs-overflow.md)：说明换行、覆盖式水平滚动、溢出菜单及标题图标配置。
 - [AI 辅助开发指南](AGENTS.md)：说明代理配置、任务示例、验证流程，以及中文文档、注释和 Conventional Commits 提交规范。
 - [多选框选中标签](docs/multi-select-labels.md)：说明 `vscode-option` 的 `abbreviation`、`vscode-multi-select` 展示区域的显示优先级，以及折叠和工具提示行为。
 - [文本框百分比模式](docs/textfield-percentage.md)：说明 `vscode-textfield` 的 `percentage` 属性、百分号显示、小数形式数值，以及编辑和校验行为。
