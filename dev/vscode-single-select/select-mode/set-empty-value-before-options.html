@@ -9,12 +9,9 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-single-select/index.js"></script>
-    <script type="module" src="/dist/vscode-option/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-single-select/index.ts"></script>
+    <script type="module" src="/src/vscode-option/index.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -26,7 +23,7 @@
 
   <body>
     <h1>选择框</h1>
-    <vscode-demo id="size-demo-target">
+    <div id="size-demo-target">
       <form>
         <vscode-single-select id="select" name="test"></vscode-single-select>
       </form>
@@ -35,7 +32,7 @@
         <button type="button" data-size="medium">medium</button>
         <button type="button" data-size="large">large</button>
       </div>
-    </vscode-demo>
+    </div>
     <script type="module">
       const select = document.querySelector('vscode-single-select');
       select.value = '';

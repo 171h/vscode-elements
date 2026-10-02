@@ -15,7 +15,7 @@
         height: 300px;
       }
     </style>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -27,7 +27,7 @@
 
   <body style="background-color: #1f1f1f">
     <main>
-      <vscode-demo>
+      <div>
         <vscode-table>
           <vscode-table-header>
             <vscode-table-header-cell>id</vscode-table-header-cell>
@@ -133,7 +133,7 @@
             </vscode-table-row>
           </vscode-table-body>
         </vscode-table>
-      </vscode-demo>
+      </div>
     </main>
   </body>
 </html>

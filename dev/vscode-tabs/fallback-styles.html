@@ -9,7 +9,7 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -21,7 +21,7 @@
 
   <body style="background-color: #1f1f1f">
     <main>
-      <vscode-demo>
+      <div>
         <vscode-tabs panel>
           <vscode-icon
             label="最大化面板"
@@ -50,9 +50,9 @@
           <vscode-tab-header slot="header">Panel 2</vscode-tab-header>
           <vscode-tab-panel> panel 2 </vscode-tab-panel>
         </vscode-tabs>
-      </vscode-demo>
+      </div>
       <p>&nbsp;</p>
-      <vscode-demo>
+      <div>
         <vscode-tabs>
           <vscode-tab-header>Tab 1</vscode-tab-header>
           <vscode-tab-panel>Panel 1</vscode-tab-panel>
@@ -67,7 +67,7 @@
           <button type="button" data-icon-size="medium">medium</button>
           <button type="button" data-icon-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       document
@@ -75,7 +75,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('vscode-demo')
+              .closest('div')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

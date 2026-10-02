@@ -9,13 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
+    <script type="module" src="/dev/demo.ts"></script>
     <!-- <script>window.__vscodeElements_disableRegistryWarning__ = true;</script> -->
-    <script type="module" src="/dist/bundled.js"></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -27,12 +24,12 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <div>
         <p><vscode-badge>308 Settings Found</vscode-badge></p>
         <p><vscode-badge variant="counter">6</vscode-badge></p>
         <p><vscode-badge variant="activity-bar-counter">6</vscode-badge></p>
         <p><vscode-badge variant="tab-header-counter">6</vscode-badge></p>
-      </vscode-demo>
+      </div>
     </main>
   </body>
 </html>

@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <style>
       main {
         max-width: 480px;
@@ -67,7 +64,7 @@
       64×64，便于检查不同尺寸的表现。
     </p>
     <main>
-      <vscode-demo class="frame">
+      <div class="frame">
         <vscode-tree>
           <vscode-tree-item>
             <span slot="icon-leaf" class="oversized-icon small">SM</span>
@@ -82,7 +79,7 @@
             Bud Spencer tribute (64x64)
           </vscode-tree-item>
         </vscode-tree>
-      </vscode-demo>
+      </div>
     </main>
   </body>
 </html>

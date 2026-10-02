@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>single-select/select-mode/element-value</title>
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-single-select/index.js"></script>
-    <script type="module" src="/dist/vscode-option/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-single-select/index.ts"></script>
+    <script type="module" src="/src/vscode-option/index.ts"></script>
   </head>
 
   <body class="vscode-light">
-    <vscode-demo id="size-demo-target">
+    <div id="size-demo-target">
       <vscode-single-select id="select">
         <vscode-option value="3f7382c7-d4cb-49a5-a1d3-4e9df19ed432"
           >Lorem</vscode-option
@@ -31,7 +28,7 @@
         <button type="button" data-size="medium">medium</button>
         <button type="button" data-size="large">large</button>
       </div>
-    </vscode-demo>
+    </div>
     <div id="out"></div>
     <script type="module">
       const sl = document.getElementById('select');

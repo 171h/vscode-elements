@@ -19,3 +19,5 @@ vscode.*-custom-data.json
 
 /demo-dist/
 /.baseline/
+
+/.vitest/

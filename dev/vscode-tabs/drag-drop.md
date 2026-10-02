@@ -78,7 +78,7 @@ legend 无边框且背景透明，与 fieldset 边框后方表面融合，避免
 
 同一套样式适用于包装组件和面板直属原生 fieldset，不影响嵌套表单 fieldset。低优先级允许应用覆盖 CSS。由于 shadow slot 无法为原生 fieldset 的 legend 后代设置样式，样式会在所属文档或 shadow root 中安装一次。
 
-独立示例包含项目主题选择器。开发服务器启动后，运行 `node scripts/test-fieldset-themes.mjs` 可检查十种内置主题，并在 `.wireit/` 下生成截图。
+独立示例包含项目主题选择器。开发服务器启动后，运行 `node scripts/test-fieldset-themes.mjs` 可检查四种本地主题，并在 `coverage/screenshots/` 下生成截图。
 
 ## VS Code 参考
 
@@ -89,4 +89,4 @@ legend 无边框且背景透明，与 fieldset 边框后方表面融合，避免
 
 本库保留横向标签页布局，标题中间和边缘区域分别用于移入已有面板及提升为新标签页。拖拽图像由浏览器绘制并随指针移动，具体外观取决于浏览器和操作系统，与 VS Code 的原生 HTML 拖拽类似。此 API 不提供工作台持久化或跨窗口拖拽。
 
-交互示例：[侧栏拖拽](drag-drop.html)、[标签页组拖拽](group-drag-drop.html)，运行 `npm run serve` 后访问。
+交互示例：[侧栏拖拽](drag-drop.html)、[标签页组拖拽](group-drag-drop.html)，运行 `pnpm start` 后访问。

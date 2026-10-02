@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <style>
       .dropdown-menu {
         display: inline-block;
@@ -34,7 +31,7 @@
     <main>
       <h2>基础示例</h2>
 
-      <vscode-demo id="size-demo-target">
+      <div id="size-demo-target">
         <div class="dropdown-menu">
           <vscode-button-group>
             <vscode-button secondary id="button-1" icon="check"
@@ -96,7 +93,7 @@
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {

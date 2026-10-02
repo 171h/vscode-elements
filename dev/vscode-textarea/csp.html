@@ -32,14 +32,10 @@
       }
     </style>
     <script nonce="abc123">
-      window.vscodeWebviewPlaygroundNonce = 'abc123';
+      window.litNonce = 'abc123';
     </script>
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-      nonce="abc123"
-    ></script>
-    <script type="module" src="/dist/main.js" nonce="abc123"></script>
+    <script type="module" src="/dev/demo.ts" nonce="abc123"></script>
+    <script type="module" src="/src/main.ts" nonce="abc123"></script>
     <script nonce="abc123">
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -52,14 +48,14 @@
   <body>
     <h1>应用 CSP</h1>
     <main>
-      <vscode-demo id="size-demo-target">
+      <div id="size-demo-target">
         <vscode-textarea value="ffff" resize="vertical"></vscode-textarea>
         <div class="size-buttons">
           <button type="button" data-size="small">small</button>
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module" nonce="abc123">
       document.querySelectorAll('.size-buttons button').forEach((button) => {

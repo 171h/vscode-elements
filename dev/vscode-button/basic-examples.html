@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -26,7 +23,7 @@
   <body>
     <main>
       <div id="size-demo-target">
-        <vscode-demo>
+        <div>
           <vscode-button>Primary Button</vscode-button>
           <vscode-button secondary>Secondary Button</vscode-button>
           <div class="size-buttons">
@@ -34,7 +31,7 @@
             <button type="button" data-size="medium">medium</button>
             <button type="button" data-size="large">large</button>
           </div>
-        </vscode-demo>
+        </div>
       </div>
     </main>
     <script type="module">

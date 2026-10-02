@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>checkbox/toggle</title>
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script src="/dist/vscode-checkbox/index.js" type="module"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script src="/src/vscode-checkbox/index.ts" type="module"></script>
   </head>
 
   <body>
     <main>
       <h2>切换开关模式</h2>
-      <vscode-demo id="size-demo-target">
+      <div id="size-demo-target">
         <vscode-checkbox
           toggle
           label="开关（关闭）"
@@ -64,7 +61,7 @@
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {

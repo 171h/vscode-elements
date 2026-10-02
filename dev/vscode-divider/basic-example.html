@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-divider/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-divider/index.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -26,7 +23,7 @@
   <body>
     <h1>分隔线</h1>
     <main>
-      <vscode-demo>
+      <div>
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque quis
           ligula id magna vulputate mollis vel eu massa. Nam cursus velit in
@@ -49,7 +46,7 @@
           eros. Nunc congue massa sit amet leo lacinia cursus. Aenean porta non
           ligula et euismod.
         </p>
-      </vscode-demo>
+      </div>
     </main>
   </body>
 </html>

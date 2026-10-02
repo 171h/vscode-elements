@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <style>
       main {
         max-width: 640px;
@@ -130,7 +127,7 @@
           <span id="tree-width-value">500px</span>
         </div>
       </div>
-      <vscode-demo class="actions-demo-frame">
+      <div class="actions-demo-frame">
         <vscode-tree class="scm-tree">
           <vscode-tree-item
             class="scm-node"
@@ -292,7 +289,7 @@
           <button type="button" data-icon-size="medium">medium</button>
           <button type="button" data-icon-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       const demoFrame = document.querySelector('.actions-demo-frame');
@@ -392,7 +389,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('vscode-demo')
+              .closest('div')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

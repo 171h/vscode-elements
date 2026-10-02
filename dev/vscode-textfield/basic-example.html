@@ -9,20 +9,17 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-icon/index.js"></script>
-    <script type="module" src="/dist/vscode-label/index.js"></script>
-    <script type="module" src="/dist/vscode-textfield/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-icon/index.ts"></script>
+    <script type="module" src="/src/vscode-label/index.ts"></script>
+    <script type="module" src="/src/vscode-textfield/index.ts"></script>
   </head>
 
   <body class="vscode-light">
     <main>
       <h1>文本框</h1>
       <h2>基础示例</h2>
-      <vscode-demo id="size-demo-target">
+      <div id="size-demo-target">
         <vscode-label for="field-1">Lorem ipsum</vscode-label>
         <vscode-textfield id="field-1" autocomplete placeholder="占位文字……">
           <vscode-icon name="calendar" slot="content-before"></vscode-icon>
@@ -78,7 +75,7 @@
           <button type="button" data-icon-size="medium">medium</button>
           <button type="button" data-icon-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {
@@ -97,7 +94,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('vscode-demo')
+              .closest('div')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

@@ -9,12 +9,9 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-split-layout/index.js"></script>
-    <script type="module" src="/dist/vscode-scrollable/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-split-layout/index.ts"></script>
+    <script type="module" src="/src/vscode-scrollable/index.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -23,7 +20,7 @@
       };
     </script>
     <style>
-      vscode-demo:not(:defined) {
+      div:not(:defined) {
         display: block;
         margin: 32px 0;
         padding: 55px 20px 20px;
@@ -39,7 +36,7 @@
   <body>
     <h1>分割布局</h1>
     <h2>垂直示例</h2>
-    <vscode-demo>
+    <div>
       <vscode-split-layout
         initial-handle-position="100px"
         reset-on-dbl-click
@@ -112,6 +109,6 @@
           </vscode-scrollable>
         </div>
       </vscode-split-layout>
-    </vscode-demo>
+    </div>
   </body>
 </html>

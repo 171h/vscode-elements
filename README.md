@@ -31,6 +31,7 @@ pnpm test:install
 | `pnpm test:watch`                     | Vitest 监视模式                                                                             |
 | `pnpm test:coverage`                  | 执行测试并生成 V8 覆盖率报告                                                                |
 | `pnpm test:release`                   | 仅执行发布工具测试                                                                          |
+| `pnpm test:build`                     | 验证开发页、生产示例、主题、CSP、原生拖拽与单文件产物                                       |
 | `pnpm test:install`                   | 安装 Playwright Chromium 与所需系统依赖                                                     |
 | `pnpm lint` / `pnpm lint:fix`         | ESLint 检查 / 修复源码                                                                      |
 | `pnpm prettier` / `pnpm prettier:fix` | Prettier 检查 / 格式化仓库文件                                                              |
@@ -52,11 +53,11 @@ Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup �
 
 从干净的工作区运行 `pnpm release`。默认建议递增 `patch` 版本；可用 `pnpm release -- minor`、`pnpm release -- major` 或 `pnpm release -- 3.1.0` 指定其他版本。命令会提示确认最终的 `v` 前缀版本标签及发布操作。
 
-发布新版本时，命令会更新 `package.json`、`pnpm-lock.yaml` 和组件版本，根据上次发布以来的 Git 提交生成 `CHANGELOG.md` 条目，提交这些文件并创建标签。选择当前版本时仅创建或更新标签，保留现有变更日志。
+发布新版本时，命令会更新 `package.json` 和组件版本（pnpm 锁文件不记录根包版本），根据上次发布以来的 Git 提交生成 `CHANGELOG.md` 条目，提交这些文件并创建标签。选择当前版本时仅创建或更新标签，保留现有变更日志。
 
 确认推送后，分支和标签会推送到 `origin`，并自动启动 GitHub Actions 的 **Release** 工作流。该工作流构建、测试并将 `nusys-ui` 发布到 npmjs，随后使用 `CHANGELOG.md` 中的说明创建 GitHub 发布。请检查工作流是否完成；本地推送成功不代表 npm 发布已完成。
 
-在仓库 Actions 中配置名为 `NPM_TOKEN` 的密钥，使其具有发布 `nusys-ui` 的权限，并可绕过无人值守发布的双因素认证。工作流通过 `actions/setup-node` 将其作为 `NODE_AUTH_TOKEN` 提供给 npm。GitHub 密钥仅在 Actions 中使用；本地命令需要 Git 推送权限，不需要 npm 令牌。包中的仓库地址必须与本仓库一致，以支持 npm 来源证明。
+在仓库 Actions 中配置名为 `NPM_TOKEN` 的密钥，使其具有发布 `nusys-ui` 的权限，并可绕过无人值守发布的双因素认证。工作流通过 `actions/setup-node` 将其作为 `NODE_AUTH_TOKEN` 提供给 pnpm。GitHub 密钥仅在 Actions 中使用；本地命令需要 Git 推送权限，不需要 npm 令牌。包中的仓库地址必须与本仓库一致，以支持 npm 来源证明。
 
 打标签的提交必须包含最新工作流。发布失败时，可手动运行 **Release**，并将 `version_tag` 设置为已有标签。已发布的 npm 版本会跳过；若包内容发生变化，应发布新版本。
 

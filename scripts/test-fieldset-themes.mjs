@@ -10,7 +10,7 @@ try {
   await page.goto(
     `${process.argv[2] || 'http://127.0.0.1:8096'}/dev/vscode-tabs/drag-drop.html`
   );
-  const selector = page.locator('vscode-theme-selector select');
+  const selector = page.locator('dev-theme-selector select');
   await selector.waitFor();
   await page.waitForFunction(
     () =>
@@ -22,15 +22,10 @@ try {
     .evaluateAll((options) => options.map((option) => option.value));
   for (const theme of themes) {
     await selector.selectOption(theme);
-    await page.waitForFunction(async (id) => {
-      const {theme: tokens} = await import(
-        `/node_modules/@vscode-elements/webview-playground/dist/themes/${id}.js`
-      );
-      return tokens.every(
-        ([key, value]) =>
-          document.documentElement.style.getPropertyValue(key).trim() === value
-      );
-    }, theme);
+    await page.waitForFunction(
+      (id) => document.documentElement.dataset.theme === id,
+      theme
+    );
     const result = await page.evaluate(() => {
       const expected = (keys) => {
         const el = document.createElement('span');
@@ -114,7 +109,7 @@ try {
     }
     await page
       .locator('main')
-      .screenshot({path: `.wireit/fieldset-${theme}.png`});
+      .screenshot({path: `coverage/screenshots/fieldset-${theme}.png`});
     console.log(`${theme}: 包装与原生 fieldset、标题、边框和焦点检查通过`);
   }
   await page.emulateMedia({forcedColors: 'active'});

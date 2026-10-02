@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>checkbox/validate-checked</title>
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script src="/dist/vscode-checkbox/index.js" type="module"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script src="/src/vscode-checkbox/index.ts" type="module"></script>
   </head>
 
   <body>
     <main>
-      <vscode-demo id="size-demo-target">
+      <div id="size-demo-target">
         <style>
           input[type='checkbox']:invalid {
             outline: 2px solid red;
@@ -39,7 +36,7 @@
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {

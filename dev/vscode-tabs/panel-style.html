@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -25,7 +22,7 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <div>
         <vscode-tabs panel class="panel-example">
           <vscode-icon
             label="最大化面板"
@@ -108,8 +105,7 @@
   2022-11-06 11:18:22.515 [info] > git for-each-ref --sort -committerdate --format %(refname) %(objectname) %(*objectname) [164ms]
   2022-11-06 11:18:22.518 [info] > git config --get commit.template [149ms]
   2022-11-06 11:18:22.523 [info] > git for-each-ref --format=%(refname)%00%(upstream:short)%00%(objectname)%00%(upstream:track)%00%(upstream:remotename)%00%(upstream:remoteref) refs/heads/rel-0.8.0 refs/remotes/rel-0.8.0 [146ms]
-            </pre
-              >
+            </pre>
             </vscode-scrollable>
           </vscode-tab-panel>
           <!-- display:block -->
@@ -122,8 +118,7 @@
   [server]   Local:    http://localhost:8000/
   [server]   Network:  http://192.168.0.15:8000/
   [server]
-          </pre
-            >
+          </pre>
           </vscode-tab-panel>
         </vscode-tabs>
         <div class="icon-size-buttons">
@@ -132,7 +127,7 @@
           <button type="button" data-icon-size="medium">medium</button>
           <button type="button" data-icon-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       document
@@ -140,7 +135,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('vscode-demo')
+              .closest('div')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

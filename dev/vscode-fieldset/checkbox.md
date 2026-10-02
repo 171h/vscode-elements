@@ -77,4 +77,4 @@ fieldset.checkedChange = (checked) => {
 
 minimal 模式隐藏原生 fieldset，因此不能通过 legend 拖动视图。需要保留拖拽入口时使用 collapsed。
 
-交互示例：[复选框测试页面](checkbox.html)，运行 `npm run serve` 后访问。
+交互示例：[复选框测试页面](checkbox.html)，运行 `pnpm start` 后访问。

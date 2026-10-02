@@ -9,18 +9,15 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-checkbox-group/index.js"></script>
-    <script type="module" src="/dist/vscode-checkbox/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-checkbox-group/index.ts"></script>
+    <script type="module" src="/src/vscode-checkbox/index.ts"></script>
   </head>
 
   <body>
     <h1>复选框</h1>
     <h2>监听 "change" 和 "invalid" 事件</h2>
-    <vscode-demo id="size-demo-target">
+    <div id="size-demo-target">
       <form action="#">
         <p>
           <vscode-checkbox-group id="group-1">
@@ -57,7 +54,7 @@
         <button type="button" data-size="medium">medium</button>
         <button type="button" data-size="large">large</button>
       </div>
-    </vscode-demo>
+    </div>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {
         button.addEventListener('click', () => {

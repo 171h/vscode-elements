@@ -9,20 +9,17 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-icon/index.js"></script>
-    <script type="module" src="/dist/vscode-label/index.js"></script>
-    <script type="module" src="/dist/vscode-textfield/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-icon/index.ts"></script>
+    <script type="module" src="/src/vscode-label/index.ts"></script>
+    <script type="module" src="/src/vscode-textfield/index.ts"></script>
   </head>
 
   <body class="vscode-light">
     <main>
       <h1>文本框</h1>
       <h2>值变化时校验</h2>
-      <vscode-demo id="size-demo-target">
+      <div id="size-demo-target">
         <style>
           input[type='text']:invalid {
             background-color: rgba(255, 0, 0, 0.2);
@@ -41,7 +38,7 @@
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </vscode-demo>
+      </div>
     </main>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {

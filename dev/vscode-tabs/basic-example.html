@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -25,7 +22,7 @@
 
   <body>
     <main>
-      <vscode-demo>
+      <div>
         <vscode-tabs>
           <vscode-tab-header>Tab 1</vscode-tab-header>
           <vscode-tab-panel>Panel 1</vscode-tab-panel>
@@ -34,7 +31,7 @@
           <vscode-tab-header>Tab 3</vscode-tab-header>
           <vscode-tab-panel>Panel 3</vscode-tab-panel>
         </vscode-tabs>
-      </vscode-demo>
+      </div>
     </main>
   </body>
 </html>

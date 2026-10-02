@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -32,7 +29,7 @@
             overflow: visible;
           }
         </style>
-        <vscode-demo>
+        <div>
           <vscode-collapsible
             heading="Lorem"
             description="Ipsum Dolor sit"
@@ -126,7 +123,7 @@
             <button type="button" data-icon-size="medium">medium</button>
             <button type="button" data-icon-size="large">large</button>
           </div>
-        </vscode-demo>
+        </div>
         <script type="module">
           const icons = document.querySelectorAll('vscode-icon[action-icon]');
 
@@ -154,7 +151,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('vscode-demo')
+              .closest('div')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

@@ -9,12 +9,9 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-multi-select/index.js"></script>
-    <script type="module" src="/dist/vscode-option/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-multi-select/index.ts"></script>
+    <script type="module" src="/src/vscode-option/index.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -26,7 +23,7 @@
 
   <body>
     <h1>多选框</h1>
-    <vscode-demo id="size-demo-target">
+    <div id="size-demo-target">
       <h2>change 事件</h2>
       <vscode-multi-select id="select-1">
         <vscode-option>Lorem</vscode-option>
@@ -41,9 +38,9 @@
         <button type="button" data-size="medium">medium</button>
         <button type="button" data-size="large">large</button>
       </div>
-    </vscode-demo>
+    </div>
 
-    <vscode-demo>
+    <div>
       <h2>invalid 事件</h2>
       <form action="#">
         <vscode-multi-select id="select-2" name="select-2" required>
@@ -56,7 +53,7 @@
       <script type="module">
         logEvents('#select-2', 'invalid');
       </script>
-    </vscode-demo>
+    </div>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {
         button.addEventListener('click', () => {

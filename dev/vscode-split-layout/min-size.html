@@ -9,12 +9,9 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/vscode-split-layout/index.js"></script>
-    <script type="module" src="/dist/vscode-scrollable/index.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/vscode-split-layout/index.ts"></script>
+    <script type="module" src="/src/vscode-scrollable/index.ts"></script>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -22,7 +19,7 @@
         margin: 24px;
       }
 
-      vscode-demo {
+      div {
         display: block;
         margin-bottom: 32px;
       }
@@ -58,7 +55,7 @@
       拖动手柄时，主面板宽度不会小于 <strong>240px</strong>，详情面板至少保留
       <strong>25%</strong> 的宽度。
     </p>
-    <vscode-demo>
+    <div>
       <vscode-split-layout
         style="width: 520px; height: 280px"
         min-start="240px"
@@ -74,11 +71,11 @@
           <p>此面板至少保留可用宽度的 25%，用于预览内容。</p>
         </div>
       </vscode-split-layout>
-    </vscode-demo>
+    </div>
 
     <h2>水平比例约束（30%）</h2>
     <p>两个面板均使用百分比最小尺寸，以保持水平分割中的工具栏可用。</p>
-    <vscode-demo>
+    <div>
       <vscode-split-layout
         split="horizontal"
         style="width: 520px; height: 320px"
@@ -95,6 +92,6 @@
           <p>检查器面板同样保留至少 30%，确保操作可用。</p>
         </div>
       </vscode-split-layout>
-    </vscode-demo>
+    </div>
   </body>
 </html>

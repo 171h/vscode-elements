@@ -1,4 +1,4 @@
-// 原生鼠标拖拽冒烟测试：先运行 `npx wds --port 8096 --hostname 127.0.0.1`
+// 原生鼠标拖拽冒烟测试：先运行 `pnpm start --port 8096 --host 127.0.0.1`
 // 再运行 `node scripts/test-tabs-drag.mjs [服务器 URL]`。
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';

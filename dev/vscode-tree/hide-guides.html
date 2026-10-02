@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -26,7 +23,7 @@
   <body>
     <h1>隐藏参考线</h1>
     <main>
-      <vscode-demo>
+      <div>
         <vscode-tree indent-guides="none">
           <vscode-tree-item>Home</vscode-tree-item>
           <vscode-tree-item>
@@ -72,7 +69,7 @@
             <vscode-tree-item>Transcripts</vscode-tree-item>
           </vscode-tree-item>
         </vscode-tree>
-      </vscode-demo>
+      </div>
     </main>
   </body>
 </html>

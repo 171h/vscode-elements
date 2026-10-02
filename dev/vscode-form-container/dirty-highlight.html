@@ -9,11 +9,8 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script
-      type="module"
-      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
-    ></script>
-    <script type="module" src="/dist/main.js"></script>
+    <script type="module" src="/dev/demo.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
     <style>
       body {
         font-family: var(--vscode-font-family);
@@ -162,7 +159,7 @@
     </section>
 
     <script type="module">
-      import {VscodeFormContainer} from '/dist/main.js';
+      import {VscodeFormContainer} from '/src/main.ts';
 
       const themeKinds = [
         'vscode-light',
