@@ -62,3 +62,31 @@ describe('标题换行', () => {
     expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
   });
 });
+
+describe('标题水平滚动', () => {
+  it('使用覆盖滚动条且选中末项时自动滚入视口', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 200px" overflow="scroll">
+        ${[1, 2, 3].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 120px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    await elementUpdated(el);
+    const list = el.shadowRoot!.querySelector<HTMLElement>('.tablist')!;
+    const scrollbar = el.shadowRoot!.querySelector<HTMLElement>('.scrollbar')!;
+    const height = el.getBoundingClientRect().height;
+    expect(getComputedStyle(scrollbar).position).to.equal('absolute');
+    expect(getComputedStyle(scrollbar).opacity).to.equal('0');
+    el.selectedIndex = 2;
+    await elementUpdated(el);
+    expect(list.scrollLeft).to.be.greaterThan(0);
+    expect(el.getBoundingClientRect().height).to.equal(height);
+    expect(
+      el.querySelectorAll('vscode-tab-header')[2].getBoundingClientRect().right
+    ).to.be.at.most(list.getBoundingClientRect().right + 1);
+  });
+});

@@ -1,6 +1,7 @@
-import {html, TemplateResult} from 'lit';
-import {property, queryAssignedElements} from 'lit/decorators.js';
+import {html, TemplateResult, PropertyValues} from 'lit';
+import {property, queryAssignedElements, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
+import {stylePropertyMap} from '../includes/style-property-map.js';
 import uniqueId from '../includes/uniqueId.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import {VscodeTabHeader} from '../vscode-tab-header/index.js';
@@ -54,13 +55,84 @@ export class VscodeTabs extends VscElement {
 
   private _dragController = new TabsDragController(this);
 
+  @state()
+  private _scrollWidth = 0;
+
+  @state()
+  private _scrollViewportWidth = 0;
+
+  @state()
+  private _scrollOffset = 0;
+
+  private _resizeObserver = new ResizeObserver(() => this._scheduleLayout());
+  private _layoutFrame = 0;
+
+  private _scheduleLayout = () => {
+    cancelAnimationFrame(this._layoutFrame);
+    this._layoutFrame = requestAnimationFrame(() => this._updateOverflow());
+  };
+
+  private _updateOverflow() {
+    const list = this.shadowRoot?.querySelector<HTMLElement>('.tablist');
+    if (!list) {
+      return;
+    }
+    this._scrollWidth = this.overflow === 'scroll' ? list.scrollWidth : 0;
+    this._scrollViewportWidth = list.clientWidth;
+    this._scrollOffset = list.offsetLeft;
+    this._syncScroll();
+  }
+
+  private _syncScroll(event?: Event) {
+    const list = this.shadowRoot?.querySelector<HTMLElement>('.tablist');
+    const scrollbar = this.shadowRoot?.querySelector<HTMLElement>('.scrollbar');
+    if (!list || !scrollbar) {
+      return;
+    }
+    if (event?.target === scrollbar) {
+      list.scrollLeft = scrollbar.scrollLeft;
+    } else {
+      scrollbar.scrollLeft = list.scrollLeft;
+    }
+  }
+
+  private _revealHeader(header?: VscodeTabHeader) {
+    if (this.overflow !== 'scroll' || !header) {
+      return;
+    }
+    const list = this.shadowRoot?.querySelector<HTMLElement>('.tablist');
+    if (!list) {
+      return;
+    }
+    const bounds = list.getBoundingClientRect();
+    const rect = header.getBoundingClientRect();
+    if (rect.left < bounds.left) {
+      list.scrollLeft += rect.left - bounds.left;
+    } else if (rect.right > bounds.right) {
+      list.scrollLeft += rect.right - bounds.right;
+    }
+    this._syncScroll();
+  }
+
+  protected override updated(changed: PropertyValues) {
+    super.updated(changed);
+    this._scheduleLayout();
+    if (changed.has('selectedIndex')) {
+      this._setActiveTab();
+      this._revealHeader(this._tabHeaders[this.selectedIndex]);
+    }
+  }
+
   override connectedCallback() {
     super.connectedCallback();
     this._dragController.connect();
+    this._resizeObserver.observe(this);
   }
 
   override disconnectedCallback() {
     this._dragController.disconnect();
+    this._resizeObserver.disconnect();
+    cancelAnimationFrame(this._layoutFrame);
     super.disconnectedCallback();
   }
 
@@ -175,6 +247,7 @@ export class VscodeTabs extends VscElement {
 
       this._tabHeaders[this._tabFocus].setAttribute('tabindex', '0');
       this._tabHeaders[this._tabFocus].focus();
+      this._revealHeader(this._tabHeaders[this._tabFocus]);
     }
 
     if (ev.key === 'Enter') {
@@ -213,13 +286,28 @@ export class VscodeTabs extends VscElement {
     this._tabHeaders = this._headerSlotElements.filter(
       (el) => el instanceof VscodeTabHeader
     ) as VscodeTabHeader[];
+    this._resizeObserver.disconnect();
+    this._resizeObserver.observe(this);
+    const list = this.shadowRoot?.querySelector('.tablist');
+    if (list) {
+      this._resizeObserver.observe(list);
+    }
     this._tabHeaders.forEach((el, i) => {
+      this._resizeObserver.observe(el);
       el.tabId = i;
       el.id = `t${this._componentId}-h${i}`;
       el.ariaControls = `t${this._componentId}-p${i}`;
       el.panel = this.panel;
       el.active = i === this.selectedIndex;
     });
+    this._scheduleLayout();
+  }
+
+  private _onAddonsSlotChange(event: Event) {
+    (event.target as HTMLSlotElement)
+      .assignedElements()
+      .forEach((el) => this._resizeObserver.observe(el));
+    this._scheduleLayout();
   }
 
   private _onHeaderClick(event: MouseEvent) {
@@ -242,14 +330,30 @@ export class VscodeTabs extends VscElement {
         @click=${this._onHeaderClick}
         @keydown=${this._onHeaderKeyDown}
       >
-        <div role="tablist" class="tablist">
+        <div role="tablist" class="tablist" @scroll=${this._syncScroll}>
           <slot
             name="header"
             @slotchange=${this._onHeaderSlotChange}
             role="tablist"
           ></slot>
         </div>
-        <slot name="addons"></slot>
+        <div
+          class="scrollbar"
+          .style=${stylePropertyMap({
+            width: `${this._scrollViewportWidth}px`,
+            left: `${this._scrollOffset}px`,
+          })}
+          @scroll=${this._syncScroll}
+          aria-hidden="true"
+        >
+          <div
+            .style=${stylePropertyMap({
+              width: `${this._scrollWidth}px`,
+              height: '1px',
+            })}
+          ></div>
+        </div>
+        <slot name="addons" @slotchange=${this._onAddonsSlotChange}></slot>
       </div>
       <slot @slotchange=${this._onMainSlotChange}></slot>
     `;

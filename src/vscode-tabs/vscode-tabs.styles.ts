@@ -16,6 +16,7 @@ const styles: CSSResultGroup = [
       font-size: var(--vscode-font-size, 13px);
       font-weight: var(--vscode-font-weight, normal);
       width: 100%;
+      position: relative;
     }
 
     .header {
@@ -49,6 +50,53 @@ const styles: CSSResultGroup = [
 
     :host([overflow='wrap'][wrap-alignment='center']) .tablist {
       justify-content: center;
+    }
+
+    :host([overflow='scroll']) .tablist {
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    :host([overflow='scroll']) .tablist::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar {
+      display: none;
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 8px;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: var(--vscode-scrollbarSlider-background, #79797966)
+        transparent;
+      z-index: 1;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    :host([overflow='scroll']) .scrollbar {
+      display: block;
+    }
+
+    :host([overflow='scroll']:hover) .scrollbar {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .scrollbar::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: var(--vscode-scrollbarSlider-background, #79797966);
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: var(--vscode-scrollbarSlider-hoverBackground, #646464b3);
     }
 
     slot[name='addons'] {
