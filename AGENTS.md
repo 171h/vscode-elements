@@ -74,7 +74,7 @@ VSCode Elements 是基于 Lit 的 Web Components 组件库，用于开发 VS Cod
 | `pnpm build`         | 通过 Vite 构建包、组件清单、自定义补全数据与打包文件      |
 | `pnpm lint`          | 使用 ESLint 检查 TypeScript                               |
 | `pnpm prettier`      | 检查仓库文件格式                                          |
-| `npm test`           | 使用 Vitest 执行 Chromium 组件测试与 Node.js 发布工具测试 |
+| `pnpm test`          | 使用 Vitest 执行 Chromium 组件测试与 Node.js 发布工具测试 |
 | `pnpm test:coverage` | 执行浏览器测试并生成覆盖率报告                            |
 | `pnpm build:demo`    | 通过 Vite 构建生产示例                                    |
 | `pnpm test:build`    | 检查开发页、生产页、原生拖拽、主题、CSP 和单文件包        |

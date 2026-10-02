@@ -9,7 +9,13 @@ import type {VscodeButton} from '../vscode-button/index.js';
 
 async function settle(element: VscodeFieldset) {
   await element.updateComplete;
-  await new Promise((resolve) => setTimeout(resolve, 260));
+  // 等待真实动画结束，避免 CI 负载导致固定延时不足。
+  await Promise.all(
+    element
+      .getAnimations({subtree: true})
+      .map((animation) => animation.finished.catch(() => undefined))
+  );
+  await element.updateComplete;
 }
 
 describe('fieldset 审查问题回归', () => {
