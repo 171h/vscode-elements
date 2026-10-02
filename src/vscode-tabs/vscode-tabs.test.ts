@@ -1097,3 +1097,33 @@ describe('变换缩放下的菜单容量', () => {
     }
   });
 });
+
+describe('无溢出时的滚动覆盖层', () => {
+  it('计算样式与实际尺寸均隐藏覆盖层，溢出后再恢复', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 400px" overflow="scroll">
+        ${[1, 2].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    const scrollbar = el.shadowRoot!.querySelector<HTMLElement>('.scrollbar')!;
+    await waitUntil(() => scrollbar.hidden);
+    expect(getComputedStyle(scrollbar).display).to.equal('none');
+    expect(scrollbar.getBoundingClientRect().height).to.equal(0);
+    const height = el.getBoundingClientRect().height;
+    el.style.width = '150px';
+    await waitUntil(() => !scrollbar.hidden);
+    expect(getComputedStyle(scrollbar).display).to.equal('block');
+    expect(scrollbar.getBoundingClientRect().height).to.equal(8);
+    expect(el.getBoundingClientRect().height).to.equal(height);
+    el.style.width = '400px';
+    await waitUntil(() => scrollbar.hidden);
+    expect(getComputedStyle(scrollbar).display).to.equal('none');
+    expect(scrollbar.getBoundingClientRect().height).to.equal(0);
+    expect(el.getBoundingClientRect().height).to.equal(height);
+  });
+});

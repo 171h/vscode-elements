@@ -95,7 +95,7 @@ const styles: CSSResultGroup = [
       pointer-events: auto;
     }
 
-    .scrollbar[hidden] {
+    :host([overflow='scroll']) .scrollbar[hidden] {
       display: none;
     }
 
