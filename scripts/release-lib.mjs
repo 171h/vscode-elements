@@ -11,14 +11,14 @@ export const repoRoot = path.resolve(
 export const changelogPath = path.join(repoRoot, 'CHANGELOG.md');
 
 const changelogGroups = [
-  ['feat', 'Added'],
-  ['fix', 'Fixed'],
-  ['perf', 'Performance'],
-  ['refactor', 'Changed'],
-  ['docs', 'Documentation'],
-  ['test', 'Tests'],
-  ['ci', 'Continuous integration'],
-  ['chore', 'Maintenance'],
+  ['feat', '新增'],
+  ['fix', '修复'],
+  ['perf', '性能'],
+  ['refactor', '变更'],
+  ['docs', '文档'],
+  ['test', '测试'],
+  ['ci', '持续集成'],
+  ['chore', '维护'],
 ];
 
 export function git(args, capture = false, quiet = false) {
@@ -100,6 +100,7 @@ export function getLastReleaseRef(currentVersion, excludedTag = '') {
       currentVersion,
       `v${currentVersion}`,
       `chore(release): publish v${currentVersion}`,
+      `chore(release): 发布 v${currentVersion}`,
     ];
     return (
       releases.find(([, subject]) => releaseSubjects.includes(subject))?.[0] ??
@@ -144,7 +145,7 @@ export function renderChangelog(version, commits, date = new Date()) {
     }
     lines.push('');
   }
-  if (!rendered) lines.push('- No user-facing changes.', '');
+  if (!rendered) lines.push('- 无面向用户的变更。', '');
   return lines.join('\n');
 }
 

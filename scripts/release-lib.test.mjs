@@ -88,21 +88,21 @@ test('buildReleasePushArgs pushes branch and tag atomically', () => {
 });
 
 test('extractReleaseNotes returns only the requested release body', () => {
-  const changelog = `# Changelog
+  const changelog = `# 变更日志
 
 ## [2.6.0] - 2026-09-01
 
-### Added
+### 新增
 
-- New release workflow.
+- 新增发布工作流。
 
 ## [2.5.1] - 2026-02-21
 
-- Previous release.
+- 此前的发布。
 `;
   assert.equal(
     extractReleaseNotes(changelog, '2.6.0'),
-    '### Added\n\n- New release workflow.'
+    '### 新增\n\n- 新增发布工作流。'
   );
 });
 
@@ -114,13 +114,13 @@ test('renderChangelog groups conventional commits', () => {
         hash: 'abc1234',
         type: 'feat',
         scope: 'button',
-        subject: 'add busy state',
+        subject: '添加忙碌状态',
       },
       {
         hash: 'def5678',
         type: 'fix',
         scope: '',
-        subject: 'correct focus handling',
+        subject: '修复焦点处理',
       },
     ],
     new Date('2026-09-01T00:00:00Z')
@@ -128,9 +128,16 @@ test('renderChangelog groups conventional commits', () => {
   assert.match(result, /^## \[2\.6\.0\] - 2026-09-01/);
   assert.match(
     result,
-    /### Added\n\n- \*\*button\*\*: add busy state \(abc1234\)/
+    /### 新增\n\n- \*\*button\*\*: 添加忙碌状态 \(abc1234\)/
   );
-  assert.match(result, /### Fixed\n\n- correct focus handling \(def5678\)/);
+  assert.match(result, /### 修复\n\n- 修复焦点处理 \(def5678\)/);
+});
+
+test('renderChangelog uses Chinese when there are no changes', () => {
+  assert.equal(
+    renderChangelog('3.3.1', [], new Date('2026-10-02T00:00:00Z')),
+    '## [3.3.1] - 2026-10-02\n\n- 无面向用户的变更。\n'
+  );
 });
 
 test('updateChangelog writes release notes and preserves previous releases', (t) => {
@@ -139,8 +146,8 @@ test('updateChangelog writes release notes and preserves previous releases', (t)
   );
   t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
   const filePath = path.join(directory, 'CHANGELOG.md');
-  const header = '# Changelog\n\nAll notable changes.\n\n';
-  const previous = '## [3.0.0] - 2026-09-02\n\n- Previous release.\n';
+  const header = '# 变更日志\n\n记录所有重要变更。\n\n';
+  const previous = '## [3.0.0] - 2026-09-02\n\n- 此前的发布。\n';
   fs.writeFileSync(filePath, header + previous);
 
   updateChangelog(
@@ -150,7 +157,7 @@ test('updateChangelog writes release notes and preserves previous releases', (t)
         hash: 'abc1234',
         type: 'fix',
         scope: 'release',
-        subject: 'use NPM_TOKEN',
+        subject: '使用 NPM_TOKEN',
       },
     ],
     filePath
@@ -161,8 +168,8 @@ test('updateChangelog writes release notes and preserves previous releases', (t)
   assert.ok(content.endsWith(previous));
   assert.equal(
     extractReleaseNotes(content, '3.0.1'),
-    '### Fixed\n\n- **release**: use NPM_TOKEN (abc1234)'
+    '### 修复\n\n- **release**: 使用 NPM_TOKEN (abc1234)'
   );
-  assert.equal(extractReleaseNotes(content, '3.0.0'), '- Previous release.');
+  assert.equal(extractReleaseNotes(content, '3.0.0'), '- 此前的发布。');
   assert.throws(() => extractReleaseNotes(content, '3.0.2'), /was not found/);
 });

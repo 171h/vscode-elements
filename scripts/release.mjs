@@ -180,7 +180,7 @@ async function main() {
         updateChangelog(version, commits);
 
         git(['add', '--', ...releaseFiles]);
-        git(['commit', '-m', `chore(release): publish ${tag}`]);
+        git(['commit', '-m', `chore(release): 发布 ${tag}`]);
       } catch (error) {
         restoreReleaseFiles(originalFiles);
         throw error;
