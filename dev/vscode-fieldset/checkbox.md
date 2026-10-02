@@ -1,50 +1,42 @@
-# Fieldset checkbox
+# Fieldset 复选框
 
-`vscode-fieldset` can show a checkbox on the top-right corner of the border.
-The checkbox is vertically aligned with the legend and, by default, enables or
-disables the fieldset content.
+`vscode-fieldset` 可在边框右上角显示与 legend 垂直对齐的复选框，默认控制内容的启用状态。
 
 ```html
-<vscode-fieldset checkbox checkbox-label="Wind load" unchecked-mode="collapsed">
+<vscode-fieldset checkbox checkbox-label="风荷载" unchecked-mode="collapsed">
   <fieldset>
-    <legend>Wind load</legend>
-    <label>Basic wind pressure <input /></label>
+    <legend>风荷载</legend>
+    <label>基本风压 <input /></label>
   </fieldset>
 </vscode-fieldset>
 ```
 
-The component expects a native `fieldset` with a `legend` in its default slot.
-The checkbox is rendered inside the component, so the light DOM keeps its
-native form semantics.
+默认插槽应包含带 legend 的原生 fieldset。复选框在组件内部渲染，内容保留原生表单语义。
 
-## Attributes and properties
+## 属性
 
-| Attribute        | Property        | Type                                    | Default     | Description                                          |
-| ---------------- | --------------- | --------------------------------------- | ----------- | ---------------------------------------------------- |
-| `checkbox`       | `checkbox`      | boolean                                 | `false`     | Shows the checkbox on the border.                    |
-| `checkbox-label` | `checkboxLabel` | string                                  | `''`        | Label text of the checkbox.                          |
-| `checked`        | `checked`       | boolean                                 | `false`     | Checked state. The content is enabled while checked. |
-| `unchecked-mode` | `uncheckedMode` | `'visible' \| 'collapsed' \| 'minimal'` | `'visible'` | Presentation of the content while unchecked.         |
+| HTML 属性        | JavaScript 属性 | 类型                                    | 默认值      | 说明                       |
+| ---------------- | --------------- | --------------------------------------- | ----------- | -------------------------- |
+| `checkbox`       | `checkbox`      | boolean                                 | `false`     | 在边框上显示复选框。       |
+| `checkbox-label` | `checkboxLabel` | string                                  | `''`        | 复选框标签。               |
+| `checked`        | `checked`       | boolean                                 | `false`     | 勾选状态；勾选时启用内容。 |
+| `unchecked-mode` | `uncheckedMode` | `'visible' \| 'collapsed' \| 'minimal'` | `'visible'` | 未勾选时的展示方式。       |
 
-All attributes are reflected, so `vscode-fieldset[checked]` can be used in CSS.
+`checkbox`、`checked` 和 `unchecked-mode` 会反映到 HTML 属性，可用 `vscode-fieldset[checked]` 选择器设置样式。`checkboxLabel` 不会自动反映到 HTML 属性。
 
-## Unchecked modes
+## 未勾选时的展示方式
 
-| Mode        | Unchecked presentation                                                                           |
-| ----------- | ------------------------------------------------------------------------------------------------ |
-| `visible`   | The content is disabled but stays visible.                                                       |
-| `collapsed` | The content is disabled and hidden. The legend, the border and the checkbox stay visible.        |
-| `minimal`   | The content, the legend and the border are hidden. Only the checkbox and its label stay visible. |
+| 模式        | 展示方式                                     |
+| ----------- | -------------------------------------------- |
+| `visible`   | 禁用内容，但保持可见。                       |
+| `collapsed` | 禁用并隐藏内容，保留标题、边框和复选框。     |
+| `minimal`   | 隐藏内容、标题和边框，仅保留复选框及其标签。 |
 
-Without the `checkbox` attribute the component does not render a checkbox and
-does not change the `disabled` state of the native fieldset.
+没有 checkbox 属性时，组件不显示复选框，也不会修改原生 fieldset 的禁用状态。
 
-## Custom behavior
+## 自定义行为
 
-Toggling the checkbox dispatches a cancelable
-`vsc-fieldset-checked-change` event with a `{checked}` detail. Calling
-`preventDefault()` skips the default behavior, so the content can be enabled,
-disabled or hidden in an application-specific way.
+切换复选框时派发可取消的 `vsc-fieldset-checked-change` 事件，其 detail 为 `{checked}`。调用 `preventDefault()` 可跳过默认的启用、禁用和折叠行为，由应用自行处理。
 
 ```js
 const fieldset = document.querySelector('vscode-fieldset');
@@ -57,37 +49,28 @@ fieldset.addEventListener('vsc-fieldset-checked-change', (event) => {
 });
 ```
 
-The same hook is available as a callback property. Returning `false` has the
-same effect as `preventDefault()`:
+`checkedChange` 回调属性提供相同入口，返回 false 的效果与 `preventDefault()` 相同：
 
 ```js
 fieldset.checkedChange = (checked) => {
-  console.log('checkbox is now', checked);
+  console.log('复选框当前状态', checked);
 };
 ```
 
-Changing the `checked` property programmatically applies the same default
-behavior. The native element can be reached through the `fieldsetElement`
-getter for custom handling.
+通过代码修改 checked 属性会应用默认行为。自定义处理可通过 fieldsetElement 获取原生元素。
 
-## Animation
+## 动画与布局
 
-When a mode change affects the height of the component, the height is animated
-with a 180 ms transition. Users with `prefers-reduced-motion: reduce` get the
-final state immediately.
+展示方式改变组件高度时，使用 180 ms 动画。偏好 `prefers-reduced-motion: reduce` 的用户直接看到最终状态。
 
-A `min-height` set by the application on the native fieldset limits how far the
-component can collapse.
+应用设置的 min-height 会限制折叠高度。调用方提供的内联 height、overflow 及其 !important 优先级，在初始化以及动画结束或中断后均会保留。动画只临时覆盖所需样式。
 
-## Form behavior
+## 表单行为
 
-While the checkbox is unchecked the native fieldset is `disabled`, so its form
-controls are disabled and are not submitted. If the native fieldset is authored
-with the `disabled` attribute, it stays disabled and the checkbox itself is
-disabled too.
+未勾选时，原生 fieldset 被禁用，其原生表单控件不可操作且不会提交。组件还同步内部库表单控件的 disabled 状态，使 shadow DOM 内的输入框不能通过键盘编辑。重新勾选或移除 checkbox 时恢复各控件原有的 disabled 状态；原先禁用的控件仍保持禁用。动态加入的库控件同样处理，移出此 fieldset 后恢复原状态。
 
-In `minimal` mode the native fieldset is hidden while unchecked, so the view
-cannot be dragged by its legend. Use `collapsed` when the view must stay
-draggable.
+原生 fieldset 初始带 disabled 属性时，内容和标题复选框始终禁用。
 
-Interactive demo: `dev/vscode-fieldset/checkbox.html` (run `npm run serve`).
+minimal 模式隐藏原生 fieldset，因此不能通过 legend 拖动视图。需要保留拖拽入口时使用 collapsed。
+
+交互示例：[复选框测试页面](checkbox.html)，运行 `npm run serve` 后访问。

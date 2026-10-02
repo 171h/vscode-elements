@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 未发布
+
+### 修复
+
+- **fieldset**：未勾选时同步库表单控件的禁用状态，重新启用时恢复原有状态。
+- **fieldset**：初始化、折叠及展开时保留调用方的 height、overflow 和 !important 优先级。
+
 ## [3.3.1] - 2026-09-26
 
 ### Maintenance

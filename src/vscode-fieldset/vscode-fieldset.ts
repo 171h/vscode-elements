@@ -8,22 +8,17 @@ import '../vscode-checkbox/index.js';
 import type {VscodeCheckbox} from '../vscode-checkbox/index.js';
 
 /**
- * What happens to the content while the checkbox of a `vscode-fieldset` is
- * unchecked.
+ * vscode-fieldset 的复选框未勾选时的内容展示方式。
  *
- * - `visible`: the content is disabled but stays visible.
- * - `collapsed`: the content is hidden, the legend and the border stay visible.
- * - `minimal`: the content, the legend and the border are hidden, only the
- *   checkbox and its label stay visible.
+ * - visible：禁用内容，但保持可见。
+ * - collapsed：隐藏内容，保留标题和边框。
+ * - minimal：隐藏内容、标题和边框，仅保留复选框及其标签。
  */
 export type FieldsetUncheckedMode = 'visible' | 'collapsed' | 'minimal';
 
 export type VscFieldsetCheckedChangeEvent = CustomEvent<{checked: boolean}>;
 
-/**
- * Called when the checkbox is toggled. Return `false` to keep the component
- * from applying the default behavior of the current `unchecked-mode`.
- */
+/** 复选框切换时调用；返回 false 可跳过当前 unchecked-mode 的默认行为。 */
 export type FieldsetCheckedChangeCallback = (
   checked: boolean
 ) => boolean | void;
@@ -33,18 +28,17 @@ const DURATION = 180;
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
 /**
- * A movable sidebar view. Supply a native fieldset with a legend in the default slot.
+ * 可移动的侧栏视图；在默认插槽中提供含 legend 的原生 fieldset。
  *
- * Add the `checkbox` attribute to show a checkbox on the top-right corner of the
- * border, aligned with the legend. The checkbox controls the disabled state of
- * the content and, depending on `unchecked-mode`, its visibility. Height changes
- * are animated, unless the user prefers reduced motion.
+ * checkbox 属性在边框右上角显示与标题对齐的复选框。
+ * 复选框控制内容的禁用状态，并根据 unchecked-mode 控制显示方式。
+ * 高度变化带有动画；用户偏好减少动态效果时跳过动画。
  *
  * @tag vscode-fieldset
  *
- * @slot - Native fieldset, legend and arbitrary form controls or content.
+ * @slot - 原生 fieldset、legend 及任意表单控件或内容。
  *
- * @fires {VscFieldsetCheckedChangeEvent} vsc-fieldset-checked-change - Cancelable event dispatched when the checkbox is toggled. Call `preventDefault()` to skip the default behavior.
+ * @fires {VscFieldsetCheckedChangeEvent} vsc-fieldset-checked-change - 复选框切换时派发的可取消事件；调用 preventDefault() 可跳过默认行为。
  *
  * @cssprop --vscode-sideBar-background
  * @cssprop --vscode-sideBar-foreground
@@ -53,46 +47,43 @@ const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
  * @cssprop --vscode-contrastBorder
  * @cssprop --vscode-focusBorder
  * @cssprop --vscode-disabledForeground
- * @cssprop [--vsc-form-control-border-radius=4px] - Border radius; small uses 1px and large uses 6px.
+ * @cssprop [--vsc-form-control-border-radius=4px] - 边框圆角；small 使用 1px，large 使用 6px。
  *
- * @csspart checkbox - Container of the checkbox placed on the border.
+ * @csspart checkbox - 位于边框上的复选框容器。
  */
 @customElement('vscode-fieldset')
 export class VscodeFieldset extends VscElement {
-  /** The fieldset size, matching the project's form controls. */
+  /** 与项目表单控件一致的尺寸。 */
   @property({reflect: true})
   size: FormControlSize = 'medium';
 
   /**
-   * Shows a checkbox on the top-right corner of the border. The checkbox
-   * enables the content and applies the `unchecked-mode` behavior.
+   * 在边框右上角显示复选框，控制内容启用状态及 unchecked-mode 行为。
    */
   @property({type: Boolean, reflect: true})
   checkbox = false;
 
   /**
-   * Label of the checkbox. It is empty by default.
+   * 复选框标签，默认为空。
    */
   @property({attribute: 'checkbox-label'})
   checkboxLabel = '';
 
   /**
-   * Checked state of the checkbox. The content is enabled while it is checked.
+   * 复选框勾选状态；勾选时启用内容。
    */
   @property({type: Boolean, reflect: true})
   checked = false;
 
   /**
-   * Presentation of the content while the checkbox is unchecked. See
-   * `FieldsetUncheckedMode` for the accepted values.
+   * 未勾选时的内容展示方式；可选值见 FieldsetUncheckedMode。
    */
   @property({attribute: 'unchecked-mode', reflect: true})
   uncheckedMode: FieldsetUncheckedMode = 'visible';
 
   /**
-   * Optional callback invoked when the checkbox is toggled, in addition to the
-   * `vsc-fieldset-checked-change` event. Return `false` to skip the default
-   * behavior. Set the property directly, it has no attribute.
+   * 复选框切换时除事件外调用的可选回调。
+   * 返回 false 可跳过默认行为；直接设置此属性，无对应 HTML 属性。
    */
   @property({attribute: false})
   checkedChange?: FieldsetCheckedChangeCallback = undefined;
@@ -112,6 +103,20 @@ export class VscodeFieldset extends VscElement {
 
   private _generation = 0;
 
+  private _disabledControls = new Map<
+    VscElement & {disabled: boolean},
+    boolean
+  >();
+
+  private _contentObserver = new MutationObserver(() => {
+    this._syncDisabledControls();
+  });
+
+  private _animationStyles = new Map<
+    HTMLElement,
+    Map<string, {value: string; priority: string}>
+  >();
+
   static override styles = [
     defaultStyles,
     css`
@@ -121,9 +126,7 @@ export class VscodeFieldset extends VscElement {
         position: relative;
       }
 
-      /* Zero height row, so the checkbox overlaps the top border. The
-         checkbox is centered on the legend, which is where the top border
-         is drawn. */
+      /* 零高度行使复选框覆盖边框，并与边框上的标题垂直居中对齐。 */
       .checkbox-row {
         display: flex;
         height: 0;
@@ -146,7 +149,7 @@ export class VscodeFieldset extends VscElement {
     `,
   ];
 
-  /** The native fieldset placed in the default slot. */
+  /** 默认插槽中的原生 fieldset。 */
   get fieldsetElement(): HTMLFieldSetElement | null {
     return this.querySelector('fieldset');
   }
@@ -154,6 +157,17 @@ export class VscodeFieldset extends VscElement {
   override connectedCallback() {
     super.connectedCallback();
     installFieldsetStyles(this);
+    this._contentObserver.observe(this, {childList: true, subtree: true});
+    if (this._rendered) {
+      this._syncCheckedState(false);
+    }
+  }
+
+  override disconnectedCallback() {
+    this._contentObserver.disconnect();
+    this._stopAnimation();
+    this._clearAnimationStyles();
+    super.disconnectedCallback();
   }
 
   override updated(changed: PropertyValues): void {
@@ -223,11 +237,13 @@ export class VscodeFieldset extends VscElement {
     if (!this.checkbox) {
       this._stopAnimation();
       this.removeAttribute(COLLAPSED_ATTR);
-      this._clearAnimationStyles(fieldset);
+      this._clearAnimationStyles();
       fieldset.disabled = this._initialDisabled;
+      this._syncDisabledControls();
       return;
     }
     fieldset.disabled = this._initialDisabled || !this.checked;
+    this._syncDisabledControls();
 
     const mode = this._uncheckedMode();
 
@@ -240,10 +256,42 @@ export class VscodeFieldset extends VscElement {
     }
   }
 
+  /** 同步库控件的实际禁用状态，并保留其原有 disabled 值。 */
+  private _syncDisabledControls() {
+    const fieldset = this.fieldsetElement;
+    const disabled = this.checkbox && !!fieldset?.disabled;
+
+    for (const [control, original] of this._disabledControls) {
+      if (!disabled || !fieldset?.contains(control)) {
+        control.disabled = original;
+        this._disabledControls.delete(control);
+      }
+    }
+    if (!disabled || !fieldset) {
+      return;
+    }
+    for (const element of fieldset.querySelectorAll('*')) {
+      if (
+        !(element instanceof VscElement) ||
+        !(element.constructor as {formAssociated?: boolean}).formAssociated ||
+        !('disabled' in element) ||
+        typeof element.disabled !== 'boolean' ||
+        !element.matches(':disabled')
+      ) {
+        continue;
+      }
+      const control = element as VscElement & {disabled: boolean};
+      if (!this._disabledControls.has(control)) {
+        this._disabledControls.set(control, control.disabled);
+      }
+      if (!control.disabled) {
+        control.disabled = true;
+      }
+    }
+  }
+
   /**
-   * Hides the fieldset content by collapsing it to the height of its header.
-   * The fieldset height is animated, so the border and the legend stay in
-   * place while the content is clipped.
+   * 将内容折叠至标题高度；动画裁剪内容，同时保留边框和标题的位置。
    */
   private _collapseFieldset(fieldset: HTMLFieldSetElement, animate: boolean) {
     if (this.hasAttribute(COLLAPSED_ATTR) && !this._animations.length) {
@@ -252,7 +300,7 @@ export class VscodeFieldset extends VscElement {
     const start = fieldset.getBoundingClientRect().height;
 
     this._stopAnimation();
-    this._clearAnimationStyles(fieldset);
+    this._clearAnimationStyles();
     this.setAttribute(COLLAPSED_ATTR, '');
     const end = fieldset.getBoundingClientRect().height;
 
@@ -263,8 +311,7 @@ export class VscodeFieldset extends VscElement {
     }
     const generation = this._generation;
 
-    fieldset.style.overflow = 'hidden';
-    fieldset.style.height = `${start}px`;
+    this._setAnimationStyles(fieldset, start);
     const animation = fieldset.animate(
       [{height: `${start}px`}, {height: `${end}px`}],
       {duration: DURATION, easing: 'ease', fill: 'forwards'}
@@ -272,14 +319,13 @@ export class VscodeFieldset extends VscElement {
 
     this._finish(animation, generation, () => {
       this.setAttribute(COLLAPSED_ATTR, '');
-      this._clearAnimationStyles(fieldset);
+      this._clearAnimationStyles();
     });
   }
 
   /**
-   * Minimal mode keeps only the checkbox. The host height and the fieldset
-   * opacity are animated, so the header disappears while the checkbox slides
-   * into the space of the collapsed component.
+   * minimal 模式仅保留复选框；对宿主高度和内容透明度应用动画，
+   * 使标题消失、复选框移动至折叠后的位置。
    */
   private _collapseMinimal(fieldset: HTMLFieldSetElement, animate: boolean) {
     if (this.hasAttribute(COLLAPSED_ATTR) && !this._animations.length) {
@@ -288,7 +334,7 @@ export class VscodeFieldset extends VscElement {
     const start = this.getBoundingClientRect().height;
 
     this._stopAnimation();
-    this._clearAnimationStyles(fieldset);
+    this._clearAnimationStyles();
     this.setAttribute(COLLAPSED_ATTR, '');
     const end = this.getBoundingClientRect().height;
 
@@ -304,14 +350,13 @@ export class VscodeFieldset extends VscElement {
       fill: 'forwards',
     };
 
-    this.style.overflow = 'hidden';
-    this.style.height = `${start}px`;
+    this._setAnimationStyles(this, start);
     this._finish(
       this.animate([{height: `${start}px`}, {height: `${end}px`}], options),
       generation,
       () => {
         this.setAttribute(COLLAPSED_ATTR, '');
-        this._clearAnimationStyles(fieldset);
+        this._clearAnimationStyles();
       }
     );
     this._finish(
@@ -320,7 +365,7 @@ export class VscodeFieldset extends VscElement {
     );
   }
 
-  /** Restores the content and animates the fieldset back to its full height. */
+  /** 恢复内容，并以动画展开至完整高度。 */
   private _expand(fieldset: HTMLFieldSetElement, animate: boolean) {
     if (!this.hasAttribute(COLLAPSED_ATTR) && !this._animations.length) {
       return;
@@ -330,7 +375,7 @@ export class VscodeFieldset extends VscElement {
     const fieldsetStart = fieldset.getBoundingClientRect().height;
 
     this._stopAnimation();
-    this._clearAnimationStyles(fieldset);
+    this._clearAnimationStyles();
     this.removeAttribute(COLLAPSED_ATTR);
     if (!animate || this._reducedMotion()) {
       return;
@@ -345,15 +390,14 @@ export class VscodeFieldset extends VscElement {
     if (minimal) {
       const end = this.getBoundingClientRect().height;
 
-      this.style.overflow = 'hidden';
-      this.style.height = `${hostStart}px`;
+      this._setAnimationStyles(this, hostStart);
       this._finish(
         this.animate(
           [{height: `${hostStart}px`}, {height: `${end}px`}],
           options
         ),
         generation,
-        () => this._clearAnimationStyles(fieldset)
+        () => this._clearAnimationStyles()
       );
       this._finish(
         fieldset.animate([{opacity: '0'}, {opacity: '1'}], options),
@@ -362,20 +406,19 @@ export class VscodeFieldset extends VscElement {
     } else {
       const end = fieldset.getBoundingClientRect().height;
 
-      fieldset.style.overflow = 'hidden';
-      fieldset.style.height = `${fieldsetStart}px`;
+      this._setAnimationStyles(fieldset, fieldsetStart);
       this._finish(
         fieldset.animate(
           [{height: `${fieldsetStart}px`}, {height: `${end}px`}],
           options
         ),
         generation,
-        () => this._clearAnimationStyles(fieldset)
+        () => this._clearAnimationStyles()
       );
     }
   }
 
-  /** Keeps the animation list and the settle callback in sync. */
+  /** 同步动画列表与结束回调。 */
   private _finish(
     animation: Animation,
     generation: number,
@@ -402,11 +445,32 @@ export class VscodeFieldset extends VscElement {
     this._animations = [];
   }
 
-  private _clearAnimationStyles(fieldset: HTMLFieldSetElement) {
-    this.style.removeProperty('height');
-    this.style.removeProperty('overflow');
-    fieldset.style.removeProperty('height');
-    fieldset.style.removeProperty('overflow');
+  /** 记录并覆盖动画所需的样式，结束时恢复调用方的值和优先级。 */
+  private _setAnimationStyles(element: HTMLElement, height: number) {
+    const saved = new Map<string, {value: string; priority: string}>();
+
+    for (const property of ['height', 'overflow']) {
+      saved.set(property, {
+        value: element.style.getPropertyValue(property),
+        priority: element.style.getPropertyPriority(property),
+      });
+    }
+    this._animationStyles.set(element, saved);
+    element.style.setProperty('height', height + 'px');
+    element.style.setProperty('overflow', 'hidden');
+  }
+
+  private _clearAnimationStyles() {
+    for (const [element, saved] of this._animationStyles) {
+      for (const [property, {value, priority}] of saved) {
+        if (value) {
+          element.style.setProperty(property, value, priority);
+        } else {
+          element.style.removeProperty(property);
+        }
+      }
+    }
+    this._animationStyles.clear();
   }
 
   private _reducedMotion() {
