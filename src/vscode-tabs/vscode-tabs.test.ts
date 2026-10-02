@@ -732,3 +732,59 @@ describe('溢出菜单尊重调用方 inert', () => {
     expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
   });
 });
+
+describe('打开菜单的动态定位', () => {
+  it('父容器滚动、移动及标题栏宽度变化后继续对齐按钮', async () => {
+    const container = await fixture<HTMLDivElement>(html`
+      <div style="height: 240px; overflow: auto; width: 600px">
+        <div style="height: 50px"></div>
+        <vscode-tabs style="width: 280px" overflow="menu">
+          ${[1, 2, 3, 4].map(
+            (i) =>
+              html`<vscode-tab-header style="width: 100px"
+                  >标题 ${i}</vscode-tab-header
+                ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+          )}
+        </vscode-tabs>
+        <div style="height: 800px"></div>
+      </div>
+    `);
+    const el = container.querySelector('vscode-tabs')!;
+    const button =
+      el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+    const layer = el.shadowRoot!.querySelector<HTMLElement>('.menu-layer')!;
+    const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
+    await waitUntil(() => !button.hidden);
+    button.click();
+    const aligned = () => {
+      const anchor = button.getBoundingClientRect();
+      const rect = menu.getBoundingClientRect();
+      const expectedLeft = Math.max(
+        0,
+        Math.min(anchor.right - rect.width, innerWidth - rect.width)
+      );
+      const expectedTop =
+        anchor.bottom + rect.height > innerHeight
+          ? Math.max(0, anchor.top - rect.height)
+          : anchor.bottom;
+      return (
+        Math.abs(layer.getBoundingClientRect().left - expectedLeft) < 1 &&
+        Math.abs(layer.getBoundingClientRect().top - expectedTop) < 1
+      );
+    };
+    await waitUntil(aligned);
+    container.scrollTop = 30;
+    await waitUntil(aligned);
+    el.style.marginLeft = '80px';
+    await waitUntil(aligned);
+    el.style.width = '180px';
+    await waitUntil(aligned);
+    expect(menu.show).to.equal(true);
+    expect(layer.matches(':popover-open')).to.equal(true);
+    button.click();
+    await elementUpdated(menu);
+    expect(menu.show).to.equal(false);
+  });
+});

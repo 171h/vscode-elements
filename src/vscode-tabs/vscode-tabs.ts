@@ -270,6 +270,19 @@ export class VscodeTabs extends VscElement {
       return;
     }
     this._setMenuRoles(menu);
+    cancelAnimationFrame(this._menuPositionFrame);
+    this._trackMenuPosition();
+  }
+
+  private _menuPositionFrame = 0;
+
+  private _trackMenuPosition = () => {
+    if (!this._menuOpen || !this.isConnected) {
+      return;
+    }
+    const menu = this.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
     const button =
       this.shadowRoot!.querySelector(
         '.overflow-button'
@@ -283,9 +296,12 @@ export class VscodeTabs extends VscElement {
       button.bottom + rect.height > window.innerHeight
         ? Math.max(0, button.top - rect.height)
         : button.bottom;
-  }
+    this._menuPositionFrame = requestAnimationFrame(this._trackMenuPosition);
+  };
 
   private _closeMenu(restoreFocus = true) {
+    cancelAnimationFrame(this._menuPositionFrame);
+    this._menuPositionFrame = 0;
     const layer = this.shadowRoot?.querySelector<HTMLElement>('.menu-layer');
     if (layer?.matches(':popover-open')) {
       layer.hidePopover();
