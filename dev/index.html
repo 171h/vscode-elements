@@ -207,6 +207,49 @@
         height: 220px;
         width: 100%;
       }
+      .sidebar-drag-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+      }
+      .sidebar-drag-demo vscode-tabs {
+        min-width: 0;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .sidebar-drag-demo vscode-tab-panel {
+        min-height: 300px;
+        padding: 8px;
+      }
+      .sidebar-drag-demo fieldset {
+        min-height: 80px;
+      }
+      .tabs-group-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+      .tabs-group-demo vscode-tabs-group {
+        min-width: 0;
+        padding: 8px;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .tabs-group-demo vscode-tab-panel {
+        min-height: 160px;
+        padding: 8px;
+      }
+      .tabs-group-demo fieldset {
+        min-height: 64px;
+      }
+      .fieldset-checkbox-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+      .demo-card a {
+        color: var(--vscode-textLink-foreground, #3794ff);
+      }
       .pane {
         display: grid;
         place-items: center;
@@ -618,6 +661,49 @@
             >
           </article>
           <article
+            id="fieldset-checkbox-card"
+            class="demo-card wide"
+            data-components="vscode-fieldset vscode-checkbox"
+          >
+            <h3>Fieldset 复选框 · 区域开关</h3>
+            <p class="muted">
+              复选框位于边框右上角并与标题对齐。visible
+              模式保留禁用内容，collapsed 隐藏标题下方的内容，minimal
+              仅保留复选框。高度变化带有动画。
+              <a href="./vscode-fieldset/checkbox.html">打开独立测试页面</a>
+            </p>
+            <div class="fieldset-checkbox-demo">
+              <vscode-fieldset checkbox checkbox-label="保持可见">
+                <fieldset>
+                  <legend>保持可见</legend>
+                  <label>值 <input value="已禁用，仍可见" /></label>
+                </fieldset>
+              </vscode-fieldset>
+              <vscode-fieldset
+                checkbox
+                checked
+                checkbox-label="折叠"
+                unchecked-mode="collapsed"
+              >
+                <fieldset>
+                  <legend>折叠</legend>
+                  <label>值 <input /></label>
+                </fieldset>
+              </vscode-fieldset>
+              <vscode-fieldset
+                checkbox
+                checked
+                checkbox-label="最小显示"
+                unchecked-mode="minimal"
+              >
+                <fieldset>
+                  <legend>最小显示</legend>
+                  <label>值 <input /></label>
+                </fieldset>
+              </vscode-fieldset>
+            </div>
+          </article>
+          <article
             class="demo-card wide"
             data-components="vscode-form-container vscode-form-group vscode-form-helper vscode-single-select vscode-multi-select vscode-option"
           >
@@ -932,6 +1018,108 @@
             >
           </article>
           <article
+            id="sidebar-drag-card"
+            class="demo-card wide"
+            data-components="vscode-tabs vscode-tab-header vscode-tab-panel vscode-fieldset fieldset drag drop"
+          >
+            <h3>标签页 / fieldset · 侧栏拖拽</h3>
+            <p class="muted">
+              拖拽标签页标题可排序，拖拽视图标题可移动视图。悬停在标签页中间可显示其面板，在边缘放置可创建标签页。将标签页标题拖入另一面板可合并其视图，也可在下方两个侧栏之间移动视图。
+              <a href="./vscode-tabs/drag-drop.html">打开独立测试页面</a>
+            </p>
+            <div class="sidebar-drag-demo">
+              <vscode-tabs id="sidebar-drag-primary">
+                <vscode-tab-header>资源管理器</vscode-tab-header>
+                <vscode-tab-panel>
+                  <vscode-fieldset>
+                    <fieldset>
+                      <legend>文件</legend>
+                      <label>筛选 <input value="移动时保留此值" /></label>
+                    </fieldset>
+                  </vscode-fieldset>
+                  <fieldset>
+                    <legend>大纲</legend>
+                    <p>类和函数大纲</p>
+                  </fieldset>
+                  <fieldset>
+                    <legend>时间线</legend>
+                    <p>最近编辑记录</p>
+                  </fieldset>
+                </vscode-tab-panel>
+                <vscode-tab-header>搜索</vscode-tab-header>
+                <vscode-tab-panel>
+                  <fieldset>
+                    <legend>搜索结果</legend>
+                    <label>查询 <input /></label>
+                  </fieldset>
+                </vscode-tab-panel>
+                <vscode-tab-header>空面板</vscode-tab-header>
+                <vscode-tab-panel></vscode-tab-panel>
+              </vscode-tabs>
+              <vscode-tabs id="sidebar-drag-secondary">
+                <vscode-tab-header>辅助侧栏</vscode-tab-header>
+                <vscode-tab-panel>
+                  <fieldset>
+                    <legend>笔记</legend>
+                    <p>将任一侧栏的视图拖到此处。</p>
+                  </fieldset>
+                </vscode-tab-panel>
+              </vscode-tabs>
+            </div>
+          </article>
+          <article
+            id="tabs-group-card"
+            class="demo-card wide"
+            data-components="vscode-tabs-group vscode-tabs vscode-tab-header vscode-tab-panel drag drop"
+          >
+            <h3>标签页组 · 容器与跨容器移动</h3>
+            <p class="muted">
+              拖拽标签栏背景可移动整组，将标签页标题拖到容器可拆分出新组，将
+              fieldset 标题拖出可为该视图创建新组。空容器显示可放置组的位置。
+              <a href="./vscode-tabs/group-drag-drop.html">打开独立测试页面</a>
+            </p>
+            <div class="tabs-group-demo">
+              <vscode-tabs-group id="gallery-group-primary">
+                <vscode-tabs>
+                  <vscode-tab-header>资源管理器</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>文件</legend>
+                      <label>筛选 <input value="保留此值" /></label>
+                    </fieldset>
+                  </vscode-tab-panel>
+                  <vscode-tab-header>搜索</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>搜索结果</legend>
+                      <p>拖拽标签栏背景可调整组的顺序。</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+                <vscode-tabs>
+                  <vscode-tab-header>笔记</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>草稿</legend>
+                      <p>将标签页或视图拖到容器可拆分为独立组。</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+              </vscode-tabs-group>
+              <vscode-tabs-group id="gallery-group-secondary">
+                <vscode-tabs>
+                  <vscode-tab-header>辅助视图</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>收件箱</legend>
+                      <p>在两个容器之间移动组。</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+              </vscode-tabs-group>
+            </div>
+          </article>
+          <article
             class="demo-card wide"
             data-components="vscode-split-layout vscode-scrollable"
           >
@@ -1139,6 +1327,11 @@
             'main vscode-button, main vscode-checkbox, main vscode-radio, main vscode-textfield, main vscode-textarea, main vscode-single-select, main vscode-multi-select, main vscode-form-group, main vscode-progress-ring, main vscode-table, main vscode-tree'
           )
           .forEach((el) => el.setAttribute('size', size));
+        document
+          .querySelectorAll(
+            'main vscode-fieldset, main vscode-fieldset > fieldset, main vscode-tab-panel > fieldset'
+          )
+          .forEach((el) => el.setAttribute('size', size));
         setIconSize(size);
       };
       document
@@ -1221,6 +1414,11 @@
         });
       document.querySelector('#clear-log').addEventListener('click', () => {
         eventLog.textContent = 'Cleared.';
+      });
+      document.addEventListener('vsc-tabs-layout-change', (event) => {
+        eventLog.textContent =
+          `[${new Date().toLocaleTimeString()}] ${event.type}：已移动 ${event.detail.views.length} 个视图\n` +
+          eventLog.textContent;
       });
       document.addEventListener('click', (event) => {
         const target = event

@@ -6,8 +6,15 @@ import {customElement, VscElement} from '../includes/VscElement.js';
 import {VscodeTabHeader} from '../vscode-tab-header/index.js';
 import {VscodeTabPanel} from '../vscode-tab-panel/index.js';
 import styles from './vscode-tabs.styles.js';
+import {TabsDragController} from './drag-controller.js';
 
 export type VscTabsSelectEvent = CustomEvent<{selectedIndex: number}>;
+export type VscTabsLayoutChangeEvent = CustomEvent<{
+  source: VscodeTabs;
+  destination: VscodeTabs;
+  views: HTMLElement[];
+  header?: VscodeTabHeader;
+}>;
 
 /**
  * @tag vscode-tabs
@@ -17,6 +24,7 @@ export type VscTabsSelectEvent = CustomEvent<{selectedIndex: number}>;
  * @slot addons - 标题中右对齐的区域。
  *
  * @fires {VscTabSelectEvent} vsc-tabs-select - 激活标签页变化时派发
+ * @fires {VscTabsLayoutChangeEvent} vsc-tabs-layout-change - 移动标签页或视图后派发
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]
@@ -35,6 +43,41 @@ export class VscodeTabs extends VscElement {
 
   @property({type: Number, reflect: true, attribute: 'selected-index'})
   selectedIndex = 0;
+
+  private _dragController = new TabsDragController(this);
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this._dragController.connect();
+  }
+
+  override disconnectedCallback() {
+    this._dragController.disconnect();
+    super.disconnectedCallback();
+  }
+
+  /** @internal DOM 移动后刷新成对的标题和面板。 */
+  syncDragTabs(activePanel = this._tabPanels[this.selectedIndex]) {
+    this._onMainSlotChange();
+    this._onHeaderSlotChange();
+    const index = activePanel ? this._tabPanels.indexOf(activePanel) : -1;
+    this.selectedIndex =
+      index >= 0
+        ? index
+        : Math.max(0, Math.min(this.selectedIndex, this._tabPanels.length - 1));
+    this._setActiveTab();
+    this._dragController.refresh();
+  }
+
+  /** @internal 位于 vscode-tabs-group 内时，可用于移动整个标签页组件的标题栏。 */
+  get dragBar(): HTMLElement | null {
+    return this.shadowRoot?.querySelector<HTMLElement>('.header') ?? null;
+  }
+
+  /** @internal 登记拖拽系统创建的面板。 */
+  markGeneratedPanel(panel: VscodeTabPanel) {
+    this._dragController.markGenerated(panel);
+  }
 
   constructor() {
     super();
@@ -212,5 +255,6 @@ declare global {
 
   interface GlobalEventHandlersEventMap {
     'vsc-tabs-select': VscTabsSelectEvent;
+    'vsc-tabs-layout-change': VscTabsLayoutChangeEvent;
   }
 }
