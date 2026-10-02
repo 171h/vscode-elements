@@ -486,3 +486,47 @@ describe('程序关闭溢出菜单后的重新打开', () => {
     }
   });
 });
+
+describe('标题内交互控件的键盘事件', () => {
+  it('保留按钮、链接、输入框和可编辑内容的原生按键行为', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs>
+        <vscode-tab-header>第一项</vscode-tab-header
+        ><vscode-tab-panel>内容</vscode-tab-panel>
+        <vscode-tab-header
+          >第二项
+          <button slot="content-after">关闭</button>
+          <a slot="content-after" href="#">链接</a>
+          <input slot="content-after" />
+          <span slot="content-after" contenteditable="true"
+            ><span>编辑</span></span
+          > </vscode-tab-header
+        ><vscode-tab-panel>内容</vscode-tab-panel>
+      </vscode-tabs>
+    `);
+    for (const control of el.querySelectorAll(
+      'button, a, input, [contenteditable] span'
+    )) {
+      for (const key of [
+        ' ',
+        'Enter',
+        'ArrowLeft',
+        'ArrowRight',
+        'Home',
+        'End',
+      ]) {
+        const event = new KeyboardEvent('keydown', {
+          key,
+          bubbles: true,
+          composed: true,
+          cancelable: true,
+        });
+        control.dispatchEvent(event);
+        expect(event.defaultPrevented, `${control.tagName}: ${key}`).to.equal(
+          false
+        );
+        expect(el.selectedIndex).to.equal(0);
+      }
+    }
+  });
+});

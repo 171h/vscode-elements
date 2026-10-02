@@ -488,12 +488,23 @@ export class VscodeTabs extends VscElement {
   }
 
   private _onHeaderKeyDown(ev: KeyboardEvent) {
-    const target = ev
-      .composedPath()
-      .find((node) => this._tabHeaders.includes(node as VscodeTabHeader)) as
-      | VscodeTabHeader
-      | undefined;
-    if (!target) {
+    const path = ev.composedPath();
+    const target = path.find((node) =>
+      this._tabHeaders.includes(node as VscodeTabHeader)
+    ) as VscodeTabHeader | undefined;
+    if (
+      !target ||
+      path
+        .slice(0, path.indexOf(target))
+        .some(
+          (node) =>
+            node instanceof HTMLElement &&
+            (node.isContentEditable ||
+              node.matches(
+                'button, input, select, textarea, a[href], [role="button"]'
+              ))
+        )
+    ) {
       return;
     }
     const headers = this._tabHeaders.filter(
