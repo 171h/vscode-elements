@@ -425,10 +425,14 @@ export class VscodeTabs extends VscElement {
     }
     const bounds = list.getBoundingClientRect();
     const rect = header.getBoundingClientRect();
+    const scale = list.offsetWidth ? bounds.width / list.offsetWidth : 0;
+    if (scale <= 0) {
+      return;
+    }
     if (rect.left < bounds.left) {
-      list.scrollLeft += rect.left - bounds.left;
+      list.scrollLeft += (rect.left - bounds.left) / scale;
     } else if (rect.right > bounds.right) {
-      list.scrollLeft += rect.right - bounds.right;
+      list.scrollLeft += (rect.right - bounds.right) / scale;
     }
     this._syncScroll();
   }

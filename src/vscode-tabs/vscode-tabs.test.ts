@@ -1188,3 +1188,54 @@ describe('标题插槽成员变化后的菜单索引', () => {
     }
   });
 });
+
+describe('缩放下的水平滚动自动展示', () => {
+  it('缩小或放大后，程序选中和键盘导航均完整显示目标标题', async () => {
+    for (const scale of [0.5, 1, 2]) {
+      const host = await fixture<HTMLDivElement>(html`
+        <div style="transform: scale(${scale}); transform-origin: top left">
+          <vscode-tabs style="width: 200px" overflow="scroll">
+            ${[1, 2, 3].map(
+              (i) =>
+                html`<vscode-tab-header style="width: 120px"
+                    >标题 ${i}</vscode-tab-header
+                  ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+            )}
+          </vscode-tabs>
+        </div>
+      `);
+      const el = host.querySelector('vscode-tabs')!;
+      const headers = el.querySelectorAll('vscode-tab-header');
+      const list = el.shadowRoot!.querySelector<HTMLElement>('.tablist')!;
+      const shown = (index: number) => {
+        const rect = headers[index].getBoundingClientRect();
+        const bounds = list.getBoundingClientRect();
+        return rect.left >= bounds.left - 1 && rect.right <= bounds.right + 1;
+      };
+      el.selectedIndex = 2;
+      await elementUpdated(el);
+      expect(shown(2), `selected last: ${scale}`).to.equal(true);
+      el.selectedIndex = 0;
+      await elementUpdated(el);
+      expect(shown(0), `selected first: ${scale}`).to.equal(true);
+      headers[0].focus();
+      headers[0].dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'End',
+          bubbles: true,
+          composed: true,
+        })
+      );
+      expect(shown(2), `End: ${scale}`).to.equal(true);
+      headers[2].dispatchEvent(
+        new KeyboardEvent('keydown', {
+          key: 'Home',
+          bubbles: true,
+          composed: true,
+        })
+      );
+      expect(shown(0), `Home: ${scale}`).to.equal(true);
+      expect(el.selectedIndex).to.equal(0);
+    }
+  });
+});
