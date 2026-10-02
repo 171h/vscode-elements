@@ -44,6 +44,17 @@ for (const file of readdirSync('dist', {recursive: true})) {
 }
 console.log('模块产物：所有导入均指向包内文件或已声明依赖');
 
+const manifest = JSON.parse(readFileSync('custom-elements.json', 'utf8'));
+for (const module of manifest.modules) {
+  assert(
+    !/(?:\.test\.ts$|\/(?:testing|test-helpers|browser-commands)\.ts$)/.test(
+      module.path
+    ),
+    '组件清单包含测试代码：' + module.path
+  );
+}
+console.log('组件清单：不包含测试工具和测试用例');
+
 // 验证开发服务器、生产示例以及未经 Vite 再转换的单文件产物。
 const browser = await chromium.launch({headless: true});
 const development = await createServer({
@@ -115,7 +126,6 @@ try {
     console.log(name + '：主题、尺寸、禁用状态、输入、键盘焦点和 CSP 通过');
   }
   const bundle = readFileSync('dist/bundled.js');
-  const manifest = JSON.parse(readFileSync('custom-elements.json', 'utf8'));
   const tags = manifest.modules
     .flatMap((module) => module.declarations ?? [])
     .filter((declaration) => declaration.customElement && declaration.tagName)

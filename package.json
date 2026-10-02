@@ -22,7 +22,7 @@
     "lint:fix": "eslint \"./src/**/*.ts\" --fix",
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
-    "analyze": "cem analyze --litelement --globs=\"src/**/*.ts\" --exclude=\"src/**/*.test.ts\" --exclude=\"src/includes/testing.ts\" --exclude=\"src/includes/test-helpers.ts\" --exclude=\"src/main.ts\" --exclude=\"src/*/index.ts\"",
+    "analyze": "cem analyze --litelement --globs=\"src/**/*.ts\" --exclude=\"src/**/*.test.ts\" --exclude=\"src/includes/testing.ts\" --exclude=\"src/includes/test-helpers.ts\" --exclude=\"src/includes/browser-commands.ts\" --exclude=\"src/main.ts\" --exclude=\"src/*/index.ts\"",
     "start": "vite",
     "preview": "vite preview --outDir demo-dist",
     "test": "vitest run",
