@@ -369,7 +369,15 @@ export class VscodeTabs extends VscElement {
     this._dispatchSelectEvent();
     await this.updateComplete;
     this._updateOverflow();
-    this._tabHeaders[index].focus();
+    if (
+      header.isConnected &&
+      this._tabHeaders[this.selectedIndex] === header &&
+      !header.hidden &&
+      !header.inert &&
+      !header.hasAttribute('data-vsc-overflow-hidden')
+    ) {
+      header.focus();
+    }
   }
 
   private _syncScroll(event?: Event) {

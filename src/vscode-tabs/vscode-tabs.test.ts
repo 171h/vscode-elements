@@ -903,3 +903,63 @@ describe('溢出触发按钮动态禁用时的焦点', () => {
     outside.remove();
   });
 });
+
+describe('菜单选择事件后的标题变化', () => {
+  it('选择监听器删除、替换或重排标题后，不聚焦旧索引对应的无关标题', async () => {
+    for (const action of ['remove', 'replace', 'reorder']) {
+      const el = await fixture<VscodeTabs>(html`
+        <vscode-tabs style="width: 180px" overflow="menu">
+          ${[1, 2, 3].map(
+            (i) =>
+              html`<vscode-tab-header style="width: 100px"
+                  >标题 ${i}</vscode-tab-header
+                ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+          )}
+        </vscode-tabs>
+      `);
+      const headers = [...el.querySelectorAll('vscode-tab-header')];
+      const button =
+        el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+      const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+        'vscode-context-menu'
+      )!;
+      await waitUntil(() => menu.data.length === 2);
+      let replacement: HTMLElement | undefined;
+      el.addEventListener(
+        'vsc-tabs-select',
+        () => {
+          if (action === 'remove') {
+            headers[2].remove();
+            el.querySelectorAll('vscode-tab-panel')[2].remove();
+          } else if (action === 'replace') {
+            replacement = document.createElement('vscode-tab-header');
+            replacement.slot = 'header';
+            replacement.textContent = '新标题';
+            headers[2].replaceWith(replacement);
+          } else {
+            el.insertBefore(headers[2], headers[0]);
+          }
+        },
+        {once: true}
+      );
+      button.click();
+      await elementUpdated(menu);
+      menu
+        .shadowRoot!.querySelectorAll('vscode-context-menu-item')[1]
+        .shadowRoot!.querySelector('a')!
+        .click();
+      await elementUpdated(el);
+      await new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      );
+      expect(menu.show, action).to.equal(false);
+      expect(document.activeElement, action).not.to.equal(headers[1]);
+      if (replacement) {
+        expect(document.activeElement).not.to.equal(replacement);
+      }
+      if (action === 'remove') {
+        expect(el.querySelectorAll('vscode-tab-header')).to.have.length(2);
+      }
+    }
+  });
+});
