@@ -1,7 +1,21 @@
 import {describe, it} from 'vitest';
 import {expect, fixture, html} from './testing.js';
+import {sendKeys} from './browser-commands.js';
 
 describe('Vitest DOM 断言', () => {
+  it('测试 iframe 失焦后仍将原生输入与 Tab 发送到控件', async () => {
+    const root = await fixture<HTMLDivElement>(
+      html`<div><input /><button>保存</button></div>`
+    );
+    const input = root.querySelector('input')!;
+    input.focus();
+    window.parent.focus();
+    await sendKeys({type: '输入'});
+    expect(input.value).to.equal('输入');
+    window.parent.focus();
+    await sendKeys({press: 'Tab'});
+    expect(document.activeElement).to.equal(root.querySelector('button'));
+  });
   it('规范化 Lit 标记、空白和类名顺序', async () => {
     const el = await fixture(
       html`<div><button class=" b a ">保存</button></div>`

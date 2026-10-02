@@ -34,7 +34,9 @@ export default defineConfig({
             instances: [{browser: 'chromium'}],
             viewport: {width: 1280, height: 1000},
             commands: {
-              async keyboardInput({page}, options) {
+              async keyboardInput({page, frame}, options) {
+                // 恢复测试 iframe 的焦点，避免按键进入外层运行器。
+                await (await frame()).evaluate(() => window.focus());
                 if (options.press) await page.keyboard.press(options.press);
                 if (options.down) await page.keyboard.down(options.down);
                 if (options.up) await page.keyboard.up(options.up);

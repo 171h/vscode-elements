@@ -1,6 +1,7 @@
-import {afterEach, expect} from 'vitest';
+import {afterEach, beforeEach, expect} from 'vitest';
 import axe from 'axe-core';
 import {fixtureCleanup} from '@open-wc/testing-helpers';
+import {resetMouse} from './browser-commands.js';
 
 // 将 DOM 结构转换为稳定结果，忽略 Lit 注释和样式注入。
 function normalizedDOM(root: Node, ignoreAttributes: string[] = []): unknown[] {
@@ -57,6 +58,8 @@ function compareDOM(
     message: () => 'DOM 结构与预期不一致',
   };
 }
+// 避免前一用例的指针位置影响新 fixture 的原生悬停状态。
+beforeEach(resetMouse);
 afterEach(fixtureCleanup);
 expect.extend({
   toMatchDOM(
