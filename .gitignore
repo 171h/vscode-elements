@@ -2,7 +2,6 @@
 node_modules
 /lib/
 /test/
-.wireit/
 docs/
 .vscode/settings.json
 
@@ -14,7 +13,9 @@ debug.log
 stats.html
 tsconfig.tsbuildinfo
 
-bendera-vscode-webview-elements-*.tgz
-vscode-elements-elements-*.tgz
+nusys-ui-*.tgz
 custom-elements.json
 vscode.*-custom-data.json
+
+/demo-dist/
+/.baseline/
