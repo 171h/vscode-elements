@@ -225,7 +225,13 @@ try {
     () => document.querySelector('vscode-tabs').selectedIndex === 1
   );
   const headers = frame.locator('vscode-tab-header');
-  await headers.first().dragTo(headers.nth(1));
+  const reorderTarget = headers.nth(1);
+  const reorderRect = await reorderTarget.boundingBox();
+  assert.ok(reorderRect, '排序目标标题必须可见');
+  // 释放在右半区，避免正中点的像素取整改变插入方向。
+  await headers.first().dragTo(reorderTarget, {
+    targetPosition: {x: reorderRect.width - 5, y: reorderRect.height / 2},
+  });
   await frame.waitForFunction(
     () => document.querySelector('vscode-tab-header').textContent === '搜索'
   );
