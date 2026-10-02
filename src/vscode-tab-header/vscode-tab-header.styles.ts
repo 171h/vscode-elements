@@ -20,7 +20,7 @@ const styles: CSSResultGroup = [
       padding: 7px 8px;
       position: relative;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      white-space: var(--vsc-tab-header-white-space, nowrap);
     }
 
     :host([active]) .wrapper {
@@ -66,6 +66,8 @@ const styles: CSSResultGroup = [
     }
 
     .main {
+      min-width: 0;
+      overflow-wrap: var(--vsc-tab-header-overflow-wrap, normal);
       overflow: inherit;
       text-overflow: inherit;
     }
@@ -108,7 +110,7 @@ const styles: CSSResultGroup = [
     .icon ::slotted(*) {
       width: 100%;
       height: 100%;
-      font-size: inherit;
+      font-size: inherit !important;
       fill: currentColor;
     }
 
@@ -140,7 +142,7 @@ const styles: CSSResultGroup = [
 
     :host(:focus-visible) .wrapper {
       outline-color: var(--vscode-focusBorder, #0078d4);
-      outline-offset: 3px;
+      outline-offset: var(--vsc-tab-focus-offset, 3px);
       outline-style: solid;
       outline-width: 1px;
     }

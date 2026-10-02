@@ -48,8 +48,19 @@ const styles: CSSResultGroup = [
       flex-wrap: wrap;
     }
 
+    :host([overflow='wrap']) .tablist ::slotted(vscode-tab-header) {
+      max-width: 100%;
+      --vsc-tab-header-white-space: normal;
+      --vsc-tab-header-overflow-wrap: anywhere;
+    }
+
     :host([overflow='wrap'][wrap-alignment='center']) .tablist {
       justify-content: center;
+    }
+
+    :host([overflow='scroll']) .tablist,
+    :host([overflow='menu']) .tablist {
+      --vsc-tab-focus-offset: -2px;
     }
 
     :host([overflow='scroll']) .tablist {
@@ -70,9 +81,6 @@ const styles: CSSResultGroup = [
       height: 8px;
       overflow-x: scroll;
       overflow-y: hidden;
-      scrollbar-width: thin;
-      scrollbar-color: var(--vscode-scrollbarSlider-background, #79797966)
-        transparent;
       z-index: 1;
       opacity: 0;
       pointer-events: none;
@@ -85,6 +93,10 @@ const styles: CSSResultGroup = [
     :host([overflow='scroll']:hover) .scrollbar {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    .scrollbar[hidden] {
+      display: none;
     }
 
     .scrollbar::-webkit-scrollbar {
@@ -121,6 +133,8 @@ const styles: CSSResultGroup = [
 
     .overflow-button {
       flex: 0 0 32px;
+      box-sizing: border-box;
+      padding: 0;
       width: 32px;
       align-self: stretch;
       border: 0;

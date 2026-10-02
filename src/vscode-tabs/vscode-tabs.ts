@@ -90,10 +90,15 @@ export class VscodeTabs extends VscElement {
     this._scheduleLayout();
   };
 
+  private _overflowInert = new WeakMap<VscodeTabHeader, boolean>();
+
   private _resizeObserver = new ResizeObserver(() => this._scheduleLayout());
   private _layoutFrame = 0;
 
   private _scheduleLayout = () => {
+    if (!this.isConnected) {
+      return;
+    }
     cancelAnimationFrame(this._layoutFrame);
     this._layoutFrame = requestAnimationFrame(() => this._updateOverflow());
   };
@@ -117,9 +122,14 @@ export class VscodeTabs extends VscElement {
     this._tabHeaders.forEach((header) =>
       header.removeAttribute('data-vsc-overflow-last')
     );
-    const widths = headers.map(
-      (header) => header.getBoundingClientRect().width
-    );
+    const widths = headers.map((header) => {
+      const style = getComputedStyle(header);
+      return (
+        header.getBoundingClientRect().width +
+        (parseFloat(style.marginLeft) || 0) +
+        (parseFloat(style.marginRight) || 0)
+      );
+    });
     const available =
       list.clientWidth + (button.hidden ? 0 : button.offsetWidth);
     let visible = [...headers];
@@ -159,7 +169,7 @@ export class VscodeTabs extends VscElement {
         hidden.includes(header)
       );
       header.toggleAttribute('data-vsc-overflow-last', header === promoted);
-      header.inert = hidden.includes(header);
+      this._setOverflowInert(header, hidden.includes(header));
     });
     if (
       hidden.length !== this._hiddenHeaders.length ||
@@ -174,6 +184,49 @@ export class VscodeTabs extends VscElement {
       this._closeMenu(false);
     }
     this._revealHeader(this._tabHeaders[this.selectedIndex]);
+  }
+
+  private _setOverflowInert(header: VscodeTabHeader, hidden: boolean) {
+    if (hidden) {
+      if (!this._overflowInert.has(header)) {
+        this._overflowInert.set(header, header.inert);
+      }
+      header.inert = true;
+    } else if (this._overflowInert.has(header)) {
+      header.inert = this._overflowInert.get(header)!;
+      this._overflowInert.delete(header);
+    }
+  }
+
+  private _restoreOverflowHeader(header: VscodeTabHeader) {
+    header.removeAttribute('data-vsc-overflow-hidden');
+    header.removeAttribute('data-vsc-overflow-last');
+    this._setOverflowInert(header, false);
+  }
+
+  private _setMenuRoles(menu: VscodeContextMenu) {
+    const wrapper =
+      menu.shadowRoot?.querySelector<HTMLElement>('.context-menu');
+    if (!wrapper) {
+      return;
+    }
+    wrapper.role = 'menu';
+    wrapper.ariaLabel = '更多标签页';
+    let active: string | null = null;
+    menu.shadowRoot
+      ?.querySelectorAll('vscode-context-menu-item')
+      .forEach((item, index) => {
+        item.role = 'menuitem';
+        item.id = `t${this._componentId}-overflow-${index}`;
+        if (item.hasAttribute('selected')) {
+          active = item.id;
+        }
+      });
+    if (active) {
+      wrapper.setAttribute('aria-activedescendant', active);
+    } else {
+      wrapper.removeAttribute('aria-activedescendant');
+    }
   }
 
   private _headerLabel(header: VscodeTabHeader) {
@@ -203,6 +256,10 @@ export class VscodeTabs extends VscElement {
     menu.show = true;
     layer.showPopover();
     await menu.updateComplete;
+    if (!this.isConnected) {
+      return;
+    }
+    this._setMenuRoles(menu);
     const button =
       this.shadowRoot!.querySelector(
         '.overflow-button'
@@ -244,11 +301,17 @@ export class VscodeTabs extends VscElement {
     }
   }
 
-  private _onMenuKeyDown(event: KeyboardEvent) {
+  private async _onMenuKeyDown(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       event.preventDefault();
       event.stopPropagation();
       this._closeMenu();
+    } else if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+      const menu = this.shadowRoot!.querySelector<VscodeContextMenu>(
+        'vscode-context-menu'
+      )!;
+      await menu.updateComplete;
+      this._setMenuRoles(menu);
     }
   }
 
@@ -300,6 +363,12 @@ export class VscodeTabs extends VscElement {
   protected override updated(changed: PropertyValues) {
     super.updated(changed);
     this._scheduleLayout();
+    if (this._menuOpen) {
+      const menu = this.shadowRoot?.querySelector<VscodeContextMenu>(
+        'vscode-context-menu'
+      );
+      menu?.updateComplete.then(() => this._setMenuRoles(menu));
+    }
     if (changed.has('selectedIndex')) {
       this._setActiveTab();
       this._revealHeader(this._tabHeaders[this.selectedIndex]);
@@ -310,6 +379,11 @@ export class VscodeTabs extends VscElement {
     super.connectedCallback();
     this._dragController.connect();
     this._resizeObserver.observe(this);
+    this.updateComplete.then(() => {
+      if (this.isConnected) {
+        this._onHeaderSlotChange();
+      }
+    });
     this._contentObserver.observe(this, {
       childList: true,
       subtree: true,
@@ -329,6 +403,7 @@ export class VscodeTabs extends VscElement {
     this._dragController.disconnect();
     this._resizeObserver.disconnect();
     this._contentObserver.disconnect();
+    this._tabHeaders.forEach((header) => this._restoreOverflowHeader(header));
     this._closeMenu(false);
     cancelAnimationFrame(this._layoutFrame);
     super.disconnectedCallback();
@@ -476,9 +551,13 @@ export class VscodeTabs extends VscElement {
   }
 
   private _onHeaderSlotChange() {
+    const previous = this._tabHeaders;
     this._tabHeaders = this._headerSlotElements.filter(
       (el) => el instanceof VscodeTabHeader
     ) as VscodeTabHeader[];
+    previous
+      .filter((header) => !this._tabHeaders.includes(header))
+      .forEach((header) => this._restoreOverflowHeader(header));
     this._resizeObserver.disconnect();
     this._resizeObserver.observe(this);
     const list = this.shadowRoot?.querySelector('.tablist');
@@ -542,6 +621,8 @@ export class VscodeTabs extends VscElement {
         </button>
         <div
           class="scrollbar"
+          ?hidden=${this.overflow !== 'scroll' ||
+          this._scrollWidth <= this._scrollViewportWidth}
           .style=${stylePropertyMap({
             width: `${this._scrollViewportWidth}px`,
             left: `${this._scrollOffset}px`,
@@ -569,9 +650,11 @@ export class VscodeTabs extends VscElement {
         })}
       >
         <vscode-context-menu
+          .tabIndex=${-1}
           .data=${this._hiddenHeaders.map((header) => ({
             label: this._headerLabel(header),
             value: String(header.tabId),
+            tabindex: -1,
           }))}
           @vsc-context-menu-select=${this._onMenuSelect}
         ></vscode-context-menu>

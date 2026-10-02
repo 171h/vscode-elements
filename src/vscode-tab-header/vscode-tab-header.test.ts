@@ -80,3 +80,16 @@ describe('标题图标', () => {
     await expect(el).to.be.accessible();
   });
 });
+
+describe('自定义字体图标尺寸', () => {
+  it('覆盖字体图标样式中的固定字号以适应标题高度', async () => {
+    const el = await fixture<VscodeTabHeader>(html`
+      <vscode-tab-header style="--vsc-tab-header-height: 40px">
+        <span slot="icon" style="font-size: 12px">★</span>收藏
+      </vscode-tab-header>
+    `);
+    const icon = el.querySelector('span')!;
+    await waitUntil(() => getComputedStyle(icon).fontSize === '32px');
+    expect(icon.getBoundingClientRect().height).to.equal(32);
+  });
+});

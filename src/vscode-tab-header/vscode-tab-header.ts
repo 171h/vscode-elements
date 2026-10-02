@@ -65,7 +65,18 @@ export class VscodeTabHeader extends VscElement {
   private _iconSize = 16;
 
   private _iconResizeObserver = new ResizeObserver((entries) => {
-    const height = entries[0]?.contentRect.height;
+    const entry = entries[0];
+    if (!entry) {
+      return;
+    }
+    const style = getComputedStyle(entry.target);
+    // 多行标题沿用单行图标尺寸，避免图标放大挤压文字并反复触发换行。
+    const lineHeight =
+      parseFloat(style.lineHeight) || parseFloat(style.fontSize) * 1.2;
+    const height = Math.min(
+      entry.contentRect.height,
+      Math.max(parseFloat(style.minHeight) || 0, lineHeight)
+    );
     if (height) {
       this._iconSize = Math.max(1, Math.round(height * 0.8));
     }
