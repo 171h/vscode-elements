@@ -52,7 +52,8 @@ export default defineConfig(({mode}) => ({
           },
           rolldownOptions:
             mode === 'bundle'
-              ? {}
+              ? // 单文件产物启用完整压缩；模块产物保留可供使用方优化的代码。
+                {output: {minify: true, comments: false}}
               : {
                   external: (id) =>
                     !id.startsWith('.') &&
