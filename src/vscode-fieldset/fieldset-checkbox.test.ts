@@ -36,20 +36,20 @@ async function makeFieldset(options?: {
   return el;
 }
 
-/** Clicks the label inside the checkbox shadow root. */
+/** 点击复选框 shadow root 中的标签。 */
 function toggle(el: VscodeFieldset) {
   checkboxOf(el).shadowRoot!.querySelector<HTMLElement>('label')!.click();
 }
 
-/** Waits until the collapse or expand animation is settled. */
+/** 等待折叠或展开动画结束。 */
 async function settle(el: VscodeFieldset) {
   await el.updateComplete;
   await new Promise((resolve) => setTimeout(resolve, DURATION + 80));
 }
 const DURATION = 180;
 
-describe('fieldset checkbox', () => {
-  it('places a labeled checkbox on the border, aligned with the legend', async () => {
+describe('fieldset 复选框', () => {
+  it('在边框上放置带标签且与标题对齐的复选框', async () => {
     const el = await makeFieldset({label: 'Enable section'});
     const checkbox = checkboxOf(el);
 
@@ -68,7 +68,7 @@ describe('fieldset checkbox', () => {
     expect(hostRect.right - checkboxRect.right).to.be.closeTo(10, 1);
   });
 
-  it('disables the content but keeps it visible in the default mode', async () => {
+  it('默认模式禁用内容但保持可见', async () => {
     const el = await makeFieldset();
     const fieldset = fieldsetOf(el);
     const input = el.querySelector('input')!;
@@ -78,7 +78,7 @@ describe('fieldset checkbox', () => {
     expect(getComputedStyle(contentOf(el)).display).to.not.equal('none');
   });
 
-  it('collapses the content and restores it when checked again', async () => {
+  it('折叠内容并在重新勾选后恢复', async () => {
     const el = await makeFieldset({checked: true, mode: 'collapsed'});
     const fieldset = fieldsetOf(el);
     const expanded = fieldset.getBoundingClientRect().height;
@@ -100,7 +100,7 @@ describe('fieldset checkbox', () => {
     expect(fieldset.getBoundingClientRect().height).to.be.closeTo(expanded, 1);
   });
 
-  it('keeps only the checkbox in the minimal mode', async () => {
+  it('minimal 模式仅保留复选框', async () => {
     const el = await makeFieldset({checked: true, mode: 'minimal'});
     const fieldset = fieldsetOf(el);
     const expanded = el.getBoundingClientRect().height;
@@ -117,7 +117,7 @@ describe('fieldset checkbox', () => {
     expect(el.getBoundingClientRect().height).to.be.closeTo(expanded, 1);
   });
 
-  it('animates the height and skips the animation with reduced motion', async () => {
+  it('为高度变化应用动画并遵循减少动态效果偏好', async () => {
     const el = await makeFieldset({checked: true, mode: 'collapsed'});
     const fieldset = fieldsetOf(el);
 
@@ -140,7 +140,7 @@ describe('fieldset checkbox', () => {
     }
   });
 
-  it('emits a cancelable event and calls the checkedChange callback', async () => {
+  it('派发可取消事件并调用 checkedChange 回调', async () => {
     const el = await makeFieldset({checked: true});
     let detail: VscFieldsetCheckedChangeEvent['detail'] | undefined;
     let callbackValue: boolean | undefined;
@@ -159,7 +159,7 @@ describe('fieldset checkbox', () => {
     expect(fieldsetOf(el).disabled).to.equal(true);
   });
 
-  it('skips the default behavior when the event is prevented or the callback returns false', async () => {
+  it('事件被取消或回调返回 false 时跳过默认行为', async () => {
     const el = await makeFieldset({checked: true, mode: 'collapsed'});
     const fieldset = fieldsetOf(el);
 
@@ -183,7 +183,7 @@ describe('fieldset checkbox', () => {
     expect(getComputedStyle(contentOf(el)).display).to.not.equal('none');
   });
 
-  it('applies the default behavior on programmatic checked changes', async () => {
+  it('通过代码修改 checked 时应用默认行为', async () => {
     const el = await makeFieldset({checked: true, mode: 'collapsed'});
     const fieldset = fieldsetOf(el);
 
@@ -200,7 +200,7 @@ describe('fieldset checkbox', () => {
     expect(getComputedStyle(contentOf(el)).display).to.not.equal('none');
   });
 
-  it('keeps native state and authored disabled fieldsets untouched without the checkbox', async () => {
+  it('不带复选框时保留原生状态及调用方的禁用状态', async () => {
     const plain = await fixture<VscodeFieldset>(html`
       <vscode-fieldset>
         <fieldset>

@@ -56,7 +56,7 @@ export class VscodeTabs extends VscElement {
     super.disconnectedCallback();
   }
 
-  /** @internal Refresh paired headers/panels after a DOM move. */
+  /** @internal DOM 移动后刷新成对的标题和面板。 */
   syncDragTabs(activePanel = this._tabPanels[this.selectedIndex]) {
     this._onMainSlotChange();
     this._onHeaderSlotChange();
@@ -69,15 +69,12 @@ export class VscodeTabs extends VscElement {
     this._dragController.refresh();
   }
 
-  /**
-   * @internal Header bar that moves the whole tabs component when it is inside
-   * a `vscode-tabs-group`.
-   */
+  /** @internal 位于 vscode-tabs-group 内时，可用于移动整个标签页组件的标题栏。 */
   get dragBar(): HTMLElement | null {
     return this.shadowRoot?.querySelector<HTMLElement>('.header') ?? null;
   }
 
-  /** @internal Registers a panel created by the drag and drop system. */
+  /** @internal 登记拖拽系统创建的面板。 */
   markGeneratedPanel(panel: VscodeTabPanel) {
     this._dragController.markGenerated(panel);
   }

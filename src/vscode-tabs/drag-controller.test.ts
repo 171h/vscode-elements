@@ -80,10 +80,10 @@ function end() {
   document.dispatchEvent(new DragEvent('dragend'));
 }
 
-describe('tabs sidebar drag and drop', () => {
+describe('标签页侧栏拖拽', () => {
   afterEach(end);
 
-  it('reorders header/panel pairs and retains the selected panel and ARIA links', async () => {
+  it('对标题和面板成对排序，保留选中面板及 ARIA 关联', async () => {
     const [tabs] = await setup();
     const [first, second] = headers(tabs);
     const original = panels(tabs)[0];
@@ -97,7 +97,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(original.ariaLabelledby).to.equal(first.id);
   });
 
-  it('moves a view after another view without losing its input or listener', async () => {
+  it('将视图移至另一视图之后并保留输入值及监听器', async () => {
     const [tabs] = await setup();
     const panel = panels(tabs)[0];
     const view = panel.firstElementChild!;
@@ -120,7 +120,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(fired).to.equal(true);
   });
 
-  it('shows half-view overlay and removes it on cancellation', async () => {
+  it('显示半视图遮罩并在取消时清除', async () => {
     const [tabs] = await setup();
     const panel = panels(tabs)[0];
     drag(
@@ -144,7 +144,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(panel.querySelector('legend')!.textContent).to.equal('Alpha');
   });
 
-  it('activates a hovered header, then moves the view into that panel', async () => {
+  it('激活悬停标题并将视图移入其面板', async () => {
     const [tabs] = await setup();
     const view = panels(tabs)[0].firstElementChild!;
     const target = headers(tabs)[1];
@@ -157,7 +157,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(view.parentElement).to.equal(panels(tabs)[1]);
   });
 
-  it('promotes a fieldset to a tab and removes its generated tab after moving it back', async () => {
+  it('将 fieldset 提升为标签页，并在移回后移除生成的标签页', async () => {
     const [tabs] = await setup();
     const original = panels(tabs)[0];
     const view = original.firstElementChild!;
@@ -172,7 +172,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(view.parentElement).to.equal(original);
   });
 
-  it('moves views across tabs components into an empty panel and emits layout details', async () => {
+  it('跨组件将视图移入空面板并派发布局详情', async () => {
     const [source, destination] = await setup();
     const view = panels(source)[0].firstElementChild!;
     let detail: {source: VscodeTabs; destination: VscodeTabs} | undefined;
@@ -185,7 +185,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(detail?.destination).to.equal(destination);
   });
 
-  it('merges all views from a dragged header into another panel', async () => {
+  it('将拖拽标题的全部视图合并到另一面板', async () => {
     const [source, destination] = await setup();
     const original = panels(source)[0];
     const views = Array.from(original.children);
@@ -195,7 +195,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(panels(source)[0].hidden).to.equal(false);
   });
 
-  it('moves an entire header/panel pair across components', async () => {
+  it('跨组件移动整对标题和面板', async () => {
     const [source, destination] = await setup();
     const header = headers(source)[0];
     const panel = panels(source)[0];
@@ -205,7 +205,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(headers(source)).to.have.length(1);
   });
 
-  it('reveals another panel for merging a header within the same group', async () => {
+  it('显示同组另一面板以合并拖拽标题的视图', async () => {
     const [tabs] = await setup();
     const source = panels(tabs)[0];
     const target = panels(tabs)[1];
@@ -220,7 +220,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(target.hidden).to.equal(false);
   });
 
-  it('preserves unrelated panel text when merging its views', async () => {
+  it('合并视图时保留面板无关文本', async () => {
     const [source, destination] = await setup();
     const original = panels(source)[0];
     original.append('Keep this panel content');
@@ -229,7 +229,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(original.textContent).to.contain('Keep this panel content');
   });
 
-  it('cancels pending hover when leaving a target or disconnecting the source', async () => {
+  it('离开目标或断开源组件时取消待执行的悬停激活', async () => {
     const [tabs] = await setup();
     const transfer = start(panels(tabs)[0].querySelector('legend')!);
     drag(headers(tabs)[1], transfer, 'dragover');
@@ -247,7 +247,7 @@ describe('tabs sidebar drag and drop', () => {
     ).to.equal(null);
   });
 
-  it('ignores external drags and interactive content', async () => {
+  it('忽略外部拖拽和交互控件', async () => {
     const [tabs] = await setup();
     drag(headers(tabs)[1], new DataTransfer(), 'dragover');
     expect(
@@ -259,7 +259,7 @@ describe('tabs sidebar drag and drop', () => {
     expect(headers(tabs)[0].textContent).to.equal('One');
   });
 
-  it('does not make nested form fieldsets draggable sidebar views', async () => {
+  it('嵌套表单 fieldset 不作为可拖拽侧栏视图', async () => {
     const [tabs] = await setup();
     const nested = document.createElement('fieldset');
     nested.innerHTML = '<legend>Nested form group</legend><input>';

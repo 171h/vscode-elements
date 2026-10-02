@@ -88,20 +88,20 @@ async function setup() {
   };
 }
 
-describe('tabs group drag and drop', () => {
+describe('标签页组拖拽', () => {
   afterEach(end);
 
-  it('shows the empty hint until a tabs group is assigned', async () => {
+  it('分配标签页组之前显示空容器提示', async () => {
     const {left, right} = await setup();
     const leftHint = left.shadowRoot!.querySelector<HTMLElement>('.empty')!;
     const rightHint = right.shadowRoot!.querySelector<HTMLElement>('.empty')!;
 
     expect(leftHint.hidden).to.equal(true);
     expect(rightHint.hidden).to.equal(false);
-    expect(rightHint.textContent).to.contain('Drag a tabs group here');
+    expect(rightHint.textContent).to.contain('将标签页组拖到此处');
   });
 
-  it('reorders tabs groups when the tab strip background is dragged', async () => {
+  it('拖拽标签栏背景时调整组顺序', async () => {
     const {left} = await setup();
     const [first, second] = tabsOf(left);
     const transfer = start(bar(first));
@@ -120,7 +120,7 @@ describe('tabs group drag and drop', () => {
     expect(left.querySelector('[data-vsc-group-placeholder]')).to.equal(null);
   });
 
-  it('moves a tabs group into another container and emits layout details', async () => {
+  it('将标签页组移入另一容器并派发布局详情', async () => {
     const {left, right} = await setup();
     const [first] = tabsOf(left);
     let detail: VscTabsGroupLayoutChangeEvent['detail'] | undefined;
@@ -143,7 +143,7 @@ describe('tabs group drag and drop', () => {
     expect(detail?.tabs).to.equal(first);
   });
 
-  it('promotes a dragged tab to a new tabs group', async () => {
+  it('将拖拽标签页提升为新组', async () => {
     const {left, right} = await setup();
     const source = tabsOf(left)[0];
     const header = source.querySelector<VscodeTabHeader>('vscode-tab-header')!;
@@ -157,7 +157,7 @@ describe('tabs group drag and drop', () => {
     )!;
 
     expect(placeholder.textContent).to.contain('One');
-    expect(placeholder.textContent).to.contain('New tabs group');
+    expect(placeholder.textContent).to.contain('新标签页组');
     dragAt(right, transfer, 'drop', y);
     const created = tabsOf(right);
 
@@ -171,7 +171,7 @@ describe('tabs group drag and drop', () => {
     expect(tabsOf(left)[0].textContent).to.contain('Two');
   });
 
-  it('promotes a dragged view into a new group with a generated tab', async () => {
+  it('将拖拽视图提升为带自动生成标签页的新组', async () => {
     const {left, right} = await setup();
     const source = tabsOf(left)[0];
     const view = source.querySelector('vscode-fieldset')!;
@@ -196,7 +196,7 @@ describe('tabs group drag and drop', () => {
     expect(input.value).to.equal('edited');
   });
 
-  it('clears the placeholder when the drag is cancelled', async () => {
+  it('取消拖拽时清除占位提示', async () => {
     const {left} = await setup();
     const [first, second] = tabsOf(left);
     const transfer = start(bar(first));
@@ -211,7 +211,7 @@ describe('tabs group drag and drop', () => {
     expect(first.parentElement).to.equal(left);
   });
 
-  it('defers to the tabs component while the pointer is over it', async () => {
+  it('指针位于标签页组件上时由其处理', async () => {
     const {left} = await setup();
     const [source, target] = tabsOf(left);
     const view = source.querySelector('vscode-fieldset')!;
@@ -226,7 +226,7 @@ describe('tabs group drag and drop', () => {
     expect(view.parentElement).to.equal(panelOf(target));
   });
 
-  it('removes the source tabs group when its last tab is dragged out', async () => {
+  it('最后一个标签页移出后移除源组', async () => {
     const {left, right} = await setup();
     const source = tabsOf(left)[1];
     const header = source.querySelector<VscodeTabHeader>('vscode-tab-header')!;
@@ -241,7 +241,7 @@ describe('tabs group drag and drop', () => {
     expect(tabsOf(right)).to.have.length(1);
   });
 
-  it('removes a generated group after its last view is dragged back out', async () => {
+  it('自动生成组的最后一个视图移出后移除该组', async () => {
     const {left, right} = await setup();
     const source = tabsOf(left)[0];
     const view = source.querySelector('vscode-fieldset')!;
@@ -256,7 +256,7 @@ describe('tabs group drag and drop', () => {
 
     expect(generated).to.not.equal(undefined);
     expect(view.parentElement).to.not.equal(sourcePanel);
-    // Move the view back into the panel it came from.
+    // 将视图移回原面板。
     const back = start(view.querySelector('legend')!);
     const panelBounds = sourcePanel.getBoundingClientRect();
     const panelY = panelBounds.top + panelBounds.height - 4;

@@ -2,8 +2,8 @@ import {expect, fixture, html} from '@open-wc/testing';
 import './index.js';
 import '../vscode-tabs/index.js';
 
-describe('fieldset theme', () => {
-  it('themes native fieldsets and legends without changing native form semantics', async () => {
+describe('fieldset 主题', () => {
+  it('为原生 fieldset 和标题应用主题并保留表单语义', async () => {
     const form = await fixture<HTMLFormElement>(
       html` <form
         style="--vscode-sideBar-background: rgb(10, 20, 30); --vscode-sideBar-foreground: rgb(220, 230, 240); --vscode-sideBarSectionHeader-background: rgb(40, 50, 60); --vscode-sideBarSectionHeader-foreground: rgb(200, 210, 220); --vscode-contrastBorder: rgb(255, 255, 0); --vscode-focusBorder: rgb(0, 255, 0)"
@@ -36,7 +36,7 @@ describe('fieldset theme', () => {
     expect(new FormData(form).has('value')).to.equal(false);
   });
 
-  it('keeps a dark theme legend transparent and readable', async () => {
+  it('暗色主题下标题保持透明且可读', async () => {
     const el = await fixture<HTMLElement>(
       html` <vscode-fieldset
         style="--vscode-sideBar-background: #181818; --vscode-sideBarSectionHeader-foreground: #cccccc"
@@ -54,7 +54,7 @@ describe('fieldset theme', () => {
     expect(getComputedStyle(legend).color).to.equal('rgb(204, 204, 204)');
   });
 
-  it('responds to live theme changes and preserves caller overrides', async () => {
+  it('响应实时主题变化并保留调用方的覆盖样式', async () => {
     const el = await fixture<HTMLElement>(
       html` <vscode-fieldset
         style="--vscode-sideBar-background: white; --vscode-sideBar-foreground: black; --vscode-disabledForeground: gray"
@@ -81,7 +81,7 @@ describe('fieldset theme', () => {
     );
   });
 
-  it('themes direct sidebar fieldsets but leaves nested form groups alone', async () => {
+  it('仅为直属侧栏 fieldset 应用主题，不影响嵌套表单组', async () => {
     const tabs = await fixture<HTMLElement>(
       html` <vscode-tabs style="--vscode-sideBar-background: rgb(10, 20, 30)">
         <vscode-tab-header>Native</vscode-tab-header>
@@ -100,7 +100,7 @@ describe('fieldset theme', () => {
     );
   });
 
-  it('installs legend styling inside a containing shadow root', async () => {
+  it('在所属 shadow root 中安装标题样式', async () => {
     const host = await fixture<HTMLDivElement>(
       html`<div style="--vscode-sideBar-background: rgb(20, 30, 40)"></div>`
     );

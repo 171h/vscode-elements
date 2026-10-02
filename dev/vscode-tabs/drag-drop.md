@@ -1,143 +1,92 @@
-# Tabs as sidebar view containers
+# 标签页与侧栏视图拖拽
 
-Tabs support native HTML move drag and drop. Import `nusys-ui` (the main bundle)
-or the individual tabs, tab-header, tab-panel and fieldset modules.
+标签页支持原生 HTML 移动拖拽。导入 `nusys-ui` 主入口，或分别导入 tabs、tab-header、tab-panel 和 fieldset 模块。
 
 ```html
 <vscode-tabs>
-  <vscode-tab-header>Explorer</vscode-tab-header>
+  <vscode-tab-header>资源管理器</vscode-tab-header>
   <vscode-tab-panel>
     <vscode-fieldset>
       <fieldset>
-        <legend>Files</legend>
-        <label>Filter <input name="filter" /></label>
+        <legend>文件</legend>
+        <label>筛选 <input name="filter" /></label>
       </fieldset>
     </vscode-fieldset>
     <fieldset>
-      <legend>Outline</legend>
-      Any content
+      <legend>大纲</legend>
+      任意内容
     </fieldset>
   </vscode-tab-panel>
-  <vscode-tab-header>Search</vscode-tab-header>
+  <vscode-tab-header>搜索</vscode-tab-header>
   <vscode-tab-panel></vscode-tab-panel>
 </vscode-tabs>
 ```
 
-The custom component wraps a native fieldset supplied by the caller; direct native
-fieldsets also work. Only direct children of a tab panel are movable views.
-Drag a view by its first legend. Nested form fieldsets and controls are not drag
-handles. Provide a legend for each movable view.
+自定义组件包装调用方提供的原生 fieldset，也可直接使用原生 fieldset。只有标签页面板的直属子节点可作为移动视图。通过视图的第一个 legend 拖拽；嵌套表单 fieldset 和控件不作为拖拽入口。每个可移动视图都应提供 legend。
 
-## Gestures
+## 拖拽操作
 
-- Drag a tab header to either side of another header to reorder its header/panel
-  pair. The active panel stays selected when reordered.
-- Drag a legend to the upper or lower half of a view to insert before or after it.
-- Drop into panel whitespace or an empty panel to append a view.
-- Hover a legend over the middle half of a tab header for 500 ms to activate its
-  panel. Drop there to append the view to that panel.
-- Drop a legend near a tab header's left/right edge or at the end of the header
-  bar to create a tab named after its legend. Moving its last view out removes
-  that generated tab. Author-provided empty tabs remain available as drop targets.
-- Drop a tab header into another panel to move all its direct views together in
-  their existing order. An emptied source pair is removed only when it has no
-  other content; unrelated content is retained.
-  Hover over another header's center for 500 ms to reveal its panel before
-  continuing down into it. Releasing on the header bar still reorders tabs.
-- All moves also work across separate tabs components in the same document.
-- Escape, drag end, leaving a target, or disconnecting a source clears feedback
-  and pending activation. External file/text drags are ignored.
-- Scrollable content scrolls when dragged near its top/bottom edge. Indicators
-  respect `prefers-reduced-motion`.
+- 将标签页标题拖到另一标题的任一侧，可对标题和面板成对排序。排序后保持当前面板选中。
+- 将 legend 拖到视图的上半区或下半区，可插入到该视图之前或之后。
+- 放到面板空白处或空面板，可追加视图。
+- 将 legend 悬停在标签页标题中间一半区域 500 ms，可激活面板。在此放置可将视图追加至该面板。
+- 将 legend 放到标题左、右边缘或标签栏末尾，可创建以该 legend 命名的新标签页。最后一个视图移出后，自动生成的标签页会被移除；调用方提供的空标签页仍保留，可继续接收视图。
+- 将标签页标题拖入另一面板，可按原有顺序移动其全部直属视图。源标题和面板仅在不含其他内容时移除，无关内容保留。悬停在另一标题中间 500 ms 可显示其面板，再继续移入；在标题栏释放仍执行标签页排序。
+- 上述移动均支持同一文档中的不同标签页组件。
+- 按 Escape、拖拽结束、离开目标或断开源组件时，清除反馈和待执行的激活操作。外部文件或文本拖拽被忽略。
+- 拖到可滚动内容的顶部或底部边缘时自动滚动。提示动画遵循 `prefers-reduced-motion`。
 
-## Tabs groups
+## 标签页组
 
-`vscode-tabs-group` stacks `vscode-tabs` children and adds group level drag and
-drop. The container shows a hint while no tabs group is assigned:
+`vscode-tabs-group` 纵向排列 `vscode-tabs` 子节点，并提供组级拖拽。容器为空时显示提示：
 
 ```html
-<vscode-tabs-group empty-text="Drop a tabs group here">
+<vscode-tabs-group empty-text="将标签页组放到此处">
   <vscode-tabs>
-    <vscode-tab-header>Explorer</vscode-tab-header>
+    <vscode-tab-header>资源管理器</vscode-tab-header>
     <vscode-tab-panel>
-      <fieldset><legend>Files</legend></fieldset>
+      <fieldset><legend>文件</legend></fieldset>
     </vscode-tab-panel>
   </vscode-tabs>
   <vscode-tabs>...</vscode-tabs>
 </vscode-tabs-group>
 ```
 
-- Drag the empty background of a tab strip (the part of the header bar that is
-  not a tab title or an addon control) to move the whole tabs group. A drag
-  image with every tab title follows the pointer and a placeholder shows the
-  insertion point. Groups can be reordered in place or moved into another
-  `vscode-tabs-group`. Sibling groups slide to the side with a short animation.
-- Tab titles keep their existing behavior inside their own group. Dropping one
-  on the container background promotes it to a new tabs group at that position.
-  Removing the source group's last tab removes the emptied `vscode-tabs`.
-- Dropping a fieldset legend on the container creates a new tabs group whose
-  generated tab is named after the legend and whose panel contains the view.
-  Moving the last view out removes the generated group again.
-- While a tab or view is dragged over the container, the placeholder shows the
-  title(s) that will become the new group. Dropping the pointer over one of the
-  existing `vscode-tabs` components keeps the inner tab and view behaviors.
-- Listen for `vsc-tabs-group-layout-change` (bubbling/composed) to persist
-  grouping. Its detail contains `source` (the previous group or `null`),
-  `destination`, `tabs` (the moved or created component), and the optional
-  `header` and `views` that were moved.
+- 拖拽标签栏中既非标题也非附加控件的空白背景，可移动整组。包含全部标题的拖拽图像随指针移动，占位提示显示插入位置。可在原容器排序，也可移动到另一 `vscode-tabs-group`；相邻组以短动画平滑移开。
+- 标题在自身组内保留原有行为。将标题放到容器背景，可在该位置创建独立组。源组最后一个标签页移出后，空的 `vscode-tabs` 会被移除。
+- 将 fieldset 的 legend 放到容器，可创建新组，自动生成的标签页以 legend 命名，面板包含该视图。最后一个视图移出后，自动生成的组会被移除。
+- 拖拽标签页或视图经过容器时，占位提示显示新组将包含的标题。指针进入已有 `vscode-tabs` 时，改用内部标签页和视图的拖拽行为。
+- 可监听冒泡且跨 shadow DOM 的 `vsc-tabs-group-layout-change` 事件保存分组。detail 包含 `source`（原组或 null）、`destination`、`tabs`（移动或创建的组件），以及可选的 `header` 和移动的 `views`。
 
-The container is only a layout and drop target. It does not implement VS Code
-workbench persistence; persist the layout from the events. `empty-text` can
-replace the built-in hint text.
+容器负责布局和接收放置，不提供 VS Code 工作台的持久化机制。应用应根据事件保存布局。`empty-text` 可替换内置提示，默认值为“将标签页组拖到此处”。
 
-Moves retain original nodes, input values and listeners. No automatic storage is
-performed. Listen for `vsc-tabs-layout-change` (bubbling/composed) to persist layout.
-Its detail contains `source` and `destination` tabs elements, `views` (moved view
-elements), and optional `header` (the dragged tab header). `vsc-tabs-select` is
-emitted on hover activation. Header/panel relationships still use their matching
-order in light DOM. Custom DOM changes should preserve that pairing.
+## 状态与事件
 
-Theme tokens: `--vscode-activityBar-dropBorder`, `--vscode-sideBar-dropBackground`,
-`--vscode-sideBarSectionHeader-background`, `--vscode-foreground`,
-`--vscode-focusBorder`, `--vscode-contrastActiveBorder`.
+移动保留原有节点、输入值和事件监听器，不自动存储数据。可监听冒泡且跨 shadow DOM 的 `vsc-tabs-layout-change` 保存布局。detail 包含源和目标标签页元素 `source`、`destination`，移动的视图节点 `views`，以及可选的拖拽标题 `header`。悬停激活会派发 `vsc-tabs-select`。
 
-Fieldsets and their legends use sidebar background/foreground, section header
-foreground/border, `--vscode-contrastBorder`, `--vscode-focusBorder`
-and `--vscode-disabledForeground`. Missing sidebar tokens fall back to editor
-and foreground tokens, then system colors. High contrast borders and Windows
-forced colors remain visible. Theme changes update existing views immediately.
-Legends have no border and a transparent background, so they blend with the
-surface behind the fieldset border instead of painting a dark rectangle in dark
-themes; their theme foreground stays readable on light and dark surfaces.
-Use `size="small"`, `size="medium"` (default) or `size="large"` on
-`vscode-fieldset` or a direct native panel fieldset. Their border radii match the
-project's form controls: 1px, 4px and 6px. Applications can override
-`--vsc-form-control-border-radius`. The gallery's global Size buttons and the
-standalone demo's Size buttons update both wrapped and native fieldsets.
-The same styles cover wrapped fieldsets and direct native panel children without
-styling nested form fieldsets. Low specificity allows application CSS overrides.
-Styles are installed once per containing document or shadow root, because a
-shadow slot cannot style the native fieldset's legend descendants.
+标题与面板仍按 light DOM 中的对应顺序配对，应用自行修改 DOM 时应保持这种配对关系。
 
-The standalone demo includes the project's theme selector. Run
-`node scripts/test-fieldset-themes.mjs` against the development server to check
-all ten bundled themes and produce screenshots under `.wireit/`.
+## 主题与尺寸
 
-## VS Code references
+拖拽使用以下主题变量：`--vscode-activityBar-dropBorder`、`--vscode-sideBar-dropBackground`、`--vscode-sideBarSectionHeader-background`、`--vscode-foreground`、`--vscode-focusBorder` 和 `--vscode-contrastActiveBorder`。
 
-The implementation follows the behavior in these MIT-licensed Microsoft sources;
-it does not copy the workbench service infrastructure:
+fieldset 和 legend 使用侧栏背景与前景、分区标题前景与边框，以及 `--vscode-contrastBorder`、`--vscode-focusBorder` 和 `--vscode-disabledForeground`。侧栏变量缺失时回退至编辑器和前景变量，再回退至系统颜色。高对比度边框与 Windows 强制颜色模式下仍可见，主题变化即时更新现有视图。
 
-- [compositeBar.ts](https://github.com/microsoft/vscode/blob/main/src/vs/workbench/browser/parts/compositeBar.ts):
-  native move operation, ordered container insertion and promotion of a view into
-  a new container.
-- [viewPaneContainer.ts](https://github.com/microsoft/vscode/blob/main/src/vs/workbench/browser/parts/views/viewPaneContainer.ts):
-  midpoint hit testing, half-pane drop overlays and cleanup.
+legend 无边框且背景透明，与 fieldset 边框后方表面融合，避免暗色主题中的矩形色块；主题前景色保证其在明暗表面均可读。
 
-This library retains its horizontal tabs layout. The center/edge header zones
-provide both view promotion and moving into existing panels in that layout.
-The browser renders the drag image and moves it with the pointer; exact appearance
-depends on the browser/OS, as with native VS Code HTML drag and drop. This API
-does not implement VS Code workbench persistence or dragging between windows.
+在 `vscode-fieldset` 或面板直属的原生 fieldset 上设置 `size="small"`、`size="medium"`（默认）或 `size="large"`。边框圆角与项目表单控件一致，分别为 1px、4px、6px；应用可覆盖 `--vsc-form-control-border-radius`。展示页的全局尺寸按钮和独立示例的尺寸按钮会同步更新包装组件与原生 fieldset。
 
-Interactive demo: `dev/vscode-tabs/drag-drop.html` (run `npm run serve`).
+同一套样式适用于包装组件和面板直属原生 fieldset，不影响嵌套表单 fieldset。低优先级允许应用覆盖 CSS。由于 shadow slot 无法为原生 fieldset 的 legend 后代设置样式，样式会在所属文档或 shadow root 中安装一次。
+
+独立示例包含项目主题选择器。开发服务器启动后，运行 `node scripts/test-fieldset-themes.mjs` 可检查十种内置主题，并在 `.wireit/` 下生成截图。
+
+## VS Code 参考
+
+实现参考以下采用 MIT 许可证的 Microsoft 源码中的行为，不复制工作台服务基础设施：
+
+- [compositeBar.ts](https://github.com/microsoft/vscode/blob/main/src/vs/workbench/browser/parts/compositeBar.ts)：原生移动操作、按序插入容器及将视图提升为新容器。
+- [viewPaneContainer.ts](https://github.com/microsoft/vscode/blob/main/src/vs/workbench/browser/parts/views/viewPaneContainer.ts)：中点命中检测、半面板放置遮罩和清理。
+
+本库保留横向标签页布局，标题中间和边缘区域分别用于移入已有面板及提升为新标签页。拖拽图像由浏览器绘制并随指针移动，具体外观取决于浏览器和操作系统，与 VS Code 的原生 HTML 拖拽类似。此 API 不提供工作台持久化或跨窗口拖拽。
+
+交互示例：[侧栏拖拽](drag-drop.html)、[标签页组拖拽](group-drag-drop.html)，运行 `npm run serve` 后访问。

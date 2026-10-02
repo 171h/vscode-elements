@@ -1,4 +1,4 @@
-// Start the dev server on port 8096, then run this to verify every bundled theme.
+// 先在 8096 端口启动开发服务器，再运行此脚本检查所有内置主题。
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 
@@ -84,22 +84,18 @@ try {
       };
     });
     for (const field of result.fields) {
-      assert.equal(field.foreground, result.foreground, `${theme}: foreground`);
-      assert.equal(field.background, result.background, `${theme}: background`);
-      assert.equal(field.titleColor, result.titleColor, `${theme}: title`);
+      assert.equal(field.foreground, result.foreground, `${theme}: 前景色`);
+      assert.equal(field.background, result.background, `${theme}: 背景色`);
+      assert.equal(field.titleColor, result.titleColor, `${theme}: 标题`);
       assert.equal(
         field.titleBackground,
         'rgba(0, 0, 0, 0)',
-        `${theme}: title background blends with the surface`
+        `${theme}: 标题背景与表面融合`
       );
-      assert.equal(
-        field.titleBorderWidth,
-        '0px',
-        `${theme}: title has no border`
-      );
-      assert.equal(field.border, result.border, `${theme}: border`);
+      assert.equal(field.titleBorderWidth, '0px', `${theme}: 标题无边框`);
+      assert.equal(field.border, result.border, `${theme}: 边框`);
     }
-    assert.equal(result.outline, result.focus, `${theme}: focus`);
+    assert.equal(result.outline, result.focus, `${theme}: 焦点`);
     for (const [size, radius] of [
       ['small', '1px'],
       ['medium', '4px'],
@@ -113,15 +109,13 @@ try {
         );
       assert.ok(
         radii.every((value) => value === radius),
-        `${theme}/${size}: wrapped and native radius`
+        `${theme}/${size}: 包装与原生 fieldset 的圆角`
       );
     }
     await page
       .locator('main')
       .screenshot({path: `.wireit/fieldset-${theme}.png`});
-    console.log(
-      `${theme}: wrapped/native fieldsets, legend, border and focus passed`
-    );
+    console.log(`${theme}: 包装与原生 fieldset、标题、边框和焦点检查通过`);
   }
   await page.emulateMedia({forcedColors: 'active'});
   assert.equal(

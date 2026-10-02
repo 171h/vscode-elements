@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Tabs groups drag and drop</title>
+    <title>标签页组拖拽</title>
     <script
       type="module"
       src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
@@ -59,78 +59,73 @@
     </style>
   </head>
   <body>
-    <h1>Tabs groups drag and drop</h1>
+    <h1>标签页组拖拽</h1>
     <vscode-theme-selector></vscode-theme-selector>
     <p>
-      Drag the empty background of a tab strip to move a whole tabs group
-      between the containers. Drag a tab title onto a container to pull it out
-      as its own group, and drag a fieldset legend onto a container to create a
-      group for that view. Drop into the dashed area of an empty container.
+      拖拽标签栏空白背景可在容器之间移动整组。将标签页标题拖到容器可拆分为独立组，将
+      fieldset 标题拖到容器可为该视图创建新组。空容器的虚线区域可接收拖拽内容。
     </p>
     <main>
       <vscode-tabs-group id="primary">
         <vscode-tabs>
-          <vscode-tab-header>Explorer</vscode-tab-header>
+          <vscode-tab-header>资源管理器</vscode-tab-header>
           <vscode-tab-panel>
             <vscode-fieldset
               ><fieldset>
-                <legend>Files</legend>
-                <label
-                  >Filter <input value="Preserved when moved"
-                /></label></fieldset
+                <legend>文件</legend>
+                <label>筛选 <input value="移动时保留此值" /></label></fieldset
             ></vscode-fieldset>
             <fieldset>
-              <legend>Outline</legend>
-              <p>Class and function outline</p>
+              <legend>大纲</legend>
+              <p>类和函数大纲</p>
             </fieldset>
           </vscode-tab-panel>
-          <vscode-tab-header>Search</vscode-tab-header>
+          <vscode-tab-header>搜索</vscode-tab-header>
           <vscode-tab-panel
             ><fieldset>
-              <legend>Search results</legend>
-              <label>Query <input /></label></fieldset
+              <legend>搜索结果</legend>
+              <label>查询 <input /></label></fieldset
           ></vscode-tab-panel>
         </vscode-tabs>
         <vscode-tabs>
-          <vscode-tab-header>Notes</vscode-tab-header>
+          <vscode-tab-header>笔记</vscode-tab-header>
           <vscode-tab-panel
             ><fieldset>
-              <legend>Draft</legend>
-              <p>Drag the tab strip background to reorder this group.</p>
+              <legend>草稿</legend>
+              <p>拖拽标签栏背景可调整此组的顺序。</p>
             </fieldset></vscode-tab-panel
           >
         </vscode-tabs>
       </vscode-tabs-group>
       <vscode-tabs-group id="secondary">
         <vscode-tabs>
-          <vscode-tab-header>Secondary sidebar</vscode-tab-header>
+          <vscode-tab-header>辅助侧栏</vscode-tab-header>
           <vscode-tab-panel
             ><fieldset>
-              <legend>Inbox</legend>
-              <p>Drop a tab, view or whole group here.</p>
+              <legend>收件箱</legend>
+              <p>将标签页、视图或整组拖到此处。</p>
             </fieldset></vscode-tab-panel
           >
         </vscode-tabs>
         <vscode-tabs>
-          <vscode-tab-header>Empty</vscode-tab-header>
+          <vscode-tab-header>空面板</vscode-tab-header>
           <vscode-tab-panel></vscode-tab-panel>
         </vscode-tabs>
       </vscode-tabs-group>
     </main>
-    <p id="events" aria-live="polite">Move a group to see the layout event.</p>
+    <p id="events" aria-live="polite">移动组以查看布局事件。</p>
     <script>
       document.addEventListener('vsc-tabs-group-layout-change', (event) => {
         const {source, destination, tabs, header, views} = event.detail;
         document.querySelector('#events').textContent =
-          `Moved "${tabs.textContent.trim()}" from ${source?.id || 'outside'} ` +
-          `to ${destination.id}; header: ${header ? `"${header.textContent.trim()}"` : 'none'}, ` +
-          `views: ${views.length}.`;
+          `已将“${tabs.textContent.trim()}”从 ${source?.id || '容器外'} ` +
+          `移动至 ${destination.id}；标题：${header ? `“${header.textContent.trim()}”` : '无'}，` +
+          `视图数：${views.length}。`;
       });
       document.addEventListener('vsc-tabs-layout-change', (event) => {
         const {source, destination, views} = event.detail;
         document.querySelector('#events').textContent =
-          `Moved ${views.length} view(s) from one tabs group to another; ` +
-          `layout can now be saved (${source === destination ? 'same' : 'new'} destination).`;
+          `已移动 ${views.length} 个视图，可保存布局（目标${source === destination ? '相同' : '不同'}）。`;
       });
     </script>
   </body>

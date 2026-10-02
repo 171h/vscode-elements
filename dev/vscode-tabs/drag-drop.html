@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Sidebar drag and drop</title>
+    <title>侧栏拖拽</title>
     <script
       type="module"
       src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
@@ -57,59 +57,55 @@
     </style>
   </head>
   <body>
-    <h1>Sidebar drag and drop</h1>
+    <h1>侧栏拖拽</h1>
     <vscode-theme-selector></vscode-theme-selector>
-    <p aria-label="Fieldset size">
-      Size:
-      <vscode-button data-fieldset-size="small">Small</vscode-button>
-      <vscode-button data-fieldset-size="medium">Medium</vscode-button>
-      <vscode-button data-fieldset-size="large">Large</vscode-button>
+    <p aria-label="Fieldset 尺寸">
+      尺寸：
+      <vscode-button data-fieldset-size="small">小</vscode-button>
+      <vscode-button data-fieldset-size="medium">中</vscode-button>
+      <vscode-button data-fieldset-size="large">大</vscode-button>
     </p>
     <p>
-      Drag tab titles to reorder. Drag legends to move views. Hover over the
-      center of a tab to open it; drop near its edges to create a tab. Drop a
-      tab title into another panel to merge its views.
+      拖拽标签页标题可排序，拖拽视图标题可移动视图。悬停在标签页中间可打开面板，在边缘放置可创建标签页。将标签页标题拖入另一面板可合并其视图。
     </p>
     <main>
       <vscode-tabs>
-        <vscode-tab-header>Explorer</vscode-tab-header>
+        <vscode-tab-header>资源管理器</vscode-tab-header>
         <vscode-tab-panel>
           <vscode-fieldset
             ><fieldset>
-              <legend>Files</legend>
-              <label
-                >Filter <input value="Preserved when moved"
-              /></label></fieldset
+              <legend>文件</legend>
+              <label>筛选 <input value="移动时保留此值" /></label></fieldset
           ></vscode-fieldset>
           <fieldset>
-            <legend>Outline</legend>
-            <p>Class and function outline</p>
+            <legend>大纲</legend>
+            <p>类和函数大纲</p>
           </fieldset>
           <fieldset>
-            <legend>Timeline</legend>
-            <p>Recent edits</p>
+            <legend>时间线</legend>
+            <p>最近编辑记录</p>
           </fieldset>
         </vscode-tab-panel>
-        <vscode-tab-header>Search</vscode-tab-header>
+        <vscode-tab-header>搜索</vscode-tab-header>
         <vscode-tab-panel
           ><fieldset>
-            <legend>Search results</legend>
-            <label>Query <input /></label></fieldset
+            <legend>搜索结果</legend>
+            <label>查询 <input /></label></fieldset
         ></vscode-tab-panel>
-        <vscode-tab-header>Empty</vscode-tab-header>
+        <vscode-tab-header>空面板</vscode-tab-header>
         <vscode-tab-panel></vscode-tab-panel>
       </vscode-tabs>
       <vscode-tabs>
-        <vscode-tab-header>Secondary sidebar</vscode-tab-header>
+        <vscode-tab-header>辅助侧栏</vscode-tab-header>
         <vscode-tab-panel
           ><fieldset>
-            <legend>Notes</legend>
-            <p>Drop views from either sidebar here.</p>
+            <legend>笔记</legend>
+            <p>将任一侧栏的视图拖到此处。</p>
           </fieldset></vscode-tab-panel
         >
       </vscode-tabs>
     </main>
-    <p id="events" aria-live="polite">Move a view to see the layout event.</p>
+    <p id="events" aria-live="polite">移动视图以查看布局事件。</p>
     <script>
       document.querySelectorAll('[data-fieldset-size]').forEach((button) => {
         button.addEventListener('click', () => {
@@ -122,7 +118,7 @@
       });
       document.addEventListener('vsc-tabs-layout-change', (event) => {
         document.querySelector('#events').textContent =
-          `Moved ${event.detail.views.length} views; layout can now be saved.`;
+          `已移动 ${event.detail.views.length} 个视图，可保存当前布局。`;
       });
     </script>
   </body>

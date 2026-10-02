@@ -13,7 +13,7 @@ type Target = {panel?: VscodeTabPanel; before?: HTMLElement; index?: number};
 let session: TabsDragSession | undefined;
 const controllers = new Set<TabsDragController>();
 
-/** Direct sidebar views only: nested form fieldsets are never separate views. */
+/** 仅处理直属侧栏视图，嵌套表单 fieldset 不作为独立视图。 */
 export function panelViews(panel: VscodeTabPanel): HTMLElement[] {
   return Array.from(panel.children).filter(
     (el): el is HTMLElement =>
@@ -21,20 +21,17 @@ export function panelViews(panel: VscodeTabPanel): HTMLElement[] {
   );
 }
 
-/** @internal Active tab or view drag, shared by every tabs component. */
+/** @internal 所有标签页组件共享的当前标签页或视图拖拽会话。 */
 export function getTabsDragSession(): TabsDragSession | undefined {
   return session;
 }
 
-/** @internal Clears drop feedback in every tabs component. */
+/** @internal 清除所有标签页组件的放置反馈。 */
 export function clearTabsDragFeedback() {
   controllers.forEach((controller) => controller.clear());
 }
 
-/**
- * Removes an emptied tabs component from its tabs group. Standalone tabs are
- * kept as authored, because the caller owns their lifecycle.
- */
+/** 从标签页组移除已清空的标签页组件。独立标签页由调用方管理生命周期，保持原有节点。 */
 function removeEmptyGroupTabs(tabs: VscodeTabs) {
   if (tabs.parentElement?.localName !== 'vscode-tabs-group') {
     return;
@@ -47,11 +44,7 @@ function removeEmptyGroupTabs(tabs: VscodeTabs) {
   }
 }
 
-/**
- * Native move DND, following VS Code's compositeBar and ViewPaneDropOverlay:
- * midpoint insertion, title drag images, delayed activation and half-pane overlays.
- * See dev/vscode-tabs/drag-drop.md for upstream references and layout differences.
- */
+/** 原生移动拖拽参考 VS Code 的 compositeBar 和 ViewPaneDropOverlay：按中点插入、标题拖拽图像、延迟激活及半面板遮罩。上游参考和布局差异见 dev/vscode-tabs/drag-drop.md。 */
 export class TabsDragController {
   private observer = new MutationObserver(() => this.refresh());
   private handles = new Set<HTMLElement>();
@@ -62,7 +55,7 @@ export class TabsDragController {
   private timer?: ReturnType<typeof setTimeout>;
   private generated = new Set<VscodeTabPanel>();
 
-  /** @internal Tabs component this controller belongs to. */
+  /** @internal 此控制器所属的标签页组件。 */
   readonly tabs: VscodeTabs;
 
   constructor(tabs: VscodeTabs) {
@@ -186,7 +179,7 @@ export class TabsDragController {
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('application/x-vscode-elements-view', 'move');
     const image = this.tabs.ownerDocument.createElement('div');
-    image.textContent = handle.textContent?.trim() || 'View';
+    image.textContent = handle.textContent?.trim() || '视图';
     Object.assign(image.style, {
       position: 'fixed',
       top: '-1000px',
@@ -222,7 +215,7 @@ export class TabsDragController {
       this.overlay = this.tabs.ownerDocument.createElement('div');
       this.overlay.setAttribute('aria-hidden', 'true');
       this.overlay.dataset.vscDropIndicator = '';
-      // Keep the indicator in the component shadow root to inherit its theme.
+      // 将提示层保留在组件 shadow root 中，以继承其主题。
       this.tabs.shadowRoot?.append(this.overlay);
     }
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -308,8 +301,7 @@ export class TabsDragController {
         this.feedback(bounds, false);
         this.scheduleHover(header);
       } else {
-        // Open another tab while dragging a container so its views can be merged
-        // by continuing down into the revealed panel. Releasing on the bar still reorders.
+        // 拖拽容器时显示另一标签页，继续移入其面板可合并视图；在标签栏释放仍执行排序。
         if (session.header && nearCenter && header !== session.header) {
           this.scheduleHover(header);
         } else {
@@ -364,7 +356,7 @@ export class TabsDragController {
         this.target = {panel};
         this.feedback(panel.getBoundingClientRect(), false);
       }
-      // Scroll the nearest overflowing container at the edge, including the panel.
+      // 在边缘滚动最近的溢出容器，包括面板本身。
       for (const el of path) {
         if (
           !(el instanceof HTMLElement) ||
@@ -393,7 +385,7 @@ export class TabsDragController {
     if (!session || !this.owned(event)) {
       return;
     }
-    // Recompute at release so stale feedback cannot cause an unintended move.
+    // 释放时重新计算目标，避免过期反馈导致意外移动。
     this.over(event);
     if (!this.target) {
       this.end();
@@ -446,7 +438,7 @@ export class TabsDragController {
       }
       if (!drag.header) {
         header.textContent =
-          drag.views[0].querySelector('legend')?.textContent?.trim() || 'View';
+          drag.views[0].querySelector('legend')?.textContent?.trim() || '视图';
         panel.append(...drag.views);
         this.generated.add(panel);
       }
@@ -499,7 +491,7 @@ export class TabsDragController {
     }
   };
 
-  /** @internal Clears the drop overlay and pending activation. */
+  /** @internal 清除放置遮罩和待执行的激活操作。 */
   clear() {
     this.cancelHover();
     this.target = undefined;
@@ -507,15 +499,12 @@ export class TabsDragController {
     this.overlay = undefined;
   }
 
-  /** @internal Registers a panel created by the drag and drop system. */
+  /** @internal 登记拖拽系统创建的面板。 */
   markGenerated(panel: VscodeTabPanel) {
     this.generated.add(panel);
   }
 
-  /**
-   * @internal Moves the active drag operation into a new tabs component placed
-   * inside a tabs group container. Returns the created tabs component.
-   */
+  /** @internal 将当前拖拽内容移至组容器内的新标签页组件，并返回该组件。 */
   moveToNewGroup(
     container: Element,
     before: Element | null
@@ -532,7 +521,7 @@ export class TabsDragController {
 
     if (!drag.header) {
       header.textContent =
-        drag.views[0].querySelector('legend')?.textContent?.trim() || 'View';
+        drag.views[0].querySelector('legend')?.textContent?.trim() || '视图';
       panel.append(...drag.views);
     }
 
@@ -579,7 +568,7 @@ export class TabsDragController {
     return tabs;
   }
 
-  /** Removes generated tabs whose last view was moved out. */
+  /** 移除最后一个视图已被移出的自动生成标签页。 */
   private cleanGenerated() {
     for (const controller of controllers) {
       for (const panel of controller.generated) {

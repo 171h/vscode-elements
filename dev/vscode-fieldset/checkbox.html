@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Fieldset checkbox</title>
+    <title>Fieldset 复选框</title>
     <script
       type="module"
       src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
@@ -57,110 +57,108 @@
     </style>
   </head>
   <body>
-    <h1>Fieldset checkbox</h1>
+    <h1>Fieldset 复选框</h1>
     <vscode-theme-selector></vscode-theme-selector>
     <p>
-      The checkbox is placed on the top-right corner of the border, aligned with
-      the legend. It disables the content while unchecked and applies the
-      selected <code>unchecked-mode</code>. The height transition is animated.
+      复选框位于边框右上角并与标题对齐。未勾选时禁用内容，并应用所选
+      <code>unchecked-mode</code> 展示方式；高度变化带有动画。
     </p>
     <main>
       <section>
-        <h2>Unchecked modes</h2>
+        <h2>未勾选时的展示方式</h2>
         <div class="modes">
-          <vscode-fieldset checkbox checkbox-label="Visible">
+          <vscode-fieldset checkbox checkbox-label="保持可见">
             <fieldset>
-              <legend>Visible</legend>
-              <label>Value <input value="Disabled, still visible" /></label>
-              <p>Content stays in place while the checkbox is unchecked.</p>
+              <legend>保持可见</legend>
+              <label>值 <input value="已禁用，仍可见" /></label>
+              <p>未勾选时内容仍保留在原位置。</p>
             </fieldset>
           </vscode-fieldset>
           <vscode-fieldset
             checkbox
             checked
-            checkbox-label="Collapsed"
+            checkbox-label="折叠"
             unchecked-mode="collapsed"
           >
             <fieldset>
-              <legend>Collapsed</legend>
-              <label>Value <input /></label>
-              <p>The content is hidden, the header stays visible.</p>
+              <legend>折叠</legend>
+              <label>值 <input /></label>
+              <p>内容隐藏，标题保持可见。</p>
             </fieldset>
           </vscode-fieldset>
           <vscode-fieldset
             checkbox
             checked
-            checkbox-label="Minimal"
+            checkbox-label="最小显示"
             unchecked-mode="minimal"
           >
             <fieldset>
-              <legend>Minimal</legend>
-              <label>Value <input /></label>
-              <p>Only the checkbox and its label stay visible.</p>
+              <legend>最小显示</legend>
+              <label>值 <input /></label>
+              <p>仅复选框及其标签保持可见。</p>
             </fieldset>
           </vscode-fieldset>
         </div>
       </section>
       <section>
-        <h2>Custom behavior</h2>
+        <h2>自定义行为</h2>
         <p>
-          The <code>vsc-fieldset-checked-change</code> event is cancelable and
-          the <code>checkedChange</code> callback can return
-          <code>false</code> to skip the default enable, disable and collapse
-          handling.
+          <code>vsc-fieldset-checked-change</code> 事件可取消，<code
+            >checkedChange</code
+          >
+          回调也可返回 <code>false</code>，跳过默认的启用、禁用和折叠处理。
         </p>
         <div class="modes">
           <vscode-fieldset
             id="callback-fieldset"
             checkbox
             checked
-            checkbox-label="Callback"
+            checkbox-label="回调"
             unchecked-mode="collapsed"
           >
             <fieldset>
-              <legend>Callback</legend>
-              <label>Value <input /></label>
-              <p class="status" id="callback-status">Callback state: enabled</p>
+              <legend>回调</legend>
+              <label>值 <input /></label>
+              <p class="status" id="callback-status">回调状态：已启用</p>
             </fieldset>
           </vscode-fieldset>
           <vscode-fieldset
             id="prevent-fieldset"
             checkbox
             checked
-            checkbox-label="Prevent default"
+            checkbox-label="阻止默认行为"
           >
             <fieldset>
-              <legend>Prevent default</legend>
-              <label>Value <input /></label>
+              <legend>阻止默认行为</legend>
+              <label>值 <input /></label>
               <p>
-                The event listener calls <code>preventDefault()</code>, so the
-                content stays enabled.
+                事件监听器调用 <code>preventDefault()</code>，因此内容保持启用。
               </p>
             </fieldset>
           </vscode-fieldset>
         </div>
       </section>
       <section>
-        <h2>Inside a tab panel</h2>
+        <h2>标签页面板内的视图</h2>
         <vscode-tabs>
-          <vscode-tab-header>Section view</vscode-tab-header>
+          <vscode-tab-header>分区视图</vscode-tab-header>
           <vscode-tab-panel style="padding: 8px">
             <vscode-fieldset
               checkbox
               checked
-              checkbox-label="Optional settings"
+              checkbox-label="可选设置"
               unchecked-mode="collapsed"
             >
               <fieldset>
-                <legend>Optional settings</legend>
-                <label>Name <input value="Draggable view" /></label>
+                <legend>可选设置</legend>
+                <label>名称 <input value="可拖拽视图" /></label>
               </fieldset>
             </vscode-fieldset>
           </vscode-tab-panel>
         </vscode-tabs>
       </section>
     </main>
-    <p id="events" aria-live="polite">Toggle a checkbox to see the event.</p>
+    <p id="events" aria-live="polite">切换复选框以查看事件。</p>
     <script>
       const callbackFieldset = document.querySelector('#callback-fieldset');
       const callbackStatus = document.querySelector('#callback-status');
@@ -169,16 +167,16 @@
         .addEventListener('vsc-fieldset-checked-change', (event) => {
           event.preventDefault();
           document.querySelector('#events').textContent =
-            'Default behavior skipped for "Prevent default".';
+            '“阻止默认行为”示例已跳过默认处理。';
         });
       callbackFieldset.checkedChange = (checked) => {
-        callbackStatus.textContent = `Callback state: ${checked ? 'enabled' : 'disabled'}`;
+        callbackStatus.textContent = `回调状态：${checked ? '已启用' : '已禁用'}`;
       };
       document.addEventListener('vsc-fieldset-checked-change', (event) => {
         const target = event.target;
         document.querySelector('#events').textContent =
-          `"${target.checkboxLabel}" is now ${event.detail.checked ? 'checked' : 'unchecked'}` +
-          `${event.defaultPrevented ? ' (default prevented)' : ''}.`;
+          `“${target.checkboxLabel}”当前${event.detail.checked ? '已勾选' : '未勾选'}` +
+          `${event.defaultPrevented ? '（已阻止默认行为）' : ''}。`;
       });
     </script>
   </body>

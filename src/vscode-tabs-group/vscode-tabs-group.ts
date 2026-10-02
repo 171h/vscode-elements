@@ -15,18 +15,14 @@ export type VscTabsGroupLayoutChangeEvent = CustomEvent<{
 }>;
 
 /**
- * Container for `vscode-tabs` groups. Groups can be reordered, moved between
- * containers, and created from a dragged tab or view.
- *
- * Drag the background of a tab strip to move a whole tabs group. Tab titles
- * keep their existing drag behavior: dropping one on the container promotes it
- * to a new group, and the same applies to a fieldset legend.
+ * vscode-tabs 组容器，支持排序、跨容器移动，以及由拖拽标签页或视图创建新组。
+ * 拖拽标签栏背景可移动整组；拖拽标题或 fieldset 的 legend 至容器可创建新组。
  *
  * @tag vscode-tabs-group
  *
- * @slot - Default slot. Assign `vscode-tabs` elements to move them as groups.
+ * @slot - 默认插槽；放入 vscode-tabs 元素后可按组移动。
  *
- * @fires {VscTabsGroupLayoutChangeEvent} vsc-tabs-group-layout-change - Dispatched after moving or creating a tabs group
+ * @fires {VscTabsGroupLayoutChangeEvent} vsc-tabs-group-layout-change - 移动或创建标签页组后派发
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]
@@ -40,11 +36,9 @@ export type VscTabsGroupLayoutChangeEvent = CustomEvent<{
 export class VscodeTabsGroup extends VscElement {
   static override styles = styles;
 
-  /**
-   * Hint shown while the container has no tabs groups.
-   */
+  /** 容器没有标签页组时显示的提示。 */
   @property({type: String, attribute: 'empty-text'})
-  emptyText = 'Drag a tabs group here';
+  emptyText = '将标签页组拖到此处';
 
   @state()
   private hasTabs = false;

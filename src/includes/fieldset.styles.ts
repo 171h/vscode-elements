@@ -1,7 +1,7 @@
 import {css} from 'lit';
 
-// Legends live in light DOM: ::slotted(fieldset) cannot reach their descendants.
-// Install narrowly scoped, low-specificity styles in the containing DOM root.
+// legend 位于 light DOM，::slotted(fieldset) 无法选中其后代。
+// 在所属 DOM 根节点中安装作用范围明确、优先级较低的样式。
 const styles = css`
   :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) {
     box-sizing: border-box;
@@ -55,11 +55,7 @@ const styles = css`
         var(--vscode-foreground, CanvasText)
       )
     );
-    /* The legend sits in the fieldset border notch, where the fieldset
-       background is not painted. An opaque background would cover the
-       surface behind the border with a rectangle, which is especially
-       visible on dark themes. Transparent blends with the surface and the
-       theme foreground keeps the title readable. */
+    /** legend 位于 fieldset 边框缺口，此处不会绘制 fieldset 背景。不透明背景会覆盖边框后的表面，形成矩形色块，在暗色主题下尤其明显。透明背景与表面融合，主题前景色保证标题可读。 */
     background: transparent;
     border: 0;
     font-family: inherit;
@@ -91,10 +87,7 @@ const styles = css`
     color: var(--vscode-disabledForeground, GrayText);
   }
 
-  /* Collapsed fieldset content, driven by the vscode-fieldset checkbox.
-     Elements are hidden and bare text nodes lose their font size, so the
-     header keeps the only visible part of the fieldset. The minimal mode
-     hides the whole fieldset and leaves the checkbox by itself. */
+  /** vscode-fieldset 复选框控制内容折叠。隐藏元素并将裸文本字号设为零，使标题成为 fieldset 唯一可见部分。minimal 模式隐藏整个 fieldset，仅保留复选框。 */
   :where(vscode-fieldset[data-vsc-collapsed] > fieldset) {
     font-size: 0;
   }
@@ -124,7 +117,7 @@ const styles = css`
 
 const installed = new WeakMap<Document | ShadowRoot, HTMLStyleElement>();
 
-/** Apply the same theme to wrapped and direct native sidebar fieldsets. */
+/** 为包装组件中的 fieldset 和侧栏直属原生 fieldset 应用相同主题。 */
 export function installFieldsetStyles(element: HTMLElement) {
   const root = element.getRootNode();
   if (!(root instanceof Document || root instanceof ShadowRoot)) {
@@ -138,8 +131,8 @@ export function installFieldsetStyles(element: HTMLElement) {
   style.textContent = styles.cssText;
   (root instanceof Document ? root.head : root).append(style);
   installed.set(root, style);
-  // innerHTML upgrades custom elements before replacing the root's old children.
-  // A style appended from connectedCallback can be discarded by that replacement.
+  // innerHTML 在替换根节点原有子节点之前升级自定义元素。
+  // connectedCallback 中添加的样式可能被该替换操作移除。
   queueMicrotask(() => {
     if (element.isConnected && !style.isConnected) {
       installFieldsetStyles(element);

@@ -1,5 +1,5 @@
-// Native pointer smoke test. Start `npx wds --port 8096 --hostname 127.0.0.1`
-// first, then run `node scripts/test-tabs-drag.mjs [server URL]`.
+// 原生鼠标拖拽冒烟测试：先运行 `npx wds --port 8096 --hostname 127.0.0.1`
+// 再运行 `node scripts/test-tabs-drag.mjs [服务器 URL]`。
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 
@@ -31,14 +31,14 @@ try {
   await page.screenshot({path: '.wireit/tabs-drag-overlay.png'});
   await page.mouse.up();
   assert.deepEqual(await legends.allTextContents(), [
-    'Outline',
-    'Files',
-    'Timeline',
-    'Search results',
+    '大纲',
+    '文件',
+    '时间线',
+    '搜索结果',
   ]);
   assert.equal(
     await tabs.locator('input').first().inputValue(),
-    'Preserved when moved'
+    '移动时保留此值'
   );
 
   const files = await legends.nth(1).boundingBox();
@@ -65,10 +65,10 @@ try {
       .nth(1)
       .locator('legend')
       .allTextContents(),
-    ['Search results', 'Files']
+    ['搜索结果', '文件']
   );
   await page.screenshot({path: '.wireit/tabs-drag-result.png'});
-  // A container can reveal another tab and merge all of its views into it.
+  // 拖拽容器时可显示另一标签页面板，并将全部视图合并到其中。
   const searchHeader = await tabs
     .locator('vscode-tab-header')
     .nth(1)
@@ -116,12 +116,10 @@ try {
       .first()
       .locator('legend')
       .allTextContents(),
-    ['Outline', 'Timeline', 'Search results', 'Files']
+    ['大纲', '时间线', '搜索结果', '文件']
   );
   assert.deepEqual(errors, []);
-  console.log(
-    'Native mouse drag, overlay, hover activation, header merge and state preservation passed.'
-  );
+  console.log('原生鼠标拖拽、遮罩、悬停激活、标题合并与状态保留检查通过。');
 } finally {
   await browser.close();
 }

@@ -12,7 +12,7 @@ import type {
   VscTabsGroupLayoutChangeEvent,
 } from './vscode-tabs-group.js';
 
-/** Move a whole tabs group by dragging the background of its tab strip. */
+/** 拖拽标签栏背景以移动整个标签页组。 */
 const HANDLE_ATTR = 'data-vsc-tabs-group-handle';
 const DRAGGING_ATTR = 'data-vsc-group-dragging';
 const PLACEHOLDER_ATTR = 'data-vsc-group-placeholder';
@@ -41,21 +41,13 @@ function endGroupDrag() {
   controllers.forEach((controller) => controller.clear());
 }
 
-/**
- * Native move drag and drop for `vscode-tabs` children of a
- * `vscode-tabs-group`, following the same model as the tabs drag controller:
- * native drag images, midpoint insertion and themed indicators.
- *
- * A tabs group is dragged by the empty part of its tab strip. Tab titles keep
- * their existing drag behavior, so a tab can still be pulled out into its own
- * group, and fieldset legends still promote a view to a new group.
- */
+/** 为 vscode-tabs-group 的 vscode-tabs 子节点提供原生移动拖拽，沿用标签页控制器的原生拖拽图像、中点插入和主题提示。拖拽标签栏空白区域可移动整组；标签页标题保留原有行为，可拖出成为独立组，fieldset 标题也可将视图提升为新组。 */
 export class TabsGroupDragController {
   private observer = new MutationObserver(() => this.refresh());
   private handles = new Map<VscodeTabs, HTMLElement>();
   private pending = new WeakSet<VscodeTabs>();
   private placeholder?: HTMLDivElement;
-  /** @internal Drag image kept until the drag ends. */
+  /** @internal 保留至拖拽结束的拖拽图像。 */
   image?: HTMLDivElement;
   private target?: Element | null;
 
@@ -128,7 +120,7 @@ export class TabsGroupDragController {
     this.handles = handles;
   }
 
-  /** @internal Clears the placeholder and any target feedback. */
+  /** @internal 清除占位提示和目标反馈。 */
   clear() {
     this.target = undefined;
     this.placeholder?.remove();
@@ -191,7 +183,7 @@ export class TabsGroupDragController {
     event.dataTransfer.setDragImage(this.image, 12, 12);
   };
 
-  /** Keeps the tab titles of the dragged group attached to the pointer. */
+  /** 使拖拽组的标签页标题随指针移动。 */
   private buildImage(tabs: VscodeTabs): HTMLDivElement {
     const image = this.group.ownerDocument.createElement('div');
     const headers = Array.from(tabs.children).filter(
@@ -215,7 +207,7 @@ export class TabsGroupDragController {
       const chip = this.group.ownerDocument.createElement('div');
       const active = index === tabs.selectedIndex;
 
-      chip.textContent = header.textContent?.trim() || 'Tab';
+      chip.textContent = header.textContent?.trim() || '标签页';
       Object.assign(chip.style, {
         borderBottom: active
           ? '2px solid var(--vscode-panelTitle-activeBorder, #0078d4)'
@@ -270,7 +262,7 @@ export class TabsGroupDragController {
     if (tabsDrag && this.childTabsInPath(event)) {
       return;
     }
-    // Recompute at release so stale feedback cannot cause an unintended move.
+    // 释放时重新计算目标，避免过期反馈导致意外移动。
     this.over(event);
     if (this.target === undefined) {
       endGroupDrag();
@@ -299,10 +291,7 @@ export class TabsGroupDragController {
     endGroupDrag();
   };
 
-  /**
-   * Clears the placeholder as soon as the pointer enters one of the tabs
-   * components of this group: the inner tabs controller takes over there.
-   */
+  /** 指针进入组内标签页组件时立即清除占位提示，由内部标签页控制器接管。 */
   private captureOver = (event: DragEvent) => {
     if (getTabsDragSession() && this.childTabsInPath(event)) {
       this.clear();
@@ -341,10 +330,7 @@ export class TabsGroupDragController {
     return null;
   }
 
-  /**
-   * Shows the placeholder at the insertion point. Siblings are animated from
-   * their previous position so the groups slide apart instead of jumping.
-   */
+  /** 在插入位置显示占位提示，并将相邻组从原位置平滑移开。 */
   private place(
     before: Element | null,
     dragged?: VscodeTabs,
@@ -405,15 +391,15 @@ export class TabsGroupDragController {
       height = Math.max(48, Math.round(dragged.getBoundingClientRect().height));
       for (const child of Array.from(dragged.children)) {
         if (child instanceof VscodeTabHeader) {
-          titles.push(child.textContent?.trim() || 'Tab');
+          titles.push(child.textContent?.trim() || '标签页');
         }
       }
     } else if (tabsDrag?.header) {
-      titles.push(tabsDrag.header.textContent?.trim() || 'Tab');
+      titles.push(tabsDrag.header.textContent?.trim() || '标签页');
     } else if (tabsDrag) {
       titles.push(
         ...tabsDrag.views.map(
-          (view) => view.querySelector('legend')?.textContent?.trim() || 'View'
+          (view) => view.querySelector('legend')?.textContent?.trim() || '视图'
         )
       );
     }
@@ -422,7 +408,7 @@ export class TabsGroupDragController {
     const bar = doc.createElement('div');
 
     Object.assign(bar.style, {display: 'flex', flexWrap: 'wrap', gap: '4px'});
-    (titles.length ? titles : ['Tabs group']).forEach((title) => {
+    (titles.length ? titles : ['标签页组']).forEach((title) => {
       const chip = doc.createElement('span');
 
       chip.textContent = title;
@@ -446,7 +432,7 @@ export class TabsGroupDragController {
     if (!dragged) {
       const label = doc.createElement('span');
 
-      label.textContent = 'New tabs group';
+      label.textContent = '新标签页组';
       Object.assign(label.style, {
         color: 'var(--vscode-descriptionForeground, #9d9d9d)',
         font: '11px var(--vscode-font-family, sans-serif)',
