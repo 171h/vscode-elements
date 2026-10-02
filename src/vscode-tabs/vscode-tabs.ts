@@ -163,6 +163,9 @@ export class VscodeTabs extends VscElement {
       this.overflow === 'menu'
         ? headers.filter((header) => !visible.includes(header))
         : [];
+    const focused = this._tabHeaders.find((header) =>
+      header.matches(':focus-within')
+    );
     this._tabHeaders.forEach((header) => {
       header.toggleAttribute(
         'data-vsc-overflow-hidden',
@@ -171,6 +174,20 @@ export class VscodeTabs extends VscElement {
       header.toggleAttribute('data-vsc-overflow-last', header === promoted);
       this._setOverflowInert(header, hidden.includes(header));
     });
+    const focusable = visible.filter(
+      (header) => !header.hidden && !header.inert
+    );
+    const tabStop =
+      (focused && focusable.includes(focused) ? focused : undefined) ??
+      focusable.find((header) => header.tabIndex === 0) ??
+      focusable.find((header) => header.active) ??
+      focusable[0];
+    this._tabHeaders.forEach((header) => {
+      header.tabIndex = header === tabStop ? 0 : -1;
+    });
+    if (focused && !focusable.includes(focused)) {
+      tabStop?.focus({preventScroll: true});
+    }
     if (
       hidden.length !== this._hiddenHeaders.length ||
       hidden.some((header, i) => header !== this._hiddenHeaders[i])

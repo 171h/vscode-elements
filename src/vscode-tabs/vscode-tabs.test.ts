@@ -530,3 +530,69 @@ describe('标题内交互控件的键盘事件', () => {
     }
   });
 });
+
+describe('溢出变化后的键盘焦点入口', () => {
+  const createTabs = () =>
+    fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 450px" overflow="menu">
+        ${[1, 2, 3, 4].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+  const pressEnd = (header: Element) =>
+    header.dispatchEvent(
+      new KeyboardEvent('keydown', {key: 'End', bubbles: true, composed: true})
+    );
+  it('缩小容器或标题变宽时，将被隐藏的焦点移回可见激活项', async () => {
+    for (const action of ['resize', 'title']) {
+      const el = await createTabs();
+      const headers = el.querySelectorAll('vscode-tab-header');
+      await waitUntil(() => !headers[3].inert);
+      headers[0].focus();
+      pressEnd(headers[0]);
+      expect(document.activeElement).to.equal(headers[3]);
+      if (action === 'resize') {
+        el.style.width = '180px';
+      } else {
+        headers[0].style.width = '350px';
+      }
+      await waitUntil(() => headers[3].inert);
+      expect(document.activeElement, action).to.equal(headers[0]);
+      expect(headers[0].tabIndex).to.equal(0);
+      expect([...headers].filter((h) => h.tabIndex === 0)).to.have.length(1);
+      expect(el.selectedIndex).to.equal(0);
+    }
+  });
+  it('保留仍可见的焦点，并在外部获得焦点后仅修复 Tab 入口', async () => {
+    const el = await createTabs();
+    const headers = el.querySelectorAll('vscode-tab-header');
+    await waitUntil(() => !headers[3].inert);
+    headers[0].focus();
+    headers[0].dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'ArrowRight',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    el.style.width = '350px';
+    await waitUntil(() => headers[3].inert);
+    expect(document.activeElement).to.equal(headers[1]);
+    expect(headers[1].tabIndex).to.equal(0);
+    const outside = document.createElement('button');
+    el.parentElement!.append(outside);
+    outside.focus();
+    el.style.width = '180px';
+    await waitUntil(() => headers[1].inert);
+    expect(document.activeElement).to.equal(outside);
+    expect(headers[0].tabIndex).to.equal(0);
+    expect(
+      [...headers].filter((h) => !h.inert && h.tabIndex === 0)
+    ).to.have.length(1);
+    outside.remove();
+  });
+});
