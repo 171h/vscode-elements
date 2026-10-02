@@ -1,22 +1,19 @@
-# Textfield percentage mode
+# 文本框百分比模式
 
-The `percentage` property of `vscode-textfield` turns the component into a
-percent field. The editable text is always a percent number and the percent
-sign is displayed inside the input, while the value which the component reports
-uses the fraction form of that number:
+`vscode-textfield` 的 `percentage` 属性将组件转换为百分比输入框。可编辑文字始终为百分数，百分号显示在输入框内，而组件向外部提供对应的小数值：
 
-| Typed in the input | Displayed in the input | `value` |
-| --- | --- | --- |
-| `1` | `1%` | `0.01` |
-| `12.5` | `12.5%` | `0.125` |
-| `-3` | `-3%` | `-0.03` |
+| 输入文字 | 显示文字 | `value` |
+| -------- | -------- | ------- |
+| `1`      | `1%`     | `0.01`  |
+| `12.5`   | `12.5%`  | `0.125` |
+| `-3`     | `-3%`    | `-0.03` |
 
-## Enable the mode
+## 启用模式
 
-Add the `percentage` attribute, or set the property:
+添加 `percentage` 特性，或设置同名属性：
 
 ```html
-<vscode-label for="opacity">Opacity</vscode-label>
+<vscode-label for="opacity">不透明度</vscode-label>
 <vscode-textfield id="opacity" percentage value="0.5"></vscode-textfield>
 ```
 
@@ -26,28 +23,22 @@ const field = document.querySelector('#opacity');
 field.percentage = true;
 ```
 
-The example displays `50%`, because `value` is written in the fraction form.
-The property is reflected, so the attribute and the property can be used
-interchangeably and the mode can be switched at runtime. The current value is
-converted when the mode changes: a field with the value `0.25` displays `25%`
-after `percentage` is enabled and `0.25` again after it is disabled. A value
-which cannot be represented as a percent number - for example `abc` - is
-dropped when the mode is enabled.
+此示例显示 `50%`，因为 `value` 使用小数形式。属性会反射到 HTML 特性，二者可互换使用，也可在运行时切换模式。切换时会转换当前值：值为 `0.25` 的文本框启用后显示 `25%`，禁用后再次显示 `0.25`。启用时，无法表示为百分数的值（例如 `abc`）会被清除。
 
-## The programmatic value is a fraction
+## 程序读写使用小数值
 
-Everything which a program reads or writes uses the fraction form:
+程序读写均使用小数形式：
 
-| Read or written with | Unit | Example for `1%` |
-| --- | --- | --- |
-| The displayed text of the input | percent number | `1%` |
-| `value` property and attribute | fraction | `0.01` |
-| Submitted form value and `FormData` | fraction | `0.01` |
-| `defaultValue` and `formStateRestoreCallback` | fraction | `0.01` |
-| `min`, `max`, and `step` | fraction | `0.01` |
+| 读写位置                                     | 单位   | `1%` 对应的示例 |
+| -------------------------------------------- | ------ | --------------- |
+| 输入框显示文字                               | 百分数 | `1%`            |
+| `value` 属性与特性                           | 小数   | `0.01`          |
+| 表单提交值与 `FormData`                      | 小数   | `0.01`          |
+| `defaultValue` 与 `formStateRestoreCallback` | 小数   | `0.01`          |
+| `min`、`max`、`step`                         | 小数   | `0.01`          |
 
 ```js
-field.value = '0.01'; // the input displays "1%"
+field.value = '0.01'; // 输入框显示 "1%"
 field.value; // "0.01"
 ```
 
@@ -61,40 +52,25 @@ field.value; // "0.01"
 new FormData(document.querySelector('form')).get('opacity'); // "0.5"
 ```
 
-An empty field does not display a percent sign, and the empty state is an empty
-string both in the `value` property and in the submitted form value. The
-`required` validation reports the empty field as usual.
+空文本框不显示百分号，`value` 与表单提交值均为空字符串。`required` 校验仍正常报告空值。
 
-## Editing behaviour
+## 编辑行为
 
-- The percent sign is added as soon as the number contains a digit, and it is
-  not part of the number which is edited: pressing Backspace removes the last
-  digit and keeps the sign.
-- Only the characters of a number are accepted while typing: the digits, a
-  single decimal separator, and a leading minus sign. Everything else is
-  ignored. A comma is converted to a period, so `1,5` becomes `1.5%`.
-- The text is normalized when the editing is finished, which is when the field
-  loses the focus: `05` becomes `5%`, `1.` becomes `1%`, and a lone `-` clears
-  the field.
-- The `input` and `change` events are dispatched as usual. The `value` property
-  already holds the fraction form when an event is handled, and the value
-  submitted with the form is updated while typing.
-- The inner input is rendered as a text field, because a native number field
-  does not accept a percent sign. The `type` property therefore has no effect in
-  this mode, and the arrow keys do not change the value.
+- 数字包含至少一位数字时添加百分号。百分号不是被编辑数字的一部分：按退格键删除末尾数字并保留百分号。
+- 输入时仅接受数字、一个小数分隔符和前导负号，忽略其他字符。逗号转换为句点，因此 `1,5` 显示为 `1.5%`。
+- 失去焦点、结束编辑时规范化文字：`05` 变为 `5%`，`1.` 变为 `1%`，单独的 `-` 清空文本框。
+- 正常派发 `input` 与 `change` 事件。处理事件时，`value` 已是小数形式；表单提交值在输入过程中同步更新。
+- 内部 input 使用文本框，因为原生数字输入框不接受百分号。此模式下 `type` 属性不生效，方向键不改变数值。
 
-## Validation
+## 校验
 
-`required`, `pattern`, `minlength`, and `maxlength` are checked against the
-displayed text, which contains the percent sign, just like in a native text
-field:
+`required`、`pattern`、`minlength` 和 `maxlength` 对包含百分号的显示文字进行校验，与原生文本框一致：
 
 ```html
 <vscode-textfield percentage required pattern="^\d+%$"></vscode-textfield>
 ```
 
-`min`, `max`, and `step` are checked against the fraction value, in the same
-unit as the `value` property:
+`min`、`max` 和 `step` 对小数值进行校验，与 `value` 使用相同单位：
 
 ```html
 <vscode-textfield
@@ -106,21 +82,16 @@ unit as the `value` property:
 ></vscode-textfield>
 ```
 
-The example accepts 0% - 100% in steps of 5%. The validation messages match the
-native messages, for example `Value must be less than or equal to 1.`:
+此示例接受 0% 至 100%，步长为 5%。校验提示与原生提示一致，例如提示数值必须小于或等于 1：
 
 ```js
-field.checkValidity(); // false when the field displays "150%"
+field.checkValidity(); // 显示 "150%" 时返回 false
 field.validity.rangeOverflow; // true
 ```
 
-## Live example
+## 交互示例
 
-The `dev/vscode-textfield/percentage.html` page contains a percent field which
-shows the displayed text and the value which is read by the program, an
-editable required field, a field with `min`, `max`, and `step`, a runtime
-toggle, and a form which submits the fraction values. Start the development
-server and open the page:
+`dev/vscode-textfield/percentage.html` 提供显示文字与程序值对照、可编辑必填框、带 `min`/`max`/`step` 的文本框、运行时模式切换，以及提交小数值的表单。启动开发服务器并打开页面：
 
 ```bash
 npm run start

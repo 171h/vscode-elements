@@ -1,51 +1,33 @@
-# How to contribute
+# 贡献指南
 
-Thank you for deciding to contribute to the development of the VSCode Elements.
+感谢参与 VSCode Elements 的开发。
 
-If you don’t feel confident enough to submit code changes, you can still contribute. Did you find
-a typo, grammatical error, or unclear documentation? Improving the documentation is a valuable
-contribution as well.
+即使暂时不准备提交代码，也可以通过修正文档中的错别字、语法错误或不清晰的说明参与贡献。
 
-If you’re not yet familiar with the code, we recommend tasks labeled as
-[“good first issue”](https://github.com/vscode-elements/elements/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22).
-These tasks are relatively simple but still important to complete.
+如果还不熟悉代码，建议从带有 [“good first issue”](https://github.com/vscode-elements/elements/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22) 标签的任务开始。这些任务相对简单，也对项目有帮助。
 
-If you decide to work on an issue, please indicate it on the issue page to avoid duplication of work.
+决定处理某个问题时，请在问题页面说明，避免重复工作。
 
-## Submit a bug report
+## 提交缺陷报告
 
-When submitting a bug report, aim to create a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example). It’s perfectly fine if the example is a repository with multiple files, as long as it can be started with a few simple commands (e.g., `npm install && npm run dev`).
+请尽量提供[最小可复现示例](https://stackoverflow.com/help/minimal-reproducible-example)。可提供能通过少量命令启动的示例仓库。
 
-It’s even better if you create a demo HTML file under the `dev` directory, using [this](https://github.com/vscode-elements/elements/blob/main/dev/_template.html) as a starting point.
-Install the dependencies with `npm ci` and start the development server using `npm run start`. Finally, attach the demo HTML file to your issue ticket.
+也可参考 [dev/\_template.html](dev/_template.html)，在 `dev` 目录中创建演示 HTML 文件。使用 `npm ci` 安装依赖，通过 `npm run start` 启动开发服务器，并将示例 HTML 附在问题报告中。
 
-## Open a pull request
+## 提交拉取请求
 
-Before submitting a pull request, ensure the code follows the styling guidelines and is
-well-formatted. It’s easier than it sounds—just use the lint and Prettier scripts (see the README).
-Writing tests is not required, but we appreciate it if you add tests for new code. If your changes
-affect the user-facing functionality, please update the changelog file.
+提交前请确保代码遵循项目风格且格式正确，可使用 README 中介绍的 lint 和 Prettier 脚本。行为变化应添加有意义的回归测试；面向用户的功能变化应更新变更日志。
 
-Commit messages aim to follow the [50/72 style](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html).
+文档相关文件、代码注释、JSDoc 描述及 HTML/CSS 注释统一使用中文。API 名称、文件路径、命令、链接及工具指令保留原格式。
 
-## Publish a release
+所有后续提交必须遵循 Conventional Commits，描述与正文尽可能以中文为主，类型和作用域保留标准形式，例如 `fix(textfield): 修复百分比模式的数值校验`。格式、类型和破坏性变更示例参见 [AGENTS.md](AGENTS.md#提交信息规范)。提交信息也尽量遵循 [50/72 风格](https://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html)。
 
-Releases are created locally with `npm run release`. The assistant prompts for a version tag and
-suggests a patch release by default. Pass `minor`, `major`, or an explicit version to change the
-suggestion, for example `npm run release -- minor`; you still confirm the final tag interactively.
+## 发布版本
 
-The release assistant requires a clean Git working tree. It previews and updates `CHANGELOG.md` from
-commits since the latest release, synchronizes `package.json` and `package-lock.json`, and creates a
-release commit and annotated tag. After pushing that tag to `origin`, open the GitHub `Release`
-workflow, choose **Run workflow**, and enter the existing version tag (for example, `v2.6.0`). The
-workflow checks out that tag, runs all verification steps, and publishes the package to npmjs. npm
-publish credentials are only used by GitHub Actions; the local command never publishes a package
-directly.
+在本地使用 `npm run release` 创建发布。发布助手会询问版本标签，默认建议补丁版本。可传入 `minor`、`major` 或明确版本，例如 `npm run release -- minor`，最终标签仍需交互确认。
 
-If the requested tag already exists locally or on `origin`, the assistant reports where it exists
-and asks before replacing it. Remote replacements use a force-with-lease check so a tag changed by
-someone else after confirmation is not overwritten. The branch and tag are pushed atomically, so
-the remote is not left with only half of the release. Cancelling before confirming the release
-leaves its files unchanged; declining the final push keeps the release commit and tag locally and
-prints the command needed to push them later. Selecting the current package version recreates or
-moves only its tag and does not add a duplicate changelog entry or release commit.
+发布助手要求 Git 工作区干净。它根据最新发布后的提交预览并更新 `CHANGELOG.md`，同步 `package.json` 和 `package-lock.json`，并创建发布提交及附注标签。将标签推送到 `origin` 后会自动启动 GitHub **Release** 工作流；重试时可选择 **Run workflow**，并填写已有版本标签，例如 `v2.6.0`。工作流检出该标签，执行验证并将包发布到 npmjs。npm 发布凭据仅用于 GitHub Actions，本地命令不会直接发布包。
+
+若请求的标签已存在于本地或 `origin`，助手会说明其位置，并在替换前询问。远程标签替换使用 force-with-lease 检查，防止覆盖确认后被其他人修改的标签。分支与标签原子推送，避免远程仅更新其中一项。
+
+在确认发布前取消，不会修改文件；拒绝最终推送时，发布提交与标签保留在本地，命令会输出稍后推送的方法。选择当前包版本时，仅重新创建或移动其标签，不重复添加变更日志或发布提交。

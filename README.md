@@ -1,33 +1,26 @@
 # VSCode Elements
 
-For the end-user documentation, [click here](https://vscode-elements.github.io). This site is also mirrored at [https://vscode-elements.netlify.app](https://vscode-elements.netlify.app), where users behind the [GFW](https://en.wikipedia.org/wiki/Great_Firewall) can access it more quickly.
+面向使用者的文档请访问[官方文档站点](https://vscode-elements.github.io)。站点另有[镜像](https://vscode-elements.netlify.app)，便于受 [GFW](https://en.wikipedia.org/wiki/Great_Firewall) 影响的用户更快访问。
 
-This documentation is intended for developers who would like to contribute to or modify the code on their own.
+本文档面向希望参与项目贡献或自行修改代码的开发者。
 
-## Documentation
+## 文档
 
-Details of the changes made in this repository are documented in the [`docs`](docs/) directory. For all other documentation, visit [https://vscode-elements.github.io/](https://vscode-elements.github.io/).
+本仓库的功能变更说明位于 [`docs`](docs/) 目录。其他使用说明请访问[文档站点](https://vscode-elements.github.io/)。
 
-- [Form control sizes](docs/form-size.md) explains the shared `small`,
-  `medium`, and `large` sizes, supported components, runtime usage, form groups,
-  and icon sizing.
-- [Multi-select face labels](docs/multi-select-labels.md) explains the
-  `abbreviation` of `vscode-option`, the display priority of the
-  `vscode-multi-select` face, and the collapsing and tooltip behaviour.
-- [Textfield percentage mode](docs/textfield-percentage.md) explains the
-  `percentage` property of `vscode-textfield`, the displayed percent sign, the
-  fraction form of the value, and the editing and validation behaviour.
-- [Modified state of a form](docs/form-dirty-highlight.md) explains the
-  highlight of `vscode-form-container`, its duration, the form controls which
-  take part, and the colors of the themes.
+- [表单控件尺寸](docs/form-size.md)：说明统一的 `small`、`medium`、`large` 尺寸、支持的组件、运行时用法、表单组及图标尺寸。
+- [AI 辅助开发指南](AGENTS.md)：说明代理配置、任务示例、验证流程，以及中文文档、注释和 Conventional Commits 提交规范。
+- [多选框选中标签](docs/multi-select-labels.md)：说明 `vscode-option` 的 `abbreviation`、`vscode-multi-select` 展示区域的显示优先级，以及折叠和工具提示行为。
+- [文本框百分比模式](docs/textfield-percentage.md)：说明 `vscode-textfield` 的 `percentage` 属性、百分号显示、小数形式数值，以及编辑和校验行为。
+- [表单已修改状态](docs/form-dirty-highlight.md)：说明 `vscode-form-container` 高亮、持续时间、参与的控件及主题颜色。
 
-VSCode Elements is based on the [Lit](https://lit.dev/) library. The local development environment requires `NodeJS 22` or newer. If you want to use a local copy of the library in your codebase, you can use the `npm link` command. First, navigate to the VSCode Elements directory and run:
+VSCode Elements 基于 [Lit](https://lit.dev/) 库。开发环境需要 Node.js 22 或更新版本。若希望在自己的项目中使用本地组件库，可使用 `npm link`。先进入 VSCode Elements 目录执行：
 
 ```bash
 npm link
 ```
 
-Then, go to the library where you want to use it and run:
+再进入使用组件库的项目，执行：
 
 ```bash
 npm link nusys-ui
@@ -35,134 +28,115 @@ npm link nusys-ui
 
 > [!WARNING]
 >
-> Multiple packages must be linked with a single command. For example:
+> 多个包必须通过同一条命令链接，例如：
 >
 > ```bash
 > npm link nusys-ui @vscode-elements/webview-playground
 > ```
 
-Don't forget to run the build script before using the package.
+使用包前请先执行构建脚本。
 
-## Setup
+## 环境配置
 
-Install dependencies:
+安装依赖：
 
 ```bash
 npm ci
 ```
 
-## The scripts defined in `package.json`
+## package.json 中定义的脚本
 
-Each script can be run using the `npm run <script_name>` format. Wireit is used to cache the script
-results.
+各脚本均可通过 `npm run <脚本名称>` 执行。项目使用 Wireit 缓存脚本结果。
 
 ### build
 
-Build everything. This command generates all the files that will be included in the package. These include:
+构建所有发布内容，包括：
 
-- Transpiled JavaScript files with type definitions and source maps.
-- The custom elements manifest file.
-- VSCode custom data files.
-- The entire library as a single, minified JavaScript file.
+- 转译后的 JavaScript、类型声明和源码映射文件。
+- 自定义元素清单。
+- VS Code 自定义补全数据。
+- 将整个组件库打包为单个压缩后的 JavaScript 文件。
 
-### built:ts
+### build:ts
 
-Transpiles TypeScript files into standard ES6 JavaScript, without minification. These files can then be imported and optimized in the end-user application.
+将 TypeScript 转译为未压缩的 JavaScript，供使用者的应用导入和优化。
 
 ### build:watch
 
-Same as the above, but the TypeScript compiler run in watch mode and recompile the modified files
-automatically.
+以监视模式运行 TypeScript 编译器，文件修改后自动重新编译。
 
 ### clean
 
-Removes the generated files.
+删除生成的文件。
 
 ### lint
 
-Code style check with [ESLint](https://eslint.org/).
+使用 [ESLint](https://eslint.org/) 检查代码风格。
 
 ### lint:fix
 
-Automatically fixing code style issues.
+自动修复代码风格问题。
 
 ### prettier
 
-Checks code formatting with [Prettier](https://prettier.io/).
+使用 [Prettier](https://prettier.io/) 检查文件格式。
 
 ### prettier:fix
 
-Automatically fixing code format issues.
+自动修复文件格式问题。
 
 ### analyze
 
-Generates a [custom elements manifest file](https://custom-elements-manifest.open-wc.org/). This file is shipped with the package, and it is the file on which the API view in the documentation site is based.
+生成[自定义元素清单](https://custom-elements-manifest.open-wc.org/)。该文件随包发布，文档站点的 API 视图基于此清单生成。
 
 ### serve
 
-Start the [Web Test Runner](https://modern-web.dev/docs/test-runner/overview/) development server.
+启动本地开发服务器。
 
 ### start
 
-Start the development server and the TypeScript compiler in watch mode, then opens the default
-browser. This is the most used command during the development.
+启动开发服务器和 TypeScript 监视编译，并打开默认浏览器。这是开发过程中最常用的命令。
 
 ### test
 
-Compiles the test files and runs them. Because tests are written in TypeScript, a transpilation step
-is also needed.
+编译并执行测试。测试使用 TypeScript 编写，因此执行前需要转译。
 
 ### test:coverage
 
-Same as above, but it also generates coverage.
+执行测试并生成覆盖率报告。
 
 ### test:watch
 
-Watches file changes and runs the tests automatically when any modifications are detected.
+监视文件变化，修改后自动重新编译并执行测试。
 
 ### wtr:watch
 
-Starts the web-test-runner in watch mode without rebuilding any files. It can be run in a separate terminal during development, allowing you to catch new errors as you code.
+以监视模式启动 Web Test Runner，不重新构建文件。可在单独终端中运行，以便在开发时发现新错误。
 
 ### checksize
 
-Displays the file size of the bundled library (dist/bundled.js) in bytes.
+显示打包文件 `dist/bundled.js` 经 gzip 压缩后的字节数。
 
 ### icons
 
-Generates icon list for the documentation site. The output of this script should
-replace the `List of icons` section inside
-the `vscode-elements.github.io/src/content/docs/components/icon.mdx` so the docs stay in sync with the latest Codicon set.
+生成文档站点的图标列表。输出应替换 `vscode-elements.github.io/src/content/docs/components/icon.mdx` 中的图标列表章节，使文档与最新 Codicon 集合保持同步。
 
 ### vscode-data
 
-Generates HTML and CSS [custom data format](https://code.visualstudio.com/blogs/2020/02/24/custom-data-format) for VSCode code completions.
+生成 VS Code 代码补全所需的 HTML 和 CSS [自定义数据](https://code.visualstudio.com/blogs/2020/02/24/custom-data-format)。
 
 ### release
 
-Run `npm run release` from a clean working tree. The default version increment is
-`patch`; use `npm run release -- minor`, `npm run release -- major`, or
-`npm run release -- 3.1.0` to suggest a different version. The command prompts for
-the final `v`-prefixed version tag and confirmation.
+从干净的工作区运行 `npm run release`。默认建议递增 `patch` 版本；可用 `npm run release -- minor`、`npm run release -- major` 或 `npm run release -- 3.1.0` 指定其他版本。命令会提示确认最终的 `v` 前缀版本标签及发布操作。
 
-For a new version, the command updates `package.json`, `package-lock.json`, and the
-component version, generates a `CHANGELOG.md` entry from Git commits since the
-previous release, then commits those files and creates the tag. Selecting the
-current version only creates or updates its tag and keeps its existing changelog.
+发布新版本时，命令会更新 `package.json`、`package-lock.json` 和组件版本，根据上次发布以来的 Git 提交生成 `CHANGELOG.md` 条目，提交这些文件并创建标签。选择当前版本时仅创建或更新标签，保留现有变更日志。
 
-Confirming the push sends the branch and tag to `origin` and automatically starts
-the GitHub Actions **Release** workflow. It builds, tests, and publishes `nusys-ui`
-to npmjs, then creates a GitHub release with notes from `CHANGELOG.md`. Check the
-workflow run for completion; a successful local push does not mean npm publishing
-has finished. If you decline the push, the command prints how to push later.
+确认推送后，分支和标签会推送到 `origin`，并自动启动 GitHub Actions 的 **Release** 工作流。该工作流构建、测试并将 `nusys-ui` 发布到 npmjs，随后使用 `CHANGELOG.md` 中的说明创建 GitHub 发布。请检查工作流是否完成；本地推送成功不代表 npm 发布已完成。
 
-Configure a repository Actions secret named `NPM_TOKEN` with permission to publish
-`nusys-ui` (and bypass 2FA for unattended publishing). The workflow supplies it as
-`NODE_AUTH_TOKEN` to npm through `actions/setup-node`. GitHub secrets stay in
-Actions; the local command needs Git push access but does not need an npm token.
-The package repository URL must match this repository for npm provenance.
+在仓库 Actions 中配置名为 `NPM_TOKEN` 的密钥，使其具有发布 `nusys-ui` 的权限，并可绕过无人值守发布的双因素认证。工作流通过 `actions/setup-node` 将其作为 `NODE_AUTH_TOKEN` 提供给 npm。GitHub 密钥仅在 Actions 中使用；本地命令需要 Git 推送权限，不需要 npm 令牌。包中的仓库地址必须与本仓库一致，以支持 npm 来源证明。
 
-The updated workflow must be included in the commit being tagged. To retry a
-failed release, manually run **Release** in GitHub Actions and set `version_tag`
-to the existing tag. An already published npm version is skipped; publish a newer
-version to distribute changed package contents.
+打标签的提交必须包含最新工作流。发布失败时，可手动运行 **Release**，并将 `version_tag` 设置为已有标签。已发布的 npm 版本会跳过；若包内容发生变化，应发布新版本。
+
+## 文档与提交约定
+
+本项目的文档相关文件与代码注释统一使用中文；命令、API 标识符、链接和工具指令保留原格式。所有后续提交必须遵循 Conventional Commits，提交描述与正文尽可能使用中文。详细要求参见 [AGENTS.md](AGENTS.md)。

@@ -1,20 +1,18 @@
-# Form control sizes
+# 表单控件尺寸
 
-Form controls support a common `size` attribute for choosing a compact,
-default, or spacious presentation. The accepted values are:
+表单控件支持统一的 `size` 特性，用于选择紧凑、默认或宽松的显示尺寸：
 
-| Value | Purpose |
-| --- | --- |
-| `small` | Compact layouts. Controls are reduced to fit a 16px-high form row where applicable. |
-| `medium` | Default size. Omitting `size` has the same effect. |
-| `large` | Larger text, icons, spacing, and controls. |
+| 值       | 用途                                                     |
+| -------- | -------------------------------------------------------- |
+| `small`  | 紧凑布局；适用的控件缩小到可容纳于 16px 高表单行的尺寸。 |
+| `medium` | 默认尺寸，省略 `size` 时效果相同。                       |
+| `large`  | 更大的文字、图标、间距和控件。                           |
 
-The shared TypeScript type is `FormControlSize`, defined as
-`'small' | 'medium' | 'large'`.
+共享 TypeScript 类型为 `FormControlSize`，定义为 `'small' | 'medium' | 'large'`。
 
-## Supported components
+## 支持的组件
 
-The common form-control sizes are available on:
+以下组件支持统一的表单控件尺寸：
 
 - `vscode-button`
 - `vscode-textfield`
@@ -26,42 +24,38 @@ The common form-control sizes are available on:
 - `vscode-form-group`
 - `vscode-label`
 
-`medium` remains the default for backward compatibility.
+为保持向后兼容，默认值仍为 `medium`。
 
-`vscode-radio-group` and `vscode-checkbox-group` are containers without their own
-`size` attribute. Their height follows the child `vscode-radio` / `vscode-checkbox`
-controls, so set `size` on the children:
+`vscode-radio-group` 和 `vscode-checkbox-group` 是容器，自身没有 `size` 特性。其高度跟随子控件，因此应在子控件上设置尺寸：
 
 ```html
 <vscode-radio-group>
-  <vscode-radio size="small">One</vscode-radio>
-  <vscode-radio size="small">Two</vscode-radio>
+  <vscode-radio size="small">选项一</vscode-radio>
+  <vscode-radio size="small">选项二</vscode-radio>
 </vscode-radio-group>
 ```
 
-## Set a size in markup
+## 在标记中设置尺寸
 
-Set `size` independently on each control:
+可分别设置各控件的 `size`：
 
 ```html
-<vscode-textfield size="small">Compact field</vscode-textfield>
+<vscode-textfield size="small">紧凑文本框</vscode-textfield>
 <vscode-single-select size="medium"></vscode-single-select>
-<vscode-button size="large">Large action</vscode-button>
+<vscode-button size="large">大型操作按钮</vscode-button>
 ```
 
-Controls can use different sizes in the same form. For a consistent layout,
-give related controls the same value:
+同一表单内可使用不同尺寸。若需要一致布局，相关控件应使用相同值：
 
 ```html
 <vscode-textfield size="small"></vscode-textfield>
-<vscode-checkbox size="small">Remember me</vscode-checkbox>
-<vscode-button size="small">Save</vscode-button>
+<vscode-checkbox size="small">记住我</vscode-checkbox>
+<vscode-button size="small">保存</vscode-button>
 ```
 
-## Change a size at runtime
+## 运行时切换尺寸
 
-The `size` property and attribute are reflected, so either can be changed at
-runtime:
+`size` 属性与 HTML 特性相互反射，可在运行时修改任意一种：
 
 ```js
 const field = document.querySelector('vscode-textfield');
@@ -70,64 +64,50 @@ field.size = 'large';
 field.setAttribute('size', 'small');
 ```
 
-The existing pages under `dev/` include **small**, **medium**, and **large**
-buttons for interactively checking the supported components. Start the local
-development server and open the relevant component example:
+`dev/` 下的现有页面提供 **small**、**medium**、**large** 按钮，可交互检查支持的组件。启动本地开发服务器后打开对应示例：
 
 ```bash
 npm run serve
 ```
 
-## Form groups
+## 表单组
 
-`vscode-form-group` uses its `size` to adjust group spacing, label width, and
-the inherited `--vsc-form-control-font-size` custom property. Set the same
-`size` on the controls when their complete dimensions should match the group:
+`vscode-form-group` 通过 `size` 调整组间距、标签宽度和继承的 `--vsc-form-control-font-size` 自定义属性。控件整体尺寸需要与表单组一致时，也应在控件上设置相同的 `size`：
 
 ```html
 <vscode-form-group size="small" variant="vertical">
-  <vscode-label for="query">Query</vscode-label>
+  <vscode-label for="query">查询</vscode-label>
   <vscode-textfield id="query" size="small"></vscode-textfield>
-  <vscode-button size="small">Search</vscode-button>
+  <vscode-button size="small">搜索</vscode-button>
 </vscode-form-group>
 ```
 
-A `vscode-label` inside a sized form group shrinks automatically, so it does not
-need its own `size`. It also accepts `size` when used outside a form group.
+设置尺寸的表单组内，`vscode-label` 自动缩放，无需单独指定 `size`。在表单组外使用时，也可自行设置该属性。
 
-The automatic font sizes are 11px for `small`, the configured VS Code font
-size (13px by default) for `medium`, and 15px for `large`. You can override the
-font size for a form group or an individual control with
-`--vsc-form-control-font-size`.
+自动字号分别为：`small` 使用 11px，`medium` 使用配置的 VS Code 字号（默认 13px），`large` 使用 15px。可通过 `--vsc-form-control-font-size` 覆盖表单组或单个控件的字号。
 
-Small textfields remain 16px high when `vscode-icon` elements are placed in the
-`content-before` or `content-after` slots. Slotted icons are adjusted to the
-available content height: regular icons render at 14px, while action icons use
-a 12px glyph with their focus border preserved.
+小型文本框在 `content-before` 或 `content-after` 插槽中放入 `vscode-icon` 时，仍保持 16px 高度。插槽图标适应可用内容高度：普通图标为 14px，操作图标使用 12px 字形，并保留焦点边框。
 
-## Buttons with icons
+## 带图标的按钮
 
-Icons created by `vscode-button` follow the button size automatically:
+`vscode-button` 创建的图标自动跟随按钮尺寸：
 
-| Button size | Generated icon size |
-| --- | --- |
-| `small` | 14px |
-| `medium` | 16px |
-| `large` | 20px |
+| 按钮尺寸 | 自动生成的图标尺寸 |
+| -------- | ------------------ |
+| `small`  | 14px               |
+| `medium` | 16px               |
+| `large`  | 20px               |
 
-Small icon-only buttons are 16px square. This applies to both leading and
-trailing generated icons:
+小型纯图标按钮为 16px 正方形，前置和后置图标均适用：
 
 ```html
-<vscode-button size="small" icon="account" aria-label="Account"></vscode-button>
-<vscode-button size="small" icon-after="add" aria-label="Add"></vscode-button>
+<vscode-button size="small" icon="account" aria-label="账户"></vscode-button>
+<vscode-button size="small" icon-after="add" aria-label="添加"></vscode-button>
 ```
 
-## Standalone icons
+## 独立图标
 
-`vscode-icon` also has a `size` property. It accepts the presets `small`
-(14px), `medium` (16px, the default), and `large` (20px), or a numeric pixel
-value:
+`vscode-icon` 同样支持 `size` 属性，接受 `small`（14px）、`medium`（16px，默认）、`large`（20px）或像素数：
 
 ```html
 <vscode-icon name="account" size="small"></vscode-icon>
@@ -139,6 +119,4 @@ const icon = document.querySelector('vscode-icon');
 icon.size = 24;
 ```
 
-When an icon is generated through the `icon` or `icon-after` property of a
-`vscode-button`, set the button's `size`; the button supplies the corresponding
-numeric icon size.
+通过 `vscode-button` 的 `icon` 或 `icon-after` 属性生成图标时，应设置按钮的 `size`，由按钮提供对应的图标像素尺寸。
