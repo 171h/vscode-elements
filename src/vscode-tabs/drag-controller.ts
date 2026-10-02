@@ -527,6 +527,8 @@ export class TabsDragController {
 
     const tabs = this.tabs.ownerDocument.createElement('vscode-tabs');
     tabs.panel = this.tabs.panel;
+    tabs.overflow = this.tabs.overflow;
+    tabs.wrapAlignment = this.tabs.wrapAlignment;
     tabs.append(header, panel);
     if (drag.header) {
       if (this.generated.delete(panel)) {
