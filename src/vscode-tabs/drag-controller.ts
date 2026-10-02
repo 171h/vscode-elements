@@ -44,7 +44,7 @@ function removeEmptyGroupTabs(tabs: VscodeTabs) {
   }
 }
 
-/** 原生移动拖拽参考 VS Code 的 compositeBar 和 ViewPaneDropOverlay：按中点插入、标题拖拽图像、延迟激活及半面板遮罩。上游参考和布局差异见 dev/vscode-tabs/drag-drop.md。 */
+/** 原生移动拖拽参考 VS Code 的 compositeBar 和 ViewPaneDropOverlay：按中点插入、标题拖拽图像、延迟激活及半面板遮罩。上游参考和布局差异见 docs/tabs-drag-drop.md。 */
 export class TabsDragController {
   private observer = new MutationObserver(() => this.refresh());
   private handles = new Set<HTMLElement>();
