@@ -1,5 +1,5 @@
 import {defineConfig} from 'vite';
-import {readdirSync} from 'node:fs';
+import {readFileSync, readdirSync} from 'node:fs';
 const files = (dir: string, extension: string) =>
   readdirSync(dir, {recursive: true})
     .filter(
@@ -8,6 +8,11 @@ const files = (dir: string, extension: string) =>
     )
     .map((file) => dir + '/' + file);
 import {relative} from 'node:path';
+
+const {dependencies, peerDependencies} = JSON.parse(
+  readFileSync(new URL('./package.json', import.meta.url), 'utf8')
+);
+const externalPackages = Object.keys({...dependencies, ...peerDependencies});
 
 const sources = files('src', '.ts').filter(
   (file) =>
@@ -56,9 +61,9 @@ export default defineConfig(({mode}) => ({
                 {output: {minify: true, comments: false}}
               : {
                   external: (id) =>
-                    !id.startsWith('.') &&
-                    !id.startsWith('/') &&
-                    !/^[A-Za-z]:/.test(id),
+                    externalPackages.some(
+                      (name) => id === name || id.startsWith(name + '/')
+                    ),
                   output: {preserveModules: true, preserveModulesRoot: 'src'},
                 },
         },

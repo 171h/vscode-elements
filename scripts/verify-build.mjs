@@ -1,11 +1,48 @@
 import assert from 'node:assert/strict';
 import {createServer, preview} from 'vite';
 import {chromium} from 'playwright';
-import {readFileSync} from 'node:fs';
+import {existsSync, readFileSync, readdirSync} from 'node:fs';
+import {dirname, resolve} from 'node:path';
+import ts from 'typescript';
 import {gzipSync} from 'node:zlib';
 import {createServer as createHttpServer} from 'node:http';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
+
+// 模块产物只能导入包内文件或已声明的运行时依赖。
+const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
+const externalPackages = Object.keys({
+  ...packageJson.dependencies,
+  ...packageJson.peerDependencies,
+});
+for (const file of readdirSync('dist', {recursive: true})) {
+  if (!file.endsWith('.js')) continue;
+  const path = resolve('dist', file);
+  const source = ts.createSourceFile(
+    path,
+    readFileSync(path, 'utf8'),
+    ts.ScriptTarget.Latest
+  );
+  for (const statement of source.statements) {
+    if (
+      !ts.isImportDeclaration(statement) &&
+      !ts.isExportDeclaration(statement)
+    )
+      continue;
+    const specifier = statement.moduleSpecifier;
+    if (!specifier || !ts.isStringLiteral(specifier)) continue;
+    const id = specifier.text;
+    assert(
+      id.startsWith('.')
+        ? existsSync(resolve(dirname(path), id))
+        : externalPackages.some(
+            (name) => id === name || id.startsWith(name + '/')
+          ),
+      `${file} 导入了缺失文件或未声明依赖：${id}`
+    );
+  }
+}
+console.log('模块产物：所有导入均指向包内文件或已声明依赖');
 
 // 验证开发服务器、生产示例以及未经 Vite 再转换的单文件产物。
 const browser = await chromium.launch({headless: true});
