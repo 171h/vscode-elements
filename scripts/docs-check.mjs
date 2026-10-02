@@ -71,6 +71,14 @@ async function markdownFiles(directory) {
   return paths;
 }
 const files = await markdownFiles(docs);
+for (const file of files) {
+  const relativePath = file.slice(docs.length + 1).replace(/\.md$/, '.html');
+  const collision = await access(resolve(docs, 'public', relativePath)).then(
+    () => true,
+    () => false
+  );
+  assert.equal(collision, false, `${file} 与 public HTML 的构建路径冲突`);
+}
 const failures = [];
 for (const file of files) {
   const text = (await readFile(file, 'utf8')).replace(

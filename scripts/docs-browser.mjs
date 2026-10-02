@@ -63,6 +63,9 @@ try {
   const page = await browser.newPage({viewport: {width: 1440, height: 1000}});
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
+  page.on('console', (message) => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
   page.on('response', (response) => {
     if (response.status() >= 400 && response.url().startsWith(origin))
       errors.push(`${response.status()}: ${response.url()}`);
@@ -199,6 +202,21 @@ try {
     () => !document.querySelector('vscode-textfield').disabled
   );
 
+  frame = await open('single-select');
+  await frame.locator('vscode-single-select').click();
+  await frame.getByRole('option', {name: 'JavaScript', exact: true}).click();
+  await frame.getByText('当前值：js', {exact: true}).waitFor();
+
+  frame = await open('multi-select');
+  await frame.locator('vscode-multi-select').click();
+  await frame.getByRole('option', {name: 'JSON 数据', exact: true}).click();
+  assert.deepEqual(
+    await frame
+      .locator('vscode-multi-select')
+      .evaluate((element) => element.value),
+    ['html', 'markdown', 'json']
+  );
+
   frame = await open('tabs');
   await frame.locator('vscode-tab-header').first().focus();
   await page.keyboard.press('ArrowRight');
@@ -210,6 +228,36 @@ try {
   await headers.first().dragTo(headers.nth(1));
   await frame.waitForFunction(
     () => document.querySelector('vscode-tab-header').textContent === '搜索'
+  );
+
+  await frame.locator('vscode-tab-header').filter({hasText: '文件'}).click();
+  const activePanel = frame.locator('vscode-tab-panel:not([hidden])');
+  await activePanel.locator('vscode-textfield input').fill('保留筛选值');
+  const targetView = activePanel.locator('fieldset').nth(1);
+  const targetRect = await targetView.boundingBox();
+  await activePanel
+    .locator('legend')
+    .first()
+    .dragTo(targetView, {targetPosition: {x: 30, y: targetRect.height - 5}});
+  assert.deepEqual(await activePanel.locator('legend').allTextContents(), [
+    '大纲',
+    '资源管理器',
+  ]);
+  assert.equal(
+    await activePanel.locator('vscode-textfield input').inputValue(),
+    '保留筛选值'
+  );
+
+  frame = await open('tabs-group');
+  const bar = frame.locator('vscode-tabs .header');
+  const barRect = await bar.boundingBox();
+  await bar.dragTo(frame.locator('vscode-tabs-group').nth(1), {
+    sourcePosition: {x: barRect.width - 10, y: barRect.height / 2},
+  });
+  await frame.waitForFunction(() =>
+    document
+      .querySelectorAll('vscode-tabs-group')[1]
+      .querySelector('vscode-tabs')
   );
 
   frame = await open('tree');
@@ -234,8 +282,17 @@ try {
   await page.goto(url('api/generated/textfield'));
   await page.screenshot({
     path: resolve(root, '.wireit/docs-screenshots/api.png'),
-    fullPage: true,
+    fullPage: false,
   });
+  await page.goto(url());
+  await page.getByRole('button', {name: '搜索文档', exact: true}).click();
+  await page.locator('#localsearch-input').fill('百分比');
+  await page
+    .locator('.VPLocalSearchBox .result')
+    .filter({hasText: '百分比'})
+    .first()
+    .waitFor();
+  await page.keyboard.press('Escape');
   await page.setViewportSize({width: 390, height: 844});
   await page.goto(url('components/button'));
   assert.equal(
@@ -256,7 +313,7 @@ try {
     .waitFor();
   assert.deepEqual(errors, [], '页面不得出现运行时或本地资源错误');
   console.log(
-    '已验证全部组件与 API 页面、三种主题及尺寸、焦点与禁用、百分比提交、表单高亮、fieldset 恢复、标签切换与拖拽、菜单、树、CSP 和移动布局。'
+    '已验证全部组件与 API 页面、三种主题及尺寸、焦点与禁用、百分比提交、表单高亮、fieldset 恢复、选择框、标签与视图及组拖拽、菜单、树、CSP、中文搜索和移动布局。'
   );
 } finally {
   await browser.close();
