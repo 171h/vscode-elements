@@ -1,7 +1,7 @@
 import {afterEach, beforeEach, expect} from 'vitest';
 import axe from 'axe-core';
 import {fixtureCleanup} from '@open-wc/testing-helpers';
-import {resetMouse} from './browser-commands.js';
+import {resetKeyboard, resetMouse} from './browser-commands.js';
 
 // 将 DOM 结构转换为稳定结果，忽略 Lit 注释和样式注入。
 function normalizedDOM(root: Node, ignoreAttributes: string[] = []): unknown[] {
@@ -58,9 +58,18 @@ function compareDOM(
     message: () => 'DOM 结构与预期不一致',
   };
 }
-// 避免前一用例的指针位置影响新 fixture 的原生悬停状态。
-beforeEach(resetMouse);
-afterEach(fixtureCleanup);
+// 在用例边界清理按键和指针，避免污染后续输入与悬停状态。
+beforeEach(async () => {
+  await resetKeyboard();
+  await resetMouse();
+});
+afterEach(async () => {
+  try {
+    await resetKeyboard();
+  } finally {
+    fixtureCleanup();
+  }
+});
 expect.extend({
   toMatchDOM(
     element: Element,

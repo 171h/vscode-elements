@@ -9,6 +9,9 @@ export async function sendKeys(options: {
 }) {
   await commands.keyboardInput(options);
 }
+export async function resetKeyboard() {
+  await commands.keyboardInput({reset: true});
+}
 export async function sendMouse(options: {
   type: 'click' | 'move' | 'down' | 'up';
   position?: [number, number];
@@ -27,6 +30,7 @@ export async function emulateMedia(options: {
 declare module 'vitest/browser' {
   interface BrowserCommands {
     keyboardInput: (options: {
+      reset?: boolean;
       press?: string;
       down?: string;
       up?: string;

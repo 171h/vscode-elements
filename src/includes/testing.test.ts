@@ -3,6 +3,26 @@ import {expect, fixture, html} from './testing.js';
 import {sendKeys} from './browser-commands.js';
 
 describe('Vitest DOM 断言', () => {
+  it('允许当前用例保持修饰键按下状态', async () => {
+    const input = await fixture<HTMLInputElement>(html`<input />`);
+    let modified = false;
+    input.addEventListener('keydown', (event) => {
+      if (event.key === 'a') {
+        modified = event.ctrlKey;
+      }
+    });
+    input.focus();
+    await sendKeys({down: 'Control'});
+    await sendKeys({press: 'a'});
+    expect(modified).to.equal(true);
+    // 故意不释放 Control，验证用例结束时的自动清理。
+  });
+  it('下一用例输入不受前一用例修饰键影响', async () => {
+    const input = await fixture<HTMLInputElement>(html`<input />`);
+    input.focus();
+    await sendKeys({type: 'hello'});
+    expect(input.value).to.equal('hello');
+  });
   it('测试 iframe 失焦后仍将原生输入与 Tab 发送到控件', async () => {
     const root = await fixture<HTMLDivElement>(
       html`<div><input /><button>保存</button></div>`

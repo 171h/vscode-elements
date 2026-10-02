@@ -1,6 +1,8 @@
 import {defineConfig} from 'vitest/config';
 import {playwright} from '@vitest/browser-playwright';
 
+const pressedKeys = new WeakMap<object, Set<string>>();
+
 export default defineConfig({
   test: {
     coverage: {
@@ -35,11 +37,24 @@ export default defineConfig({
             viewport: {width: 1280, height: 1000},
             commands: {
               async keyboardInput({page, frame}, options) {
+                const pressed = pressedKeys.get(page) ?? new Set<string>();
+                pressedKeys.set(page, pressed);
+                if (options.reset) {
+                  for (const key of pressed) await page.keyboard.up(key);
+                  pressed.clear();
+                  return;
+                }
                 // 恢复测试 iframe 的焦点，避免按键进入外层运行器。
                 await (await frame()).evaluate(() => window.focus());
                 if (options.press) await page.keyboard.press(options.press);
-                if (options.down) await page.keyboard.down(options.down);
-                if (options.up) await page.keyboard.up(options.up);
+                if (options.down) {
+                  await page.keyboard.down(options.down);
+                  pressed.add(options.down);
+                }
+                if (options.up) {
+                  await page.keyboard.up(options.up);
+                  pressed.delete(options.up);
+                }
                 if (options.type) await page.keyboard.type(options.type);
               },
               async mouseInput({page, frame}, options) {
