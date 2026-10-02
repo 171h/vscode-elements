@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,7 +32,7 @@
         align-items: center;
       }
 
-      /* Severity colors */
+      /* 严重程度对应的颜色 */
       .problems-tree .sev.error {
         color: var(--vscode-problemsErrorIcon-foreground);
       }
@@ -41,7 +41,7 @@
         color: var(--vscode-problemsInfoIcon-foreground);
       }
 
-      /* Inherit when the tree is focused (active) and the row is selected (severity icon + bulb) */
+      /* 树获得焦点且行被选中时继承颜色（严重程度图标与灯泡） */
       .problems-tree:focus-within
         vscode-tree-item[selected]
         > [slot='icon-leaf'].problem-icon-wrap
@@ -69,12 +69,12 @@
         color: inherit !important;
       }
 
-      /* Center items */
+      /* 居中对齐项目 */
       .problems-tree .problem-icon-wrap {
         display: flex;
       }
 
-      /* Hover: swap severity icon -> lightbulb */
+      /* 悬停时将严重程度图标替换为灯泡 */
       .problems-tree .problem-icon-wrap .bulb {
         display: none;
         color: var(--vscode-editorLightBulb-foreground, #ddb100);
@@ -102,7 +102,7 @@
         display: inline-flex;
       }
 
-      /* Keep icons aligned like label text */
+      /* 图标与标签文字保持对齐 */
       .tree-label {
         display: inline-flex;
         align-items: center;
@@ -132,7 +132,7 @@
         text-decoration: underline;
       }
 
-      /* Preserve the original color when the tree node is selected */
+      /* 树节点选中时保留原始颜色 */
       .problems-tree:focus-within vscode-tree-item[selected] .problem-link {
         color: inherit !important;
       }
@@ -148,16 +148,15 @@
     </style>
   </head>
   <body>
-    <h1>Problems (demo)</h1>
+    <h1>问题列表（示例）</h1>
     <p>
-      Hover and click the error icon to open the quick-fix menu, and notice how
-      the row doesn't steal focus. The faux <code>(no-console)</code>
-      link behaves the same way—no selection changes, just logging.
+      悬停并点击错误图标打开快速修复菜单，行不会抢占焦点。模拟的
+      <code>(no-console)</code> 链接行为相同：只记录日志，不改变选择。
     </p>
     <main>
       <vscode-demo class="frame">
         <vscode-tree class="problems-tree">
-          <!-- Root -->
+          <!-- 根节点 -->
           <vscode-tree-item branch open data-node="problems-root">
             <span class="tree-label">
               <span class="tree-label-text">rollup.config.js</span>
@@ -166,7 +165,7 @@
               >3</vscode-badge
             >
 
-            <!-- Error -->
+            <!-- 错误 -->
             <vscode-tree-item
               data-node="p-error-1"
               data-problem-action
@@ -253,7 +252,7 @@
               </span>
             </vscode-tree-item>
 
-            <!-- Info -->
+            <!-- 信息 -->
             <vscode-tree-item data-node="p-info-1">
               <span slot="icon-leaf" class="problem-icon-wrap">
                 <vscode-icon name="info" class="sev info"></vscode-icon>

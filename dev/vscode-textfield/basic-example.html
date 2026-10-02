@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -20,22 +20,18 @@
 
   <body class="vscode-light">
     <main>
-      <h1>Textfield</h1>
-      <h2>Basic example</h2>
+      <h1>文本框</h1>
+      <h2>基础示例</h2>
       <vscode-demo id="size-demo-target">
         <vscode-label for="field-1">Lorem ipsum</vscode-label>
-        <vscode-textfield
-          id="field-1"
-          autocomplete
-          placeholder="Placeholder..."
-        >
+        <vscode-textfield id="field-1" autocomplete placeholder="占位文字……">
           <vscode-icon name="calendar" slot="content-before"></vscode-icon>
           <vscode-icon
             id="search-icon"
             name="search"
             slot="content-after"
             action-icon
-            label="Search"
+            label="搜索"
           ></vscode-icon>
         </vscode-textfield>
         <button type="button" id="bt-focus">focus</button>
