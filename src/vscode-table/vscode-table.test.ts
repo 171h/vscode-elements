@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import {$, dragElement} from '../includes/test-helpers.js';
 import {VscodeTable} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import '../vscode-table-body/vscode-table-body.js';
 import '../vscode-table-cell/vscode-table-cell.js';
 import '../vscode-table-header/vscode-table-header.js';

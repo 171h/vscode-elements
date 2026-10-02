@@ -1,5 +1,5 @@
 import {VscodeDivider} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-divider', () => {
   it('is defined', () => {
@@ -12,6 +12,6 @@ describe('vscode-divider', () => {
       html`<vscode-divider></vscode-divider>`
     );
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 });

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import {VscodeCheckbox} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
-import {sendKeys} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {sendKeys} from '../includes/browser-commands.js';
 import sinon from 'sinon';
 
 describe('vscode-checkbox', () => {
@@ -16,7 +16,7 @@ describe('vscode-checkbox', () => {
       html`<vscode-checkbox>Test checkbox</vscode-checkbox>`
     );
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('should type attribute return "checkbox"', () => {
@@ -439,7 +439,7 @@ describe('vscode-checkbox', () => {
 
     lb?.click();
 
-    expect(spy).to.have.been.calledOnce;
+    expect(spy.callCount).to.equal(1);
   });
 
   describe('toggle mode', () => {

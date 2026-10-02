@@ -1,4 +1,4 @@
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 import {VscodeTreeItem} from './index.js';
 
 describe('vscode-tree', () => {

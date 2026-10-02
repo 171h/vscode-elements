@@ -3,8 +3,8 @@ import sinon from 'sinon';
 import {VscodeTextarea} from './vscode-textarea.js';
 import './vscode-textarea.js';
 import '../vscode-label/vscode-label.js';
-import {sendKeys, sendMouse} from '@web/test-runner-commands';
-import {expect, fixture, html, aTimeout} from '@open-wc/testing';
+import {sendKeys, sendMouse} from '../includes/browser-commands.js';
+import {expect, fixture, html, aTimeout} from '../includes/testing.js';
 
 describe('vscode-textarea', () => {
   it('is defined', () => {
@@ -21,13 +21,13 @@ describe('vscode-textarea', () => {
     `);
     const el = container.querySelector('#textarea');
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('renders with default values', async () => {
     const el = await fixture(html`<vscode-textarea></vscode-textarea>`);
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         aria-label=""
@@ -77,7 +77,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea autocomplete="on"></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         autocomplete="on"
@@ -94,7 +94,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea autofocus></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         autofocus
@@ -111,7 +111,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea disabled></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         disabled
@@ -128,7 +128,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea maxlength="100"></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         maxlength="100"
@@ -145,7 +145,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea minlength="100"></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         minlength="100"
@@ -162,7 +162,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea rows="10"></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         rows="10"
@@ -179,7 +179,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea cols="80"></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         cols="80"
@@ -196,7 +196,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea placeholder="test"></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         placeholder="test"
@@ -213,7 +213,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea readonly></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         readonly
@@ -230,7 +230,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea resize="both"></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         aria-label=""
@@ -246,7 +246,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea required></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         required
@@ -263,7 +263,7 @@ describe('vscode-textarea', () => {
       html`<vscode-textarea spellcheck></vscode-textarea>`
     );
 
-    expect(el).shadowDom.to.equal(`
+    expect(el).toMatchShadowDOM(`
       <div class="shadow"></div>
       <textarea
         spellcheck="true"

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 import {Percent, percent} from '../includes/sizes.js';
 import {calculateColumnWidths} from './calculations.js';
 

@@ -3,7 +3,7 @@
 import {clickOnElement} from '../includes/test-helpers.js';
 import type {VscodeContextMenuItem} from '../main.js';
 import {VscodeContextMenu} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-context-menu', () => {
   it('is defined', () => {
@@ -21,7 +21,7 @@ describe('vscode-context-menu', () => {
     ];
     await el.updateComplete;
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('should synchronize visibility state', async () => {

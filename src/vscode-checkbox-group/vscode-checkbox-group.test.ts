@@ -1,5 +1,5 @@
 import {VscodeCheckboxGroup} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import '../vscode-option/index.js';
 
 describe('vscode-checkbox-group', () => {
@@ -13,6 +13,6 @@ describe('vscode-checkbox-group', () => {
       html`<vscode-checkbox-group></vscode-checkbox-group>`
     );
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 });

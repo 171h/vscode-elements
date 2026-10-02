@@ -1,5 +1,5 @@
 import {VscodeFormHelper} from './index.js';
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 
 describe('vscode-form-helper', () => {
   it('is defined', () => {

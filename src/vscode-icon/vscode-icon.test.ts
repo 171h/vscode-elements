@@ -1,5 +1,5 @@
 import {VscodeIcon} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-icon', () => {
   it('is defined', () => {

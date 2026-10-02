@@ -2,7 +2,7 @@ import '../vscode-tabs/vscode-tabs.js';
 import '../vscode-tab-header/vscode-tab-header.js';
 import '../vscode-tab-panel/vscode-tab-panel.js';
 import {VscodeTabs} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-tabs', () => {
   it('is defined', () => {
@@ -26,6 +26,6 @@ describe('vscode-tabs', () => {
       </div>
     `);
 
-    await expect(el).to.be.accessible({});
+    await expect(el).toBeAccessible();
   });
 });

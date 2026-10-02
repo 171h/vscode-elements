@@ -1,5 +1,5 @@
-import {expect, fixture, html} from '@open-wc/testing';
-import {emulateMedia} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {emulateMedia} from '../includes/browser-commands.js';
 import './index.js';
 import type {FieldsetUncheckedMode} from './index.js';
 import type {VscFieldsetCheckedChangeEvent, VscodeFieldset} from './index.js';

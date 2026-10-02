@@ -1,4 +1,4 @@
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import './vscode-tabs-group.js';
 import '../vscode-tabs/index.js';
 import '../vscode-fieldset/index.js';

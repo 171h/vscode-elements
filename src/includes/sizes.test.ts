@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect} from '@open-wc/testing';
+import {expect} from './testing.js';
 import {parseSizeAttributeToPercent} from './sizes.js';
 
 describe('parseSizeAttributeToPercent', () => {

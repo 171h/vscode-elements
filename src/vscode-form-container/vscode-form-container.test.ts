@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect, fixture, html} from '@open-wc/testing';
-import {sendKeys} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {sendKeys} from '../includes/browser-commands.js';
 import {literal, unsafeStatic} from 'lit/static-html.js';
 import sinon from 'sinon';
 import {toCssTime, toMilliseconds} from '../includes/form-mark-duration.js';
@@ -347,7 +347,6 @@ describe('vscode-form-container', () => {
     it('uses the duration from the property', async function () {
       // 刻意使用较长的持续时间，默认测试超时
       // 不足以完成此用例。
-      this.timeout(6000);
 
       const id = nextFormId('property');
       const el = await createForm(id);
@@ -471,7 +470,7 @@ describe('vscode-form-container', () => {
       await el.updateComplete;
       await el.updateComplete;
 
-      expect(spy).to.have.been.calledOnce;
+      expect(spy.callCount).to.equal(1);
       expect(spy.firstCall.args[0].detail.dirty).to.be.true;
       expect(spy.firstCall.args[0].detail.form).to.eq(el);
 
@@ -479,7 +478,7 @@ describe('vscode-form-container', () => {
       await el.updateComplete;
       await el.updateComplete;
 
-      expect(spy).to.have.been.calledTwice;
+      expect(spy.callCount).to.equal(2);
       expect(spy.secondCall.args[0].detail.dirty).to.be.false;
     });
 

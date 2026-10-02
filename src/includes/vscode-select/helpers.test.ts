@@ -1,4 +1,4 @@
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../testing.js';
 import {
   containsSearch,
   fuzzySearch,
@@ -104,7 +104,7 @@ describe('helpers', () => {
         >`
       );
 
-      expect(el).lightDom.to.equals('l<b>ore</b>m i<b>psu</b>m d<b>olo</b>r');
+      expect(el).toMatchDOM('l<b>ore</b>m i<b>psu</b>m d<b>olo</b>r');
     });
 
     it('should highlight range correctly at start', async () => {
@@ -112,7 +112,7 @@ describe('helpers', () => {
         html`<span>${highlightRanges('lorem ipsum dolor', [[0, 2]])}</span>`
       );
 
-      expect(el).lightDom.to.equals('<b>lo</b>rem ipsum dolor');
+      expect(el).toMatchDOM('<b>lo</b>rem ipsum dolor');
     });
 
     it('should highlight range correctly at end', async () => {
@@ -120,7 +120,7 @@ describe('helpers', () => {
         html`<span>${highlightRanges('lorem ipsum dolor', [[15, 17]])}</span>`
       );
 
-      expect(el).lightDom.to.equals('lorem ipsum dol<b>or</b>');
+      expect(el).toMatchDOM('lorem ipsum dol<b>or</b>');
     });
 
     it('should render spaces correctly', async () => {
@@ -128,7 +128,7 @@ describe('helpers', () => {
         html`<span>${highlightRanges('lorem ipsum dolor', [[5, 17]])}</span>`
       );
 
-      expect(el).lightDom.to.equals('lorem<b> ipsum dolor</b>');
+      expect(el).toMatchDOM('lorem<b> ipsum dolor</b>');
     });
   });
 });

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import sinon from 'sinon';
 import {VscodeButton} from './index.js';
-import {expect, fixture, html, aTimeout} from '@open-wc/testing';
+import {expect, fixture, html, aTimeout} from '../includes/testing.js';
 import {$} from '../includes/test-helpers.js';
 
 describe('vscode-button', () => {
@@ -13,7 +13,7 @@ describe('vscode-button', () => {
   it('is accessible', async () => {
     const el = await fixture(html`<vscode-button>Test button</vscode-button>`);
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('is focused automatically', async () => {
@@ -147,7 +147,7 @@ describe('vscode-button', () => {
       html`<vscode-button icon="account"></vscode-button>`
     );
 
-    expect(el).shadowDom.to.eq(
+    expect(el).toMatchShadowDOM(
       `
       <div class="base" part="base">
         <slot name="content-before"></slot>
@@ -164,7 +164,7 @@ describe('vscode-button', () => {
       html`<vscode-button icon="account" icon-spin></vscode-button>`
     );
 
-    expect(el).shadowDom.to.eq(
+    expect(el).toMatchShadowDOM(
       `
       <div class="base" part="base">
         <slot name="content-before"></slot>
@@ -184,7 +184,7 @@ describe('vscode-button', () => {
       ></vscode-button>`
     );
 
-    expect(el).shadowDom.to.eq(
+    expect(el).toMatchShadowDOM(
       `
       <div class="base" part="base">
         <slot name="content-before"></slot>
@@ -201,7 +201,7 @@ describe('vscode-button', () => {
       html`<vscode-button icon-after="account"></vscode-button>`
     );
 
-    expect(el).shadowDom.to.eq(
+    expect(el).toMatchShadowDOM(
       `
       <div class="base" part="base">
         <slot name="content-before"></slot>
@@ -218,7 +218,7 @@ describe('vscode-button', () => {
       html`<vscode-button icon-after="account" icon-after-spin></vscode-button>`
     );
 
-    expect(el).shadowDom.to.eq(
+    expect(el).toMatchShadowDOM(
       `
       <div class="base" part="base">
         <slot name="content-before"></slot>
@@ -238,7 +238,7 @@ describe('vscode-button', () => {
       ></vscode-button>`
     );
 
-    expect(el).shadowDom.to.eq(
+    expect(el).toMatchShadowDOM(
       `
       <div class="base" part="base">
         <slot name="content-before"></slot>

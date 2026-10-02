@@ -192,7 +192,7 @@ importers:
         specifier: ^24.0.0
         version: 24.19.0
       '@types/sinon':
-        specifier: ^21.0.0
+        specifier: ^21.0.1
         version: 21.0.1
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.29.0
@@ -210,7 +210,7 @@ importers:
         specifier: ^0.0.46-24
         version: 0.0.46-24
       axe-core:
-        specifier: ^4.11.0
+        specifier: ^4.13.0
         version: 4.13.0
       custom-element-vs-code-integration:
         specifier: ^1.5.0
@@ -218,6 +218,9 @@ importers:
       custom-elements-manifest-deprecator:
         specifier: ^1.2.0
         version: 1.2.0(prettier@3.9.9)
+      eslint:
+        specifier: ^9.39.5
+        version: 9.39.5(supports-color@7.2.0)
       eslint-plugin-import:
         specifier: ^2.32.0
         version: 2.32.0(@typescript-eslint/parser@8.71.0(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)(typescript@5.9.3))(eslint@9.39.5(supports-color@7.2.0))(supports-color@7.2.0)
