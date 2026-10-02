@@ -141,14 +141,18 @@ describe('标题溢出菜单', () => {
       .shadowRoot!.querySelectorAll('vscode-context-menu-item')[1]
       .shadowRoot!.querySelector('a')!
       .click();
-    await waitUntil(() => el.selectedIndex === 3 && !headers[3].inert);
+    await waitUntil(
+      () =>
+        el.selectedIndex === 3 &&
+        !headers[3].hasAttribute('data-vsc-overflow-hidden')
+    );
     await elementUpdated(el);
     expect(selected).to.equal(3);
     expect(headers[3].active).to.equal(true);
     expect(headers[3].getBoundingClientRect().left).to.be.greaterThan(
       headers[0].getBoundingClientRect().left
     );
-    expect(headers[1].inert).to.equal(true);
+    expect(headers[1].hasAttribute('data-vsc-overflow-hidden')).to.equal(true);
     expect(menu.data.map((item) => item.value)).to.deep.equal(['1', '2']);
     expect(Array.from(el.querySelectorAll('vscode-tab-header'))).to.deep.equal(
       headers
@@ -161,16 +165,24 @@ describe('标题溢出菜单', () => {
   it('缩放及切换模式后刷新可见项，程序选中隐藏标题也会显示', async () => {
     const {el, button, headers} = await createTabs();
     el.selectedIndex = 2;
-    await waitUntil(() => !headers[2].inert);
+    await waitUntil(() => !headers[2].hasAttribute('data-vsc-overflow-hidden'));
     expect(headers[2].active).to.equal(true);
     el.style.width = '500px';
     await waitUntil(() => button.hidden);
-    expect(headers.every((header) => !header.inert)).to.equal(true);
+    expect(
+      headers.every(
+        (header) => !header.hasAttribute('data-vsc-overflow-hidden')
+      )
+    ).to.equal(true);
     el.style.width = '150px';
     await waitUntil(() => !button.hidden);
     el.overflow = 'wrap';
     await waitUntil(
-      () => button.hidden && headers.every((header) => !header.inert)
+      () =>
+        button.hidden &&
+        headers.every(
+          (header) => !header.hasAttribute('data-vsc-overflow-hidden')
+        )
     );
   });
 
@@ -331,7 +343,7 @@ describe('溢出边界与键盘操作', () => {
       el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
     await waitUntil(() => !button.hidden);
     headers[2].remove();
-    await waitUntil(() => !headers[2].inert);
+    await waitUntil(() => !headers[2].hasAttribute('data-vsc-overflow-hidden'));
     el.overflow = 'wrap';
     await waitUntil(() => button.hidden);
     expect(headers[1].inert).to.equal(true);
@@ -384,7 +396,9 @@ describe('溢出菜单首次向上导航', () => {
     await waitUntil(
       () =>
         el.selectedIndex === 2 &&
-        !el.querySelectorAll('vscode-tab-header')[2].inert
+        !el
+          .querySelectorAll('vscode-tab-header')[2]
+          .hasAttribute('data-vsc-overflow-hidden')
     );
     expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
     expect(menu.show).to.equal(false);
@@ -551,7 +565,9 @@ describe('溢出变化后的键盘焦点入口', () => {
     for (const action of ['resize', 'title']) {
       const el = await createTabs();
       const headers = el.querySelectorAll('vscode-tab-header');
-      await waitUntil(() => !headers[3].inert);
+      await waitUntil(
+        () => !headers[3].hasAttribute('data-vsc-overflow-hidden')
+      );
       headers[0].focus();
       pressEnd(headers[0]);
       expect(document.activeElement).to.equal(headers[3]);
@@ -560,7 +576,9 @@ describe('溢出变化后的键盘焦点入口', () => {
       } else {
         headers[0].style.width = '350px';
       }
-      await waitUntil(() => headers[3].inert);
+      await waitUntil(() =>
+        headers[3].hasAttribute('data-vsc-overflow-hidden')
+      );
       expect(document.activeElement, action).to.equal(headers[0]);
       expect(headers[0].tabIndex).to.equal(0);
       expect([...headers].filter((h) => h.tabIndex === 0)).to.have.length(1);
@@ -570,7 +588,7 @@ describe('溢出变化后的键盘焦点入口', () => {
   it('保留仍可见的焦点，并在外部获得焦点后仅修复 Tab 入口', async () => {
     const el = await createTabs();
     const headers = el.querySelectorAll('vscode-tab-header');
-    await waitUntil(() => !headers[3].inert);
+    await waitUntil(() => !headers[3].hasAttribute('data-vsc-overflow-hidden'));
     headers[0].focus();
     headers[0].dispatchEvent(
       new KeyboardEvent('keydown', {
@@ -580,19 +598,64 @@ describe('溢出变化后的键盘焦点入口', () => {
       })
     );
     el.style.width = '350px';
-    await waitUntil(() => headers[3].inert);
+    await waitUntil(() => headers[3].hasAttribute('data-vsc-overflow-hidden'));
     expect(document.activeElement).to.equal(headers[1]);
     expect(headers[1].tabIndex).to.equal(0);
     const outside = document.createElement('button');
     el.parentElement!.append(outside);
     outside.focus();
     el.style.width = '180px';
-    await waitUntil(() => headers[1].inert);
+    await waitUntil(() => headers[1].hasAttribute('data-vsc-overflow-hidden'));
     expect(document.activeElement).to.equal(outside);
     expect(headers[0].tabIndex).to.equal(0);
     expect(
-      [...headers].filter((h) => !h.inert && h.tabIndex === 0)
+      [...headers].filter(
+        (h) => !h.hasAttribute('data-vsc-overflow-hidden') && h.tabIndex === 0
+      )
     ).to.have.length(1);
     outside.remove();
+  });
+});
+
+describe('隐藏期间调用方更新 inert', () => {
+  it('显示、模式切换和移除后保留动态启用及禁用状态', async () => {
+    for (const action of ['resize', 'mode', 'remove']) {
+      for (const initial of [false, true]) {
+        const el = await fixture<VscodeTabs>(html`
+          <vscode-tabs style="width: 180px" overflow="menu">
+            <vscode-tab-header style="width: 100px">第一项</vscode-tab-header
+            ><vscode-tab-panel>内容</vscode-tab-panel>
+            <vscode-tab-header style="width: 100px" ?inert=${initial}>
+              第二项<button slot="content-after">
+                操作
+              </button> </vscode-tab-header
+            ><vscode-tab-panel>内容</vscode-tab-panel>
+          </vscode-tabs>
+        `);
+        const header = el.querySelectorAll('vscode-tab-header')[1];
+        await waitUntil(() => header.hasAttribute('data-vsc-overflow-hidden'));
+        expect(header.inert).to.equal(initial);
+        const button = header.querySelector('button')!;
+        button.focus();
+        expect(document.activeElement).not.to.equal(button);
+        header.inert = !initial;
+        if (action === 'resize') {
+          el.style.width = '500px';
+        } else if (action === 'mode') {
+          el.overflow = 'wrap';
+        } else {
+          header.remove();
+        }
+        await waitUntil(() => !header.hasAttribute('data-vsc-overflow-hidden'));
+        expect(header.inert, `${action}: ${initial}`).to.equal(!initial);
+        expect(
+          header.shadowRoot!.querySelector<HTMLElement>('.wrapper')!.inert
+        ).to.equal(false);
+        if (action !== 'remove') {
+          button.focus();
+          expect(document.activeElement === button).to.equal(initial);
+        }
+      }
+    }
   });
 });

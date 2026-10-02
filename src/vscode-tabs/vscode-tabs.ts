@@ -90,8 +90,6 @@ export class VscodeTabs extends VscElement {
     this._scheduleLayout();
   };
 
-  private _overflowInert = new WeakMap<VscodeTabHeader, boolean>();
-
   private _resizeObserver = new ResizeObserver(() => this._scheduleLayout());
   private _layoutFrame = 0;
 
@@ -172,7 +170,7 @@ export class VscodeTabs extends VscElement {
         hidden.includes(header)
       );
       header.toggleAttribute('data-vsc-overflow-last', header === promoted);
-      this._setOverflowInert(header, hidden.includes(header));
+      this._setOverflowContentInert(header, hidden.includes(header));
     });
     const focusable = visible.filter(
       (header) => !header.hidden && !header.inert
@@ -203,22 +201,17 @@ export class VscodeTabs extends VscElement {
     this._revealHeader(this._tabHeaders[this.selectedIndex]);
   }
 
-  private _setOverflowInert(header: VscodeTabHeader, hidden: boolean) {
-    if (hidden) {
-      if (!this._overflowInert.has(header)) {
-        this._overflowInert.set(header, header.inert);
-      }
-      header.inert = true;
-    } else if (this._overflowInert.has(header)) {
-      header.inert = this._overflowInert.get(header)!;
-      this._overflowInert.delete(header);
+  private _setOverflowContentInert(header: VscodeTabHeader, hidden: boolean) {
+    const content = header.shadowRoot?.querySelector<HTMLElement>('.wrapper');
+    if (content) {
+      content.inert = hidden;
     }
   }
 
   private _restoreOverflowHeader(header: VscodeTabHeader) {
     header.removeAttribute('data-vsc-overflow-hidden');
     header.removeAttribute('data-vsc-overflow-last');
-    this._setOverflowInert(header, false);
+    this._setOverflowContentInert(header, false);
   }
 
   private _setMenuRoles(menu: VscodeContextMenu) {
@@ -409,6 +402,7 @@ export class VscodeTabs extends VscElement {
       attributeFilter: [
         'aria-label',
         'hidden',
+        'inert',
         'icon',
         'icon-display',
         'icon-position',
@@ -525,7 +519,10 @@ export class VscodeTabs extends VscElement {
       return;
     }
     const headers = this._tabHeaders.filter(
-      (header) => !header.hidden && !header.inert
+      (header) =>
+        !header.hidden &&
+        !header.inert &&
+        !header.hasAttribute('data-vsc-overflow-hidden')
     );
     const index = headers.indexOf(target);
     let next: VscodeTabHeader | undefined;
