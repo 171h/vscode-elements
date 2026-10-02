@@ -1,8 +1,15 @@
 import '../vscode-tabs/vscode-tabs.js';
 import '../vscode-tab-header/vscode-tab-header.js';
 import '../vscode-tab-panel/vscode-tab-panel.js';
+import {VscodeContextMenu} from '../vscode-context-menu/index.js';
 import {VscodeTabs} from './index.js';
-import {expect, fixture, html, elementUpdated} from '@open-wc/testing';
+import {
+  expect,
+  fixture,
+  html,
+  elementUpdated,
+  waitUntil,
+} from '@open-wc/testing';
 
 describe('vscode-tabs', () => {
   it('is defined', () => {
@@ -88,5 +95,104 @@ describe('标题水平滚动', () => {
     expect(
       el.querySelectorAll('vscode-tab-header')[2].getBoundingClientRect().right
     ).to.be.at.most(list.getBoundingClientRect().right + 1);
+  });
+});
+
+describe('标题溢出菜单', () => {
+  async function createTabs() {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs
+        style="width: 280px; background: #1f1f1f; color: #cccccc"
+        overflow="menu"
+      >
+        ${[1, 2, 3, 4].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    const button =
+      el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+    await waitUntil(() => !button.hidden);
+    await elementUpdated(el);
+    return {
+      el,
+      button,
+      headers: Array.from(el.querySelectorAll('vscode-tab-header')),
+      menu: el.shadowRoot!.querySelector<VscodeContextMenu>(
+        'vscode-context-menu'
+      )!,
+    };
+  }
+
+  it('菜单激活隐藏标题并放到末位，保留索引和面板对应关系', async () => {
+    const {el, button, headers, menu} = await createTabs();
+    let selected = -1;
+    el.addEventListener(
+      'vsc-tabs-select',
+      (event) => (selected = event.detail.selectedIndex)
+    );
+    expect(menu.data.map((item) => item.value)).to.deep.equal(['2', '3']);
+    button.click();
+    await elementUpdated(menu);
+    menu
+      .shadowRoot!.querySelectorAll('vscode-context-menu-item')[1]
+      .shadowRoot!.querySelector('a')!
+      .click();
+    await waitUntil(() => el.selectedIndex === 3 && !headers[3].inert);
+    await elementUpdated(el);
+    expect(selected).to.equal(3);
+    expect(headers[3].active).to.equal(true);
+    expect(headers[3].getBoundingClientRect().left).to.be.greaterThan(
+      headers[0].getBoundingClientRect().left
+    );
+    expect(headers[1].inert).to.equal(true);
+    expect(menu.data.map((item) => item.value)).to.deep.equal(['1', '2']);
+    expect(Array.from(el.querySelectorAll('vscode-tab-header'))).to.deep.equal(
+      headers
+    );
+    expect(el.querySelectorAll('vscode-tab-panel')[3].hidden).to.equal(false);
+    expect(document.activeElement).to.equal(headers[3]);
+    expect(menu.show).to.equal(false);
+  });
+
+  it('缩放及切换模式后刷新可见项，程序选中隐藏标题也会显示', async () => {
+    const {el, button, headers} = await createTabs();
+    el.selectedIndex = 2;
+    await waitUntil(() => !headers[2].inert);
+    expect(headers[2].active).to.equal(true);
+    el.style.width = '500px';
+    await waitUntil(() => button.hidden);
+    expect(headers.every((header) => !header.inert)).to.equal(true);
+    el.style.width = '150px';
+    await waitUntil(() => !button.hidden);
+    el.overflow = 'wrap';
+    await waitUntil(
+      () => button.hidden && headers.every((header) => !header.inert)
+    );
+  });
+
+  it('菜单按 Escape 关闭并恢复按钮焦点，不误触发标签选择', async () => {
+    const {el, button, menu} = await createTabs();
+    button.click();
+    await elementUpdated(menu);
+    menu.dispatchEvent(
+      new KeyboardEvent('keydown', {
+        key: 'Escape',
+        bubbles: true,
+        composed: true,
+      })
+    );
+    await elementUpdated(el);
+    expect(menu.show).to.equal(false);
+    expect(el.selectedIndex).to.equal(0);
+    expect(el.shadowRoot!.activeElement).to.equal(button);
+  });
+
+  it('包含菜单的组件可访问', async () => {
+    const {el} = await createTabs();
+    await expect(el).to.be.accessible();
   });
 });

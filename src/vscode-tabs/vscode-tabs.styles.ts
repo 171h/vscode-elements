@@ -99,6 +99,62 @@ const styles: CSSResultGroup = [
       background: var(--vscode-scrollbarSlider-hoverBackground, #646464b3);
     }
 
+    .tablist ::slotted([hidden]) {
+      display: none;
+    }
+
+    :host([overflow='menu']) .tablist {
+      overflow: hidden;
+    }
+
+    .tablist ::slotted([data-vsc-overflow-hidden]) {
+      position: absolute;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .tablist ::slotted([data-vsc-overflow-last]) {
+      order: 1;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .overflow-button {
+      flex: 0 0 32px;
+      width: 32px;
+      align-self: stretch;
+      border: 0;
+      background: transparent;
+      color: var(--vscode-foreground, #cccccc);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .overflow-button[hidden] {
+      display: none;
+    }
+
+    .overflow-button:hover {
+      background: var(--vscode-toolbar-hoverBackground, #5a5d5d4f);
+    }
+
+    .overflow-button:focus-visible {
+      outline: 1px solid var(--vscode-focusBorder, #0078d4);
+      outline-offset: -2px;
+    }
+
+    .menu-layer {
+      position: fixed;
+      inset: auto;
+      margin: 0;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      max-width: 100vw;
+      max-height: 100vh;
+      overflow: auto;
+    }
+
     slot[name='addons'] {
       display: block;
       margin-left: auto;

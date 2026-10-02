@@ -7,6 +7,11 @@ import {customElement, VscElement} from '../includes/VscElement.js';
 import {VscodeTabHeader} from '../vscode-tab-header/index.js';
 import {VscodeTabPanel} from '../vscode-tab-panel/index.js';
 import styles from './vscode-tabs.styles.js';
+import '../vscode-context-menu/index.js';
+import type {
+  VscodeContextMenu,
+  VscContextMenuSelectEvent,
+} from '../vscode-context-menu/vscode-context-menu.js';
 import {TabsDragController} from './drag-controller.js';
 
 export type VscTabsSelectEvent = CustomEvent<{selectedIndex: number}>;
@@ -64,6 +69,27 @@ export class VscodeTabs extends VscElement {
   @state()
   private _scrollOffset = 0;
 
+  @state()
+  private _hiddenHeaders: VscodeTabHeader[] = [];
+
+  @state()
+  private _menuOpen = false;
+
+  @state()
+  private _menuLeft = 0;
+
+  @state()
+  private _menuTop = 0;
+
+  private _contentObserver = new MutationObserver(() =>
+    this._scheduleContentLayout()
+  );
+
+  private _scheduleContentLayout = () => {
+    this.requestUpdate();
+    this._scheduleLayout();
+  };
+
   private _resizeObserver = new ResizeObserver(() => this._scheduleLayout());
   private _layoutFrame = 0;
 
@@ -77,10 +103,167 @@ export class VscodeTabs extends VscElement {
     if (!list) {
       return;
     }
+    this._updateMenuOverflow(list);
     this._scrollWidth = this.overflow === 'scroll' ? list.scrollWidth : 0;
     this._scrollViewportWidth = list.clientWidth;
     this._scrollOffset = list.offsetLeft;
     this._syncScroll();
+  }
+
+  private _updateMenuOverflow(list: HTMLElement) {
+    const button =
+      this.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+    const headers = this._tabHeaders.filter((header) => !header.hidden);
+    this._tabHeaders.forEach((header) =>
+      header.removeAttribute('data-vsc-overflow-last')
+    );
+    const widths = headers.map(
+      (header) => header.getBoundingClientRect().width
+    );
+    const available =
+      list.clientWidth + (button.hidden ? 0 : button.offsetWidth);
+    let visible = [...headers];
+    let promoted: VscodeTabHeader | undefined;
+    if (
+      this.overflow === 'menu' &&
+      widths.reduce((sum, width) => sum + width, 0) > available
+    ) {
+      const budget = Math.max(0, available - 32);
+      visible = [];
+      let used = 0;
+      for (let i = 0; i < headers.length; i++) {
+        if (used + widths[i] > budget) {
+          break;
+        }
+        visible.push(headers[i]);
+        used += widths[i];
+      }
+      const selected = this._tabHeaders[this.selectedIndex];
+      if (selected && !selected.hidden && !visible.includes(selected)) {
+        const width = Math.min(widths[headers.indexOf(selected)], budget);
+        while (visible.length && used + width > budget) {
+          const removed = visible.pop()!;
+          used -= widths[headers.indexOf(removed)];
+        }
+        visible.push(selected);
+        promoted = selected;
+      }
+    }
+    const hidden =
+      this.overflow === 'menu'
+        ? headers.filter((header) => !visible.includes(header))
+        : [];
+    this._tabHeaders.forEach((header) => {
+      header.toggleAttribute(
+        'data-vsc-overflow-hidden',
+        hidden.includes(header)
+      );
+      header.toggleAttribute('data-vsc-overflow-last', header === promoted);
+      header.inert = hidden.includes(header);
+    });
+    if (
+      hidden.length !== this._hiddenHeaders.length ||
+      hidden.some((header, i) => header !== this._hiddenHeaders[i])
+    ) {
+      this._hiddenHeaders = hidden;
+      if (!hidden.length) {
+        this._closeMenu(false);
+      }
+    }
+    if (this.overflow !== 'menu') {
+      this._closeMenu(false);
+    }
+    this._revealHeader(this._tabHeaders[this.selectedIndex]);
+  }
+
+  private _headerLabel(header: VscodeTabHeader) {
+    return (
+      header.ariaLabel ||
+      Array.from(header.childNodes)
+        .filter(
+          (node) => !(node instanceof Element) || !node.getAttribute('slot')
+        )
+        .map((node) => node.textContent)
+        .join('')
+        .trim() ||
+      `标签页 ${header.tabId + 1}`
+    );
+  }
+
+  private async _openMenu() {
+    const layer = this.shadowRoot!.querySelector<HTMLElement>('.menu-layer')!;
+    const menu = this.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
+    if (this._menuOpen) {
+      this._closeMenu();
+      return;
+    }
+    this._menuOpen = true;
+    menu.show = true;
+    layer.showPopover();
+    await menu.updateComplete;
+    const button =
+      this.shadowRoot!.querySelector(
+        '.overflow-button'
+      )!.getBoundingClientRect();
+    const rect = menu.getBoundingClientRect();
+    this._menuLeft = Math.max(
+      0,
+      Math.min(button.right - rect.width, window.innerWidth - rect.width)
+    );
+    this._menuTop =
+      button.bottom + rect.height > window.innerHeight
+        ? Math.max(0, button.top - rect.height)
+        : button.bottom;
+  }
+
+  private _closeMenu(restoreFocus = true) {
+    const layer = this.shadowRoot?.querySelector<HTMLElement>('.menu-layer');
+    if (layer?.matches(':popover-open')) {
+      layer.hidePopover();
+    }
+    const menu = this.shadowRoot?.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    );
+    if (menu) {
+      menu.show = false;
+    }
+    const wasOpen = this._menuOpen;
+    this._menuOpen = false;
+    if (wasOpen && restoreFocus) {
+      this.shadowRoot
+        ?.querySelector<HTMLButtonElement>('.overflow-button')
+        ?.focus();
+    }
+  }
+
+  private _onMenuToggle(event: Event) {
+    if ((event as ToggleEvent).newState === 'closed') {
+      this._closeMenu(false);
+    }
+  }
+
+  private _onMenuKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      event.stopPropagation();
+      this._closeMenu();
+    }
+  }
+
+  private async _onMenuSelect(event: VscContextMenuSelectEvent) {
+    const index = Number(event.detail.value);
+    if (!this._tabHeaders[index]) {
+      return;
+    }
+    this.selectedIndex = index;
+    this._setActiveTab();
+    this._closeMenu(false);
+    this._dispatchSelectEvent();
+    await this.updateComplete;
+    this._updateOverflow();
+    this._tabHeaders[index].focus();
   }
 
   private _syncScroll(event?: Event) {
@@ -127,11 +310,26 @@ export class VscodeTabs extends VscElement {
     super.connectedCallback();
     this._dragController.connect();
     this._resizeObserver.observe(this);
+    this._contentObserver.observe(this, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+      attributes: true,
+      attributeFilter: [
+        'aria-label',
+        'hidden',
+        'icon',
+        'icon-display',
+        'icon-position',
+      ],
+    });
   }
 
   override disconnectedCallback() {
     this._dragController.disconnect();
     this._resizeObserver.disconnect();
+    this._contentObserver.disconnect();
+    this._closeMenu(false);
     cancelAnimationFrame(this._layoutFrame);
     super.disconnectedCallback();
   }
@@ -193,8 +391,6 @@ export class VscodeTabs extends VscElement {
 
   private _componentId = '';
 
-  private _tabFocus = 0;
-
   private _dispatchSelectEvent() {
     this.dispatchEvent(
       new CustomEvent('vsc-tabs-select', {
@@ -207,8 +403,6 @@ export class VscodeTabs extends VscElement {
   }
 
   private _setActiveTab() {
-    this._tabFocus = this.selectedIndex;
-
     this._tabPanels.forEach((el, i) => {
       el.hidden = i !== this.selectedIndex;
     });
@@ -218,41 +412,40 @@ export class VscodeTabs extends VscElement {
     });
   }
 
-  private _focusPrevTab() {
-    if (this._tabFocus === 0) {
-      this._tabFocus = this._tabHeaders.length - 1;
-    } else {
-      this._tabFocus -= 1;
-    }
-  }
-
-  private _focusNextTab() {
-    if (this._tabFocus === this._tabHeaders.length - 1) {
-      this._tabFocus = 0;
-    } else {
-      this._tabFocus += 1;
-    }
-  }
-
   private _onHeaderKeyDown(ev: KeyboardEvent) {
-    if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') {
-      ev.preventDefault();
-      this._tabHeaders[this._tabFocus].setAttribute('tabindex', '-1');
-
-      if (ev.key === 'ArrowLeft') {
-        this._focusPrevTab();
-      } else if (ev.key === 'ArrowRight') {
-        this._focusNextTab();
-      }
-
-      this._tabHeaders[this._tabFocus].setAttribute('tabindex', '0');
-      this._tabHeaders[this._tabFocus].focus();
-      this._revealHeader(this._tabHeaders[this._tabFocus]);
+    const target = ev
+      .composedPath()
+      .find((node) => this._tabHeaders.includes(node as VscodeTabHeader)) as
+      | VscodeTabHeader
+      | undefined;
+    if (!target) {
+      return;
     }
-
-    if (ev.key === 'Enter') {
+    const headers = this._tabHeaders.filter(
+      (header) => !header.hidden && !header.inert
+    );
+    const index = headers.indexOf(target);
+    let next: VscodeTabHeader | undefined;
+    if (ev.key === 'ArrowLeft') {
+      next = headers[(index + headers.length - 1) % headers.length];
+    } else if (ev.key === 'ArrowRight') {
+      next = headers[(index + 1) % headers.length];
+    } else if (ev.key === 'Home') {
+      next = headers[0];
+    } else if (ev.key === 'End') {
+      next = headers[headers.length - 1];
+    }
+    if (next) {
       ev.preventDefault();
-      this.selectedIndex = this._tabFocus;
+      target.tabIndex = -1;
+      next.tabIndex = 0;
+      next.focus();
+      this._revealHeader(next);
+    }
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      this.selectedIndex = target.tabId;
+      this._setActiveTab();
       this._dispatchSelectEvent();
     }
   }
@@ -337,6 +530,16 @@ export class VscodeTabs extends VscElement {
             role="tablist"
           ></slot>
         </div>
+        <button
+          class="overflow-button"
+          ?hidden=${this._hiddenHeaders.length === 0}
+          aria-label="更多标签页"
+          aria-haspopup="menu"
+          aria-expanded=${String(this._menuOpen)}
+          @click=${this._openMenu}
+        >
+          ...
+        </button>
         <div
           class="scrollbar"
           .style=${stylePropertyMap({
@@ -354,6 +557,24 @@ export class VscodeTabs extends VscElement {
           ></div>
         </div>
         <slot name="addons" @slotchange=${this._onAddonsSlotChange}></slot>
+      </div>
+      <div
+        class="menu-layer"
+        popover="auto"
+        @toggle=${this._onMenuToggle}
+        @keydown=${this._onMenuKeyDown}
+        .style=${stylePropertyMap({
+          left: `${this._menuLeft}px`,
+          top: `${this._menuTop}px`,
+        })}
+      >
+        <vscode-context-menu
+          .data=${this._hiddenHeaders.map((header) => ({
+            label: this._headerLabel(header),
+            value: String(header.tabId),
+          }))}
+          @vsc-context-menu-select=${this._onMenuSelect}
+        ></vscode-context-menu>
       </div>
       <slot @slotchange=${this._onMainSlotChange}></slot>
     `;
