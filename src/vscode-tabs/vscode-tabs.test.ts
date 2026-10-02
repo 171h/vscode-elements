@@ -1127,3 +1127,64 @@ describe('无溢出时的滚动覆盖层', () => {
     expect(el.getBoundingClientRect().height).to.equal(height);
   });
 });
+
+describe('标题插槽成员变化后的菜单索引', () => {
+  it('插入或删除 hidden 标题后更新菜单值与面板索引', async () => {
+    for (const action of ['remove', 'insert']) {
+      const el = await fixture<VscodeTabs>(html`
+        <vscode-tabs style="width: 180px" overflow="menu">
+          ${[0, 1, 2, 3].map(
+            (i) =>
+              html`<vscode-tab-header style="width: 100px" ?hidden=${i === 1}
+                  >标题 ${i}</vscode-tab-header
+                ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+          )}
+        </vscode-tabs>
+      `);
+      const headers = [...el.querySelectorAll('vscode-tab-header')];
+      const panels = [...el.querySelectorAll('vscode-tab-panel')];
+      const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+        'vscode-context-menu'
+      )!;
+      await waitUntil(() => menu.data.length === 2);
+      expect(menu.data.map((item) => item.value)).to.deep.equal(['2', '3']);
+      if (action === 'remove') {
+        headers[1].remove();
+        panels[1].remove();
+      } else {
+        const header = document.createElement('vscode-tab-header');
+        header.slot = 'header';
+        header.hidden = true;
+        header.textContent = '插入隐藏项';
+        const panel = document.createElement('vscode-tab-panel');
+        panel.textContent = '插入内容';
+        el.insertBefore(header, headers[1]);
+        el.insertBefore(panel, panels[1]);
+      }
+      const expected = action === 'remove' ? ['1', '2'] : ['3', '4'];
+      await waitUntil(
+        () => menu.data.map((item) => item.value).join() === expected.join()
+      );
+      let selected = -1;
+      el.addEventListener(
+        'vsc-tabs-select',
+        (event) => {
+          selected = event.detail.selectedIndex;
+        },
+        {once: true}
+      );
+      el.shadowRoot!.querySelector<HTMLButtonElement>(
+        '.overflow-button'
+      )!.click();
+      await elementUpdated(menu);
+      menu
+        .shadowRoot!.querySelectorAll('vscode-context-menu-item')[1]
+        .shadowRoot!.querySelector('a')!
+        .click();
+      await waitUntil(() => !panels[3].hidden);
+      expect(el.selectedIndex, action).to.equal(Number(expected[1]));
+      expect(selected).to.equal(Number(expected[1]));
+      expect(headers[3].active).to.equal(true);
+    }
+  });
+});

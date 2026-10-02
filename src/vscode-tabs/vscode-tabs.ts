@@ -678,6 +678,7 @@ export class VscodeTabs extends VscElement {
       el.panel = this.panel;
       el.active = i === this.selectedIndex;
     });
+    this.requestUpdate();
     this._scheduleLayout();
   }
 
