@@ -57,6 +57,8 @@ fieldset.checkedChange = (checked) => {
 };
 ```
 
+取消默认处理后的内容状态在拖拽或重新连接后保留；之后通过代码修改 checked、checkbox 或 uncheckedMode 属性会重新应用默认行为。
+
 通过代码修改 checked 属性会应用默认行为。自定义处理可通过 fieldsetElement 获取原生元素。
 
 ## 动画与布局
@@ -68,6 +70,8 @@ fieldset.checkedChange = (checked) => {
 ## 表单行为
 
 未勾选时，原生 fieldset 被禁用，其原生表单控件不可操作且不会提交。组件还同步内部库表单控件的 disabled 状态，使 shadow DOM 内的输入框不能通过键盘编辑。重新勾选或移除 checkbox 时恢复各控件原有的 disabled 状态；原先禁用的控件仍保持禁用。动态加入的库控件同样处理，移出此 fieldset 后恢复原状态。
+
+嵌套的 vscode-fieldset 共用控件的原始禁用状态。任意一层仍禁用时，控件继续禁用；所有层启用后恢复控件原有状态。视图移出父级后，由剩余的禁用来源决定状态。
 
 原生 fieldset 初始带 disabled 属性时，内容和标题复选框始终禁用。
 

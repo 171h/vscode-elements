@@ -27,6 +27,14 @@ const COLLAPSED_ATTR = 'data-vsc-collapsed';
 const DURATION = 180;
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
 
+type DisabledControl = VscElement & {disabled: boolean};
+
+// 多层 fieldset 共享原始状态，所有禁用来源解除后才恢复控件。
+const disabledControlStates = new WeakMap<
+  DisabledControl,
+  {original: boolean; owners: Set<VscodeFieldset>}
+>();
+
 /**
  * 可移动的侧栏视图；在默认插槽中提供含 legend 的原生 fieldset。
  *
@@ -97,16 +105,15 @@ export class VscodeFieldset extends VscElement {
 
   private _suppressDefault = false;
 
+  private _defaultBehaviorSuppressed = false;
+
   private _rendered = false;
 
   private _animations: Animation[] = [];
 
   private _generation = 0;
 
-  private _disabledControls = new Map<
-    VscElement & {disabled: boolean},
-    boolean
-  >();
+  private _disabledControls = new Set<DisabledControl>();
 
   private _contentObserver = new MutationObserver(() => {
     this._syncDisabledControls();
@@ -159,12 +166,15 @@ export class VscodeFieldset extends VscElement {
     installFieldsetStyles(this);
     this._contentObserver.observe(this, {childList: true, subtree: true});
     if (this._rendered) {
-      this._syncCheckedState(false);
+      this._onSlotChange();
     }
   }
 
   override disconnectedCallback() {
     this._contentObserver.disconnect();
+    for (const control of this._disabledControls) {
+      this._releaseDisabledControl(control);
+    }
     this._stopAnimation();
     this._clearAnimationStyles();
     super.disconnectedCallback();
@@ -183,6 +193,7 @@ export class VscodeFieldset extends VscElement {
       if (this._suppressDefault) {
         this._suppressDefault = false;
       } else {
+        this._defaultBehaviorSuppressed = false;
         this._syncCheckedState(animate);
       }
     } else {
@@ -191,7 +202,11 @@ export class VscodeFieldset extends VscElement {
   }
 
   private _onSlotChange() {
-    this._syncCheckedState(false);
+    if (this._defaultBehaviorSuppressed) {
+      this._syncDisabledControls();
+    } else {
+      this._syncCheckedState(false);
+    }
   }
 
   private _onCheckboxChange() {
@@ -205,9 +220,9 @@ export class VscodeFieldset extends VscElement {
       }) as VscFieldsetCheckedChangeEvent
     );
 
-    if (!allowed || this.checkedChange?.(checked) === false) {
-      this._suppressDefault = true;
-    }
+    this._defaultBehaviorSuppressed =
+      !allowed || this.checkedChange?.(checked) === false;
+    this._suppressDefault = this._defaultBehaviorSuppressed;
     this.checked = checked;
   }
 
@@ -261,10 +276,9 @@ export class VscodeFieldset extends VscElement {
     const fieldset = this.fieldsetElement;
     const disabled = this.checkbox && !!fieldset?.disabled;
 
-    for (const [control, original] of this._disabledControls) {
+    for (const control of this._disabledControls) {
       if (!disabled || !fieldset?.contains(control)) {
-        control.disabled = original;
-        this._disabledControls.delete(control);
+        this._releaseDisabledControl(control);
       }
     }
     if (!disabled || !fieldset) {
@@ -280,13 +294,31 @@ export class VscodeFieldset extends VscElement {
       ) {
         continue;
       }
-      const control = element as VscElement & {disabled: boolean};
-      if (!this._disabledControls.has(control)) {
-        this._disabledControls.set(control, control.disabled);
+      const control = element as DisabledControl;
+      let state = disabledControlStates.get(control);
+      if (!state) {
+        state = {original: control.disabled, owners: new Set()};
+        disabledControlStates.set(control, state);
       }
+      state.owners.add(this);
+      this._disabledControls.add(control);
       if (!control.disabled) {
         control.disabled = true;
       }
+    }
+  }
+
+  /** 仅在最后一个禁用来源解除时恢复控件，避免嵌套组件相互覆盖。 */
+  private _releaseDisabledControl(control: DisabledControl) {
+    this._disabledControls.delete(control);
+    const state = disabledControlStates.get(control);
+    if (!state) {
+      return;
+    }
+    state.owners.delete(this);
+    if (state.owners.size === 0) {
+      control.disabled = state.original;
+      disabledControlStates.delete(control);
     }
   }
 
