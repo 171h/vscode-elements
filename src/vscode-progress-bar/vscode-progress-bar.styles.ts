@@ -34,12 +34,12 @@ const styles: CSSResultGroup = [
       will-change: transform, width, left;
     }
 
-    /* Determinate mode: width is set inline via style attribute */
+    /* 确定进度模式：通过内联 style 特性设置宽度 */
     .discrete .indicator {
       transition: width 100ms linear;
     }
 
-    /* Indeterminate mode: VS Code style progress bit */
+    /* 不确定进度模式：使用 VS Code 风格的进度滑块 */
     .infinite .indicator {
       width: 2%;
       animation-name: progress;
@@ -49,12 +49,12 @@ const styles: CSSResultGroup = [
       transform: translate3d(0px, 0px, 0px);
     }
 
-    /* Long running: reduce GPU pressure using stepped animation */
+    /* 长时间运行：使用分步动画减轻 GPU 压力 */
     .infinite.infinite-long-running .indicator {
       animation-timing-function: steps(100);
     }
 
-    /* Keyframes adapted from VS Code */
+    /* 关键帧改编自 VS Code */
     @keyframes progress {
       from {
         transform: translateX(0%) scaleX(1);

@@ -178,19 +178,19 @@ export const highlightRanges = (
     const match = text.substring(r[0], r[1]);
 
     if (i === 0 && r[0] !== 0) {
-      // text before the first range
+      // 第一个匹配区间之前的文本
       res.push(...preventSpaces(text.substring(0, ranges[0][0])));
     }
 
     if (i > 0 && i < rl && r[0] - ranges[i - 1][1] !== 0) {
-      // text before the current range
+      // 当前匹配区间之前的文本
       res.push(...preventSpaces(text.substring(ranges[i - 1][1], r[0])));
     }
 
     res.push(html`<b>${preventSpaces(match)}</b>`);
 
     if (i === rl - 1 && r[1] < text.length) {
-      // text after the last range
+      // 最后一个匹配区间之后的文本
       res.push(...preventSpaces(text.substring(r[1], text.length)));
     }
   });

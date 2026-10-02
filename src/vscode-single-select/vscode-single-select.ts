@@ -11,14 +11,14 @@ import styles from './vscode-single-select.styles.js';
 export type VscSingleSelectCreateOptionEvent = CustomEvent<{value: string}>;
 
 /**
- * Allows to select an item from multiple options.
+ * 允许从多个选项中选择一项。
  *
- * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
- * can be applied through the `invalid` property.
+ * 参与表单时支持 `:invalid` 伪类，其他情况下
+ * 可通过 `invalid` 属性应用错误样式。
  *
  * @tag vscode-single-select
  *
- * ## Types
+ * ## 类型
  *
  * ```typescript
  *interface Option {
@@ -31,7 +31,7 @@ export type VscSingleSelectCreateOptionEvent = CustomEvent<{value: string}>;
  * ```
  * @prop {boolean} invalid
  * @attr {boolean} invalid
- * @attr name - Name which is used as a variable name in the data of the form-container.
+ * @attr name - 在表单容器数据中使用的变量名。
  *
  * @cssprop [--dropdown-z-index=2]
  * @cssprop [--vscode-badge-background=#616161]
@@ -73,8 +73,8 @@ export class VscodeSingleSelect
   static formAssociated = true;
 
   /**
-   * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light blue background.
+   * 组件所属表单是否已修改。状态由
+   * 由 `vscode-form-container` 管理，以浅蓝色背景显示。
    */
   @property({type: Boolean, reflect: true})
   dirty = false;
@@ -205,8 +205,8 @@ export class VscodeSingleSelect
   }
 
   /**
-   * This variable was introduced for cases where the value is set before the corresponding option
-   * exists. This can happen while a framework like Vue or React is rendering the component.
+   * 此变量用于先设置值、后创建对应选项的场景，
+   * 例如 Vue 或 React 等框架渲染组件时。
    */
   private _requestedValueToSetLater = '';
 
@@ -234,12 +234,12 @@ export class VscodeSingleSelect
     }
   }
 
-  //#region event handlers
+  //#region 事件处理
   protected override _onSlotChange(): void {
     super._onSlotChange();
 
     if (this._requestedValueToSetLater) {
-      // the value is set before the available options are appended
+      // 先设置值，再追加可用选项
       const foundOption = this._opts.getOptionByValue(
         this._requestedValueToSetLater
       );
@@ -342,7 +342,7 @@ export class VscodeSingleSelect
     }
   }
 
-  //#region render functions
+  //#region 渲染函数
   protected override _renderSelectFace(): TemplateResult {
     const selectedOption = this._opts.getSelectedOption();
     const label = selectedOption?.label ?? '';

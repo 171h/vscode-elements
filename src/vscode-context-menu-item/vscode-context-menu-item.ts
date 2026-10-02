@@ -14,7 +14,7 @@ export interface VscClickEventDetail {
 /**
  * @tag vscode-context-menu-item
  *
- * Child component of [ContextMenu](/components/context-menu/).
+ * [上下文菜单](/components/context-menu/)的子组件。
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]

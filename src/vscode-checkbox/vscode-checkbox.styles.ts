@@ -41,9 +41,9 @@ const styles: CSSResultGroup = [
       outline-offset: -1px;
     }
 
-    /* Toggle appearance */
+    /* 开关样式 */
     :host([toggle]) .icon {
-      /* Track */
+      /* 轨道 */
       width: 36px;
       height: 18px;
       border-radius: 999px;
@@ -57,13 +57,13 @@ const styles: CSSResultGroup = [
       outline-offset: 2px;
     }
 
-    /* Reserve space for the wider toggle track so text doesn't overlap */
+    /* 为较宽的开关轨道预留空间，避免文字重叠 */
     :host([toggle]) .label-inner {
-      padding-left: 45px; /* 36px track + 9px spacing */
+      padding-left: 45px; /* 36px 轨道加 9px 间距 */
     }
 
     :host([toggle]) .thumb {
-      /* Thumb */
+      /* 滑块 */
       box-sizing: border-box;
       display: block;
       width: 14px;

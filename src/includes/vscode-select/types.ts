@@ -1,7 +1,7 @@
 export interface Option {
   label?: string;
   value?: string;
-  /** Short form of the label, displayed in the face of the multi-select. */
+  /** 标签缩写，用于多选框的选中项展示区域。 */
   abbreviation?: string;
   description?: string;
   selected?: boolean;
@@ -10,9 +10,9 @@ export interface Option {
 
 export interface InternalOption extends Required<Option> {
   index: number;
-  /** Option index in the filtered list. */
+  /** 选项在过滤列表中的索引。 */
   filteredIndex: number;
-  /** Character ranges to highlight matches in the filtered list. */
+  /** 过滤列表中用于高亮匹配文字的字符区间。 */
   ranges?: [number, number][];
   visible: boolean;
 }

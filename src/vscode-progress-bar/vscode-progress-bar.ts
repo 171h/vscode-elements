@@ -22,25 +22,25 @@ export class VscodeProgressBar extends VscElement {
   override ariaLabel = 'Loading';
 
   /**
-   * Current value for determinate mode. If undefined/NaN, the bar is indeterminate.
+   * 确定进度模式的当前值。未定义或为 NaN 时使用不确定进度模式。
    */
   @property({type: Number, reflect: true})
   value?: number;
 
   /**
-   * Maximum value for determinate mode.
+   * 确定进度模式的最大值。
    */
   @property({type: Number, reflect: true})
   max = 100;
 
   /**
-   * Force indeterminate mode even if value is set.
+   * 即使已设置 value，也强制使用不确定进度模式。
    */
   @property({type: Boolean, reflect: true})
   indeterminate = false;
 
   /**
-   * Switch to a gentler animation after this many ms in indeterminate mode.
+   * 不确定进度模式运行指定毫秒数后切换为更平缓的动画。
    */
   @property({type: Number, attribute: 'long-running-threshold'})
   longRunningThreshold = 15000;
@@ -120,7 +120,7 @@ export class VscodeProgressBar extends VscElement {
     }
 
     if (this._longRunningHandle) {
-      return; // already scheduled
+      return; // 已安排任务
     }
 
     this._longRunningHandle = setTimeout(() => {

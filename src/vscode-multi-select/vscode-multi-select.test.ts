@@ -10,8 +10,8 @@ import {VscodeMultiSelect} from './index.js';
 const LONG_LABEL = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
 
 async function waitForSelectFace(el: VscodeMultiSelect) {
-  // the labels are fitted into the face after the update, the fitting can
-  // trigger another update
+  // 更新后调整标签以适应展示区域，
+  // 此调整可能触发下一次更新
   for (let i = 0; i < 5; i++) {
     await el.updateComplete;
   }
@@ -135,7 +135,7 @@ describe('vscode-multi-select', () => {
     await waitForSelectFace(el);
 
     expect(getVisibleLabels(el)).to.eql(['SRV', 'Cache']);
-    // the tooltip and the option list keep the complete labels
+    // 工具提示和选项列表保留完整标签
     expect(el.shadowRoot!.querySelector('.face-values')?.getAttribute('title'))
       .to.eq(`Server
 Cache`);

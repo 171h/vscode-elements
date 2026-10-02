@@ -21,7 +21,7 @@ export class VscodeTabPanel extends VscElement {
   ariaLabelledby = '';
 
   /**
-   * Panel-like look
+   * 面板风格的外观
    */
   @property({type: Boolean, reflect: true})
   panel = false;

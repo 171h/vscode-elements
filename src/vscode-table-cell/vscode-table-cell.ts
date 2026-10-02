@@ -20,13 +20,13 @@ export class VscodeTableCell extends VscElement {
   override role = 'cell';
 
   /**
-   * Cell label in the compact view of the responsive mode. For internal use only.
+   * 响应式紧凑视图中的单元格标签，仅供内部使用。
    */
   @property({attribute: 'column-label'})
   columnLabel = '';
 
   /**
-   * Enable compact view in the responsive mode. For internal use only.
+   * 启用响应式紧凑视图，仅供内部使用。
    */
   @property({type: Boolean, reflect: true})
   compact = false;

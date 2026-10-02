@@ -24,7 +24,7 @@ export type VscContextMenuSelectEvent = CustomEvent<{
 /**
  * @tag vscode-context-menu
  *
- * @fires {VscMenuSelectEvent} vsc-menu-select - Emitted when a menu item is clicked
+ * @fires {VscMenuSelectEvent} vsc-menu-select - 点击菜单项时触发
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]
@@ -57,7 +57,7 @@ export class VscodeContextMenu extends VscElement {
   }
 
   /**
-   * By default, the menu closes when an item is clicked. This attribute prevents the menu from closing.
+   * 默认点击菜单项后关闭菜单，此特性阻止菜单关闭。
    */
   @property({type: Boolean, reflect: true, attribute: 'prevent-close'})
   preventClose = false;

@@ -47,25 +47,25 @@ export class VscodeTable extends VscElement {
   responsive = false;
 
   /**
-   * The size of the table rows and text. The `medium` size is the default.
+   * 表格行和文字的尺寸，默认为 `medium`。
    */
   @property({reflect: true})
   size: FormControlSize = 'medium';
 
   /**
-   * Both rows and columns are separated by borders.
+   * 行列均以边框分隔。
    */
   @property({type: Boolean, reflect: true})
   bordered = false;
 
   /**
-   * Columns are separated by borders.
+   * 列之间以边框分隔。
    */
   @property({type: Boolean, reflect: true, attribute: 'bordered-columns'})
   borderedColumns = false;
 
   /**
-   * Rows are separated by borders.
+   * 行之间以边框分隔。
    */
   @property({type: Boolean, reflect: true, attribute: 'bordered-rows'})
   borderedRows = false;
@@ -74,14 +74,14 @@ export class VscodeTable extends VscElement {
   breakpoint = 300;
 
   /**
-   * Initial column sizes in a JSON-encoded array.
-   * Accepted values are:
-   * - number
-   * - string-type number (ex.: "100")
-   * - px value (ex.: "100px")
-   * - percentage value (ex.: "50%")
-   * - percentage value (ex.: "50%")
-   * - "auto" keyword
+   * 以 JSON 数组编码的初始列尺寸。
+   * 接受以下值：
+   * - 数字
+   * - 数字字符串（例如 "100"）
+   * - 像素值（例如 "100px"）
+   * - 百分比值（例如 "50%"）
+   * - 百分比值（例如 "50%"）
+   * - "auto" 关键字
    */
   @property({type: Array})
   set columns(val: string[]) {
@@ -103,13 +103,13 @@ export class VscodeTable extends VscElement {
   }
 
   /**
-   * Minimum column width. Valid values are:
-   * - number
-   * - string-type number (ex.: "100")
-   * - px value (ex.: "100px")
-   * - percentage value (ex.: "50%")
-   * - percentage value (ex.: "50%")
-   * - "auto" keyword
+   * 最小列宽，接受以下值：
+   * - 数字
+   * - 数字字符串（例如 "100"）
+   * - 像素值（例如 "100px"）
+   * - 百分比值（例如 "50%"）
+   * - 百分比值（例如 "50%"）
+   * - "auto" 关键字
    */
   @property({attribute: 'min-column-width'})
   minColumnWidth = '50px';
@@ -124,13 +124,13 @@ export class VscodeTable extends VscElement {
   compact = false;
 
   /**
-   * Zebra stripes, even rows are tinted.
+   * 斑马纹：为偶数行着色。
    */
   @property({type: Boolean, reflect: true})
   zebra = false;
 
   /**
-   * Zebra stripes, odd rows are tinted.
+   * 斑马纹：为奇数行着色。
    */
   @property({type: Boolean, reflect: true, attribute: 'zebra-odd'})
   zebraOdd = false;
@@ -165,7 +165,7 @@ export class VscodeTable extends VscElement {
   private _assignedBodyElements!: NodeListOf<VscodeTableBody>;
 
   /**
-   * Sash positions in percentage
+   * 以百分比表示的分隔条位置
    */
   @state()
   private _sashPositions: number[] = [];
@@ -174,7 +174,7 @@ export class VscodeTable extends VscElement {
   private _isDragging = false;
 
   /**
-   * Sash hover state flags, used in the render.
+   * 分隔条悬停状态标记，用于渲染。
    */
   private _sashHovers: boolean[] = [];
   private _columns: string[] = [];
@@ -185,13 +185,13 @@ export class VscodeTable extends VscElement {
   private _componentH = 0;
   private _componentW = 0;
   /**
-   * Cached querySelectorAll result. Updated when the header slot changes.
-   * It shouldn't be used directly, check the "_getHeaderCells" function.
+   * 缓存的 querySelectorAll 结果，表头插槽变化时更新。
+   * 不要直接使用，请通过 "_getHeaderCells" 函数读取。
    */
   private _headerCells: VscodeTableHeaderCell[] = [];
   /**
-   * Cached querySelectorAll result. Updated when the body slot changes.
-   * It shouldn't be used directly, check the "_getCellsOfFirstRow" function.
+   * 缓存的 querySelectorAll 结果，表格主体插槽变化时更新。
+   * 不要直接使用，请通过 "_getCellsOfFirstRow" 函数读取。
    */
   private _cellsOfFirstRow: VscodeTableCell[] = [];
   private _prevHeaderHeight = 0;
@@ -223,9 +223,9 @@ export class VscodeTable extends VscElement {
   }
 
   protected override willUpdate(changedProperties: PropertyValues): void {
-    // `minColumnWidth` has been deprecated. Until it is completely removed from
-    // the API, it is used as a fallback value when no min-width is specified on
-    // a column header cell.
+    // `minColumnWidth` 已弃用。在从 API 完全移除之前，
+    // 当列头单元格未指定 min-width 时，
+    // 将其作为回退值。
     if (changedProperties.has('minColumnWidth')) {
       const value = percent(
         parseSizeAttributeToPercent(this.minColumnWidth, this._componentW) ?? 0
@@ -234,7 +234,7 @@ export class VscodeTable extends VscElement {
       const widths = this._columnResizeController.columnWidths;
 
       for (let i = 0; i < widths.length; i++) {
-        // Don't override the value comes form table header cell:
+        // 不要覆盖来自表头单元格的值：
         if (!prevMap.has(i)) {
           this._columnResizeController.setColumnMinWidthAt(i, value);
         }
@@ -264,7 +264,7 @@ export class VscodeTable extends VscElement {
   }
 
   /**
-   * Get cached header cells
+   * 获取缓存的表头单元格
    */
   private _getHeaderCells() {
     if (!this._headerCells.length) {
@@ -289,7 +289,7 @@ export class VscodeTable extends VscElement {
   }
 
   /**
-   * Get cached cells of first row
+   * 获取缓存的首行单元格
    */
   private _getCellsOfFirstRow() {
     if (!this._cellsOfFirstRow.length) {

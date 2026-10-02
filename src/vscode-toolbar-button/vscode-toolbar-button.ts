@@ -7,7 +7,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 
 /**
- * Toolbar button
+ * 工具栏按钮
  *
  * @tag vscode-toolbar-button
  */

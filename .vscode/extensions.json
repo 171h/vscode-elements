@@ -1,8 +1,8 @@
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
-  // Extension identifier format: ${publisher}.${name}. Example: vscode.csharp
+  // 工作区推荐扩展说明：https://go.microsoft.com/fwlink/?LinkId=827846
+  // 扩展标识符格式：${publisher}.${name}，例如 vscode.csharp。
 
-  // List of extensions which should be recommended for users of this workspace.
+  // 推荐给本工作区用户的扩展列表。
   "recommendations": [
     "runem.lit-plugin",
     "editorconfig.editorconfig",
@@ -10,6 +10,6 @@
     "esbenp.prettier-vscode",
     "google.wireit"
   ],
-  // List of extensions recommended by VS Code that should not be recommended for users of this workspace.
+  // VS Code 推荐但不应向本工作区用户推荐的扩展列表。
   "unwantedRecommendations": []
 }

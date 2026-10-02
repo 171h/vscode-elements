@@ -2,7 +2,7 @@ import {html, TemplateResult} from 'lit';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import styles from './vscode-form-helper.styles.js';
 
-// Guard for SSR: CSSStyleSheet may not be available
+// SSR 防护：CSSStyleSheet 可能不可用
 let lightDOMStyles: CSSStyleSheet | undefined;
 if (typeof CSSStyleSheet !== 'undefined') {
   lightDOMStyles = new CSSStyleSheet();
@@ -18,11 +18,11 @@ if (typeof CSSStyleSheet !== 'undefined') {
 }
 
 /**
- * Adds more detailed description to a [FromGroup](https://bendera.github.io/vscode-webview-elements/components/vscode-form-group/)
+ * 为[表单组](https://bendera.github.io/vscode-webview-elements/components/vscode-form-group/)添加更详细的说明
  *
  * @tag vscode-form-helper
  *
- * @cssprop --vsc-foreground-translucent - Default text color. 90% transparency version of `--vscode-foreground` by default.
+ * @cssprop --vsc-foreground-translucent - 默认文字颜色，默认使用 `--vscode-foreground` 的 90% 透明度版本。
  */
 @customElement('vscode-form-helper')
 export class VscodeFormHelper extends VscElement {
@@ -34,7 +34,7 @@ export class VscodeFormHelper extends VscElement {
   }
 
   private _injectLightDOMStyles() {
-    // Guard for SSR: document may not be available
+    // SSR 防护：document 可能不可用
     if (typeof document === 'undefined' || !lightDOMStyles) {
       return;
     }

@@ -9,20 +9,20 @@ import styles from './vscode-radio.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
 /**
- * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
- * can be applied through the `invalid` property.
+ * 参与表单时支持 `:invalid` 伪类，其他情况下
+ * 可通过 `invalid` 属性应用错误样式。
  *
  * @tag vscode-radio
  *
- * @attr name - Name which is used as a variable name in the data of the form-container.
- * @attr label - Attribute pair of the `label` property.
+ * @attr name - 在表单容器数据中使用的变量名。
+ * @attr label - 与 `label` 属性对应的 HTML 特性。
  *
- * @prop label - Label text. It is only applied if component's innerHTML doesn't contain any text.
+ * @prop label - 标签文字，仅在组件 innerHTML 不包含文字时应用。
  *
- * @fires {Event} change - Dispatched when checked state is changed.
- * @fires {Event} invalid - Dispatched when the element is invalid and `checkValidity()` has been called or the form containing this element is submitted.
+ * @fires {Event} change - 选中状态变化时派发。
+ * @fires {Event} invalid - 元素无效且调用 `checkValidity()` 或提交所在表单时派发。
  *
- * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
+ * [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]
@@ -50,11 +50,11 @@ export class VscodeRadio
     delegatesFocus: true,
   };
 
-  //#region properties
+  //#region 属性
 
   /**
-   * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light blue box.
+   * 组件所属表单是否已修改。状态由
+   * `vscode-form-container` 管理，使用浅蓝色方框显示。
    */
   @property({type: Boolean, reflect: true})
   dirty = false;
@@ -72,7 +72,7 @@ export class VscodeRadio
   invalid = false;
 
   /**
-   * Name which is used as a variable name in the data of the form-container.
+   * 在表单容器数据中使用的变量名。
    */
   @property({reflect: true})
   name = '';
@@ -112,7 +112,7 @@ export class VscodeRadio
 
   //#endregion
 
-  //#region private variables
+  //#region 私有变量
 
   @state()
   private _slottedText = '';
@@ -124,7 +124,7 @@ export class VscodeRadio
 
   //#endregion
 
-  //#region lifecycle methods
+  //#region 生命周期方法
 
   constructor() {
     super();
@@ -157,7 +157,7 @@ export class VscodeRadio
 
   //#endregion
 
-  //#region public methods
+  //#region 公共方法
 
   checkValidity(): boolean {
     return this._internals.checkValidity();
@@ -209,7 +209,7 @@ export class VscodeRadio
 
   //#endregion
 
-  //#region private methods
+  //#region 私有方法
 
   private _getRadios(): VscodeRadio[] {
     const root = this.getRootNode({composed: false}) as Document | ShadowRoot;
@@ -266,7 +266,7 @@ export class VscodeRadio
 
   //#endregion
 
-  //#region  event handlers
+  //#region 事件处理
 
   private _handleValueChange() {
     const radios = this._getRadios();

@@ -3,7 +3,7 @@ import {customElement, VscElement} from '../includes/VscElement.js';
 import styles from './vscode-toolbar-container.styles.js';
 
 /**
- * Simple container to arrange the toolar buttons
+ * 用于排列工具栏按钮的简单容器
  *
  * @tag vscode-toolbar-container
  */

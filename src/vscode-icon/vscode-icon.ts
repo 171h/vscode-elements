@@ -7,37 +7,37 @@ import {stylePropertyMap} from '../includes/style-property-map.js';
 import styles from './vscode-icon.styles.js';
 
 /**
- * Display a [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html).
- * In "action-icon" mode it behaves like a button. In this case, it is
- * recommended that a meaningful label is specified with the `label` property.
+ * 展示 [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) 图标。
+ * 在 "action-icon" 模式下表现为按钮，
+ * 建议通过 `label` 属性提供有意义的标签。
  *
  * @tag vscode-icon
  *
  * @cssprop [--vscode-icon-foreground=#cccccc]
- * @cssprop [--vscode-toolbar-hoverBackground=rgba(90, 93, 94, 0.31)] - Hover state background color in `active-icon` mode
- * @cssprop [--vscode-toolbar-activeBackground=rgba(99, 102, 103, 0.31)] - Active state background color in `active-icon` mode
+ * @cssprop [--vscode-toolbar-hoverBackground=rgba(90, 93, 94, 0.31)] - `active-icon` 模式下悬停状态的背景色
+ * @cssprop [--vscode-toolbar-activeBackground=rgba(99, 102, 103, 0.31)] - `active-icon` 模式下激活状态的背景色
  * @cssprop [--vscode-focusBorder=#0078d4]
  */
 @customElement('vscode-icon')
 export class VscodeIcon extends VscElement {
   static override styles = styles;
   /**
-   * Set a meaningful label in `action-icon` mode for the screen readers
+   * 在 `action-icon` 模式下设置有意义的标签供屏幕阅读器使用
    */
   @property()
   label = '';
 
   /**
-   * [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) icon name.
+   * [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) 图标名称。
    */
   @property({type: String})
   name = '';
 
   /**
-   * Icon size. Accepts a number of pixels or one of the predefined sizes:
-   * `small` (14px), `medium` (16px, default) and `large` (20px).
-   * Invalid values (for example `NaN`, `24px` or an empty string) are
-   * rejected and fall back to the `medium` default (16px).
+   * 图标尺寸，接受像素数或预设尺寸：
+   * `small`（14px）、`medium`（16px，默认）和 `large`（20px）。
+   * 无效值（例如 `NaN`、`24px` 或空字符串）
+   * 会被拒绝，并回退为默认 `medium`（16px）。
    */
   @property()
   set size(val: number | 'small' | 'medium' | 'large') {
@@ -68,19 +68,19 @@ export class VscodeIcon extends VscElement {
   }
 
   /**
-   * Enable rotation animation
+   * 启用旋转动画
    */
   @property({type: Boolean, reflect: true})
   spin = false;
 
   /**
-   * Animation duration in seconds
+   * 动画时长，单位为秒
    */
   @property({type: Number, attribute: 'spin-duration'})
   spinDuration = 1.5;
 
   /**
-   * Behaves like a button
+   * 表现为按钮
    */
   @property({type: Boolean, reflect: true, attribute: 'action-icon'})
   actionIcon = false;
@@ -101,16 +101,16 @@ export class VscodeIcon extends VscElement {
   }
 
   /**
-   * For using web fonts in web components, the font stylesheet must be included
-   * twice: on the page and in the web component. This function looks for the
-   * font stylesheet on the page and returns the stylesheet URL and the nonce
-   * id.
+   * 在 Web Components 中使用网络字体时，字体样式表需要引入两次：
+   * 一次在页面中，一次在组件中。此函数查找
+   * 页面上的字体样式表，并返回其 URL 与 nonce
+   * 标识。
    */
   private _getStylesheetConfig(): {
     href: string | undefined;
     nonce: string | undefined;
   } {
-    // Guard for SSR: document may not be available
+    // SSR 防护：document 可能不可用
     if (typeof document === 'undefined') {
       return {nonce: undefined, href: undefined};
     }

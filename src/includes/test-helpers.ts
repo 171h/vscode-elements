@@ -1,4 +1,4 @@
-// Borrowed from Shoelace
+// 借鉴 Shoelace 的实现
 
 import {sendMouse} from '@web/test-runner-commands';
 
@@ -41,15 +41,15 @@ function determineMousePosition(
   return {clickX, clickY};
 }
 
-/** A testing utility that measures an element's position and clicks on it. */
+/** 测试工具：测量元素位置并点击元素。 */
 export async function clickOnElement(
-  /** The element to click */
+  /** 要点击的元素 */
   el: Element,
-  /** The location of the element to click */
+  /** 元素内的点击位置 */
   position: 'top' | 'right' | 'bottom' | 'left' | 'center' = 'center',
-  /** The horizontal offset to apply to the position when clicking */
+  /** 点击位置的水平偏移量 */
   offsetX = 0,
-  /** The vertical offset to apply to the position when clicking */
+  /** 点击位置的垂直偏移量 */
   offsetY = 0
 ) {
   const {clickX, clickY} = determineMousePosition(
@@ -62,15 +62,15 @@ export async function clickOnElement(
   await sendMouse({type: 'click', position: [clickX, clickY]});
 }
 
-/** A testing utility that moves the mouse onto an element. */
+/** 测试工具：将鼠标移动到元素上。 */
 export async function moveMouseOnElement(
-  /** The element to click */
+  /** 要点击的元素 */
   el: Element,
-  /** The location of the element to click */
+  /** 元素内的点击位置 */
   position: 'top' | 'right' | 'bottom' | 'left' | 'center' = 'center',
-  /** The horizontal offset to apply to the position when clicking */
+  /** 点击位置的水平偏移量 */
   offsetX = 0,
-  /** The vertical offset to apply to the position when clicking */
+  /** 点击位置的垂直偏移量 */
   offsetY = 0
 ) {
   const {clickX, clickY} = determineMousePosition(
@@ -83,13 +83,13 @@ export async function moveMouseOnElement(
   await sendMouse({type: 'move', position: [clickX, clickY]});
 }
 
-/** A testing utility that drags an element with the mouse. */
+/** 测试工具：使用鼠标拖动元素。 */
 export async function dragElement(
-  /** The element to drag */
+  /** 要拖动的元素 */
   el: Element,
-  /** The horizontal distance to drag in pixels */
+  /** 水平拖动距离，单位为像素 */
   deltaX = 0,
-  /** The vertical distance to drag in pixels */
+  /** 垂直拖动距离，单位为像素 */
   deltaY = 0,
   callbacks: {
     afterMouseDown?: () => void | Promise<void>;

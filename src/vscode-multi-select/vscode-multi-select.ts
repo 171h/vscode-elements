@@ -12,35 +12,35 @@ import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
 const SELECTED_LABELS_GAP_FALLBACK = 2;
 
-/** Minimum width of a label which is truncated by the fitting. */
+/** 标签在空间适配时被截断后的最小宽度。 */
 const MIN_TAG_WIDTH = 24;
 
 /**
- * The labels are measured with subpixel precision, but `clientWidth` is rounded
- * to an integer. Without a tolerance a label which fits into the face can be
- * collapsed when the widths add up to a fraction above the rounded width, which
- * depends on the font metrics of the environment.
+ * 标签测量精确到亚像素，但 `clientWidth` 四舍五入为整数。
+ * 若不保留容差，原本可以容纳的标签，
+ * 可能因为宽度总和略大于取整后的宽度而折叠；
+ * 该行为取决于当前环境的字体度量。
  */
 const FIT_TOLERANCE = 1;
 
 export type VscMultiSelectCreateOptionEvent = CustomEvent<{value: string}>;
 
 /**
- * Allows to select multiple items from a list of options.
+ * 允许从选项列表中选择多个项目。
  *
- * The face shows the labels of the selected options in the order of the
- * selection. An option which has an `abbreviation` is displayed with it. When
- * the labels do not fit into the face, they are collapsed into a "+N" badge and
- * the complete list of the selected items is available as a tooltip.
+ * 展示区域按选择顺序显示选中项标签。
+ * 设置 `abbreviation` 的选项显示其缩写。
+ * 标签无法全部放入时，溢出的标签折叠为 "+N" 徽章，
+ * 完整选中项列表通过工具提示提供。
  *
- * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
- * can be applied through the `invalid` property.
+ * 参与表单时支持 `:invalid` 伪类，其他情况下
+ * 可通过 `invalid` 属性应用错误样式。
  *
  * @tag vscode-multi-select
  *
  * @prop {boolean} invalid
  * @attr {boolean} invalid
- * @attr name - Name which is used as a variable name in the data of the form-container.
+ * @attr name - 在表单容器数据中使用的变量名。
  *
  * @cssprop [--dropdown-z-index=2]
  * @cssprop [--vscode-badge-background=#616161]
@@ -81,8 +81,8 @@ export class VscodeMultiSelect
   static formAssociated = true;
 
   /**
-   * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light blue background.
+   * 组件所属表单是否已修改。状态由
+   * 由 `vscode-form-container` 管理，以浅蓝色背景显示。
    */
   @property({type: Boolean, reflect: true})
   dirty = false;
@@ -211,22 +211,22 @@ export class VscodeMultiSelect
   private _faceValuesElement!: HTMLDivElement;
 
   /**
-   * Number of the selected labels which fit into the face. The labels above
-   * this limit are collapsed and summarized by a "+N" badge.
+   * 能放入展示区域的选中标签数量。超过此数量的标签
+   * 会折叠，并汇总为 "+N" 徽章。
    */
   @state()
   private _visibleTagCount = Number.POSITIVE_INFINITY;
 
   /**
-   * True when not every selected label is fully visible. In this case the
-   * complete list is available as a tooltip on hover.
+   * 未能完整显示所有选中标签时为 true，此时
+   * 鼠标悬停可通过工具提示查看完整列表。
    */
   @state()
   private _isFaceValuesTruncated = false;
 
   /**
-   * Width of the rendered labels by size and text. The collapsed labels are
-   * not part of the layout, their last measured width is used instead.
+   * 按尺寸和文字记录渲染后标签的宽度。折叠标签
+   * 不参与布局，改用最后一次测量的宽度。
    */
   private _tagWidths = new Map<string, number>();
 
@@ -298,7 +298,7 @@ export class VscodeMultiSelect
     this._isPlaceholderOptionActive = false;
   }
 
-  //#region event handlers
+  //#region 事件处理
   protected override _onSlotChange(): void {
     super._onSlotChange();
 
@@ -392,7 +392,7 @@ export class VscodeMultiSelect
   }
   //#endregion
 
-  //#region selected labels in the face
+  //#region 展示区域中的选中标签
 
   private _getSelectedOptions(): InternalOption[] {
     const options: InternalOption[] = [];
@@ -408,12 +408,12 @@ export class VscodeMultiSelect
     return options;
   }
 
-  /** The face displays the abbreviation when the option has one. */
+  /** 选项带缩写时在展示区域显示缩写。 */
   private _getFaceLabel(op: InternalOption) {
     return op.abbreviation || op.label || op.value;
   }
 
-  /** The option list and the tooltip display the complete label. */
+  /** 选项列表与工具提示显示完整标签。 */
   private _getFullLabel(op: InternalOption) {
     return op.label || op.value;
   }
@@ -428,8 +428,8 @@ export class VscodeMultiSelect
       return measured;
     }
 
-    // The collapsed labels are not part of the layout, the width measured
-    // before the collapse is used instead.
+    // 折叠标签不参与布局，使用折叠前
+    // 测得的宽度。
     return this._tagWidths.get(key) ?? 0;
   }
 
@@ -458,9 +458,9 @@ export class VscodeMultiSelect
   }
 
   /**
-   * The selected labels are placed in a single row in the order of the
-   * selection. When they do not fit into the face, the labels above the
-   * available space are collapsed and summarized by a "+N" badge.
+   * 选中标签按选择顺序排列在单行中。
+   * 标签无法全部放入展示区域时，超出可用空间的标签
+   * 会折叠并汇总为 "+N" 徽章。
    */
   private _fitSelectedLabels(): void {
     const container = this._faceValuesElement;
@@ -487,8 +487,8 @@ export class VscodeMultiSelect
     const gap = this._getTagGap(container);
     const available = container.clientWidth + FIT_TOLERANCE;
 
-    // The "+N" badge is rendered even when every label is visible, so its
-    // width is known before the first label has to be collapsed.
+    // 即使所有标签可见也渲染 "+N" 徽章，
+    // 以便在首次折叠标签前确定其宽度。
     const moreTag = container.querySelector<HTMLElement>('.more-tag');
     const moreTagWidth = moreTag ? this._getTagWidth(moreTag) : 0;
 
@@ -509,14 +509,14 @@ export class VscodeMultiSelect
     let hiddenCount = widths.length - visibleCount;
 
     if (hiddenCount > 0) {
-      // the "+N" badge takes up space as well
+      // "+N" 徽章同样占据空间
       while (visibleCount > 0 && used + gap + moreTagWidth > available) {
         visibleCount -= 1;
         hiddenCount += 1;
         used = visibleCount === 0 ? 0 : used - widths[visibleCount] - gap;
       }
 
-      // A truncated label is still more useful than no label at all.
+      // 截断标签仍比完全不显示标签更有用。
       if (
         visibleCount === 0 &&
         available >= moreTagWidth + gap + MIN_TAG_WIDTH
@@ -536,7 +536,7 @@ export class VscodeMultiSelect
   }
   //#endregion
 
-  //#region render functions
+  //#region 渲染函数
   private _renderSelectedLabels() {
     const options = this._getSelectedOptions();
     const labels = options.map((op) => this._getFaceLabel(op));
@@ -548,8 +548,8 @@ export class VscodeMultiSelect
       measuring: hiddenCount === 0,
     };
     const hasAbbreviation = options.some((op) => op.abbreviation !== '');
-    // The tooltip reveals the collapsed labels and the abbreviated ones, so it
-    // lists the complete labels, one per line.
+    // 工具提示显示折叠及缩写标签的完整文字，
+    // 每行一个标签。
     const showFullLabels =
       labels.length > 0 && (this._isFaceValuesTruncated || hasAbbreviation);
     const tooltip = options

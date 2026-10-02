@@ -1,5 +1,5 @@
 /**
- * Size options of the form control components. The `medium` size is the default and matches
- * the regular VS Code sizing.
+ * 表单控件的尺寸选项，默认为 `medium`，
+ * 与常规 VS Code 尺寸一致。
  */
 export type FormControlSize = 'small' | 'medium' | 'large';

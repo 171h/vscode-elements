@@ -29,7 +29,7 @@ export class VscodeSelectBase extends VscElement {
   creatable = false;
 
   /**
-   * Options can be filtered by typing into a text input field.
+   * 通过在文本输入框中输入内容过滤选项。
    */
   @property({type: Boolean, reflect: true})
   set combobox(enabled: boolean) {
@@ -40,14 +40,14 @@ export class VscodeSelectBase extends VscElement {
   }
 
   /**
-   * Accessible label for screen readers. When a `<vscode-label>` is connected
-   * to the component, it will be filled automatically.
+   * 供屏幕阅读器使用的无障碍标签。连接 `<vscode-label>`
+   * 后自动填写。
    */
   @property({reflect: true})
   label = '';
 
   /**
-   * The element cannot be used and is not focusable.
+   * 元素不可使用，也无法获得焦点。
    */
   @property({type: Boolean, reflect: true})
   set disabled(newState: boolean) {
@@ -70,24 +70,24 @@ export class VscodeSelectBase extends VscElement {
   }
 
   /**
-   * Sets the invalid state manually.
+   * 手动设置无效状态。
    */
   @property({type: Boolean, reflect: true})
   invalid = false;
 
   /**
-   * The size of the component. The `medium` size is the default.
+   * 组件尺寸，默认为 `medium`。
    */
   @property({reflect: true})
   size: FormControlSize = 'medium';
 
   /**
-   * Search method in the filtered list within the combobox mode.
+   * 组合框模式中过滤列表的搜索方式。
    *
-   * - contains - The list item includes the searched pattern at any position.
-   * - fuzzy - The list item contains the letters of the search pattern in the same order, but at any position.
-   * - startsWith - The search pattern matches the beginning of the searched text.
-   * - startsWithPerTerm - The search pattern matches the beginning of any word in the searched text.
+   * - contains - 列表项在任意位置包含搜索内容。
+   * - fuzzy - 列表项按顺序包含搜索字符，但位置可以不连续。
+   * - startsWith - 搜索内容匹配文本开头。
+   * - startsWithPerTerm - 搜索内容匹配文本中任意单词的开头。
    *
    * @default 'fuzzy'
    */
@@ -118,13 +118,13 @@ export class VscodeSelectBase extends VscElement {
   }
 
   /**
-   * Its value is true when element is focused.
+   * 元素获得焦点时值为 true。
    */
   @property({type: Boolean, reflect: true})
   focused = false;
 
   /**
-   * Toggle the dropdown visibility.
+   * 切换下拉列表的可见状态。
    */
   @property({type: Boolean, reflect: true})
   open = false;
@@ -151,7 +151,7 @@ export class VscodeSelectBase extends VscElement {
   }
 
   /**
-   * Position of the options list when visible.
+   * 选项列表展开时的位置。
    */
   @property({reflect: true})
   position: 'above' | 'below' = 'below';
@@ -170,7 +170,7 @@ export class VscodeSelectBase extends VscElement {
 
   protected _opts = new OptionListController(this);
 
-  //#region lifecycle callbacks
+  //#region 生命周期回调
 
   constructor() {
     super();
@@ -342,8 +342,8 @@ export class VscodeSelectBase extends VscElement {
   }
 
   /**
-   * The events bubble, so a parent element, e.g. a `vscode-form-container`,
-   * can detect that the selection has changed.
+   * 事件会冒泡，因此父元素（例如 `vscode-form-container`）
+   * 能够检测选择变化。
    */
   protected _dispatchChangeEvent(): void {
     this.dispatchEvent(new Event('change', {bubbles: true}));
@@ -405,7 +405,7 @@ export class VscodeSelectBase extends VscElement {
     }
   }
 
-  //#region event handlers
+  //#region 事件处理
   protected _onFaceClick(): void {
     this.open = !this.open;
   }
@@ -601,11 +601,11 @@ export class VscodeSelectBase extends VscElement {
   }
 
   /**
-   * The pattern of the filter is not a value of the component: the event of the
-   * internal input does not leave the shadow root, so the elements above the
-   * component, e.g. a `vscode-form-container`, react only to the selection.
-   * The `change` and the `input` event of the component itself are dispatched
-   * by {@link _dispatchChangeEvent} when the selection changes.
+   * 过滤内容不是组件的值；内部输入框的事件
+   * 不会离开 Shadow Root，因此组件上层的元素，
+   * 例如 `vscode-form-container`，仅响应选择变化。
+   * 组件自身的 `change` 和 `input` 事件
+   * 在选择变化时由 {@link _dispatchChangeEvent} 派发。
    */
   protected _onComboboxInputInput(ev: InputEvent): void {
     ev.stopPropagation();
@@ -640,7 +640,7 @@ export class VscodeSelectBase extends VscElement {
   };
   //#endregion
 
-  //#region render functions
+  //#region 渲染函数
   private _renderCheckbox(
     checked: boolean,
     label: string | TemplateResult | TemplateResult[]
