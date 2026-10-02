@@ -6,6 +6,7 @@ const styles: CSSResultGroup = [
   css`
     :host {
       display: block;
+      min-width: 0;
     }
 
     .header {
@@ -33,12 +34,27 @@ const styles: CSSResultGroup = [
 
     .tablist {
       display: flex;
+      flex: 1;
+      min-width: 0;
       margin-bottom: -1px;
+    }
+
+    .tablist ::slotted(vscode-tab-header) {
+      flex: 0 0 auto;
+    }
+
+    :host([overflow='wrap']) .tablist {
+      flex-wrap: wrap;
+    }
+
+    :host([overflow='wrap'][wrap-alignment='center']) .tablist {
+      justify-content: center;
     }
 
     slot[name='addons'] {
       display: block;
       margin-left: auto;
+      flex: 0 0 auto;
     }
   `,
 ];

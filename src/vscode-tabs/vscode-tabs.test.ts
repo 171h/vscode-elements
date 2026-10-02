@@ -2,7 +2,7 @@ import '../vscode-tabs/vscode-tabs.js';
 import '../vscode-tab-header/vscode-tab-header.js';
 import '../vscode-tab-panel/vscode-tab-panel.js';
 import {VscodeTabs} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html, elementUpdated} from '@open-wc/testing';
 
 describe('vscode-tabs', () => {
   it('is defined', () => {
@@ -27,5 +27,38 @@ describe('vscode-tabs', () => {
     `);
 
     await expect(el).to.be.accessible({});
+  });
+});
+
+describe('标题换行', () => {
+  it('按内容增加高度并支持居中对齐', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 200px" overflow="wrap">
+        ${[1, 2, 3].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 120px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    await elementUpdated(el);
+    const headers = el.querySelectorAll('vscode-tab-header');
+    const bar = el.shadowRoot!.querySelector('.header')!;
+    expect(bar.getBoundingClientRect().height).to.be.greaterThan(
+      headers[0].getBoundingClientRect().height * 2
+    );
+    el.wrapAlignment = 'center';
+    await elementUpdated(el);
+    expect(
+      Math.round(
+        headers[0].getBoundingClientRect().left -
+          el.getBoundingClientRect().left
+      )
+    ).to.equal(40);
+    headers[2].click();
+    await elementUpdated(el);
+    expect(el.selectedIndex).to.equal(2);
+    expect(el.querySelectorAll('vscode-tab-panel')[2].hidden).to.equal(false);
   });
 });

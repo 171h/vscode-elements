@@ -44,6 +44,14 @@ export class VscodeTabs extends VscElement {
   @property({type: Number, reflect: true, attribute: 'selected-index'})
   selectedIndex = 0;
 
+  /** 标题溢出时的显示方式：换行、水平滚动或菜单。 */
+  @property({reflect: true})
+  overflow: 'wrap' | 'scroll' | 'menu' = 'wrap';
+
+  /** 换行标题的对齐方式。 */
+  @property({reflect: true, attribute: 'wrap-alignment'})
+  wrapAlignment: 'start' | 'center' = 'start';
+
   private _dragController = new TabsDragController(this);
 
   override connectedCallback() {
