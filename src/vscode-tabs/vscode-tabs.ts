@@ -81,9 +81,25 @@ export class VscodeTabs extends VscElement {
   @state()
   private _menuTop = 0;
 
-  private _contentObserver = new MutationObserver(() =>
-    this._scheduleContentLayout()
-  );
+  private _contentObserver = new MutationObserver((records) => {
+    const affectsHeader = records.some(({target}) => {
+      let node = target instanceof Element ? target : target.parentElement;
+      while (node && node !== this) {
+        if (
+          this._tabHeaders.includes(node as VscodeTabHeader) ||
+          (node.parentElement === this &&
+            node.getAttribute('slot') === 'addons')
+        ) {
+          return true;
+        }
+        node = node.parentElement;
+      }
+      return false;
+    });
+    if (affectsHeader) {
+      this._scheduleContentLayout();
+    }
+  });
 
   private _scheduleContentLayout = () => {
     this.requestUpdate();

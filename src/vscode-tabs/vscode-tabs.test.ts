@@ -963,3 +963,40 @@ describe('菜单选择事件后的标题变化', () => {
     }
   });
 });
+
+describe('面板动态内容与标题观察', () => {
+  it('忽略面板内部变更，标题及 addons 变化仍更新布局', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 280px" overflow="menu">
+        ${[1, 2, 3].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel><div>内容 ${i}</div></vscode-tab-panel>`
+        )}
+        <span slot="addons">操作</span>
+      </vscode-tabs>
+    `);
+    const settle = () =>
+      new Promise<void>((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+      );
+    await settle();
+    await elementUpdated(el);
+    await settle();
+    const previousUpdate = el.updateComplete;
+    const content = el.querySelector('vscode-tab-panel div')!;
+    content.firstChild!.textContent = '更新日志';
+    content.append(document.createElement('span'));
+    content.setAttribute('hidden', '');
+    await settle();
+    expect(el.updateComplete).to.equal(previousUpdate);
+    el.querySelector('vscode-tab-header')!.textContent = '新标题';
+    await settle();
+    expect(el.updateComplete).not.to.equal(previousUpdate);
+    const headerUpdate = el.updateComplete;
+    el.querySelector('[slot="addons"]')!.textContent = '更多操作与筛选';
+    await settle();
+    expect(el.updateComplete).not.to.equal(headerUpdate);
+  });
+});
