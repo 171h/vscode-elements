@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Fieldset checkbox</title>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/dist/main.js"></script>
+    <style>
+      body {
+        margin: 32px;
+        background: var(--vscode-editor-background, Canvas);
+        color: var(--vscode-foreground, CanvasText);
+        font: var(--vscode-font-size, 13px)
+          var(--vscode-font-family, sans-serif);
+      }
+      main {
+        display: grid;
+        gap: 32px;
+        max-width: 1100px;
+      }
+      .modes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+      vscode-fieldset fieldset {
+        margin-bottom: 0;
+      }
+      label {
+        display: block;
+        margin: 8px 0;
+      }
+      input {
+        background: var(--vscode-input-background, Canvas);
+        color: var(--vscode-input-foreground, CanvasText);
+        border: 1px solid
+          var(
+            --vscode-contrastBorder,
+            var(--vscode-input-border, var(--vscode-panel-border, currentColor))
+          );
+        font: inherit;
+      }
+      input:focus-visible {
+        outline: 1px solid var(--vscode-focusBorder, Highlight);
+      }
+      #events {
+        white-space: pre-wrap;
+      }
+      .status {
+        color: var(--vscode-descriptionForeground, GrayText);
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fieldset checkbox</h1>
+    <vscode-theme-selector></vscode-theme-selector>
+    <p>
+      The checkbox is placed on the top-right corner of the border, aligned with
+      the legend. It disables the content while unchecked and applies the
+      selected <code>unchecked-mode</code>. The height transition is animated.
+    </p>
+    <main>
+      <section>
+        <h2>Unchecked modes</h2>
+        <div class="modes">
+          <vscode-fieldset checkbox checkbox-label="Visible">
+            <fieldset>
+              <legend>Visible</legend>
+              <label>Value <input value="Disabled, still visible" /></label>
+              <p>Content stays in place while the checkbox is unchecked.</p>
+            </fieldset>
+          </vscode-fieldset>
+          <vscode-fieldset
+            checkbox
+            checked
+            checkbox-label="Collapsed"
+            unchecked-mode="collapsed"
+          >
+            <fieldset>
+              <legend>Collapsed</legend>
+              <label>Value <input /></label>
+              <p>The content is hidden, the header stays visible.</p>
+            </fieldset>
+          </vscode-fieldset>
+          <vscode-fieldset
+            checkbox
+            checked
+            checkbox-label="Minimal"
+            unchecked-mode="minimal"
+          >
+            <fieldset>
+              <legend>Minimal</legend>
+              <label>Value <input /></label>
+              <p>Only the checkbox and its label stay visible.</p>
+            </fieldset>
+          </vscode-fieldset>
+        </div>
+      </section>
+      <section>
+        <h2>Custom behavior</h2>
+        <p>
+          The <code>vsc-fieldset-checked-change</code> event is cancelable and
+          the <code>checkedChange</code> callback can return
+          <code>false</code> to skip the default enable, disable and collapse
+          handling.
+        </p>
+        <div class="modes">
+          <vscode-fieldset
+            id="callback-fieldset"
+            checkbox
+            checked
+            checkbox-label="Callback"
+            unchecked-mode="collapsed"
+          >
+            <fieldset>
+              <legend>Callback</legend>
+              <label>Value <input /></label>
+              <p class="status" id="callback-status">Callback state: enabled</p>
+            </fieldset>
+          </vscode-fieldset>
+          <vscode-fieldset
+            id="prevent-fieldset"
+            checkbox
+            checked
+            checkbox-label="Prevent default"
+          >
+            <fieldset>
+              <legend>Prevent default</legend>
+              <label>Value <input /></label>
+              <p>
+                The event listener calls <code>preventDefault()</code>, so the
+                content stays enabled.
+              </p>
+            </fieldset>
+          </vscode-fieldset>
+        </div>
+      </section>
+      <section>
+        <h2>Inside a tab panel</h2>
+        <vscode-tabs>
+          <vscode-tab-header>Section view</vscode-tab-header>
+          <vscode-tab-panel style="padding: 8px">
+            <vscode-fieldset
+              checkbox
+              checked
+              checkbox-label="Optional settings"
+              unchecked-mode="collapsed"
+            >
+              <fieldset>
+                <legend>Optional settings</legend>
+                <label>Name <input value="Draggable view" /></label>
+              </fieldset>
+            </vscode-fieldset>
+          </vscode-tab-panel>
+        </vscode-tabs>
+      </section>
+    </main>
+    <p id="events" aria-live="polite">Toggle a checkbox to see the event.</p>
+    <script>
+      const callbackFieldset = document.querySelector('#callback-fieldset');
+      const callbackStatus = document.querySelector('#callback-status');
+      document
+        .querySelector('#prevent-fieldset')
+        .addEventListener('vsc-fieldset-checked-change', (event) => {
+          event.preventDefault();
+          document.querySelector('#events').textContent =
+            'Default behavior skipped for "Prevent default".';
+        });
+      callbackFieldset.checkedChange = (checked) => {
+        callbackStatus.textContent = `Callback state: ${checked ? 'enabled' : 'disabled'}`;
+      };
+      document.addEventListener('vsc-fieldset-checked-change', (event) => {
+        const target = event.target;
+        document.querySelector('#events').textContent =
+          `"${target.checkboxLabel}" is now ${event.detail.checked ? 'checked' : 'unchecked'}` +
+          `${event.defaultPrevented ? ' (default prevented)' : ''}.`;
+      });
+    </script>
+  </body>
+</html>

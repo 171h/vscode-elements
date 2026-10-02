@@ -241,6 +241,12 @@
       .tabs-group-demo fieldset {
         min-height: 64px;
       }
+      .fieldset-checkbox-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+        align-items: start;
+      }
       .demo-card a {
         color: var(--vscode-textLink-foreground, #3794ff);
       }
@@ -670,6 +676,52 @@
                 >Insiders</vscode-radio
               ></vscode-radio-group
             >
+          </article>
+          <article
+            id="fieldset-checkbox-card"
+            class="demo-card wide"
+            data-components="vscode-fieldset vscode-checkbox"
+          >
+            <h3>Fieldset checkbox · section toggles</h3>
+            <p class="muted">
+              The checkbox sits on the top-right corner of the border, aligned
+              with the legend. Visible mode keeps the disabled content in place,
+              collapsed hides it below the header, and minimal keeps only the
+              checkbox. Height changes are animated.
+              <a href="./vscode-fieldset/checkbox.html"
+                >Open standalone test page</a
+              >
+            </p>
+            <div class="fieldset-checkbox-demo">
+              <vscode-fieldset checkbox checkbox-label="Visible">
+                <fieldset>
+                  <legend>Visible</legend>
+                  <label>Value <input value="Disabled, still visible" /></label>
+                </fieldset>
+              </vscode-fieldset>
+              <vscode-fieldset
+                checkbox
+                checked
+                checkbox-label="Collapsed"
+                unchecked-mode="collapsed"
+              >
+                <fieldset>
+                  <legend>Collapsed</legend>
+                  <label>Value <input /></label>
+                </fieldset>
+              </vscode-fieldset>
+              <vscode-fieldset
+                checkbox
+                checked
+                checkbox-label="Minimal"
+                unchecked-mode="minimal"
+              >
+                <fieldset>
+                  <legend>Minimal</legend>
+                  <label>Value <input /></label>
+                </fieldset>
+              </vscode-fieldset>
+            </div>
           </article>
           <article
             class="demo-card wide"

@@ -91,6 +91,24 @@ const styles = css`
     color: var(--vscode-disabledForeground, GrayText);
   }
 
+  /* Collapsed fieldset content, driven by the vscode-fieldset checkbox.
+     Elements are hidden and bare text nodes lose their font size, so the
+     header keeps the only visible part of the fieldset. The minimal mode
+     hides the whole fieldset and leaves the checkbox by itself. */
+  :where(vscode-fieldset[data-vsc-collapsed] > fieldset) {
+    font-size: 0;
+  }
+
+  :where(vscode-fieldset[data-vsc-collapsed] > fieldset) > :not(legend) {
+    display: none;
+  }
+
+  :where(
+    vscode-fieldset[data-vsc-collapsed][unchecked-mode='minimal'] > fieldset
+  ) {
+    display: none;
+  }
+
   @media (forced-colors: active) {
     :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) {
       border-color: CanvasText;
