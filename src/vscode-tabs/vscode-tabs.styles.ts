@@ -148,7 +148,12 @@ const styles: CSSResultGroup = [
       display: none;
     }
 
-    .overflow-button:hover {
+    .overflow-button:disabled {
+      cursor: default;
+      color: var(--vscode-disabledForeground, #cccccc80);
+    }
+
+    .overflow-button:hover:not(:disabled) {
       background: var(--vscode-toolbar-hoverBackground, #5a5d5d4f);
     }
 

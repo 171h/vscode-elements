@@ -824,3 +824,49 @@ describe('同数量隐藏集合替换', () => {
     await waitUntil(() => el.selectedIndex === 1);
   });
 });
+
+describe('无可操作隐藏项时的菜单入口', () => {
+  it('全禁用时阻止打开，动态禁用最后一项关闭菜单并恢复可见焦点', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 180px" overflow="menu">
+        <vscode-tab-header style="width: 100px">第一项</vscode-tab-header
+        ><vscode-tab-panel>内容</vscode-tab-panel>
+        <vscode-tab-header style="width: 100px" inert>第二项</vscode-tab-header
+        ><vscode-tab-panel>内容</vscode-tab-panel>
+      </vscode-tabs>
+    `);
+    const headers = el.querySelectorAll('vscode-tab-header');
+    const button =
+      el.shadowRoot!.querySelector<HTMLButtonElement>('.overflow-button')!;
+    const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
+    const layer = el.shadowRoot!.querySelector('.menu-layer')!;
+    await waitUntil(() => !button.hidden && button.disabled);
+    button.click();
+    button.dispatchEvent(
+      new MouseEvent('click', {bubbles: true, composed: true})
+    );
+    await elementUpdated(el);
+    expect(menu.show).to.equal(false);
+    expect(layer.matches(':popover-open')).to.equal(false);
+    expect(button.getAttribute('aria-expanded')).to.equal('false');
+    headers[1].inert = false;
+    await waitUntil(() => !button.disabled);
+    button.click();
+    await elementUpdated(menu);
+    await waitUntil(() => menu.matches(':focus-within'));
+    headers[1].inert = true;
+    await waitUntil(() => button.disabled && !menu.show);
+    expect(layer.matches(':popover-open')).to.equal(false);
+    expect(button.getAttribute('aria-expanded')).to.equal('false');
+    expect(document.activeElement).to.equal(headers[0]);
+    headers[1].inert = false;
+    await waitUntil(() => !button.disabled);
+    button.click();
+    await elementUpdated(menu);
+    expect(menu.show).to.equal(true);
+    expect(menu.data.map((item) => item.value)).to.deep.equal(['1']);
+    button.click();
+  });
+});

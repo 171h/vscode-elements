@@ -198,7 +198,20 @@ export class VscodeTabs extends VscElement {
     if (this.overflow !== 'menu') {
       this._closeMenu(false);
     }
+    if (this._menuOpen && !this._hasMenuItems) {
+      const hadFocus = this.shadowRoot!.querySelector(
+        'vscode-context-menu'
+      )!.matches(':focus-within');
+      this._closeMenu(false);
+      if (hadFocus) {
+        tabStop?.focus({preventScroll: true});
+      }
+    }
     this._revealHeader(this._tabHeaders[this.selectedIndex]);
+  }
+
+  private get _hasMenuItems() {
+    return this._hiddenHeaders.some((header) => !header.inert);
   }
 
   private _setOverflowContentInert(header: VscodeTabHeader, hidden: boolean) {
@@ -254,6 +267,9 @@ export class VscodeTabs extends VscElement {
   }
 
   private async _openMenu() {
+    if (!this._hasMenuItems) {
+      return;
+    }
     const layer = this.shadowRoot!.querySelector<HTMLElement>('.menu-layer')!;
     const menu = this.shadowRoot!.querySelector<VscodeContextMenu>(
       'vscode-context-menu'
@@ -654,6 +670,7 @@ export class VscodeTabs extends VscElement {
         <button
           class="overflow-button"
           ?hidden=${this._hiddenHeaders.length === 0}
+          ?disabled=${!this._hasMenuItems}
           aria-label="更多标签页"
           aria-haspopup="menu"
           aria-expanded=${String(this._menuOpen)}
