@@ -40,6 +40,18 @@ export class VscodeContextMenu extends VscElement {
 
   @property({type: Array, attribute: false})
   set data(data: MenuItemData[]) {
+    const identity = JSON.stringify(
+      data.map(({label, value, separator, keybinding}) => [
+        label,
+        value,
+        !!separator,
+        keybinding,
+      ])
+    );
+    if (identity !== this._dataIdentity) {
+      this._selectedClickableItemIndex = -1;
+    }
+    this._dataIdentity = identity;
     this._data = data;
 
     const indexes: number[] = [];
@@ -149,6 +161,7 @@ export class VscodeContextMenu extends VscElement {
   private _wrapperEl!: HTMLDivElement;
 
   private _data: MenuItemData[] = [];
+  private _dataIdentity = '';
 
   private _clickableItemIndexes: number[] = [];
 

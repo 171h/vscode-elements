@@ -788,3 +788,39 @@ describe('打开菜单的动态定位', () => {
     expect(menu.show).to.equal(false);
   });
 });
+
+describe('同数量隐藏集合替换', () => {
+  it('程序激活其他标签后，旧高亮不能误激活新集合中的标签', async () => {
+    const el = await fixture<VscodeTabs>(html`
+      <vscode-tabs style="width: 280px" overflow="menu">
+        ${[1, 2, 3, 4].map(
+          (i) =>
+            html`<vscode-tab-header style="width: 100px"
+                >标题 ${i}</vscode-tab-header
+              ><vscode-tab-panel>内容 ${i}</vscode-tab-panel>`
+        )}
+      </vscode-tabs>
+    `);
+    const menu = el.shadowRoot!.querySelector<VscodeContextMenu>(
+      'vscode-context-menu'
+    )!;
+    await waitUntil(() => menu.data.length === 2);
+    el.shadowRoot!.querySelector<HTMLButtonElement>(
+      '.overflow-button'
+    )!.click();
+    await elementUpdated(menu);
+    const press = (key: string) =>
+      menu.dispatchEvent(
+        new KeyboardEvent('keydown', {key, bubbles: true, composed: true})
+      );
+    press('ArrowDown');
+    el.selectedIndex = 2;
+    await waitUntil(() => menu.data[0].value === '1');
+    press('Enter');
+    expect(el.selectedIndex).to.equal(2);
+    expect(menu.show).to.equal(true);
+    press('ArrowDown');
+    press('Enter');
+    await waitUntil(() => el.selectedIndex === 1);
+  });
+});

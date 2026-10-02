@@ -201,3 +201,59 @@ describe('菜单外部点击监听器生命周期', () => {
     expect(el.show).to.equal(false);
   });
 });
+
+describe('菜单数据身份变化', () => {
+  it('等价数据保留高亮，同长度替换或分隔项变化清除高亮', async () => {
+    const el = await fixture<VscodeContextMenu>(
+      html`<vscode-context-menu show></vscode-context-menu>`
+    );
+    const press = (key: string) =>
+      el.dispatchEvent(
+        new KeyboardEvent('keydown', {key, bubbles: true, composed: true})
+      );
+    let selected = '';
+    el.addEventListener('vsc-context-menu-select', (event) => {
+      selected = event.detail.value;
+    });
+    el.data = [
+      {label: '甲', value: 'a'},
+      {label: '乙', value: 'b'},
+    ];
+    await el.updateComplete;
+    press('ArrowDown');
+    el.data = el.data.map((item) => ({...item}));
+    await el.updateComplete;
+    press('Enter');
+    expect(selected).to.equal('a');
+    selected = '';
+    el.show = true;
+    await el.updateComplete;
+    press('ArrowDown');
+    el.data = [
+      {label: '丙', value: 'c'},
+      {label: '乙', value: 'b'},
+    ];
+    await el.updateComplete;
+    press('Enter');
+    expect(selected).to.equal('');
+    await el.updateComplete;
+    press('ArrowDown');
+    const mutated = el.data;
+    mutated[0].value = 'd';
+    el.data = mutated;
+    await el.updateComplete;
+    press('Enter');
+    expect(selected).to.equal('');
+    await el.updateComplete;
+    press('ArrowDown');
+    el.data = [{separator: true}, {label: '乙', value: 'b'}];
+    await el.updateComplete;
+    press('Enter');
+    expect(selected).to.equal('');
+    await el.updateComplete;
+    press('ArrowDown');
+    await el.updateComplete;
+    press('Enter');
+    expect(selected).to.equal('b');
+  });
+});
