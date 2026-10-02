@@ -25,69 +25,69 @@ enum FormGroupLayout {
 type CheckboxOrRadioGroup = VscodeRadioGroup | VscodeCheckboxGroup;
 
 /**
- * How long the modified state of a form is highlighted. A number is
- * interpreted as milliseconds, a string as CSS time, e.g. `2500` or `'2.5s'`.
- * The `forever` value keeps the highlight until another modified form or a
- * `reset()` call removes it.
+ * 表单已修改状态的高亮持续时间。数字按毫秒解析，
+ * 字符串按 CSS 时间解析，例如 `2500` 或 `'2.5s'`。
+ * `forever` 保持高亮，直到修改其他表单或调用
+ * `reset()` 将其移除。
  */
 export type FormMarkDuration = MarkDuration | typeof FOREVER;
 
 /**
- * The automatic marking ignores a new modification for this long. The events
- * which belong to the same keystroke, and the keystrokes which follow each
- * other quickly, would otherwise restart the countdown on every event, so the
- * countdown is restarted about twice a second at the most.
+ * 自动标记在此时间内忽略新修改。同一按键触发的多个事件，
+ * 以及连续快速按键，原本会在每次事件发生时
+ * 重新开始倒计时；设置间隔后，
+ * 每秒最多重新开始约两次。
  *
- * The delay is shortened by {@link VscodeFormContainer._automaticMarkDelay}
- * when the duration of the state is shorter, otherwise the countdown would
- * expire before a new modification is able to restart it and the state would
- * blink while the user types.
+ * 当状态持续时间较短时，{@link VscodeFormContainer._automaticMarkDelay}
+ * 会缩短此间隔，否则倒计时可能在新修改能够重启它之前
+ * 就已过期，
+ * 导致输入时状态闪烁。
  */
 const RE_MARK_DELAY = 500;
 
 /**
- * The animation length of the durations which cannot be expressed as a CSS
- * time, about a day. It is not an infinite animation: the colors are resolved
- * from the keyframes and the animation rests on the peak color, so a
- * `forever` state is visible and it is removed only by another modified form
- * or by `reset()`.
+ * 无法表示为 CSS 时间的持续时间使用约一天的动画时长。
+ * 这不是无限动画：从关键帧解析颜色，
+ * 并将动画停留在峰值颜色，
+ * 使 `forever` 状态保持可见，直到修改其他表单
+ * 或调用 `reset()` 移除。
  */
 const UNBOUNDED_DURATION = 86400000;
 
 /**
- * The state of a single `vscode-form-container` at the time of the query.
+ * 查询时单个 `vscode-form-container` 的状态。
  */
 export interface FormState {
-  /** The form container itself. */
+  /** 表单容器本身。 */
   element: VscodeFormContainer;
-  /** The `id` attribute of the container, or an empty string. */
+  /** 容器的 `id` 特性，未设置时为空字符串。 */
   id: string;
-  /** The `name` attribute of the container, or an empty string. */
+  /** 容器的 `name` 特性，未设置时为空字符串。 */
   name: string;
-  /** Whether the form is currently highlighted as modified. */
+  /** 表单当前是否以已修改状态高亮。 */
   dirty: boolean;
-  /** The duration used when the form is marked as modified. */
+  /** 表单标记为已修改时使用的持续时间。 */
   markDuration: FormMarkDuration;
 }
 
 /**
- * Detail of the `vsc-dirty-change` event, dispatched when the modified
- * highlight of a form is turned on or off.
+ * 表单已修改高亮开启或关闭时派发的
+ * `vsc-dirty-change` 事件详情。
  */
 export interface FormDirtyChangeDetail {
   form: VscodeFormContainer;
   dirty: boolean;
 }
 
-/** Every form container that has been connected, in creation order. */
+/** 按创建顺序保存所有已连接的表单容器。 */
 const formMarkRegistry = new Set<VscodeFormContainer>();
 
 const collectFormContainers = (
   root: Document | ShadowRoot | Element,
   result: Set<VscodeFormContainer> = new Set()
 ): Set<VscodeFormContainer> => {
-  // The walk starts below the root, so the root itself is not returned by the
-  // tree walker.
+  // 遍历从根节点下方开始，因此树遍历器
+  // 不会返回根节点本身。
   if (root instanceof VscodeFormContainer) {
     result.add(root);
   }
@@ -126,37 +126,37 @@ const isInRoot = (
 /**
  * @tag vscode-form-container
  *
- * The modified state of the form is shown on its controls with a light blue
- * wash. The colors follow the kind of the VS Code theme: `#eff3ff` is the
- * resting color of the light themes, the dark and the high contrast themes use
- * a color of the same hue with the lightness of their surfaces. A control
- * which shows an error keeps its error colors, the modified state is not
- * painted on it.
+ * 表单的已修改状态通过控件上的浅蓝色背景显示。
+ * 颜色随 VS Code 主题类型变化：浅色主题静止颜色为 `#eff3ff`，
+ * 深色及高对比度主题使用相同色相，
+ * 并匹配各自表面的明度。
+ * 显示错误的控件保留错误颜色，
+ * 不在其上绘制已修改状态。
  *
- * @fires {CustomEvent<FormDirtyChangeDetail>} vsc-dirty-change - Dispatched when the modified state of the form changes, and not when the countdown of an already modified form is restarted. The event does not bubble, its `detail` contains the `form` and the new `dirty` value. The state of a modified form which is removed from the DOM becomes `false` and the event is dispatched as well.
- * @cssprop [--vsc-form-control-dirty-background=#eff3ff] - Resting background color of the modified form controls
- * @cssprop [--vsc-form-control-dirty-background-peak=#dbe4ff] - Background color of the modified form controls at the beginning of the animation
- * @cssprop [--vsc-form-control-dirty-border-color=#93a9f0] - Border color of the modified form controls
- * @cssprop [--vsc-form-control-dirty-ring-color=#6784de] - Ring color of the modified checkbox and radio buttons
- * @cssprop [--vsc-form-control-dirty-duration=5000ms] - Length of the animation of the modified controls. It is written on the container from the `markDuration` property, so a value of an ancestor of the container does not apply. The countdown of the state follows `markDuration` as well.
+ * @fires {CustomEvent<FormDirtyChangeDetail>} vsc-dirty-change - 表单已修改状态变化时派发；已修改表单仅重启倒计时时不派发。事件不冒泡，`detail` 包含 `form` 与新的 `dirty` 值。已修改表单移出 DOM 后状态变为 `false`，同样派发事件。
+ * @cssprop [--vsc-form-control-dirty-background=#eff3ff] - 已修改表单控件的静止背景色
+ * @cssprop [--vsc-form-control-dirty-background-peak=#dbe4ff] - 已修改表单控件在动画开始时的背景色
+ * @cssprop [--vsc-form-control-dirty-border-color=#93a9f0] - 已修改表单控件的边框颜色
+ * @cssprop [--vsc-form-control-dirty-ring-color=#6784de] - 已修改复选框和单选按钮的外环颜色
+ * @cssprop [--vsc-form-control-dirty-duration=5000ms] - 已修改控件的动画时长，由容器的 `markDuration` 属性写入，因此容器祖先上的值不生效。状态倒计时也遵循 `markDuration`。
  */
 @customElement('vscode-form-container')
 export class VscodeFormContainer extends VscElement {
   static override styles = styles;
 
-  /** Duration of the highlight when the `mark-duration` attribute is absent. */
+  /** 未设置 `mark-duration` 特性时的高亮持续时间。 */
   static defaultMarkDuration: FormMarkDuration = 5000;
 
   /**
-   * Every form container of a root with its current modified state. The nested
-   * form containers are included as well, and the root itself when it is a
-   * form container. A `Document` returns the forms of the document, the forms
-   * of a shadow root are returned when the shadow root is passed.
+   * 获取根节点内所有表单容器及当前已修改状态，包括
+   * 嵌套表单；根节点本身为表单容器时也包含在结果中。
+   * 传入 `Document` 时返回该文档中的表单，
+   * 传入 Shadow Root 时返回其内部表单。
    *
-   * The query walks the whole tree and it descends into the shadow roots, so it
-   * is not cheap and it should not be called on a hot path.
+   * 查询遍历整棵树并深入 Shadow Root，开销较大，
+   * 不应在频繁执行的路径上调用。
    *
-   * @param root Defaults to the whole document.
+   * @param root 默认为整个文档。
    */
   static getFormStates(
     root: Document | ShadowRoot | Element = document
@@ -192,14 +192,14 @@ export class VscodeFormContainer extends VscElement {
   breakpoint = 490;
 
   /**
-   * How long the form stays highlighted after it has been modified. A number
-   * is interpreted as milliseconds, a string as CSS time (`'2.5s'`), the
-   * `forever` value disables the automatic reset. A negative duration is
-   * interpreted as zero. Defaults to
-   * `VscodeFormContainer.defaultMarkDuration`, 5 seconds.
+   * 表单修改后的高亮持续时间。数字按毫秒解析，
+   * 字符串按 CSS 时间解析（例如 `'2.5s'`）；
+   * `forever` 禁用自动重置。负数按零解析。
+   * 默认值为
+   * `VscodeFormContainer.defaultMarkDuration`，即 5 秒。
    *
-   * An empty value, e.g. the bare `mark-duration` attribute, and the removal
-   * of the attribute restore the default duration as well.
+   * 空值（例如不带值的 `mark-duration` 特性）
+   * 或移除该特性同样会恢复默认持续时间。
    */
   @property({
     attribute: 'mark-duration',
@@ -213,11 +213,11 @@ export class VscodeFormContainer extends VscElement {
   markDuration: FormMarkDuration = VscodeFormContainer.defaultMarkDuration;
 
   /**
-   * When the property is `false`, the form is not marked automatically on user
-   * interaction. It can still be marked by calling `mark()`. The attribute is
-   * `markable="false"` to turn the automatic marking off, and the state is not
-   * written back to the DOM, so `vscode-form-container[markable]` matches the
-   * containers with the attribute only.
+   * 属性为 `false` 时，不因用户交互自动标记表单，
+   * 但仍可调用 `mark()` 标记。使用
+   * `markable="false"` 特性关闭自动标记；状态
+   * 不会写回 DOM，因此 `vscode-form-container[markable]`
+   * 仅匹配显式带有此特性的容器。
    */
   @property({
     attribute: 'markable',
@@ -234,7 +234,7 @@ export class VscodeFormContainer extends VscElement {
 
   private _lastMarkTime = -Infinity;
 
-  /** Watches the form while it is modified, so its new controls join the state. */
+  /** 表单处于已修改状态时监听变化，使新增控件加入该状态。 */
   private _controlObserver: MutationObserver | null = null;
 
   private _firstUpdateComplete = false;
@@ -251,7 +251,7 @@ export class VscodeFormContainer extends VscElement {
 
   private _currentFormGroupLayout!: FormGroupLayout;
 
-  /** Whether the form is currently highlighted as modified. */
+  /** 表单当前是否以已修改状态高亮。 */
   get dirty(): boolean {
     return this._dirty;
   }
@@ -281,7 +281,7 @@ export class VscodeFormContainer extends VscElement {
       this._activateResponsiveLayout();
     }
 
-    // The state can be set before the element is rendered.
+    // 状态可在元素渲染前设置。
     this._reflectDirty();
     this._reflectMarkDuration();
   }
@@ -297,13 +297,13 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * Highlights the form as modified and starts the countdown of the reset.
-   * Every other form of the same root is restored to its normal state
-   * immediately. The call always restarts the countdown, the delay which
-   * ignores the events of the automatic marking does not apply to it.
+   * 以已修改状态高亮表单，并开始重置倒计时。
+   * 同一根节点内的其他表单立即恢复正常状态。
+   * 每次调用都会重启倒计时，
+   * 自动标记的事件忽略间隔不适用于直接调用。
    *
-   * The `vsc-dirty-change` event is dispatched only when the form was not
-   * modified yet: the restart of the countdown does not change the state.
+   * 仅在表单之前尚未修改时派发 `vsc-dirty-change` 事件，
+   * 因为重启倒计时不会改变状态。
    */
   mark(): void {
     const wasDirty = this._dirty;
@@ -324,7 +324,7 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * Removes the modified highlight immediately and restores the normal state.
+   * 立即移除已修改高亮，恢复正常状态。
    */
   reset(): void {
     this._clearResetTimer();
@@ -341,8 +341,8 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * The modified state is shown by the form controls of the form. The
-   * container itself keeps its own background.
+   * 已修改状态显示在表单控件上，
+   * 容器本身保留自己的背景。
    */
   private _reflectDirty(): void {
     if (this._dirty) {
@@ -353,8 +353,8 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * The controls which are added to the form while it is modified show the
-   * state as well. The observer runs only while the state is on the screen.
+   * 表单已修改期间新增的控件也显示该状态。
+   * 观察器仅在状态可见时运行。
    */
   private _observeControls(): void {
     if (this._controlObserver) {
@@ -376,8 +376,8 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * The animation of the modified state lasts as long as the state, so the
-   * color changes gradually and the end of the countdown is visible.
+   * 已修改状态的动画时长与状态持续时间一致，
+   * 使颜色逐渐变化，并体现倒计时结束。
    */
   private _reflectMarkDuration(): void {
     const cssTime = toCssTime(this.markDuration);
@@ -400,8 +400,8 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * The state is reflected to the DOM by the next update, so the event waits
-   * for it as well.
+   * 状态在下一次更新时反射到 DOM，
+   * 因此事件也等待该更新完成。
    */
   private _dispatchDirtyChangeWhenUpdated(dirty: boolean): void {
     if (this._firstUpdateComplete) {
@@ -413,8 +413,8 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * A form restores only the forms that belong to the same root, so the
-   * documents and the shadow roots do not interfere with each other.
+   * 表单仅恢复同一根节点下的表单，
+   * 不同文档和 Shadow Root 互不干扰。
    */
   private _unmarkOthers(): void {
     const root = this.getRootNode();
@@ -449,9 +449,9 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * Whether the event comes from a form control of this form. The nearest form
-   * container owns a control, so the form does not mark itself when the event
-   * comes from a control of a nested form container.
+   * 判断事件是否来自当前表单的控件。控件归属最近的表单容器，
+   * 因此嵌套表单控件触发事件时，
+   * 外层表单不会标记自身。
    */
   private _markableFormControl(ev: Event): boolean {
     if (!this.markable) {
@@ -478,12 +478,12 @@ export class VscodeFormContainer extends VscElement {
   }
 
   /**
-   * The interval which ignores a new modification of the automatic marking.
+   * 自动标记忽略新修改的间隔。
    *
-   * It is never longer than the half of the duration of the state: the
-   * countdown is restarted before it can expire while the user keeps modifying
-   * the form, so a duration which is shorter than `RE_MARK_DELAY` does not make
-   * the state blink. A duration which never expires keeps the standard delay.
+   * 此间隔不超过状态持续时间的一半，
+   * 用户持续修改表单时，倒计时会在过期前重启，
+   * 因此短于 `RE_MARK_DELAY` 的持续时间
+   * 不会使状态闪烁。永久状态使用标准间隔。
    */
   private _automaticMarkDelay(): number {
     const milliseconds = toMilliseconds(this.markDuration);
@@ -498,8 +498,8 @@ export class VscodeFormContainer extends VscElement {
       return;
     }
 
-    // The events of a keystroke and the keystrokes which follow each other
-    // quickly do not restart the countdown.
+    // 同一次按键的多个事件和连续快速按键
+    // 不会重启倒计时。
     if (
       this.dirty &&
       performance.now() - this._lastMarkTime < this._automaticMarkDelay()

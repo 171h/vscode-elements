@@ -8,7 +8,7 @@ export function calculateColumnWidths(
 ): Percent[] {
   const result = [...widths];
 
-  // No-op for invalid splitter position or zero delta
+  // 分隔位置无效或位移为零时不执行操作
   if (delta === 0 || splitterIndex < 0 || splitterIndex >= widths.length - 1) {
     return result;
   }
@@ -19,21 +19,21 @@ export function calculateColumnWidths(
   const leftIndices: number[] = [];
   const rightIndices: number[] = [];
 
-  // Collect column indices to the left of the splitter (inclusive)
+  // 收集分隔条左侧的列索引，包含当前列
   for (let i = splitterIndex; i >= 0; i--) {
     leftIndices.push(i);
   }
 
-  // Collect column indices to the right of the splitter
+  // 收集分隔条右侧的列索引
   for (let i = splitterIndex + 1; i < widths.length; i++) {
     rightIndices.push(i);
   }
 
-  // One side shrinks, the other grows depending on drag direction
+  // 根据拖动方向，一侧缩小，另一侧增大
   const shrinkingSide = delta > 0 ? rightIndices : leftIndices;
   const growingSide = delta > 0 ? leftIndices : rightIndices;
 
-  // Calculate total shrinkable space respecting minWidth
+  // 计算遵循 minWidth 的总可缩小空间
   let totalAvailable: Percent = percent(0);
 
   for (const i of shrinkingSide) {
@@ -41,12 +41,12 @@ export function calculateColumnWidths(
     totalAvailable = percent(totalAvailable + available);
   }
 
-  // Abort if the requested delta cannot be fully satisfied
+  // 请求位移无法完全满足时中止
   if (totalAvailable < remaining) {
     return result;
   }
 
-  // Shrink columns sequentially until the delta is fully consumed
+  // 依次缩小列，直到完全消耗请求位移
   for (const i of shrinkingSide) {
     if (remaining === 0) {
       break;
@@ -59,7 +59,7 @@ export function calculateColumnWidths(
     remaining = percent(remaining - take);
   }
 
-  // Apply the exact opposite delta to the growing side
+  // 对增大侧应用大小相同、方向相反的位移
   let toAdd: Percent = percent(absDelta);
 
   for (const i of growingSide) {
@@ -68,7 +68,7 @@ export function calculateColumnWidths(
     }
 
     result[i] = percent(result[i] + toAdd);
-    toAdd = percent(0); // all growth is applied to the nearest column
+    toAdd = percent(0); // 全部增量应用于最近的列
   }
 
   return result;

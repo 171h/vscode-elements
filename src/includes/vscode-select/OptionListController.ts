@@ -28,7 +28,7 @@ export class OptionListController implements ReactiveController {
 
   hostConnected(): void {}
 
-  //#region getters/setters
+  //#region 访问器
 
   get activeIndex(): number {
     return this._activeIndex;
@@ -176,7 +176,7 @@ export class OptionListController implements ReactiveController {
 
   //#endregion
 
-  //#region public functions
+  //#region 公共函数
 
   populate(options: Option[]) {
     this._indexByValue.clear();
@@ -430,7 +430,7 @@ export class OptionListController implements ReactiveController {
 
   //#endregion
 
-  //#region private functions
+  //#region 私有函数
 
   private _searchByPattern(text: string) {
     let result: SearchResult;

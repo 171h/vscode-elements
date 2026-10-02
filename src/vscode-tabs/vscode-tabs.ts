@@ -19,12 +19,12 @@ export type VscTabsLayoutChangeEvent = CustomEvent<{
 /**
  * @tag vscode-tabs
  *
- * @slot - Default slot. It is used for tab panels.
- * @slot header - Slot for tab headers.
- * @slot addons - Right aligned area in the header.
+ * @slot - 默认插槽，用于标签页面板。
+ * @slot header - 标签页标题插槽。
+ * @slot addons - 标题中右对齐的区域。
  *
- * @fires {VscTabSelectEvent} vsc-tabs-select - Dispatched when the active tab is changed
- * @fires {VscTabsLayoutChangeEvent} vsc-tabs-layout-change - Dispatched after moving tabs or views
+ * @fires {VscTabSelectEvent} vsc-tabs-select - 激活标签页变化时派发
+ * @fires {VscTabsLayoutChangeEvent} vsc-tabs-layout-change - 移动标签页或视图后派发
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]
@@ -36,7 +36,7 @@ export type VscTabsLayoutChangeEvent = CustomEvent<{
 export class VscodeTabs extends VscElement {
   static override styles = styles;
   /**
-   * Panel-like look
+   * 面板风格的外观
    */
   @property({type: Boolean, reflect: true})
   panel = false;

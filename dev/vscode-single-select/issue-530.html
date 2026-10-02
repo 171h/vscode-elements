@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -29,7 +29,7 @@
     </style>
   </head>
   <body>
-    <h1>vscode-single-select stale index repro</h1>
+    <h1>vscode-single-select 索引过期问题复现</h1>
     <div class="row" id="size-demo-target">
       <vscode-single-select id="sel" combobox></vscode-single-select>
     </div>
@@ -78,7 +78,7 @@
       };
 
       document.getElementById('shrink').onclick = async () => {
-        // React-like rerender: only placeholder remains
+        // 模拟 React 重新渲染：仅保留占位选项
         sel.innerHTML = '';
         const only = document.createElement('vscode-option');
         only.value = '';

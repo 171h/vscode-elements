@@ -1,126 +1,101 @@
-# Multi-select face labels
+# 多选框选中标签
 
-The face of `vscode-multi-select` displays the labels of the selected options
-instead of a single `N Selected` counter. The labels are shown in the order in
-which the options were selected.
+`vscode-multi-select` 的展示区域按选择顺序显示选中项标签，替代单一的选中数量计数。
 
-This document describes which text is displayed for an option, how the
-`abbreviation` attribute of `vscode-option` shortens it, and how the component
-behaves when the labels do not fit into the face.
+本文说明选项文字的显示规则、`vscode-option` 的 `abbreviation` 缩写属性，以及标签无法完全放入展示区域时的行为。
 
-## Display priority
+## 显示优先级
 
-An option can provide up to three texts. The face uses the first one which is
-available:
+一个选项最多提供三种文字，展示区域按以下优先级使用首个可用值：
 
-| Priority | Source | Example | Face | Option list | Tooltip |
-| --- | --- | --- | --- | --- | --- |
-| 1 | `abbreviation` attribute or property of `vscode-option` | `DB` | yes | no | no |
-| 2 | Label: the text content of `vscode-option`, or the `label` field of the `options` property | `Database` | yes | yes | yes |
-| 3 | `value` attribute or property | `db` | yes | no | yes |
+| 优先级 | 来源                                                                 | 示例     | 展示区域 | 选项列表 | 工具提示 |
+| ------ | -------------------------------------------------------------------- | -------- | -------- | -------- | -------- |
+| 1      | `vscode-option` 的 `abbreviation` 特性或属性                         | `DB`     | 是       | 否       | 否       |
+| 2      | 标签：`vscode-option` 的文本内容，或 `options` 属性中的 `label` 字段 | `数据库` | 是       | 是       | 是       |
+| 3      | `value` 特性或属性                                                   | `db`     | 是       | 否       | 是       |
 
-The abbreviation is only used in the face of `vscode-multi-select`. Everywhere
-else - the option list of the dropdown, the tooltip of the selected labels, and
-the face of `vscode-single-select` - the complete label is displayed.
+缩写仅用于 `vscode-multi-select` 的展示区域。下拉选项列表、选中标签的工具提示和 `vscode-single-select` 的展示区域均显示完整标签。
 
-## Abbreviate an option
+## 设置选项缩写
 
-Add the `abbreviation` attribute to a `vscode-option` element:
+为 `vscode-option` 添加 `abbreviation` 特性：
 
 ```html
 <vscode-multi-select>
-  <vscode-option abbreviation="DB">Database</vscode-option>
-  <vscode-option abbreviation="SRV">Server</vscode-option>
-  <vscode-option>Cache</vscode-option>
+  <vscode-option abbreviation="DB">数据库</vscode-option>
+  <vscode-option abbreviation="SRV">服务器</vscode-option>
+  <vscode-option>缓存</vscode-option>
 </vscode-multi-select>
 ```
 
-With `Database` and `Server` selected, the face displays `DB` and `SRV`. An
-option without an abbreviation, such as `Cache`, is displayed with its label.
+选中数据库与服务器时，展示区域显示 `DB` 和 `SRV`。没有缩写的选项（如缓存）显示标签本身。
 
-The same field is available when the options are set with the `options`
-property, which is useful for frameworks that render the component from data:
+通过 `options` 属性设置选项时，也可使用同一字段，适合基于数据渲染组件的框架：
 
 ```js
 const select = document.querySelector('vscode-multi-select');
 
 select.options = [
-  {label: 'Database', value: 'db', abbreviation: 'DB', selected: true},
-  {label: 'Server', value: 'srv', abbreviation: 'SRV', selected: true},
+  {label: '数据库', value: 'db', abbreviation: 'DB', selected: true},
+  {label: '服务器', value: 'srv', abbreviation: 'SRV', selected: true},
 ];
 ```
 
-The property can also be changed at runtime. The face updates as soon as the
-option reports its new state:
+可在运行时修改该属性；选项报告新状态后，展示区域立即更新：
 
 ```js
 const option = document.querySelector('vscode-option');
 
-option.abbreviation = 'DB'; // the face displays "DB" instead of "Database"
-option.abbreviation = ''; // the face falls back to the label
+option.abbreviation = 'DB'; // 展示区域显示 "DB"，替代“数据库”
+option.abbreviation = ''; // 展示区域恢复为标签
 ```
 
-Removing the abbreviation - by setting it to an empty string or by removing the
-attribute - restores the label, so the abbreviation is always optional.
+设置空字符串或移除特性即可恢复完整标签，缩写始终是可选的。
 
-## Collapsed labels and tooltip
+## 标签折叠与工具提示
 
-The labels are placed in a single row which is kept inside the face. When the
-selected labels do not fit:
+标签排列在展示区域内的单行中。无法容纳全部选中标签时：
 
-1. as many complete labels are displayed as fit into the row,
-2. the remaining labels are collapsed and summarized by a `+N` badge, where `N`
-   is the number of the collapsed labels,
-3. the complete list of the selected options is available as a tooltip when the
-   mouse hovers over the row.
+1. 尽可能显示完整标签。
+2. 剩余标签折叠为 `+N` 徽章，`N` 为折叠数量。
+3. 鼠标悬停于该行时，工具提示提供完整的选中项列表。
 
 ```html
 <vscode-multi-select style="width: 160px">
-  <vscode-option selected>Apple</vscode-option>
-  <vscode-option selected>Banana</vscode-option>
-  <vscode-option selected>Cherry</vscode-option>
-  <vscode-option selected>Strawberry</vscode-option>
+  <vscode-option selected>苹果</vscode-option>
+  <vscode-option selected>香蕉</vscode-option>
+  <vscode-option selected>樱桃</vscode-option>
+  <vscode-option selected>草莓</vscode-option>
 </vscode-multi-select>
 ```
 
-The face displays `Apple` `Banana` `+2`, and hovering it shows:
+若只能容纳前两个标签，展示区域显示“苹果”“香蕉”和 `+2`；悬停时显示：
 
+```text
+苹果
+香蕉
+樱桃
+草莓
 ```
-Apple
-Banana
-Cherry
-Strawberry
-```
 
-The number of the selected options is always readable: it is the number of the
-displayed labels plus `N`. The tooltip is only added when it contains
-information which the face does not show:
+选中项总数始终可由可见标签数加 `N` 得出。仅当工具提示包含展示区域未显示的信息时，才添加工具提示：
 
-- at least one label is collapsed into the `+N` badge,
-- a displayed label is truncated with an ellipsis because it is longer than the
-  face,
-- at least one displayed label is an abbreviation, so the tooltip reveals the
-  complete labels.
+- 至少一个标签折叠为 `+N` 徽章。
+- 至少一个标签过长，使用省略号截断。
+- 至少一个标签使用缩写，需要提供完整标签。
 
-A label which is too long for the available space is displayed truncated rather
-than being collapsed, so a single long selection is still visible.
+单个标签超过可用宽度时，会截断而非完全折叠，使单个较长选中项仍然可见。
 
-## Behaviour notes
+## 行为说明
 
-- The fitting is recalculated when the component is resized, so the collapsed
-  labels reappear when the face becomes wider.
-- The abbreviation is not used for searching. The combobox mode filters the
-  options by their complete labels.
-- The labels follow the order of the selection. Options which are marked as
-  `selected` in the markup are listed in the order of the option elements.
-- The height of the face does not depend on the number of the selected options,
-  and it is the same for the `small`, `medium`, and `large` sizes as before.
+- 组件尺寸变化时重新计算布局，展示区域变宽后，折叠标签可重新显示。
+- 搜索不使用缩写，组合框模式按完整标签过滤选项。
+- 标签跟随选择顺序；在标记中设置 `selected` 的选项按元素顺序显示。
+- 展示区域高度不受选中项数量影响，`small`、`medium` 和 `large` 的高度保持原有行为。
 
-## Live example
+## 交互示例
 
-The `dev/vscode-multi-select/selected-labels.html` page contains the empty,
-partially selected, collapsed, truncated, and abbreviated cases in both the
-select and the combobox mode. Start the development server and open the page:
+`dev/vscode-multi-select/selected-labels.html` 展示选择模式与组合框模式中的空选中、部分选中、折叠、截断和缩写场景。启动开发服务器并打开该页面：
 
 ```bash
 npm run start

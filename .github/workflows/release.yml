@@ -1,7 +1,7 @@
 name: Release
 
-# `npm run release` creates and pushes a tag after updating the version and
-# CHANGELOG. Pushing the tag publishes it; manual dispatch allows retries.
+# `npm run release` 更新版本与变更日志后创建并推送标签。
+# 推送标签会触发发布；手动运行工作流可重试发布。
 on:
   push:
     tags:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       version_tag:
-        description: 'Existing release tag to publish, for example v2.6.0'
+        description: '要发布的已有版本标签，例如 v2.6.0'
         required: true
         type: string
 

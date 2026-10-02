@@ -8,7 +8,7 @@ import styles from './vscode-button.styles.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
 
 /**
- * Clickable element that are used to trigger actions.
+ * 用于触发操作的可点击元素。
  *
  * @tag vscode-button
  *
@@ -16,19 +16,19 @@ import {ifDefined} from 'lit/directives/if-defined.js';
  * @cssprop [--vscode-button-foreground=#ffffff]
  * @cssprop [--vscode-button-border=var(--vscode-button-background, rgba(255, 255, 255, 0.07))]
  * @cssprop [--vscode-button-hoverBackground=#026ec1]
- * @cssprop [--vscode-font-family=sans-serif] - A sans-serif font type depends on the host OS.
+ * @cssprop [--vscode-font-family=sans-serif] - 无衬线字体，具体字体取决于宿主操作系统。
  * @cssprop [--vscode-font-size=13px]
  * @cssprop [--vscode-font-weight=normal]
  * @cssprop [--vscode-button-secondaryForeground=#cccccc]
  * @cssprop [--vscode-button-secondaryBackground=#313131]
  * @cssprop [--vscode-button-secondaryHoverBackground=#3c3c3c]
  * @cssprop [--vscode-focusBorder=#0078d4]
- * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - Font size of the button label. It is set automatically by the `size` property.
+ * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - 按钮标签字号，由 `size` 属性自动设置。
  *
- * @csspart base - The main content area of the component.
+ * @csspart base - 组件的主要内容区域。
  *
- * @slot content-before - Slot before the main content.
- * @slot content-after - Slot after the main content.
+ * @slot content-before - 主内容前的插槽。
+ * @slot content-after - 主内容后的插槽。
  */
 @customElement('vscode-button')
 export class VscodeButton extends VscElement {
@@ -45,14 +45,14 @@ export class VscodeButton extends VscElement {
   override tabIndex = 0;
 
   /**
-   * Button has a less prominent style.
+   * 使用较弱的视觉强调样式。
    */
   @property({type: Boolean, reflect: true})
   secondary = false;
 
   /**
-   * Makes the button fill its container and use VS Code's block sizing,
-   * similar to the Source Control "Commit" action.
+   * 使按钮填满容器，并使用 VS Code 的块级尺寸，
+   * 类似源代码管理中的“提交”操作。
    */
   @property({type: Boolean, reflect: true})
   block = false;
@@ -65,43 +65,43 @@ export class VscodeButton extends VscElement {
   disabled = false;
 
   /**
-   * The size of the button. The `medium` size is the default.
+   * 按钮尺寸，默认为 `medium`。
    */
   @property({reflect: true})
   size: FormControlSize = 'medium';
 
   /**
-   * A [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) before the label
+   * 标签前的 [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) 图标
    */
   @property()
   icon = '';
 
   /**
-   * Spin property for the icon
+   * 前置图标的旋转属性
    */
   @property({type: Boolean, reflect: true, attribute: 'icon-spin'})
   iconSpin? = false;
 
   /**
-   * Duration property for the icon
+   * 前置图标的旋转时长
    */
   @property({type: Number, reflect: true, attribute: 'icon-spin-duration'})
   iconSpinDuration?: number;
 
   /**
-   * A [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) after the label
+   * 标签后的 [Codicon](https://microsoft.github.io/vscode-codicons/dist/codicon.html) 图标
    */
   @property({attribute: 'icon-after'})
   iconAfter = '';
 
   /**
-   * Spin property for the after icon
+   * 后置图标的旋转属性
    */
   @property({type: Boolean, reflect: true, attribute: 'icon-after-spin'})
   iconAfterSpin = false;
 
   /**
-   * Duration property for the after icon
+   * 后置图标的旋转时长
    */
   @property({
     type: Number,
@@ -181,9 +181,9 @@ export class VscodeButton extends VscElement {
 
     if (changedProperties.has('disabled')) {
       if (this.disabled) {
-        // Save the original tabIndex, which may have been modified by the user.
+        // 保存可能被用户修改过的原始 tabIndex。
         this._prevTabindex = this.tabIndex;
-        // It's a native property, we don't care about re-rendering.
+        // 这是原生属性，无需触发重新渲染。
         // eslint-disable-next-line lit/no-property-change-update
         this.tabIndex = -1;
       } else {

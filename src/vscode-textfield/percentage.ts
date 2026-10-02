@@ -1,25 +1,25 @@
 /**
- * Helpers for the percentage mode of `vscode-textfield`.
+ * `vscode-textfield` 百分比模式的工具函数。
  *
- * The editable text of the component is a percent number (`1`, `12.5`, `-3`)
- * and it is displayed with a percent sign (`1%`). The value which the component
- * reports to the outside world - the `value` property and the value submitted
- * with the form - is the fraction form of that number (`0.01`, `0.125`, `-0.03`).
+ * 组件可编辑文字为百分数（`1`、`12.5`、`-3`），
+ * 显示时附带百分号（`1%`）。组件向外部提供的值，
+ * 即 `value` 属性与表单提交值，
+ * 使用对应的小数形式（`0.01`、`0.125`、`-0.03`）。
  *
- * The conversions are calculated with decimal string arithmetic instead of
- * floating point division, so they do not introduce rounding errors:
- * `percentToFraction('1.1')` is exactly `'0.011'`.
+ * 转换使用十进制字符串运算，而非浮点除法，
+ * 因此不会引入舍入误差：
+ * `percentToFraction('1.1')` 精确返回 `'0.011'`。
  */
 
 type DecimalParts = {
-  /** `'-'` or an empty string. */
+  /** `'-'` 或空字符串。 */
   sign: string;
-  /** The digits without the decimal separator. */
+  /** 不含小数分隔符的数字。 */
   digits: string;
   /**
-   * The position of the decimal separator inside `digits`, counted from the
-   * left. It can be outside of the string, which means the value has leading or
-   * trailing zeros.
+   * 小数分隔符在 `digits` 中从左侧计数的位置。
+   * 位置可以超出字符串范围，表示数值带有
+   * 前导零或尾随零。
    */
   pointPos: number;
 };
@@ -42,8 +42,8 @@ const parseDecimal = (value: string): DecimalParts | null => {
   return {
     sign: sign === '-' ? '-' : '',
     digits: `${intPart}${fracPart}`,
-    // A leading `+` sign and a missing integer part are handled by the position
-    // of the separator, the exponent shifts it further.
+    // 通过分隔符位置处理前导 `+` 和缺少整数部分的情况，
+    // 指数会进一步移动该位置。
     pointPos: intPart.length + (exponent ? Number(exponent) : 0),
   };
 };
@@ -82,17 +82,17 @@ const shiftDecimal = (value: string, places: number): string => {
 };
 
 /**
- * Converts a percent number to its fraction form: `'1'` to `'0.01'`, `'12.5'`
- * to `'0.125'`. An empty string or anything which is not a number results in an
- * empty string.
+ * 将百分数转换为小数形式：`'1'` 转为 `'0.01'`，`'12.5'`
+ * 转为 `'0.125'`。空字符串或非数字内容
+ * 返回空字符串。
  */
 export const percentToFraction = (percent: string): string =>
   shiftDecimal(percent, -2);
 
 /**
- * Converts a fraction to its percent number form: `'0.01'` to `'1'`, `'0.125'`
- * to `'12.5'`. An empty string or anything which is not a number results in an
- * empty string.
+ * 将小数转换为百分数：`'0.01'` 转为 `'1'`，`'0.125'`
+ * 转为 `'12.5'`。空字符串或非数字内容返回
+ * 返回空字符串。
  */
 export const fractionToPercent = (fraction: string): string =>
   shiftDecimal(fraction, 2);
@@ -106,9 +106,9 @@ const addLeadingZero = (digits: string): string => {
 };
 
 /**
- * Keeps the characters of a percent number while the user is typing: a leading
- * minus sign, the digits, and a single decimal separator. The result can be
- * incomplete, `'-'`, `'1.'` and `'0.'` are accepted results.
+ * 输入过程中保留百分数允许的字符：前导负号、
+ * 数字和一个小数分隔符。结果可以不完整，
+ * 允许 `'-'`、`'1.'` 和 `'0.'`。
  */
 export const sanitizePercentInput = (raw: string): string => {
   let digits = '';
@@ -130,8 +130,8 @@ export const sanitizePercentInput = (raw: string): string => {
 };
 
 /**
- * The final form of the editable text, applied when the editing is finished:
- * `'05'` becomes `'5'`, `'1.'` and `'-'` become `'1'` and `''`.
+ * 编辑结束时应用的最终文字形式：
+ * `'05'` 变为 `'5'`，`'1.'` 和 `'-'` 分别变为 `'1'` 和 `''`。
  */
 export const normalizePercentInput = (raw: string): string => {
   const parsed = parseDecimal(sanitizePercentInput(raw));
@@ -140,15 +140,15 @@ export const normalizePercentInput = (raw: string): string => {
 };
 
 /**
- * Adds the percent sign to a percent number for displaying it in the input.
- * Partial values without a digit, like an empty string or a single minus sign,
- * are not decorated.
+ * 为百分数添加百分号，以便在输入框中显示。
+ * 不含数字的部分输入值，例如空字符串或单个负号，
+ * 不添加百分号。
  */
 export const formatPercentDisplay = (percent: string): string =>
   /\d/.test(percent) ? `${percent}%` : percent;
 
 /**
- * A constraint which the fraction value violates.
+ * 小数值违反的约束。
  */
 export type PercentConstraintViolation = {
   flag: 'rangeUnderflow' | 'rangeOverflow' | 'stepMismatch';
@@ -163,7 +163,7 @@ const findStepMismatch = (
   step: number,
   base: number
 ): {lower: number; upper: number} | null => {
-  // `step="any"` is converted to NaN by the numeric attribute converter.
+  // `step="any"` 经数字特性转换器转换后为 NaN。
   if (!Number.isFinite(step) || step <= 0) {
     return null;
   }
@@ -184,10 +184,10 @@ const findStepMismatch = (
 };
 
 /**
- * Checks a fraction value against the `min`, `max`, and `step` constraints of
- * the component. The constraints are interpreted in the same unit as the
- * fraction value, so `min="0"` and `max="1"` accept 0% - 100% and `step="0.05"`
- * means steps of 5%.
+ * 依据组件的 `min`、`max` 和 `step` 约束检查小数值。
+ * 约束与小数值使用相同单位，
+ * 因此 `min="0"` 和 `max="1"` 接受 0% 至 100%，`step="0.05"`
+ * 表示 5% 的步长。
  */
 export const validatePercentValue = (
   fraction: string,

@@ -19,9 +19,9 @@ const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 /**
- * The fading animation of a surface. The browser resolves the custom
- * properties, so the colors of the keyframes show what the control actually
- * paints.
+ * 表面淡出动画。浏览器解析自定义属性，
+ * 因此关键帧颜色反映控件实际
+ * 绘制的颜色。
  */
 const getFadeAnimation = (surface: Element) =>
   (
@@ -34,7 +34,7 @@ const getFadeAnimation = (surface: Element) =>
   );
 
 /**
- * The keyframes of the fading animation of a surface.
+ * 表面淡出动画的关键帧。
  */
 const getFadeKeyframes = (surface: Element): Keyframe[] => {
   const animation = getFadeAnimation(surface);
@@ -49,11 +49,11 @@ const getFadeKeyframes = (surface: Element): Keyframe[] => {
 interface ControlCase {
   tagName: string;
   markup: string;
-  /** The element of the shadow root which draws the background. */
+  /** Shadow Root 中绘制背景的元素。 */
   surface: string;
-  /** The background of the surface of the theme of the test runner. */
+  /** 测试运行器主题的表面背景。 */
   background: string;
-  /** Whether the control draws the background on a small box. */
+  /** 控件是否在小方框中绘制背景。 */
   box?: boolean;
 }
 
@@ -117,9 +117,9 @@ const CASES: ControlCase[] = [
 let formIndex = 0;
 
 /**
- * Creates a form with a single control. The declaration is parsed as a static
- * string, because Lit does not create an attribute part for a binding that is
- * surrounded by whitespace.
+ * 创建包含单个控件的表单。声明以静态字符串解析，
+ * 因为 Lit 不会为被空白包围的绑定
+ * 创建特性绑定部分。
  */
 const createForm = async (controlMarkup: string, duration = '10000') => {
   const id = `control-case-${formIndex++}`;
@@ -175,8 +175,8 @@ describe('modified state of the form controls', () => {
       expect(
         style.animationDuration.split(',').map((part) => part.trim())
       ).to.deep.eq(testCase.box ? ['10s', '10s'] : ['10s']);
-      // The animation paints the colors of the state, so the resolved
-      // keyframes show the color of the theme.
+      // 动画绘制状态颜色，因此解析后的
+      // 关键帧反映主题颜色。
       expect(keyframes[0].backgroundColor, 'the peak color').to.eq(
         'rgb(219, 228, 255)'
       );
@@ -191,8 +191,8 @@ describe('modified state of the form controls', () => {
           'rgb(60, 60, 60)'
         );
 
-        // The border fades into the color of the state, so its value is read
-        // after the transition is over.
+        // 边框渐变为状态颜色，因此在过渡结束后
+        // 读取其值。
         await delay(400);
 
         expect(
@@ -316,7 +316,7 @@ describe('modified state of the form controls', () => {
       'the ring color of the container'
     ).to.contain('rgb(7, 8, 9)');
 
-    // The border fades into the color of the state.
+    // 边框渐变为状态颜色。
     await delay(400);
 
     expect(

@@ -47,7 +47,7 @@ describe('vscode-split-layout', () => {
     });
 
     it('should handle null input value correctly', () => {
-      // @ts-expect-error test with an invalid type
+      // @ts-expect-error 使用无效类型进行测试
       expect(parseValue(null)).to.deep.equal({unit: 'pixel', value: 0});
     });
   });
@@ -836,7 +836,7 @@ describe('vscode-split-layout', () => {
     expect(handle.offsetTop).to.eq(248);
   });
 
-  // TODO
+  // TODO 待完善
   it('should nested instances reset when slotted content is changed');
   it('fixed pane prop changed');
 });

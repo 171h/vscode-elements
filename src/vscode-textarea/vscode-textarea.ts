@@ -10,10 +10,10 @@ import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 import styles from './vscode-textarea.styles.js';
 
 /**
- * Multi-line text input.
+ * 多行文本输入框。
  *
- * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
- * can be applied through the `invalid` property.
+ * 参与表单时支持 `:invalid` 伪类，其他情况下
+ * 可通过 `invalid` 属性应用错误样式。
  *
  * @tag vscode-textarea
  *
@@ -38,7 +38,7 @@ import styles from './vscode-textarea.styles.js';
  * @cssprop [--vscode-scrollbarSlider-background=rgba(121, 121, 121, 0.4)]
  * @cssprop [--vscode-scrollbarSlider-hoverBackground=rgba(100, 100, 100, 0.7)]
  * @cssprop [--vscode-scrollbarSlider-activeBackground=rgba(191, 191, 191, 0.4)]
- * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - Font size of the textarea. It is set automatically by the `size` property.
+ * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - 多行文本框字号，由 `size` 属性自动设置。
  */
 @customElement('vscode-textarea')
 export class VscodeTextarea
@@ -58,13 +58,13 @@ export class VscodeTextarea
     delegatesFocus: true,
   };
 
-  // #region properties, setters/getters
+  // #region 属性与访问器
   @property()
   autocomplete: 'on' | 'off' | undefined = undefined;
 
   /**
-   * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light blue background.
+   * 组件所属表单是否已修改。状态由
+   * 由 `vscode-form-container` 管理，以浅蓝色背景显示。
    */
   @property({type: Boolean, reflect: true})
   dirty = false;
@@ -109,7 +109,7 @@ export class VscodeTextarea
   resize: 'both' | 'horizontal' | 'vertical' | 'none' = 'none';
 
   /**
-   * The size of the textarea. The `medium` size is the default.
+   * 多行文本框尺寸，默认为 `medium`。
    */
   @property({reflect: true})
   size: FormControlSize = 'medium';
@@ -121,8 +121,8 @@ export class VscodeTextarea
   override spellcheck = false;
 
   /**
-   * Use monospace fonts. The font family, weight, size, and color will be the same as set in the
-   * VSCode code editor.
+   * 使用等宽字体，字体、字重、字号和颜色与
+   * VS Code 代码编辑器设置一致。
    */
   @property({type: Boolean, reflect: true})
   monospace = false;
@@ -138,7 +138,7 @@ export class VscodeTextarea
   }
 
   /**
-   * Getter for the inner textarea element if it needs to be accessed for some reason.
+   * 内部 textarea 元素的访问器，用于需要直接访问该元素的场景。
    */
   get wrappedElement(): HTMLTextAreaElement {
     return this._textareaEl;
@@ -166,7 +166,7 @@ export class VscodeTextarea
   }
 
   /**
-   * Lowercase alias to minLength
+   * minLength 的小写别名
    */
   set minlength(val: number) {
     this.minLength = val;
@@ -177,7 +177,7 @@ export class VscodeTextarea
   }
 
   /**
-   * Lowercase alias to maxLength
+   * maxLength 的小写别名
    */
   set maxlength(val: number) {
     this.maxLength = val;

@@ -10,20 +10,20 @@ import styles from './vscode-checkbox.styles.js';
 import {AssociatedFormControl} from '../includes/AssociatedFormControl.js';
 
 /**
- * Allows users to select one or more options from a set. When participating in a form, it supports
- * the `:invalid` pseudo class. Otherwise the error styles can be applied through the `invalid`
- * property.
+ * 允许用户从一组选项中选择一个或多个选项。参与表单时支持
+ * `:invalid` 伪类；其他情况下可通过 `invalid`
+ * 属性应用错误样式。
  *
  * @tag vscode-checkbox
  *
- * @attr name - Name which is used as a variable name in the data of the form-container.
- * @attr label - Attribute pair of the `label` property.
- * @prop label - Label text. It is only applied if component's innerHTML doesn't contain any text.
+ * @attr name - 在表单容器数据中使用的变量名。
+ * @attr label - 与 `label` 属性对应的 HTML 特性。
+ * @prop label - 标签文字，仅在组件 innerHTML 不包含文字时应用。
  *
- * @fires {Event} change - Dispatched when checked state is changed. The event is bubbled, so it can be listened on a parent element like the `CheckboxGroup`.
- * @fires {Event} invalid - Dispatched when the element is invalid and `checkValidity()` has been called or the form containing this element is submitted.
+ * @fires {Event} change - 选中状态变化时派发。事件会冒泡，可在 `CheckboxGroup` 等父元素上监听。
+ * @fires {Event} invalid - 元素无效且调用 `checkValidity()` 或提交所在表单时派发。
  *
- * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
+ * [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/invalid_event)
  *
  * @cssprop [--vscode-font-family=sans-serif]
  * @cssprop [--vscode-font-size=13px]
@@ -53,16 +53,16 @@ export class VscodeCheckbox
   };
 
   /**
-   * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light blue box.
+   * 组件所属表单是否已修改。状态由
+   * `vscode-form-container` 管理，使用浅蓝色方框显示。
    */
   @property({type: Boolean, reflect: true})
   dirty = false;
 
   /**
-   * Automatically focus on the element when the page loads.
+   * 页面加载时自动聚焦元素。
    *
-   * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autofocus)
+   * [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/autofocus)
    */
   @property({type: Boolean, reflect: true})
   override autofocus = false;
@@ -80,7 +80,7 @@ export class VscodeCheckbox
   private _checked = false;
 
   /**
-   * The element's initial checked state, which will be restored when the containing form is reset.
+   * 元素的初始选中状态，所在表单重置时恢复此状态。
    */
   @property({type: Boolean, reflect: true, attribute: 'default-checked'})
   defaultChecked = false;
@@ -92,17 +92,17 @@ export class VscodeCheckbox
   name: string | undefined = undefined;
 
   /**
-   * When true, renders as a toggle switch instead of a checkbox.
+   * 为 true 时渲染为切换开关，而非复选框。
    */
   @property({type: Boolean, reflect: true})
   toggle = false;
 
   /**
-   * Associate a value to the checkbox. According to the native checkbox [specification](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value_2), If the component participates in a form:
+   * 为复选框关联一个值。根据原生复选框[规范](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/checkbox#value_2)，当组件参与表单时：
    *
-   * - If it is unchecked, the value will not be submitted.
-   * - If it is checked but the value is not set, `on` will be submitted.
-   * - If it is checked and value is set, the value will be submitted.
+   * - 未选中时不提交该值。
+   * - 选中但未设置值时提交 `on`。
+   * - 选中且设置了值时提交该值。
    */
   @property()
   value = '';
@@ -145,21 +145,21 @@ export class VscodeCheckbox
   }
 
   /**
-   * Returns `true` if the element's value is valid; otherwise, it returns `false`.
-   * If the element's value is invalid, an invalid event is triggered on the element.
+   * 元素值有效时返回 `true`，否则返回 `false`。
+   * 元素值无效时在元素上触发 invalid 事件。
    *
-   * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/checkValidity)
+   * [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/checkValidity)
    */
   checkValidity(): boolean {
     return this._internals.checkValidity();
   }
 
   /**
-   * Returns `true` if the element's value is valid; otherwise, it returns `false`.
-   * If the element's value is invalid, an invalid event is triggered on the element, and the
-   * browser displays an error message to the user.
+   * 元素值有效时返回 `true`，否则返回 `false`。
+   * 元素值无效时在元素上触发 invalid 事件，
+   * 浏览器同时向用户显示错误消息。
    *
-   * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/reportValidity)
+   * [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/reportValidity)
    */
   reportValidity(): boolean {
     return this._internals.reportValidity();
@@ -205,11 +205,11 @@ export class VscodeCheckbox
 
   private _internals: ElementInternals;
 
-  // Sets the value of the control according to the native checkbox behavior.
-  // - If the checkbox is unchecked, the value will be null, so the control will
-  //   excluded from the form.
-  // - If the control is checked but the value is not set, the value will be "on".
-  // - If the control is checked and value is set, the value won't be changed.
+  // 按照原生复选框行为设置控件值。
+  // - 未选中时值为 null，因此该控件
+  //   不参与表单提交。
+  // - 选中但未设置值时，值为 "on"。
+  // - 选中且已设置值时，保持原值。
   private _setActualFormValue() {
     let actualValue: string | null = '';
 

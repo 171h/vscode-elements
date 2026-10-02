@@ -16,7 +16,7 @@ const warn = (message: string, componentInstance?: VscElement) => {
 };
 
 export class VscElement extends LitElement {
-  /** VSCode Elements version */
+  /** VSCode Elements 版本 */
   get version(): string {
     return VERSION;
   }
@@ -34,7 +34,7 @@ export type Constructor<T> = {
 };
 
 /**
- * Own implementation of Lit's customElement decorator.
+ * 项目自行实现的 Lit customElement 装饰器。
  */
 export const customElement = (tagName: string) => {
   return (classOrTarget: CustomElementClass) => {

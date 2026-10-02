@@ -48,7 +48,7 @@ export class VscodeLabel extends VscElement {
   required = false;
 
   /**
-   * The size of the component. The `medium` size is the default.
+   * 组件尺寸，默认为 `medium`。
    */
   @property({reflect: true})
   size: FormControlSize = 'medium';

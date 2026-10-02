@@ -14,11 +14,11 @@ export class VscodeOption extends VscElement {
   value?: string | undefined;
 
   /**
-   * Short form of the label.
+   * 标签缩写。
    *
-   * The face of the `vscode-multi-select` component displays it instead of the
-   * label when the option is selected. The full label remains visible in the
-   * option list and in the tooltip of the selected labels.
+   * 选项选中时，`vscode-multi-select` 的展示区域
+   * 显示缩写而非标签。完整标签仍保留在
+   * 选项列表和选中标签的工具提示中。
    */
   @property({type: String})
   abbreviation = '';

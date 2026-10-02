@@ -20,49 +20,49 @@ export class VscodeScrollable extends VscElement {
   static override styles = styles;
 
   /**
-   * By default, the scrollbar appears only when the cursor hovers over the
-   * component. With this option, the scrollbar will always be visible.
+   * 默认仅在鼠标悬停于组件上时显示滚动条。
+   * 启用此选项后，滚动条始终可见。
    */
   @property({type: Boolean, reflect: true, attribute: 'always-visible'})
   alwaysVisible = false;
 
   /**
-   * Scrolling speed multiplier when pressing `Alt`. This property is designed to use the value of
-   * `editor.fastScrollSensitivity`, `workbench.list.fastScrollSensitivity` or
-   * `terminal.integrated.fastScrollSensitivity` depending on the context.
+   * 按住 `Alt` 时的滚动速度倍数，根据上下文使用
+   * `editor.fastScrollSensitivity`、`workbench.list.fastScrollSensitivity` 或
+   * `terminal.integrated.fastScrollSensitivity` 的值。
    */
   @property({type: Number, attribute: 'fast-scroll-sensitivity'})
   fastScrollSensitivity = 5;
 
   /**
-   * This setting defines the scrollbar's minimum size when the component contains a large amount of content.
+   * 组件内容较多时的滚动条最小尺寸。
    */
   @property({type: Number, attribute: 'min-thumb-size'})
   minThumbSize = 20;
 
   /**
-   * A multiplier to be used on the `deltaY` of the mouse wheel scroll events. This property is
-   * designed to use the value of `editor.mouseWheelScrollSensitivity`,
-   * `workbench.list.mouseWheelScrollSensitivity` or
-   * `terminal.integrated.mouseWheelScrollSensitivity` depending on the context.
+   * 鼠标滚轮事件 `deltaY` 的倍数，此属性
+   * 根据上下文使用 `editor.mouseWheelScrollSensitivity`、
+   * `workbench.list.mouseWheelScrollSensitivity` 或
+   * `terminal.integrated.mouseWheelScrollSensitivity` 的值。
    */
   @property({type: Number, attribute: 'mouse-wheel-scroll-sensitivity'})
   mouseWheelScrollSensitivity = 1;
 
   /**
-   * Controls shadow visibility when content overflows.
+   * 控制内容溢出时的阴影可见状态。
    */
   @property({type: Boolean, reflect: true})
   shadow = true;
 
   /**
-   * It's true when `scrollPos` greater than 0
+   * `scrollPos` 大于 0 时为 true
    */
   @property({type: Boolean, reflect: true})
   scrolled = false;
 
   /**
-   * Scroll position.
+   * 滚动位置。
    */
   @property({type: Number, attribute: 'scroll-pos'})
   set scrollPos(val: number) {
@@ -78,7 +78,7 @@ export class VscodeScrollable extends VscElement {
   private _scrollPos = 0;
 
   /**
-   * The maximum amount of the `scrollPos`.
+   * `scrollPos` 的最大值。
    */
   get scrollMax(): number {
     if (!this._scrollableContainer) {
@@ -128,7 +128,7 @@ export class VscodeScrollable extends VscElement {
   private _scrollbarVisible = true;
   private _scrollbarTrackZ = 0;
 
-  //#region lifecycle methods
+  //#region 生命周期方法
 
   constructor() {
     super();
@@ -267,7 +267,7 @@ export class VscodeScrollable extends VscElement {
     }
   }
 
-  //#region event handlers
+  //#region 事件处理
   private _handleSlotChange = () => {
     this._updateScrollbar();
     this._updateThumbPosition();

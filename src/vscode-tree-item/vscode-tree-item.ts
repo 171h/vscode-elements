@@ -43,23 +43,23 @@ function getParentItem(childItem: VscodeTreeItem) {
 }
 
 /**
- * Represents an item in a Tree component.
+ * 表示树组件中的一个项目。
  *
  * @tag vscode-tree
  *
- * @slot - Main content
- * @slot icon-branch - Custom icon for a closed branch item.
- * @slot icon-branch-opened - Custom icon for an opened branch item.
- * @slot icon-leaf - Custom icon for a leaf item.
- * @slot description - Description of the item. Displayed with a smaller font size and a less prominent color.
- * @slot actions - Container for action buttons.
- * @slot decoration - Container for small decorative elements aligned to the right edge of the item.
+ * @slot - 主要内容
+ * @slot icon-branch - 关闭分支项的自定义图标。
+ * @slot icon-branch-opened - 展开分支项的自定义图标。
+ * @slot icon-leaf - 叶子项的自定义图标。
+ * @slot description - 项目描述，使用较小字号与较弱的强调颜色显示。
+ * @slot actions - 操作按钮容器。
+ * @slot decoration - 与项目右边缘对齐的小型装饰元素容器。
  */
 @customElement('vscode-tree-item')
 export class VscodeTreeItem extends VscElement {
   static override styles = styles;
 
-  //#region properties
+  //#region 属性
 
   @property({type: Boolean})
   active = false;
@@ -108,7 +108,7 @@ export class VscodeTreeItem extends VscElement {
 
   //#endregion
 
-  //#region private variables
+  //#region 私有变量
 
   private _path: number[] = [];
   private _internals: ElementInternals;
@@ -165,14 +165,14 @@ export class VscodeTreeItem extends VscElement {
 
   //#endregion
 
-  //#region derived state
+  //#region 派生状态
 
   private _isPointerInside = false;
   private _hasKeyboardFocus = false;
 
   //#endregion
 
-  //#region lifecycle methods
+  //#region 生命周期方法
 
   constructor() {
     super();
@@ -217,7 +217,7 @@ export class VscodeTreeItem extends VscElement {
 
   //#endregion
 
-  //#region private methods
+  //#region 私有方法
 
   private _setAriaExpanded() {
     if (!this.branch) {
@@ -501,7 +501,7 @@ export class VscodeTreeItem extends VscElement {
 
   //#endregion
 
-  //#region event handlers
+  //#region 事件处理
 
   private _handleChildrenSlotChange() {
     initPathTrackerProps(this, this._childrenTreeItems);

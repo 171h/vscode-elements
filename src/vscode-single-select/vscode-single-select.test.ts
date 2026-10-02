@@ -363,14 +363,14 @@ describe('vscode-single-select', () => {
 
       el.value = 'Lorem';
 
-      // first arrow down press opens the dropdown
+      // 首次按下向下箭头键时打开下拉列表
       el.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown'}));
       await el.updateComplete;
 
       el.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown'}));
       await el.updateComplete;
 
-      // Last option
+      // 最后一个选项
       el.dispatchEvent(new KeyboardEvent('keydown', {key: 'ArrowDown'}));
       await el.updateComplete;
 
@@ -416,7 +416,7 @@ describe('vscode-single-select', () => {
       expect(scrollable?.scrollPos).to.eq(220);
     });
 
-    //#region keyboard interactions
+    //#region 键盘交互
 
     it('the dropdown should be opened when the arrow down key pressed while the dropdown is closed', async () => {
       const el = (await fixture(html`
@@ -549,7 +549,7 @@ describe('vscode-single-select', () => {
         <vscode-single-select combobox></vscode-single-select>
       `);
 
-      // Append options dynamically to mimic React rendering
+      // 动态追加选项，模拟 React 渲染
       const placeholder = document.createElement(
         'vscode-option'
       ) as VscodeOption;
@@ -570,12 +570,12 @@ describe('vscode-single-select', () => {
       await aTimeout(0);
       await el.updateComplete;
 
-      // Select "two"
+      // 选择 "two"
       el.value = 'two';
       expect(el.selectedIndex).to.eq(2);
       await el.updateComplete;
 
-      // Shrink options to only the placeholder (React-like rerender)
+      // 将选项缩减至仅剩占位项，模拟 React 重新渲染
       el.innerHTML = '';
       await aTimeout(0);
       await el.updateComplete;
@@ -988,8 +988,8 @@ describe('vscode-single-select', () => {
       expect(activeOption).lightDom.to.eq('Ipsum');
     });
 
-    //#region  keyboard interactions
-    //#region textbox
+    //#region 键盘交互
+    //#region 文本框
     it('when ESC key is pressed, closes the listbox if it is displayed');
     it(
       'when the ESC key is pressed, clears the textbox if the listbox is not displayed'
@@ -1052,7 +1052,7 @@ describe('vscode-single-select', () => {
       el.selectedIndex = 2;
 
       expect(() => {
-        // trigger a slot change event
+        // 触发插槽变化事件
         el.innerHTML = '   ';
       }).not.throw();
     });
@@ -1374,7 +1374,7 @@ describe('vscode-single-select', () => {
     expect(el.value).to.eql('asdf');
   });
 
-  //keyboard navigation
+  //键盘导航
   it('selects previous option with keyboard');
   it('selects next option with keyboard');
   it('selects an option above the viewport with keyboard');

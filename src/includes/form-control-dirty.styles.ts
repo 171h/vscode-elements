@@ -1,15 +1,15 @@
 import {css, CSSResultGroup, unsafeCSS} from 'lit';
 
 /**
- * The form controls which take part in the modified state of a
- * `vscode-form-container`. The `dirty` property is reflected as the `dirty`
- * attribute, which is the hook of the modified state styles.
+ * 参与 `vscode-form-container` 已修改状态的表单控件。
+ * `dirty` 属性会反射为同名 HTML 特性，
+ * 作为已修改状态样式的选择依据。
  */
 export interface MarkableFormControl extends HTMLElement {
   dirty: boolean;
 }
 
-/** The tag names of the form controls of a form container. */
+/** 表单容器中的表单控件标签名。 */
 export const MARKABLE_FORM_CONTROL_TAGS = [
   'vscode-checkbox',
   'vscode-multi-select',
@@ -19,7 +19,7 @@ export const MARKABLE_FORM_CONTROL_TAGS = [
   'vscode-textfield',
 ] as const;
 
-/** The selector of the form controls of a form container. */
+/** 表单容器中的表单控件选择器。 */
 export const MARKABLE_FORM_CONTROL_SELECTOR =
   MARKABLE_FORM_CONTROL_TAGS.join(',');
 
@@ -28,13 +28,13 @@ const MARKABLE_FORM_CONTROL_TAG_NAMES: ReadonlySet<string> = new Set(
 );
 
 /**
- * Whether an element is a form control which takes part in the modified state
- * of a form container.
+ * 判断元素是否为参与表单容器已修改状态的
+ * 表单控件。
  */
 export const isMarkableFormControl = (node: Element): boolean =>
   MARKABLE_FORM_CONTROL_TAG_NAMES.has(node.localName);
 
-/** The parent of a node, which crosses the boundary of a shadow root. */
+/** 获取节点的父节点，跨越 Shadow Root 边界。 */
 const parentOf = (node: Element): Element | null => {
   if (node.parentElement) {
     return node.parentElement;
@@ -46,8 +46,8 @@ const parentOf = (node: Element): Element | null => {
 };
 
 /**
- * The form container which owns a control, or `null` when the control does not
- * belong to a form.
+ * 获取控件所属的表单容器；不属于任何表单时
+ * 返回 `null`。
  */
 const owningForm = (control: Element): Element | null => {
   let node = parentOf(control);
@@ -64,8 +64,8 @@ const owningForm = (control: Element): Element | null => {
 };
 
 /**
- * The controls of a form. The controls of a nested form container belong to the
- * nested form, so the outer form does not mark them.
+ * 获取表单控件。嵌套表单容器中的控件归属于嵌套表单，
+ * 外层表单不会标记这些控件。
  */
 const controlsOf = (form: HTMLElement): MarkableFormControl[] =>
   [
@@ -75,7 +75,7 @@ const controlsOf = (form: HTMLElement): MarkableFormControl[] =>
   ].filter((control) => owningForm(control) === form);
 
 /**
- * Marks the form controls of a form as modified.
+ * 将表单中的控件标记为已修改。
  */
 export const markFormControls = (form: HTMLElement): void => {
   controlsOf(form).forEach((control) => {
@@ -84,7 +84,7 @@ export const markFormControls = (form: HTMLElement): void => {
 };
 
 /**
- * Restores the form controls of a form to their normal state.
+ * 将表单中的控件恢复为正常状态。
  */
 export const unmarkFormControls = (form: HTMLElement): void => {
   controlsOf(form).forEach((control) => {
@@ -100,8 +100,8 @@ interface DirtyColors {
 }
 
 /**
- * The colors of the modified state of a light theme, the default of the
- * palette.
+ * 浅色主题的已修改状态颜色，
+ * 作为调色板默认值。
  */
 const LIGHT: DirtyColors = {
   background: '#eff3ff',
@@ -111,8 +111,8 @@ const LIGHT: DirtyColors = {
 };
 
 /**
- * The colors of the modified state of a dark theme: the hue of the light
- * theme with the lightness of the surfaces of a dark theme.
+ * 深色主题的已修改状态颜色：沿用浅色主题色相，
+ * 并匹配深色主题表面的明度。
  */
 const DARK: DirtyColors = {
   background: '#243a5e',
@@ -122,9 +122,9 @@ const DARK: DirtyColors = {
 };
 
 /**
- * The colors of the modified state of a high contrast theme. The state is
- * opaque and it is separated from the background of the control by a border,
- * so it stays visible when the theme hides the subtle differences.
+ * 高对比度主题的已修改状态颜色。状态使用不透明颜色，
+ * 并通过边框与控件背景区分，
+ * 确保主题隐藏细微颜色差异时仍可见。
  */
 const HIGH_CONTRAST_DARK: DirtyColors = {
   background: '#243a5e',
@@ -144,14 +144,14 @@ const body = (kind: string) =>
   `:host-context(body[data-vscode-theme-kind='${kind}']), :host-context(body.${kind})`;
 
 /**
- * The value of a color of the modified state.
+ * 已修改状态的颜色值。
  *
- * The public custom property is read first, so the color can be replaced on
- * the form container, on an ancestor, on the `body` element or on the control
- * itself. The colors of the theme palette are declared with the separate
- * `--vsc-form-control-dirty-palette-*` names: a declaration with the public
- * name would shadow the value which the control inherits, and the color could
- * not be replaced above the control any more.
+ * 优先读取公共自定义属性，因此可在表单容器、
+ * 祖先节点、`body` 或控件自身上覆盖颜色。
+ * 主题调色板使用独立的
+ * `--vsc-form-control-dirty-palette-*` 名称；若使用公共属性名声明，
+ * 就会遮蔽控件继承的值，
+ * 导致无法在控件上层覆盖颜色。
  */
 const dirtyColor = (name: string, fallback: string) => css`var(
     --vsc-form-control-dirty-${unsafeCSS(name)},
@@ -162,11 +162,11 @@ const dirtyColor = (name: string, fallback: string) => css`var(
   )`;
 
 /**
- * The colors of the modified state of a theme. The kind of the theme is
- * published by VS Code and by the webview playground on the `body` element,
- * and `:host-context` is used, because it also matches from a shadow root.
+ * 主题的已修改状态颜色。VS Code 和组件预览工具
+ * 通过 `body` 标识主题类型；
+ * 使用 `:host-context` 以便从 Shadow Root 内匹配。
  *
- * The palette is an internal fallback of the public custom properties, see
+ * 调色板是公共自定义属性的内部回退值，参见
  * {@link dirtyColor}.
  */
 const themeColors = (selector: string, value: DirtyColors): CSSResultGroup => [
@@ -184,7 +184,7 @@ const themeColors = (selector: string, value: DirtyColors): CSSResultGroup => [
   `,
 ];
 
-/** The colors of the modified state of each kind of the VS Code themes. */
+/** 各类 VS Code 主题的已修改状态颜色。 */
 export const FORM_CONTROL_DIRTY_PALETTE: CSSResultGroup = [
   themeColors(
     `${body('vscode-light')}, :host-context(body:not([data-vscode-theme-kind]))`,
@@ -196,10 +196,10 @@ export const FORM_CONTROL_DIRTY_PALETTE: CSSResultGroup = [
 ];
 
 /**
- * The fading animation of the modified state, which the controls share. The
- * background fades from the peak color to the resting color of the theme, and
- * it fades back to the original background of the control when the state is
- * removed.
+ * 控件共享的已修改状态淡出动画。
+ * 背景从峰值颜色渐变至主题的静止颜色，
+ * 状态移除时再恢复为控件原来的背景。
+ * 此时淡出结束。
  */
 export const formControlDirtyVariables = css`
   @keyframes vsc-form-control-dirty-fade {
@@ -210,11 +210,11 @@ export const formControlDirtyVariables = css`
 `;
 
 /**
- * The colors of the modified state of a control which fills its whole surface,
- * e.g. a textfield, a textarea or a dropdown.
+ * 铺满整个表面的控件的已修改状态颜色，
+ * 例如文本框、多行文本框或下拉框。
  *
- * Only the background is changed, so the border of a focused control keeps
- * the focus color.
+ * 只修改背景，因此获得焦点的控件边框
+ * 保留焦点颜色。
  */
 const dirtySurface = css`
   animation: vsc-form-control-dirty-fade
@@ -225,9 +225,9 @@ const dirtySurface = css`
 `;
 
 /**
- * The colors of the modified state of a small control which draws the
- * background on a box instead of the whole surface, e.g. a checkbox or a
- * radio button. The box is small, so a ring carries the state as well.
+ * 仅在小方框而非整个表面绘制背景的控件的
+ * 已修改状态颜色，例如复选框或
+ * 单选按钮。方框较小，因此额外使用外环显示状态。
  */
 const dirtyBox = css`
   animation:
@@ -245,11 +245,11 @@ const dirtyBox = css`
 `;
 
 /**
- * The modified state of a control which fills its whole surface.
+ * 铺满整个表面的控件的已修改状态。
  *
- * A control which shows an error keeps the error colors: the modified state is
- * not painted on it, so the error is not covered by the wash during the whole
- * highlight.
+ * 显示错误的控件保留错误颜色，不绘制已修改状态，
+ * 避免在整个高亮过程中
+ * 淡色背景覆盖错误提示。
  */
 export const FORM_CONTROL_DIRTY_SURFACE_STYLES = css`
   :host([dirty]:not([invalid]):not(:invalid)) .root,
@@ -271,8 +271,8 @@ export const FORM_CONTROL_DIRTY_SURFACE_STYLES = css`
 `;
 
 /**
- * The modified state of a small control which draws the background on a box
- * instead of the whole surface.
+ * 仅在小方框而非整个表面绘制背景的
+ * 小型控件的已修改状态。
  */
 export const FORM_CONTROL_DIRTY_BOX_STYLES = css`
   @keyframes vsc-form-control-dirty-ring {

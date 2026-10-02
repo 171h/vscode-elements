@@ -1,7 +1,7 @@
-# Auto detect text files and enforce LF line endings
+# 自动识别文本文件并统一使用 LF 换行
 * text=auto eol=lf
 
-# Source code
+# 源代码
 *.js text eol=lf
 *.mjs text eol=lf
 *.ts text eol=lf
@@ -9,10 +9,10 @@
 *.html text eol=lf
 *.css text eol=lf
 
-# Documentation
+# 文档
 *.md text eol=lf
 
-# Config files
+# 配置文件
 *.yml text eol=lf
 *.yaml text eol=lf
 *.config text eol=lf
@@ -23,7 +23,7 @@
 .ncurc text eol=lf
 .mailmap text eol=lf
 
-# Graphics
+# 图形资源
 *.svg text eol=lf
 *.woff binary
 *.woff2 binary

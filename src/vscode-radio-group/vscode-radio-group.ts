@@ -7,13 +7,13 @@ import styles from './vscode-radio-group.styles.js';
 /**
  * @tag vscode-radio-group
  *
- * @fires {Event} change - Dispatched when a child radio button is changed.
+ * @fires {Event} change - 子单选按钮变化时派发。
  */
 @customElement('vscode-radio-group')
 export class VscodeRadioGroup extends VscElement {
   static override styles = styles;
 
-  //#region properties
+  //#region 属性
 
   @property({reflect: true})
   variant: 'horizontal' | 'vertical' = 'horizontal';
@@ -24,7 +24,7 @@ export class VscodeRadioGroup extends VscElement {
 
   //#endregion
 
-  //#region private variables
+  //#region 私有变量
 
   @queryAssignedElements({selector: 'vscode-radio'})
   private _radios!: VscodeRadio[];
@@ -39,7 +39,7 @@ export class VscodeRadioGroup extends VscElement {
 
   //#endregion
 
-  //#region lifecycle methods
+  //#region 生命周期方法
 
   constructor() {
     super();
@@ -49,7 +49,7 @@ export class VscodeRadioGroup extends VscElement {
 
   //#endregion
 
-  //#region private methods
+  //#region 私有方法
 
   private _uncheckPreviousChecked(prevChecked: number, prevFocused: number) {
     if (prevChecked !== -1) {
@@ -106,7 +106,7 @@ export class VscodeRadioGroup extends VscElement {
 
   //#endregion
 
-  //#region event handlers
+  //#region 事件处理
 
   private _handleKeyDown = (ev: KeyboardEvent) => {
     const {key} = ev;
@@ -166,7 +166,7 @@ export class VscodeRadioGroup extends VscElement {
     let indexOfDefaultCheckedRadio = -1;
 
     this._radios.forEach((r, i) => {
-      // if _focusedRadio is not set, the first radio should be focusable
+      // 未设置 _focusedRadio 时，第一个单选按钮应可聚焦
       if (this._focusedRadio > -1) {
         r.tabIndex = i === this._focusedRadio ? 0 : -1;
       } else {

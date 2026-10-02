@@ -79,7 +79,7 @@ describe('calculateColumnWidths', () => {
 
     const result = calculateColumnWidths(widths, 0, percent(15), minWidths);
 
-    // right side shrinks, left side grows
+    // 右侧缩小，左侧增大
     expect(result).to.deep.equal([percent(45), percent(20), percent(35)]);
   });
 

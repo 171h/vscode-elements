@@ -4,7 +4,7 @@ import {customElement, VscElement} from '../includes/VscElement.js';
 import styles from './vscode-checkbox-group.styles.js';
 
 /**
- * Arranges a group of checkboxes horizontally or vertically.
+ * 水平或垂直排列一组复选框。
  *
  * @tag vscode-checkbox-group
  */

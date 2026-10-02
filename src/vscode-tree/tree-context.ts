@@ -9,8 +9,8 @@ export interface TreeContext {
   itemListUpToDate: boolean;
   focusedItem: VscodeTreeItem | null;
   prevFocusedItem: VscodeTreeItem | null;
-  /** If arrows are visible and `List` component has not any branch item, the
-   * extra padding should be removed in the leaf elements before the content
+  /** 显示箭头且 `List` 组件不含分支项时，
+   * 应移除叶子元素内容前的额外内边距
    */
   hasBranchItem: boolean;
   rootElement: VscodeTree | null;

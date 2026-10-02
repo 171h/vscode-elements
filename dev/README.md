@@ -1,13 +1,15 @@
-This directory contains HTML files containing your element for development. By running `npm run start` you can edit and see changes without bundling.
+此目录包含用于开发和验证组件的 HTML 文件。运行 `npm run start` 后，可以在不打包的情况下编辑并查看变化。
 
-## Unified component gallery
+## 统一组件展示页
 
-After running `npm run start`, open `http://localhost:8000/dev` to browse the individual component test pages, or open [`index.html`](./index.html) at `http://localhost:8000/dev/index.html` to use the unified development gallery. The gallery contains all public components and their common interaction scenarios in one page.
+运行 `npm run start` 后，访问 `http://localhost:8000/dev` 浏览各组件测试页面，或访问 `http://localhost:8000/dev/index.html` 打开[统一组件展示页](./index.html)。展示页将所有公共组件及常见交互场景放在同一页面中。
 
-The toolbar at the top applies one of the ten bundled VS Code themes, component size, and icon size globally. Use the component filter to focus on one family; the event log at the bottom captures bubbling component events. The per-component folders below are retained as focused regression fixtures and historical examples.
+顶部工具栏可全局切换十种内置 VS Code 主题、组件尺寸和图标尺寸。组件过滤器可聚焦某一组件类别，底部事件日志捕获冒泡的组件事件。各组件子目录继续保留，用于聚焦的回归验证及历史示例。
 
-You can use the following files as a starting point:
+可使用以下文件作为起点：
 
-- \_template.html - Default template. All VSCode theme variables, codicons, and components are available.
-- \_template-csp.html - Template with strict CSP settings. All VSCode theme variables, codicons, and components are available.
-- \_template-fallback-styles.html - Template for demoing the default styles. Codicons and all components are available, however theme variables are not.
+- `_template.html`：默认模板，提供所有 VS Code 主题变量、Codicon 图标和组件。
+- `_template-csp.html`：使用严格 CSP 设置的模板，提供所有 VS Code 主题变量、Codicon 图标和组件。
+- `_template-fallback-styles.html`：默认回退样式演示模板，提供 Codicon 图标和所有组件，但不提供主题变量。
+
+示例说明、文档与代码注释均使用中文，技术标识符和工具指令保持原样。

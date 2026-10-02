@@ -23,7 +23,7 @@ class StylePropertyMap extends Directive {
         if (key.startsWith('--')) {
           part.element.style.setProperty(key, val);
         } else {
-          // @ts-expect-error I'm so sick of these stupid unresolvable TS errors.
+          // @ts-expect-error 此处类型错误无法由当前类型定义解决。
           part.element.style[key] = val;
         }
 
@@ -40,9 +40,9 @@ class StylePropertyMap extends Directive {
 }
 
 /**
- * Implement a Lit directive similar to styleMap, but instead of setting styles via the style
- * attribute (which violates CSP), it should apply styles using the style property.
+ * 实现类似 styleMap 的 Lit 指令，使用 style 属性对象设置样式，
+ * 避免通过 style HTML 特性设置样式而违反 CSP。
  *
- * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy#unsafe-inline)
+ * [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy#unsafe-inline)
  */
 export const stylePropertyMap = directive(StylePropertyMap);

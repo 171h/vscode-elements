@@ -5,7 +5,7 @@ import {parseSizeAttributeToPercent} from './sizes.js';
 describe('parseSizeAttributeToPercent', () => {
   const base = 200;
 
-  // number input
+  // 数字输入
   it('should parse valid number input', () => {
     expect(parseSizeAttributeToPercent(50, base)).to.equal(25);
     expect(parseSizeAttributeToPercent(0, base)).to.equal(0);
@@ -19,7 +19,7 @@ describe('parseSizeAttributeToPercent', () => {
     expect(parseSizeAttributeToPercent(-Infinity, base)).to.be.null;
   });
 
-  // string number input
+  // 数字字符串输入
   it('should parse valid string number', () => {
     expect(parseSizeAttributeToPercent('50', base)).to.equal(25);
     expect(parseSizeAttributeToPercent('0', base)).to.equal(0);
@@ -39,7 +39,7 @@ describe('parseSizeAttributeToPercent', () => {
     expect(parseSizeAttributeToPercent('NaN', base)).to.be.null;
   });
 
-  // px input
+  // 像素输入
   it('should parse valid px input', () => {
     expect(parseSizeAttributeToPercent('50px', base)).to.equal(25);
     expect(parseSizeAttributeToPercent('0px', base)).to.equal(0);
@@ -57,7 +57,7 @@ describe('parseSizeAttributeToPercent', () => {
     expect(parseSizeAttributeToPercent('50px%', base)).to.be.null;
   });
 
-  // percent input
+  // 百分比输入
   it('should parse valid percent input', () => {
     expect(parseSizeAttributeToPercent('25%', base)).to.equal(25);
     expect(parseSizeAttributeToPercent('0%', base)).to.equal(0);
@@ -77,7 +77,7 @@ describe('parseSizeAttributeToPercent', () => {
     expect(parseSizeAttributeToPercent('50%px', base)).to.be.null;
   });
 
-  // invalid base
+  // 无效基准值
   it('should return null for invalid base', () => {
     expect(parseSizeAttributeToPercent('50', 0)).to.be.null;
     expect(parseSizeAttributeToPercent('50', NaN)).to.be.null;

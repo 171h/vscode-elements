@@ -8,8 +8,7 @@ import {legacyPlugin} from '@web/dev-server-legacy';
 import {directoryIndexPlugin} from '@bendera/wds-plugin-directory-index';
 
 export default {
-  // Keep directory listings for individual component folders. The gallery
-  // entry below handles /dev explicitly before the directory index plugin.
+  // 保留各组件目录的文件列表；先将 /dev 重定向到统一组件展示页。
   appIndex: 'dev/__index.html',
   middleware: [
     async (context, next) => {
@@ -29,7 +28,7 @@ export default {
   plugins: [
     legacyPlugin({
       polyfills: {
-        // Manually imported in index.html file
+        // 在 index.html 中手动导入
         webcomponents: false,
       },
     }),

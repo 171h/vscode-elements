@@ -1,5 +1,5 @@
 /**
- * Replace the `## [Unreleased]` header to the version number and the release date.
+ * 将 `## [Unreleased]` 标题替换为版本号与发布日期。
  */
 import fs from 'fs';
 import util from 'util';

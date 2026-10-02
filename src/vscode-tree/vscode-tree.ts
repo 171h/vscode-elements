@@ -76,19 +76,19 @@ const listenedKeys: ListenedKey[] = [
 export class VscodeTree extends VscElement {
   static override styles = styles;
 
-  //#region properties
+  //#region 属性
 
   /**
-   * The size of the tree items. The `medium` size is the default.
+   * 树项目尺寸，默认为 `medium`。
    */
   @property({reflect: true})
   size: FormControlSize = 'medium';
 
   /**
-   * Controls how tree folders are expanded when clicked. This property is designed to use
-   * the `workbench.tree.expandMode` setting.
+   * 控制点击时树文件夹的展开方式，用于适配
+   * `workbench.tree.expandMode` 设置。
    *
-   * Valid options are available as constants.
+   * 有效选项通过常量提供。
    *
    * ```javascript
    * import {ExpandMode} from 'nusys-ui/dist/vscode-tree/vscode-tree.js';
@@ -102,25 +102,25 @@ export class VscodeTree extends VscElement {
   expandMode: ExpandMode = 'singleClick';
 
   /**
-   * Although arrows are always visible in the Tree component by default in VSCode, some icon sets
-   * (e.g., Material Icon Theme) allow disabling them in the file explorer view. This flag makes it
-   * possible to mimic that behavior.
+   * VS Code 的树组件默认始终显示箭头，但部分图标集
+   * （例如 Material Icon Theme）允许在文件资源管理器中禁用箭头。
+   * 此标记用于模拟该行为。
    */
   @property({type: Boolean, reflect: true, attribute: 'hide-arrows'})
   hideArrows: boolean = false;
 
   /**
-   * Controls the indentation in pixels. This property is designed to use the
-   * `workbench.tree.indent` setting.
+   * 控制缩进的像素值，用于适配
+   * `workbench.tree.indent` 设置。
    */
   @property({type: Number, reflect: true})
   indent: number = 8;
 
   /**
-   * Controls whether the tree should render indent guides. This property is
-   * designed to use the `workbench.tree.renderIndentGuides` setting.
+   * 控制树是否渲染缩进参考线，
+   * 用于适配 `workbench.tree.renderIndentGuides` 设置。
    *
-   * Valid options are available as constants.
+   * 有效选项通过常量提供。
    *
    * ```javascript
    * import {IndentGuides} from 'nusys-ui/dist/vscode-tree/vscode-tree.js';
@@ -139,14 +139,14 @@ export class VscodeTree extends VscElement {
   indentGuides: IndentGuideDisplay = 'onHover';
 
   /**
-   * Allows selecting multiple items.
+   * 允许选择多个项目。
    */
   @property({type: Boolean, reflect: true, attribute: 'multi-select'})
   multiSelect: boolean = false;
 
   //#endregion
 
-  //#region private variables
+  //#region 私有变量
 
   @provide({context: treeContext})
   private _treeContextState: TreeContext = {
@@ -183,7 +183,7 @@ export class VscodeTree extends VscElement {
 
   //#endregion
 
-  //#region lifecycle methods
+  //#region 生命周期方法
 
   constructor() {
     super();
@@ -208,10 +208,10 @@ export class VscodeTree extends VscElement {
 
   //#endregion
 
-  //#region public methods
+  //#region 公共方法
 
   /**
-   * Expands all folders.
+   * 展开所有文件夹。
    */
   expandAll() {
     const children = this.querySelectorAll<VscodeTreeItem>('vscode-tree-item');
@@ -224,7 +224,7 @@ export class VscodeTree extends VscElement {
   }
 
   /**
-   * Collapses all folders.
+   * 折叠所有文件夹。
    */
   collapseAll() {
     const children = this.querySelectorAll<VscodeTreeItem>('vscode-tree-item');
@@ -238,8 +238,8 @@ export class VscodeTree extends VscElement {
 
   /**
    * @internal
-   * Updates `hasBranchItem` property in the context state in order to removing
-   * extra padding before the leaf elements, if it is required.
+   * 更新上下文状态中的 `hasBranchItem`，
+   * 按需移除叶子元素前的额外内边距。
    */
   updateHasBranchItemFlag() {
     const hasBranchItem = this._assignedTreeItems.some((li) => li.branch);
@@ -248,7 +248,7 @@ export class VscodeTree extends VscElement {
 
   //#endregion
 
-  //#region private methods
+  //#region 私有方法
 
   private _emitSelectEvent() {
     const ev = new CustomEvent('vsc-tree-select', {
@@ -356,7 +356,7 @@ export class VscodeTree extends VscElement {
 
   //#endregion
 
-  //#region event handlers
+  //#region 事件处理
 
   private _handleArrowRightPress() {
     if (!this._treeContextState.focusedItem) {

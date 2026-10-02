@@ -150,7 +150,7 @@ const styles: CSSResultGroup = [
     .content {
       display: flex;
       align-items: center;
-      flex-wrap: nowrap; /* prevent wrapping; allow ellipses via min-width: 0 */
+      flex-wrap: nowrap; /* 防止换行，通过 min-width: 0 允许显示省略号 */
       min-width: 0;
       width: 100%;
       line-height: var(--vsc-tree-item-height, 22px);
@@ -182,7 +182,7 @@ const styles: CSSResultGroup = [
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      flex: 1 1 0%; /* description takes remaining space, yields first when shrinking */
+      flex: 1 1 0%; /* 描述占据剩余空间，缩小时优先让出空间 */
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -191,7 +191,7 @@ const styles: CSSResultGroup = [
     }
 
     .content.has-description .label {
-      flex: 0 1 auto; /* label only grows when description missing */
+      flex: 0 1 auto; /* 仅在缺少描述时让标签增大 */
     }
 
     .content:not(.has-description) .label {

@@ -16,8 +16,8 @@ const nextFrame = () =>
   new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 /**
- * The keyframes of the fading animation of a surface. The browser resolves the
- * custom properties, so the keyframes show the colors of the active theme.
+ * 表面淡出动画的关键帧。浏览器解析自定义属性，
+ * 因此关键帧反映当前主题的颜色。
  */
 const getFadeKeyframes = (surface: Element): Keyframe[] => {
   const animation = (
@@ -39,7 +39,7 @@ const getFadeKeyframes = (surface: Element): Keyframe[] => {
 const delay = (milliseconds: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 
-/** Waits until the predicate is true, so the tests are not time sensitive. */
+/** 等待判断条件为 true，避免测试依赖固定时间。 */
 const waitFor = async (
   predicate: () => boolean,
   timeout = 3000
@@ -57,7 +57,7 @@ const waitFor = async (
 
 let formIndex = 0;
 
-/** A unique id, so the states of the other tests can be filtered out. */
+/** 使用唯一 id，以过滤其他测试的状态。 */
 const nextFormId = (prefix: string) => `${prefix}-${formIndex++}`;
 
 const getState = (id: string) =>
@@ -67,9 +67,9 @@ const getStates = (...ids: string[]) =>
   VscodeFormContainer.getFormStates().filter((state) => ids.includes(state.id));
 
 /**
- * Creates a form with attributes that are parsed as real attributes. The
- * attributes cannot be interpolated into the template, Lit does not create an
- * attribute part for a binding that is surrounded by whitespace.
+ * 创建表单，使特性按真实 HTML 特性解析。
+ * 不能将特性插入模板，因为 Lit 不会为被空白包围的绑定
+ * 创建特性绑定部分。
  */
 const createForm = async (id: string, attributes = '') => {
   const declaration = attributes
@@ -91,8 +91,8 @@ const createForm = async (id: string, attributes = '') => {
 };
 
 /**
- * Types into the native input of the first textfield. The input event is
- * dispatched by the component itself, like a real keystroke does.
+ * 向第一个文本框的原生输入框输入内容。
+ * input 事件由组件自身派发，与真实按键行为相同。
  */
 const typeIntoTextfield = (form: VscodeFormContainer, text: string) => {
   const textfield = form.querySelector('vscode-textfield')!;
@@ -235,8 +235,8 @@ describe('vscode-form-container', () => {
       await nextFrame();
 
       const style = surface();
-      // The animation paints the color of the state, the resolved keyframes
-      // show the colors of the theme.
+      // 动画绘制状态颜色，解析后的关键帧
+      // 反映主题颜色。
       const keyframes = getFadeKeyframes(
         textfield.shadowRoot!.querySelector('.root')!
       );
@@ -345,8 +345,8 @@ describe('vscode-form-container', () => {
     });
 
     it('uses the duration from the property', async function () {
-      // The duration is long on purpose, the default test timeout is not
-      // enough for it.
+      // 刻意使用较长的持续时间，默认测试超时
+      // 不足以完成此用例。
       this.timeout(6000);
 
       const id = nextFormId('property');
@@ -369,8 +369,8 @@ describe('vscode-form-container', () => {
           .animationDuration
       ).to.eq('2.5s');
 
-      // The countdown is not over after 1.5 seconds, but it is after the
-      // remaining second.
+      // 经过 1.5 秒后倒计时尚未结束，
+      // 再经过剩余的 1 秒后结束。
       await delay(1500);
       expect(el.dirty).to.be.true;
       await waitFor(() => !el.dirty);
@@ -489,7 +489,7 @@ describe('vscode-form-container', () => {
 
       typeIntoTextfield(el, 'a');
       await el.updateComplete;
-      // The guard ignores the modifications that follow each other quickly.
+      // 保护机制忽略连续快速发生的修改。
       await delay(600);
 
       typeIntoTextfield(el, 'ab');
@@ -507,8 +507,8 @@ describe('vscode-form-container', () => {
 
       typeIntoTextfield(el, 'a');
       await el.updateComplete;
-      // The input and the change event of the same keystroke, then the next
-      // keystroke of a user who types fast.
+      // 同一按键的 input 和 change 事件，随后是
+      // 快速输入用户的下一个按键。
       await delay(50);
       typeIntoTextfield(el, 'ab');
       await el.updateComplete;
@@ -564,8 +564,8 @@ describe('vscode-form-container', () => {
       await el.updateComplete;
       await delay(250);
 
-      // The second call is inside the delay which ignores the events of the
-      // automatic marking, but a direct call is never ignored.
+      // 第二次调用位于自动标记的事件忽略间隔内，
+      // 但直接调用不会被忽略。
       el.mark();
       await el.updateComplete;
       await delay(250);
@@ -586,8 +586,8 @@ describe('vscode-form-container', () => {
 
       el.mark();
       await el.updateComplete;
-      // The countdown of a form which is already highlighted is restarted
-      // without a change of the state.
+      // 已高亮表单的倒计时重新开始，
+      // 状态保持不变。
       el.mark();
       await el.updateComplete;
       await delay(20);
@@ -617,8 +617,8 @@ describe('vscode-form-container', () => {
       textfield.focus();
       await sendKeys({type: 'a'});
 
-      // The keystrokes follow each other faster than the duration of the
-      // state, so the countdown has to be restarted before it expires.
+      // 连续按键的间隔短于状态持续时间，
+      // 因此倒计时应在过期前重新开始。
       for (const character of 'bcdef') {
         await delay(100);
         await sendKeys({type: character});

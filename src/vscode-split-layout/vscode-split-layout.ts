@@ -38,7 +38,7 @@ export const parseValue = (
   return {unit, value};
 };
 
-// Returns a percentage between 0 and 100
+// 返回 0 到 100 之间的百分比
 export const pxToPercent = (current: number, max: number) => {
   return max === 0 ? 0 : Math.min(100, (current / max) * 100);
 };
@@ -56,8 +56,8 @@ export type VscSplitLayoutChangeEvent = CustomEvent<{
  * @tag vscode-split-layout
  *
  * @prop {'start' | 'end' | 'none'} fixedPane
- * @prop {string} minStart - Minimum size of the start pane expressed in `px` or `%`.
- * @prop {string} minEnd - Minimum size of the end pane expressed in `px` or `%`.
+ * @prop {string} minStart - 起始面板的最小尺寸，单位为 `px` 或 `%`。
+ * @prop {string} minEnd - 结束面板的最小尺寸，单位为 `px` 或 `%`。
  *
  * @cssprop [--separator-border=#454545]
  * @cssprop [--vscode-editorWidget-border=#454545]
@@ -68,7 +68,7 @@ export class VscodeSplitLayout extends VscElement {
   static override styles = styles;
 
   /**
-   * Direction of the divider.
+   * 分隔条方向。
    */
   @property({reflect: true})
   set split(newVal: Orientation) {
@@ -84,30 +84,30 @@ export class VscodeSplitLayout extends VscElement {
   private _split: Orientation = 'vertical';
 
   /**
-   * Controls whether the handle position should reset to the value set in the
-   * `initialHandlePosition` when it is double-clicked.
+   * 控制双击时是否将拖动手柄位置重置为
+   * `initialHandlePosition` 设置的值。
    */
   @property({type: Boolean, reflect: true, attribute: 'reset-on-dbl-click'})
   resetOnDblClick = false;
 
   /**
-   * Controls the draggable area size in pixels. it is intended to use the value
-   * of `workbench.sash.size`.
+   * 控制可拖动区域的像素尺寸，用于适配
+   * `workbench.sash.size` 设置。
    */
   @property({type: Number, reflect: true, attribute: 'handle-size'})
   handleSize = 4;
 
   /**
-   * The handler position will reset to this position when it is double-clicked,
-   * or the `resetHandlePosition()` is called.
+   * 双击或调用 `resetHandlePosition()` 时，
+   * 拖动手柄重置到此位置。
    */
   @property({reflect: true, attribute: 'initial-handle-position'})
   initialHandlePosition: string = DEFAULT_INITIAL_POSITION;
 
   /**
-   * Set the handle position programmatically. The value must include a unit,
-   * either `%` or `px`. If no unit is specified, the value is interpreted as
-   * `px`.
+   * 通过代码设置手柄位置。值应带有 `%` 或 `px` 单位；
+   * 未指定单位时，
+   * 按 `px` 解析。
    */
   @property({attribute: 'handle-position'})
   set handlePosition(newVal: string) {
@@ -120,7 +120,7 @@ export class VscodeSplitLayout extends VscElement {
   private _rawHandlePosition?: string;
 
   /**
-   * The size of the fixed pane will not change when the component is resized.
+   * 组件尺寸变化时，固定面板的尺寸保持不变。
    */
   @property({attribute: 'fixed-pane'})
   set fixedPane(newVal: FixedPaneType) {
@@ -133,7 +133,7 @@ export class VscodeSplitLayout extends VscElement {
   private _fixedPane: FixedPaneType = 'none';
 
   /**
-   * Sets the minimum size of the start pane. Accepts pixel or percentage values.
+   * 设置起始面板最小尺寸，接受像素或百分比值。
    */
   @property({attribute: 'min-start'})
   set minStart(newVal: string | null | undefined) {
@@ -152,7 +152,7 @@ export class VscodeSplitLayout extends VscElement {
   private _minStart?: string;
 
   /**
-   * Sets the minimum size of the end pane. Accepts pixel or percentage values.
+   * 设置结束面板最小尺寸，接受像素或百分比值。
    */
   @property({attribute: 'min-end'})
   set minEnd(newVal: string | null | undefined) {
@@ -207,7 +207,7 @@ export class VscodeSplitLayout extends VscElement {
   }
 
   /**
-   * Sets the handle position to the value specified in the `initialHandlePosition` property.
+   * 将手柄位置设置为 `initialHandlePosition` 属性指定的值。
    */
   resetHandlePosition() {
     if (!this._wrapperEl) {

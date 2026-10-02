@@ -1,41 +1,28 @@
-# Modified state of a form
+# 表单已修改状态
 
-`vscode-form-container` shows the modified state of a form with a light blue
-background on its form controls. The highlight makes the change visible even
-when the modified control is outside of the viewport, and it disappears
-automatically after a timeout.
+`vscode-form-container` 在表单控件上显示浅蓝色背景，标识表单已修改。即使被修改的控件位于视口之外，高亮也能提示变化，并在超时后自动消失。
 
-The background of the container itself is not changed.
+容器自身的背景不变。
 
-## Mark a form as modified
+## 标记表单已修改
 
-The state is detected automatically: the container listens to the `input` and
-`change` events of the slotted form controls, so typing into a
-`vscode-textfield`, toggling a `vscode-checkbox`, or selecting an option marks
-the whole form.
+容器自动监听插槽中表单控件的 `input` 和 `change` 事件。因此在 `vscode-textfield` 中输入、切换 `vscode-checkbox` 或选择选项，均会标记整个表单。
 
-Only the form controls of the table below take part in the state. A native
-`input`, `select`, or `textarea` in the form does not mark it, because the
-container cannot show the state on a native control. The nearest container owns
-a control as well, so a form container which contains another form container is
-not marked when a control of the nested form is modified.
+只有下表列出的控件参与状态。原生 `input`、`select` 或 `textarea` 不会标记表单，因为容器无法在原生控件上显示该状态。控件归属最近的容器，因此嵌套表单中的控件被修改时，不会标记外层表单。
 
-Only a user interaction marks a form. Setting the `value` property or the
-`value` attribute from code does not change the state.
+仅用户交互会自动标记表单。通过代码设置 `value` 属性或 HTML 特性不会改变状态。
 
 ```html
 <vscode-form-container>
   <vscode-form-group variant="vertical">
-    <vscode-label for="name">Name</vscode-label>
+    <vscode-label for="name">名称</vscode-label>
     <vscode-textfield id="name"></vscode-textfield>
-    <vscode-checkbox label="Enabled"></vscode-checkbox>
+    <vscode-checkbox label="启用"></vscode-checkbox>
   </vscode-form-group>
 </vscode-form-container>
 ```
 
-The state is available on the container and on every form control of the form.
-The controls reflect it as the `dirty` attribute, which is also the hook of the
-highlight styles:
+容器及表单内各控件均可读取状态。控件将状态反射为 `dirty` 特性，作为高亮样式的选择依据：
 
 ```js
 const form = document.querySelector('vscode-form-container');
@@ -44,68 +31,55 @@ const textfield = form.querySelector('vscode-textfield');
 form.dirty; // false
 textfield.dirty; // false
 
-textfield.dirty; // true after the user types into the field
-form.dirty; // true, the form of the field is marked as well
+textfield.dirty; // 用户输入后为 true
+form.dirty; // true，文本框所属表单也被标记
 ```
 
-## The modified form controls
+## 参与状态的表单控件
 
-Every control which takes part in the state shows the light blue background on
-its own surface:
+各控件在自身表面显示浅蓝色背景：
 
-| Control | The highlighted surface |
-| --- | --- |
-| `vscode-textfield` | The box of the input |
-| `vscode-textarea` | The box of the textarea |
-| `vscode-single-select` | The face of the dropdown, in both select and combobox mode |
-| `vscode-multi-select` | The face of the dropdown, in both select and combobox mode |
-| `vscode-checkbox` | The box of the checkbox, with a ring |
-| `vscode-radio` | The box of the radio button, with a ring |
+| 控件                   | 高亮区域                                   |
+| ---------------------- | ------------------------------------------ |
+| `vscode-textfield`     | 输入框                                     |
+| `vscode-textarea`      | 多行文本框                                 |
+| `vscode-single-select` | 下拉框展示区域，选择模式和组合框模式均适用 |
+| `vscode-multi-select`  | 下拉框展示区域，选择模式和组合框模式均适用 |
+| `vscode-checkbox`      | 复选框方框及外环                           |
+| `vscode-radio`         | 单选按钮方框及外环                         |
 
-The face of a dropdown is highlighted whether it shows the selected option, the
-labels of a multiple selection, or the placeholder of an empty selection, and
-it stays highlighted while the options are open. Typing a filter pattern into a
-combobox does not mark the form; selecting an option does.
+下拉框无论显示选中项、多选标签还是空选中占位文字，展示区域都会高亮，选项列表展开时也保持高亮。组合框中输入过滤文字不会标记表单，选择选项才会标记。
 
-A control which is added to the form while it is highlighted takes part in the
-state as well, so a form which is built dynamically shows the state on its new
-fields.
+高亮期间动态添加的控件同样参与状态，因此动态构建的表单可在新增字段上显示高亮。
 
-The small controls draw the background on a small box, so a ring makes the
-state visible around the box as well. The controls which are not part of a
-form container, e.g. a standalone `vscode-textfield`, are never marked.
+小型控件在小方框上绘制背景，并通过外环增强可见性。不属于表单容器的控件（例如独立的 `vscode-textfield`）不会被标记。
 
-A control which shows an error keeps its error colors: the state is not painted
-on an invalid control, so the error is not covered by the highlight. The state
-appears on the control again when it becomes valid.
+显示错误的控件保留错误颜色，不在无效控件上绘制高亮，以免覆盖错误提示。控件重新有效后恢复显示已修改状态。
 
-## Duration of the highlight
+## 高亮持续时间
 
-The highlight lasts **5 seconds** by default. The `mark-duration` attribute
-and the `markDuration` property accept:
+高亮默认持续 **5 秒**。`mark-duration` 特性与 `markDuration` 属性接受以下值：
 
-| Value | Meaning |
-| --- | --- |
-| `5000` | A number or a unitless string is interpreted as milliseconds |
-| `'2.5s'`, `'500ms'` | A string with a CSS time unit |
-| `'forever'` | The highlight is removed only by another modified form or by `reset()` |
-| no value | The bare `mark-duration` attribute and the removal of the attribute restore the default duration |
+| 值                  | 含义                                                        |
+| ------------------- | ----------------------------------------------------------- |
+| `5000`              | 数字或不带单位的字符串按毫秒解析                            |
+| `'2.5s'`、`'500ms'` | 带 CSS 时间单位的字符串                                     |
+| `'forever'`         | 仅在修改另一个表单或调用 `reset()` 时移除高亮               |
+| 空值                | 不带值的 `mark-duration` 特性或移除特性，均恢复默认持续时间 |
 
-The rules are the same for every kind of form control: a dropdown follows them
-exactly like a textfield, whether the option is selected in select mode or in
-combobox mode.
+所有表单控件遵循相同规则；下拉框无论在选择模式还是组合框模式选中选项，行为均与文本框一致。
 
 ```html
-<!-- 2 seconds -->
+<!-- 2 秒 -->
 <vscode-form-container mark-duration="2000"></vscode-form-container>
 
-<!-- 1.5 seconds -->
+<!-- 1.5 秒 -->
 <vscode-form-container mark-duration="1.5s"></vscode-form-container>
 
-<!-- stays highlighted -->
+<!-- 持续高亮 -->
 <vscode-form-container mark-duration="forever"></vscode-form-container>
 
-<!-- the default duration, like the removal of the attribute -->
+<!-- 默认持续时间，与移除特性相同 -->
 <vscode-form-container mark-duration></vscode-form-container>
 ```
 
@@ -115,36 +89,21 @@ const form = document.querySelector('vscode-form-container');
 form.markDuration = 3000;
 ```
 
-`VscodeFormContainer.defaultMarkDuration` is the fallback for the containers
-without a `mark-duration` attribute. The value is read when a container is
-created, so changing it affects only the containers which are created
-afterwards.
+未设置 `mark-duration` 的容器使用 `VscodeFormContainer.defaultMarkDuration` 作为回退值。该值在容器创建时读取，因此修改它仅影响之后创建的容器。
 
-A value that cannot be interpreted, e.g. `'slow'`, keeps the highlight until
-it is reset. A negative duration is interpreted as zero, so the highlight is
-removed immediately.
+无法解析的值（例如 `'slow'`）会保持高亮直到重置。负数按零处理，立即移除高亮。
 
-The countdown is restarted by every modification, but the modifications which
-follow each other within 500ms share one restart: the events of a single
-keystroke do not restart it, and neither do the keystrokes of a user who types
-faster than two characters a second. The highlight disappears within
-`markDuration` after the last modification, and it stays on the screen while
-the user keeps modifying the form. A duration which is shorter than the 500ms
-interval shortens the interval as well, so the countdown is always restarted
-before it expires and the state does not blink. That interval belongs to the
-automatic marking: a `mark()` call always restarts the countdown.
+每次修改会重启倒计时，但 500ms 内连续修改共用一次重启：同一按键产生的多个事件，以及每秒输入超过两个字符的连续按键，不会每次都重启。高亮在最后一次修改后的 `markDuration` 内消失，用户持续修改时保持可见。
 
-The fade-out of the `'forever'` duration is far beyond a page visit, so the
-controls keep the peak color of the animation while the state is on the screen.
+持续时间短于 500ms 时，忽略间隔也会缩短，确保倒计时在过期前重启，避免状态闪烁。此间隔仅适用于自动标记，直接调用 `mark()` 总会重启倒计时。
 
-## Only one form is highlighted
+`'forever'` 的淡出时间远超通常的页面访问时长，因此状态显示期间控件保持动画峰值颜色。
 
-A page can contain several forms, but only one of them is highlighted at a
-time. When a form is marked, every other form of the same root returns to its
-normal state immediately, so the user always sees which form was modified
-last. Forms in different shadow roots do not affect each other.
+## 同一根节点只高亮一个表单
 
-The state of every form of a page can be queried:
+页面可包含多个表单，但同一根节点中一次仅高亮一个。标记某个表单时，该根节点中的其他表单立即恢复正常状态，使用户知道最近修改的是哪个表单。不同 Shadow Root 中的表单互不影响。
+
+可查询页面各表单的状态：
 
 ```js
 const states = VscodeFormContainer.getFormStates();
@@ -155,39 +114,31 @@ const states = VscodeFormContainer.getFormStates();
 // ]
 ```
 
-`VscodeFormContainer.getFormStates(root)` accepts a `Document`, a `ShadowRoot`,
-or an `Element` as the optional argument, and it includes the nested
-containers. The root itself is included when it is a form container. A
-`Document` returns the forms of the document itself; the forms of a shadow root
-are returned when the shadow root is passed. The query walks the whole tree and
-it descends into the shadow roots, so it is not cheap and it should not be
-called on a hot path.
+`VscodeFormContainer.getFormStates(root)` 接受可选的 `Document`、`ShadowRoot` 或 `Element`，结果包含嵌套容器；根节点本身为表单容器时也包含在结果中。传入 `Document` 返回该文档内的表单，传入 Shadow Root 则返回其内部表单。
 
-The state of a form which holds a modified dropdown is reported like the state
-of a form which holds a modified textfield, and the button of the gallery uses
-the query to find the forms:
+查询遍历整棵树并深入 Shadow Root，开销较大，不应在频繁执行的路径上调用。
+
+包含已修改下拉框的表单与包含已修改文本框的表单以相同方式报告状态。展示页中的按钮使用该查询查找表单：
 
 ```js
-// The dropdown of the second form is selected, so the first form is restored.
+// 第二个表单的下拉框被选择，因此第一个表单恢复正常。
 VscodeFormContainer.getFormStates().map((state) => [state.id, state.dirty]);
 // [['profile', false], ['account', true]]
 ```
 
-## Manual control
+## 手动控制
 
 ```js
 const form = document.querySelector('vscode-form-container');
 
-// Mark the form and start the countdown.
+// 标记表单并启动倒计时。
 form.mark();
 
-// Restore the normal state immediately.
+// 立即恢复正常状态。
 form.reset();
 ```
 
-`vscode-form-container` also dispatches a `vsc-dirty-change` event when the
-state of the form changes. The event does not bubble, and its `detail` contains
-the `form` and the new `dirty` value:
+表单状态变化时，`vscode-form-container` 派发 `vsc-dirty-change` 事件。事件不冒泡，`detail` 包含 `form` 和新的 `dirty` 值：
 
 ```js
 form.addEventListener('vsc-dirty-change', (ev) => {
@@ -195,108 +146,68 @@ form.addEventListener('vsc-dirty-change', (ev) => {
 });
 ```
 
-The event reports the changes of the state, so `mark()` dispatches it only when
-the form was not modified yet: the restart of the countdown of a form which is
-already highlighted does not dispatch it again. The state of a modified form
-which is removed from the DOM becomes `false`, and that change is reported as
-well.
+事件报告状态变化，因此 `mark()` 仅在表单尚未修改时派发；重启已高亮表单的倒计时不会重复派发。已修改表单从 DOM 移除时，状态变为 `false`，同样报告此变化。
 
-Automatic marking can be turned off with the `markable` attribute, while
-`mark()` and `reset()` keep working:
+可通过 `markable` 特性关闭自动标记，`mark()` 和 `reset()` 仍可使用：
 
 ```html
 <vscode-form-container markable="false"></vscode-form-container>
 ```
 
-The attribute is not written back to the DOM, so
-`vscode-form-container[markable]` matches the containers which have the
-attribute only.
+该状态不写回 DOM，因此 `vscode-form-container[markable]` 仅匹配显式带有此特性的容器。
 
-## Styling
+## 样式
 
-The background of the controls fades from a peak color to the resting color
-over the whole duration of the state, and it fades back to the original
-background of the control when the state is removed. The animation is disabled
-when the user prefers the reduced motion.
+控件背景在整个状态持续时间内，从峰值颜色渐变至静止颜色；状态移除时，再恢复原始背景。用户设置减少动态效果时禁用动画。
 
-The background color is applied only in the modified state, so a form that has
-never been modified keeps the original background of its controls.
+背景色仅应用于已修改状态，未修改过的表单保留控件原有背景。
 
-### Colors of the themes
+### 主题颜色
 
-The state is a light blue wash, and the palette follows the kind of the VS Code
-theme. `#eff3ff` is the resting color of the light themes; the dark and the
-high contrast themes use a color of the same hue with the lightness of their
-surfaces, so the state stays visible without glaring.
+状态使用浅蓝色背景，调色板随 VS Code 主题类型变化。浅色主题静止颜色为 `#eff3ff`；深色和高对比度主题使用相同色相，明度匹配各自表面，使状态可见且不刺眼。
 
-| Theme kind | Resting color | Peak color | Border color | Ring color |
-| --- | --- | --- | --- | --- |
-| `vscode-light` (default) | `#eff3ff` | `#dbe4ff` | `#93a9f0` | `#6784de` |
-| `vscode-dark` | `#243a5e` | `#2f4c7a` | `#4a6ea8` | `rgba(74, 110, 168, 0.55)` |
-| `vscode-high-contrast` | `#243a5e` | `#3a5c8f` | `#7aa2e3` | `#7aa2e3` |
-| `vscode-high-contrast-light` | `#dbe4ff` | `#b9c9ff` | `#0a3d91` | `#0a3d91` |
+| 主题类型                     | 静止颜色  | 峰值颜色  | 边框颜色  | 外环颜色                   |
+| ---------------------------- | --------- | --------- | --------- | -------------------------- |
+| `vscode-light`（默认）       | `#eff3ff` | `#dbe4ff` | `#93a9f0` | `#6784de`                  |
+| `vscode-dark`                | `#243a5e` | `#2f4c7a` | `#4a6ea8` | `rgba(74, 110, 168, 0.55)` |
+| `vscode-high-contrast`       | `#243a5e` | `#3a5c8f` | `#7aa2e3` | `#7aa2e3`                  |
+| `vscode-high-contrast-light` | `#dbe4ff` | `#b9c9ff` | `#0a3d91` | `#0a3d91`                  |
 
-The border color is used by the checkbox and the radio button, the ring color is
-the color of their ring. A control which fills its whole surface, e.g. a
-textfield, changes the background only, so the border of a focused control
-keeps the focus color.
+边框与外环颜色用于复选框和单选按钮。铺满整个表面的控件（例如文本框）只改变背景，使焦点边框保留焦点颜色。
 
-The kind of the theme is published by VS Code on the `body` element as the
-`data-vscode-theme-kind` attribute, with the `vscode-light`, `vscode-dark`,
-`vscode-high-contrast`, and `vscode-high-contrast-light` values, and the
-`vscode-light`, `vscode-dark`, and `vscode-high-contrast` classes. The styles
-match with `:host-context`, so the colors follow the theme of the page, and
-they are recalculated when the theme changes.
+VS Code 在 `body` 上通过 `data-vscode-theme-kind` 特性提供主题类型，值为 `vscode-light`、`vscode-dark`、`vscode-high-contrast` 或 `vscode-high-contrast-light`，并提供 `vscode-light`、`vscode-dark` 和 `vscode-high-contrast` 类。样式使用 `:host-context` 匹配，使颜色跟随页面主题，并在主题切换时重新计算。
 
-`:host-context()` is a deprecated selector which only Chromium supports, see
-[MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:host-context)
-and the [web features explorer](https://web-platform-dx.github.io/web-features-explorer/features/host-context/).
-The components are built for Chromium, the engine of the VS Code webviews and
-of the Electron shell, and the palette is available there. Other browsers
-ignore the styles of the palette and fall back to the light colors.
+`:host-context()` 是已弃用且仅 Chromium 支持的选择器，参见 [MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:host-context) 和 [Web 特性浏览器](https://web-platform-dx.github.io/web-features-explorer/features/host-context/)。本组件库面向 VS Code Webview 与 Electron 使用的 Chromium，可使用该调色板。其他浏览器忽略调色板样式，回退到浅色配色。
 
-A page which does not publish the kind of the theme can ask for a palette by
-adding the class of the kind to the `body` element:
+未提供主题类型的页面，可在 `body` 上添加对应类型的类来启用调色板：
 
 ```html
 <body class="vscode-dark"></body>
 ```
 
-### Custom properties
+### 自定义属性
 
-The form container passes the colors to its controls. Each of them can be set
-on a control as well, which overrides the value of the container. A value which
-is set on an ancestor of the container or on the `body` element is used as
-well:
+表单容器将颜色传递给控件。也可在单个控件上设置并覆盖容器值，或在容器祖先、`body` 上设置：
 
-| Property | Purpose |
-| --- | --- |
-| `--vsc-form-control-dirty-background` | Resting background color of the modified controls |
-| `--vsc-form-control-dirty-background-peak` | Background color at the beginning of the animation |
-| `--vsc-form-control-dirty-border-color` | Border color of the modified checkbox and radio buttons |
-| `--vsc-form-control-dirty-ring-color` | Ring color of the modified checkbox and radio buttons |
-| `--vsc-form-control-dirty-duration` | Length of the animation of the modified control |
+| 属性                                       | 用途                             |
+| ------------------------------------------ | -------------------------------- |
+| `--vsc-form-control-dirty-background`      | 已修改控件的静止背景色           |
+| `--vsc-form-control-dirty-background-peak` | 动画开始时的背景色               |
+| `--vsc-form-control-dirty-border-color`    | 已修改复选框和单选按钮的边框颜色 |
+| `--vsc-form-control-dirty-ring-color`      | 已修改复选框和单选按钮的外环颜色 |
+| `--vsc-form-control-dirty-duration`        | 已修改控件的动画时长             |
 
-The duration is an exception of the rule above: the form container writes the
-value of its `markDuration` property on itself, so a value which is set on an
-ancestor of the container or on the `body` element does not reach the controls.
-Use `markDuration` or the `mark-duration` attribute to set the length of the
-state, and set the property on a single control to change the length of its
-animation only.
+持续时间例外：容器将 `markDuration` 的值写入自身，因此在容器祖先或 `body` 上设置的值不会传递到控件。通过 `markDuration` 或 `mark-duration` 设置状态时长；仅需调整单个控件的动画时长时，在该控件上设置自定义属性。
 
-The colors of the theme come from the internal
-`--vsc-form-control-dirty-palette-*` variables, which are only the fallback of
-the properties above. The names are different on purpose: a declaration of a
-property above on the level of a control would shadow the value which the
-control inherits, and the colors could not be replaced on the page any more.
+主题颜色来自内部的 `--vsc-form-control-dirty-palette-*` 变量，它们仅作为上述公共属性的回退值。使用不同名称是为了避免控件层级的声明遮蔽继承值，从而保留页面级覆盖颜色的能力。
 
 ```css
-/* the whole page */
+/* 整个页面 */
 body {
   --vsc-form-control-dirty-background: #e8f0ff;
 }
 
-/* one control */
+/* 单个控件 */
 vscode-textfield {
   --vsc-form-control-dirty-background: #f0e8ff;
 }

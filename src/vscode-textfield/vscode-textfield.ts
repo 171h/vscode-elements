@@ -32,19 +32,19 @@ type InputType =
   | 'week';
 
 /**
- * A simple inline textfield
+ * 简单的单行文本框
  *
- * When participating in a form, it supports the `:invalid` pseudo class. Otherwise the error styles
- * can be applied through the `invalid` property.
+ * 参与表单时支持 `:invalid` 伪类，其他情况下
+ * 可通过 `invalid` 属性应用错误样式。
  *
- * The `percentage` property turns the component into a percent field. The input displays the
- * percent sign, while the `value` property and the value submitted with the form use the fraction
- * form: entering `1` displays `1%` and reads back as `0.01`.
+ * `percentage` 属性将组件转换为百分比输入框。输入框显示
+ * 百分号，`value` 属性与表单提交值使用小数形式：
+ * 输入 `1` 显示 `1%`，读取值为 `0.01`。
  *
  * @tag vscode-textfield
  *
- * @slot content-before - A slot before the editable area but inside of the component. It is used to place icons.
- * @slot content-after - A slot after the editable area but inside of the component. It is used to place icons.
+ * @slot content-before - 组件内部、可编辑区域前的插槽，用于放置图标。
+ * @slot content-after - 组件内部、可编辑区域后的插槽，用于放置图标。
  *
  * @fires {InputEvent} input
  * @fires {Event} change
@@ -53,7 +53,7 @@ type InputType =
  * @cssprop [--vscode-settings-textInputBorder=var(--vscode-settings-textInputBackground, #313131)]
  * @cssprop [--vscode-settings-textInputForeground=#cccccc]
  * @cssprop [--vscode-focusBorder=#0078d4]
- * @cssprop [--vscode-font-family=sans-serif] - A sans-serif font type depends on the host OS.
+ * @cssprop [--vscode-font-family=sans-serif] - 无衬线字体，具体字体取决于宿主操作系统。
  * @cssprop [--vscode-font-size=13px]
  * @cssprop [--vscode-font-weight=normal]
  * @cssprop [--vscode-inputValidation-errorBorder=#be1100]
@@ -62,7 +62,7 @@ type InputType =
  * @cssprop [--vscode-button-background=#0078d4]
  * @cssprop [--vscode-button-foreground=#ffffff]
  * @cssprop [--vscode-button-hoverBackground=#026ec1]
- * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - Font size of the input. It is set automatically by the `size` property.
+ * @cssprop [--vsc-form-control-font-size=var(--vscode-font-size, 13px)] - 输入框字号，由 `size` 属性自动设置。
  */
 @customElement('vscode-textfield')
 export class VscodeTextfield
@@ -96,16 +96,16 @@ export class VscodeTextfield
   focused = false;
 
   /**
-   * Set error styles on the component. This is only intended to apply styles when custom error
-   * validation is implemented. To check whether the component is valid, use the checkValidity method.
+   * 为组件设置错误样式，仅用于实现自定义错误校验时的样式设置。
+   * 检查组件是否有效时，应使用 checkValidity 方法。
    */
   @property({type: Boolean, reflect: true})
   invalid = false;
 
   /**
    * @internal
-   * Set `aria-label` for the inner input element. Should not be set,
-   * vscode-label will do it automatically.
+   * 为内部 input 元素设置 `aria-label`。通常不应手动设置，
+   * vscode-label 会自动处理。
    */
   @property({attribute: false})
   label = '';
@@ -129,20 +129,20 @@ export class VscodeTextfield
   name: string | undefined = undefined;
 
   /**
-   * Specifies a regular expression the form control's value should match.
-   * [MDN Reference](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/pattern)
+   * 指定表单控件值必须匹配的正则表达式。
+   * [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/pattern)
    */
   @property()
   pattern: string | undefined = undefined;
 
   /**
-   * Treats the value of the component as a percentage. The editable text is a percent number which
-   * is displayed with a percent sign: entering `1` displays `1%`. The `value` property, the
-   * submitted form value, and the `min`, `max`, and `step` constraints use the fraction form of
-   * that number, so `1%` is `0.01`.
+   * 将组件值视为百分比。可编辑文字为百分数，
+   * 显示时附带百分号：输入 `1` 显示 `1%`。`value` 属性、
+   * 表单提交值以及 `min`、`max`、`step` 约束均使用
+   * 对应的小数形式，因此 `1%` 对应 `0.01`。
    *
-   * The inner input is rendered as a text field in this mode, because a native number field does
-   * not accept a percent sign.
+   * 此模式将内部 input 渲染为文本框，
+   * 因为原生数字输入框不接受百分号。
    */
   @property({type: Boolean, reflect: true})
   get percentage(): boolean {
@@ -176,7 +176,7 @@ export class VscodeTextfield
   required = false;
 
   /**
-   * The size of the textfield. The `medium` size is the default.
+   * 文本框尺寸，默认为 `medium`。
    */
   @property({reflect: true})
   size: FormControlSize = 'medium';
@@ -185,8 +185,8 @@ export class VscodeTextfield
   step: number | undefined = undefined;
 
   /**
-   * Same as the `type` of the native `<input>` element but only a subset of types are supported.
-   * The supported ones are: `color`,`date`,`datetime-local`,`email`,`file`,`month`,`number`,`password`,`search`,`tel`,`text`,`time`,`url`,`week`
+   * 与原生 `<input>` 的 `type` 类似，但仅支持部分类型。
+   * 支持：`color`、`date`、`datetime-local`、`email`、`file`、`month`、`number`、`password`、`search`、`tel`、`text`、`time`、`url`、`week`
    */
   @property({reflect: true})
   set type(val: InputType) {
@@ -234,7 +234,7 @@ export class VscodeTextfield
   }
 
   /**
-   * Lowercase alias to minLength
+   * minLength 的小写别名
    */
   set minlength(val: number) {
     this.minLength = val;
@@ -245,7 +245,7 @@ export class VscodeTextfield
   }
 
   /**
-   * Lowercase alias to maxLength
+   * maxLength 的小写别名
    */
   set maxlength(val: number) {
     this.maxLength = val;
@@ -272,10 +272,10 @@ export class VscodeTextfield
   }
 
   /**
-   * Check the component's validity state when built-in validation is used.
-   * Built-in validation is triggered when any validation-related attribute is set. Validation-related
-   * attributes are: `max, maxlength, min, minlength, pattern, required, step`.
-   * See this [the MDN reference](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/checkValidity) for more details.
+   * 使用内置校验时检查组件有效性。
+   * 设置任何校验相关特性都会触发内置校验。
+   * 相关特性为：`max, maxlength, min, minlength, pattern, required, step`。
+   * 更多细节参见 [MDN 参考](https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/checkValidity)。
    * @returns {boolean}
    */
   checkValidity(): boolean {
@@ -351,22 +351,22 @@ export class VscodeTextfield
   private _inputEl!: HTMLInputElement;
 
   /**
-   * Whether the form of the component has been modified. The state is managed
-   * by `vscode-form-container` and it is shown with a light blue background.
+   * 组件所属表单是否已修改。状态由
+   * 由 `vscode-form-container` 管理，以浅蓝色背景显示。
    */
   @property({type: Boolean, reflect: true})
   dirty = false;
 
   /**
-   * The value of the component. In percentage mode it is the fraction form of
-   * the percent number which is displayed in the input.
+   * 组件值。百分比模式下为输入框中所显示百分数的
+   * 小数形式。
    */
   @state()
   private _value = '';
 
   /**
-   * The text of the input without the percent sign. It can be an incomplete
-   * percent number like `'-'` or `'1.'` while the user is typing.
+   * 不含百分号的输入文字。输入过程中可为
+   * `'-'` 或 `'1.'` 等不完整百分数。
    */
   @state()
   private _displayText = '';
@@ -377,15 +377,15 @@ export class VscodeTextfield
   private _percentage = false;
 
   /**
-   * The caret position of the input which has to be restored after the masked
-   * text is rendered, or null when the caret does not have to be restored.
+   * 遮罩文字渲染后需要恢复的光标位置；
+   * 不需要恢复时为 null。
    */
   private _caretBeforeUpdate: number | null = null;
 
   private _internals: ElementInternals;
 
   /**
-   * In percentage mode the value is always a valid fraction or an empty string.
+   * 百分比模式中的值始终为有效小数或空字符串。
    */
   private _normalizeValue(val: string): string {
     if (!this.percentage) {
@@ -424,8 +424,8 @@ export class VscodeTextfield
   }
 
   /**
-   * Applies the final form of the editable text: `'05'` becomes `'5%'` and
-   * `'1.'` becomes `'1%'`.
+   * 应用可编辑文字的最终形式：`'05'` 变为 `'5%'`，
+   * `'1.'` 变为 `'1%'`。
    */
   private _commitPercentInput() {
     const text = normalizePercentInput(this._inputEl.value);
@@ -441,9 +441,9 @@ export class VscodeTextfield
   }
 
   /**
-   * Maps a caret position of the raw text to the position inside the masked
-   * text. A caret after the percent sign is moved to the end of the number,
-   * because everything which is typed there belongs to the end of the number.
+   * 将原始文字中的光标位置映射到遮罩文字中。
+   * 百分号后的光标移动至数字末尾，
+   * 因为在此处输入的内容属于数字末尾。
    */
   private _caretFromRaw(raw: string, caret: number, sanitized: string): number {
     const percentIndex = raw.indexOf('%');
@@ -554,9 +554,9 @@ export class VscodeTextfield
   }
 
   /**
-   * The masked text is rendered into the input, which moves the caret to the
-   * end of the text, so the position is saved before the update and restored
-   * afterwards.
+   * 遮罩文字渲染到输入框时会将光标移动到文字末尾，
+   * 因此在更新前保存位置，
+   * 更新后恢复。
    */
   protected override willUpdate(): void {
     if (!this.percentage || !this._inputEl) {

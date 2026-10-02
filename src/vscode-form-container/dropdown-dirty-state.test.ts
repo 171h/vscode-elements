@@ -12,7 +12,7 @@ import {VscodeFormContainer} from '../vscode-form-container/index.js';
 const delay = (milliseconds: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, milliseconds));
 
-/** Waits until the predicate is true, so the tests are not time sensitive. */
+/** 等待判断条件为 true，避免测试依赖固定时间。 */
 const waitFor = async (
   predicate: () => boolean,
   timeout = 3000
@@ -43,9 +43,9 @@ const OPTIONS = `
 `;
 
 /**
- * The markup of a form with one dropdown. The declaration is parsed as a
- * static string, because Lit does not create an attribute part for a binding
- * which is surrounded by whitespace.
+ * 包含一个下拉框的表单标记。以静态字符串解析，
+ * 因为 Lit 不会为被空白包围的绑定
+ * 创建特性绑定部分。
  */
 const formMarkup = (
   duration: string | null,
@@ -75,8 +75,8 @@ const getControl = (root: Element, selector: string) =>
   root.querySelector(selector) as DropdownElement | null;
 
 /**
- * Selects an option the way a user does: the face of the dropdown is clicked
- * to open the options, then the option of the opened list is clicked.
+ * 模拟用户选择选项：先点击下拉框展示区域打开列表，
+ * 再点击展开列表中的选项。
  */
 const selectOption = async (dropdown: DropdownElement, index: number) => {
   const face = dropdown.shadowRoot!.querySelector(
@@ -105,7 +105,7 @@ const backgroundOf = (dropdown: DropdownElement) => {
 
   return {
     background: getComputedStyle(face).backgroundColor,
-    // the wash of the state is blue, the background of the theme is not
+    // 状态使用蓝色淡色背景，主题背景本身并非蓝色
     isBlue: rgb[2] > rgb[0] && rgb[2] > rgb[1],
   };
 };
@@ -158,8 +158,8 @@ describe('modified state of a dropdown', () => {
     expect(dropdown.dirty, 'the dropdown is not marked').to.be.false;
     expect(backgroundOf(dropdown).isBlue, 'the face is not blue').to.be.false;
 
-    // The selection of an option marks the form, the pattern is only a way to
-    // find the option.
+    // 选择选项会标记表单，过滤内容只是
+    // 查找选项的方式。
     const option =
       dropdown.shadowRoot!.querySelector<HTMLElement>('li.option')!;
 
@@ -187,8 +187,8 @@ describe('modified state of a dropdown', () => {
     expect(form.markDuration, 'the default duration').to.eq(
       VscodeFormContainer.defaultMarkDuration
     );
-    // The duration of the state is driven with the custom property of the
-    // controls, like it is for a textfield.
+    // 状态持续时间由控件的自定义属性控制，
+    // 方式与文本框相同。
     expect(
       form.style.getPropertyValue('--vsc-form-control-dirty-duration')
     ).to.eq('5000ms');
@@ -219,7 +219,7 @@ describe('modified state of a dropdown', () => {
     await selectOption(dropdown, 1);
     expect(form.dirty).to.be.true;
 
-    // The state is still there after half of the duration.
+    // 经过一半持续时间后状态仍然存在。
     await delay(400);
     expect(form.dirty, 'the state is still there').to.be.true;
 
@@ -249,8 +249,8 @@ describe('modified state of a dropdown', () => {
     form.markDuration = 800;
     await form.updateComplete;
 
-    // The property is not written back to the DOM, it drives the duration of
-    // the state through the custom property of the controls.
+    // 该属性不会写回 DOM，而是通过控件的自定义属性
+    // 控制状态持续时间。
     expect(form.getAttribute('mark-duration')).to.be.null;
     expect(form.markDuration).to.eq(800);
     expect(
@@ -304,7 +304,7 @@ describe('modified state of a dropdown', () => {
       .true;
     expect(stateOf(secondId).dirty).to.be.false;
 
-    // The modification of another form of the page restores the first one.
+    // 修改页面上的另一个表单会恢复第一个表单。
     thirdField.focus();
     await sendKeys({type: 'a'});
     await thirdField.updateComplete;
@@ -363,7 +363,7 @@ describe('modified state of a dropdown', () => {
 
     await selectOption(dropdown, 0);
 
-    // Longer than the duration of the other cases of the suite.
+    // 比此测试组其他用例的持续时间更长。
     await delay(1000);
 
     expect(form.dirty, 'the form is still marked').to.be.true;

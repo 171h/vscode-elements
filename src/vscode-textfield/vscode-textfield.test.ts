@@ -464,8 +464,8 @@ describe('vscode-textfield', () => {
       const el = await fixture<VscodeTextfield>(
         html`<vscode-textfield percentage></vscode-textfield>`
       );
-      // Emulates the keystrokes without waiting for the update in between, like
-      // a user who types faster than the component re-renders.
+      // 模拟连续按键，不在按键之间等待更新，
+      // 对应输入速度快于组件重新渲染的用户。
       const pressKey = (char: string) => {
         const input = el.wrappedElement;
         const caret = input.selectionStart ?? input.value.length;

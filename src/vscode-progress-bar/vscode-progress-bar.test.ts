@@ -17,7 +17,7 @@ describe('vscode-progress-bar', () => {
       `)) as VscodeProgressBar;
 
       await el.updateComplete;
-      // Before threshold
+      // 达到阈值之前
       await clock.tickAsync(999);
       await el.updateComplete;
 
@@ -39,7 +39,7 @@ describe('vscode-progress-bar', () => {
       `)) as VscodeProgressBar;
 
       await el.updateComplete;
-      // Reach threshold
+      // 达到阈值
       await clock.tickAsync(1000);
       await el.updateComplete;
 
@@ -82,11 +82,11 @@ describe('vscode-progress-bar', () => {
 
       await el.updateComplete;
 
-      // Remove before threshold
+      // 达到阈值之前移除
       el.remove();
       await clock.tickAsync(100);
 
-      // Re-attach check: since removed, class should not toggle
+      // 重新挂载检查：已移除后不应切换类名
       const container = el.shadowRoot?.querySelector('.container');
       expect(container?.classList.contains('infinite-long-running')).to.be
         .false;
