@@ -19,6 +19,22 @@
 .vp-doc h1 {
   letter-spacing: -0.03em;
 }
+.VPHero .main {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+.VPHero .name,
+.VPHero .text {
+  max-width: 960px;
+}
+.VPHero .tagline {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.VPHero .actions {
+  justify-content: center;
+}
 .vp-doc table {
   width: 100%;
   font-size: 13px;

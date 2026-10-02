@@ -18,7 +18,7 @@ import 'nusys-ui/dist/vscode-icon/index.js';
 
 通过嵌套 TreeItem 表示层级，分支可用 open 初始化展开。`multi-select` 允许多选；`expand-mode` 为 singleClick 或 doubleClick；`indent` 控制缩进，`indent-guides` 为 none、onHover、always；`hide-arrows` 隐藏展开箭头。
 
-`vsc-tree-select` 的 detail 为 `{selectedItems}`，数组包含节点元素；不要把元素直接当作可持久化业务值。方向键导航、展开和收起，Enter 或空格选择；使用 Ctrl/Cmd 和 Shift 检查多选。
+`vsc-tree-select` 的运行时 detail 是 `VscodeTreeItem[]`，直接读取 `event.detail.length`。现有导出类型 `VscTreeSelectEvent` 声明为 `{selectedItems}`，与运行时不一致，集成时应以数组行为为准。数组包含节点元素，不要把元素直接当作可持久化业务值。方向键导航、展开和收起，Enter 或空格选择；使用 Ctrl/Cmd 和 Shift 检查多选。
 
 ## 交互示例
 
@@ -47,7 +47,7 @@ document
   .querySelector('vscode-tree')
   .addEventListener('vsc-tree-select', (event) => {
     document.querySelector('output').textContent =
-      '选中数量：' + event.detail.selectedItems.length;
+      '选中数量：' + event.detail.length;
   });
 ```
 

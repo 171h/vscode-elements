@@ -91,11 +91,20 @@ export async function generateApi(root) {
     await readFile(resolve(root, 'custom-elements.json'), 'utf8')
   );
   const paths = await sourceFiles(resolve(root, 'src'));
-  const program = ts.createProgram(paths, {
-    target: ts.ScriptTarget.ES2022,
-    experimentalDecorators: true,
-    moduleResolution: ts.ModuleResolutionKind.Node10,
-  });
+  const config = ts.readConfigFile(
+    resolve(root, 'tsconfig.json'),
+    ts.sys.readFile
+  );
+  if (config.error)
+    throw new Error(
+      ts.flattenDiagnosticMessageText(config.error.messageText, '\n')
+    );
+  const options = ts.parseJsonConfigFileContent(
+    config.config,
+    ts.sys,
+    root
+  ).options;
+  const program = ts.createProgram(paths, options);
   const checker = program.getTypeChecker();
   const classes = new Map();
   const aliases = new Map();
@@ -134,7 +143,9 @@ export async function generateApi(root) {
         );
         if (
           ts.isInterfaceDeclaration(node) &&
-          node.name.text === 'HTMLElementEventMap'
+          ['HTMLElementEventMap', 'GlobalEventHandlersEventMap'].includes(
+            node.name.text
+          )
         ) {
           for (const member of node.members)
             if (member.name && ts.isStringLiteral(member.name))
@@ -249,6 +260,10 @@ export async function generateApi(root) {
     for (const event of events.values())
       if (eventTypeCorrections[event.name])
         event.type = {text: eventTypeCorrections[event.name]};
+    if (component.id === 'tree') {
+      events.get('vsc-tree-select').description =
+        '运行时 detail 是 VscodeTreeItem[]，直接读取数组。源码导出的 VscTreeSelectEvent 声明为 {selectedItems}，与当前运行时不一致。';
+    }
     const slots = new Map(
       (declaration.slots || []).map((slot) => [slot.name, slot])
     );

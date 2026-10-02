@@ -47,7 +47,7 @@ document
   .querySelector('vscode-tree')
   .addEventListener('vsc-tree-select', (event) => {
     document.querySelector('output').textContent =
-      '选中数量：' + event.detail.selectedItems.length;
+      '选中数量：' + event.detail.length;
   });
 ```
 

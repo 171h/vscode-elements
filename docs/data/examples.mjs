@@ -1,30 +1,37 @@
 export const examples = {
   badge: {
+    height: 120,
     title: '徽章与计数',
     html: '<vscode-badge>进行中</vscode-badge> <vscode-badge variant="counter">12</vscode-badge> <vscode-badge variant="activity-bar-counter">3</vscode-badge>',
   },
   button: {
+    height: 150,
     title: '按钮状态与图标',
     html: '<vscode-button icon="save">保存</vscode-button> <vscode-button secondary>取消</vscode-button> <vscode-button disabled>已禁用</vscode-button> <vscode-button icon="refresh" aria-label="刷新"></vscode-button>',
   },
   'button-group': {
+    height: 150,
     title: '组合按钮',
     html: '<vscode-button-group><vscode-button>运行</vscode-button><vscode-button icon="chevron-down" aria-label="更多运行操作"></vscode-button></vscode-button-group>',
   },
   icon: {
+    height: 160,
     title: '图标与操作',
     html: '<vscode-icon name="files"></vscode-icon> <vscode-icon name="sync" spin></vscode-icon> <vscode-icon name="refresh" action-icon label="刷新"></vscode-icon><output aria-live="polite"></output>',
     js: "document.querySelector('[action-icon]').addEventListener('vsc-click', () => { document.querySelector('output').textContent = '已刷新'; });",
   },
   divider: {
+    height: 200,
     title: '内容分隔',
     html: '<p>文件操作</p><vscode-divider></vscode-divider><p>项目设置</p>',
   },
   'progress-bar': {
+    height: 200,
     title: '确定与不确定进度',
     html: '<vscode-progress-bar value="45" max="100" aria-label="下载进度"></vscode-progress-bar><p>下载进度：45%</p><vscode-progress-bar indeterminate aria-label="正在处理"></vscode-progress-bar>',
   },
   'progress-ring': {
+    height: 120,
     title: '处理中',
     html: '<vscode-progress-ring aria-label="正在加载"></vscode-progress-ring><span>正在加载项目…</span>',
   },
@@ -39,18 +46,22 @@ export const examples = {
     js: "const field = document.querySelector('#rate'); const output = document.querySelector('output'); field.addEventListener('input', () => { output.textContent = '程序值：' + field.value; }); document.querySelector('form').addEventListener('submit', (event) => { event.preventDefault(); output.textContent = '提交值：' + new FormData(event.target).get('rate'); });",
   },
   textarea: {
+    height: 240,
     title: '多行文字',
     html: '<vscode-label for="description">项目说明</vscode-label><vscode-textarea id="description" name="description" rows="4" maxlength="140" placeholder="最多 140 个字符"></vscode-textarea>',
   },
   checkbox: {
+    height: 140,
     title: '复选框状态',
     html: '<vscode-checkbox label="自动保存" checked></vscode-checkbox><vscode-checkbox label="启动时恢复项目"></vscode-checkbox><vscode-checkbox label="已禁用" disabled></vscode-checkbox>',
   },
   'checkbox-group': {
+    height: 180,
     title: '复选框组',
     html: '<vscode-checkbox-group variant="vertical" aria-label="导出格式"><vscode-checkbox label="HTML" name="format" value="html" checked></vscode-checkbox><vscode-checkbox label="Markdown" name="format" value="md"></vscode-checkbox></vscode-checkbox-group>',
   },
   'radio-group': {
+    height: 140,
     title: '单选与键盘切换',
     html: '<vscode-radio-group aria-label="保存方式"><vscode-radio name="save-mode" value="auto" label="自动" checked></vscode-radio><vscode-radio name="save-mode" value="manual" label="手动"></vscode-radio></vscode-radio-group>',
   },
@@ -84,8 +95,8 @@ export const examples = {
   },
   'context-menu': {
     title: '菜单与选择事件',
-    html: '<vscode-button id="open">显示菜单</vscode-button><vscode-context-menu><vscode-context-menu-item value="copy" label="复制" keybinding="Ctrl+C"></vscode-context-menu-item><vscode-context-menu-item value="paste" label="粘贴" keybinding="Ctrl+V"></vscode-context-menu-item></vscode-context-menu><output aria-live="polite"></output>',
-    js: "const menu = document.querySelector('vscode-context-menu'); document.querySelector('#open').addEventListener('click', () => { menu.show = true; }); menu.addEventListener('vsc-context-menu-select', (event) => { document.querySelector('output').textContent = '操作：' + event.detail.value; });",
+    html: '<vscode-button id="open">显示菜单</vscode-button><vscode-context-menu></vscode-context-menu><output aria-live="polite"></output>',
+    js: "const menu = document.querySelector('vscode-context-menu'); menu.data = [{label: '复制', value: 'copy', keybinding: 'Ctrl+C'}, {label: '粘贴', value: 'paste', keybinding: 'Ctrl+V'}]; menu.show = true; document.querySelector('#open').addEventListener('click', (event) => { event.stopPropagation(); menu.show = true; }); menu.addEventListener('vsc-context-menu-select', (event) => { document.querySelector('output').textContent = '操作：' + event.detail.value; });",
   },
   scrollable: {
     title: '滚动内容',
@@ -106,17 +117,19 @@ export const examples = {
     css: '.groups {display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px} vscode-tabs-group {min-height: 200px} @media(max-width: 500px) {.groups {grid-template-columns: 1fr}}',
   },
   toolbar: {
+    height: 160,
     title: '操作与切换按钮',
     html: '<vscode-toolbar-container><vscode-toolbar-button icon="new-file" label="新建文件"></vscode-toolbar-button><vscode-toolbar-button icon="refresh" label="刷新"></vscode-toolbar-button><vscode-toolbar-button icon="pin" label="固定" toggleable></vscode-toolbar-button></vscode-toolbar-container><output aria-live="polite"></output>',
     js: "const button = document.querySelector('[toggleable]'); button.addEventListener('change', () => { document.querySelector('output').textContent = button.checked ? '已固定' : '已取消固定'; });",
   },
   table: {
+    height: 220,
     title: '表格与列宽调整',
     html: '<vscode-table resizable bordered-columns><vscode-table-header><vscode-table-header-cell>文件</vscode-table-header-cell><vscode-table-header-cell>类型</vscode-table-header-cell></vscode-table-header><vscode-table-body><vscode-table-row><vscode-table-cell>index.ts</vscode-table-cell><vscode-table-cell>TypeScript</vscode-table-cell></vscode-table-row><vscode-table-row><vscode-table-cell>README.md</vscode-table-cell><vscode-table-cell>Markdown</vscode-table-cell></vscode-table-row></vscode-table-body></vscode-table>',
   },
   tree: {
     title: '层级、图标与多选',
     html: '<vscode-tree multi-select indent-guides="always" aria-label="项目文件"><vscode-tree-item open><vscode-icon slot="icon-branch" name="folder"></vscode-icon><vscode-icon slot="icon-branch-opened" name="folder-opened"></vscode-icon>src<vscode-tree-item><vscode-icon slot="icon-leaf" name="file-code"></vscode-icon>index.ts<span slot="description">入口</span></vscode-tree-item><vscode-tree-item>styles.ts</vscode-tree-item></vscode-tree-item><vscode-tree-item>README.md</vscode-tree-item></vscode-tree><output aria-live="polite"></output>',
-    js: "document.querySelector('vscode-tree').addEventListener('vsc-tree-select', (event) => { document.querySelector('output').textContent = '选中数量：' + event.detail.selectedItems.length; });",
+    js: "document.querySelector('vscode-tree').addEventListener('vsc-tree-select', (event) => { document.querySelector('output').textContent = '选中数量：' + event.detail.length; });",
   },
 };

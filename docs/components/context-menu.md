@@ -16,7 +16,7 @@ import 'nusys-ui/dist/vscode-context-menu-item/index.js';
 
 ## 使用说明
 
-用 `show` 控制显示，可传入 `data` 数组，或提供菜单项子节点。菜单项使用 `label`，其默认内容不会自动变成标签。`prevent-close` 可阻止选择后自动关闭。菜单位置由应用 CSS 控制。
+用 `show` 控制显示，通过 JavaScript `data` 数组提供菜单项。当前实现默认 `data` 为数组并优先渲染该数组，不能依赖手写的插槽菜单项自动显示。菜单项使用 `label`，`prevent-close` 可阻止选择后自动关闭。菜单位置由应用 CSS 控制。
 
 当前实现派发 `vsc-context-menu-select`，详情包含 `value`、`label`、`keybinding` 等字段；上游旧说明中的 `vsc-menu-select` 不适用于本项目。使用方向键、Enter 和 Escape 检查菜单操作。
 
@@ -28,18 +28,19 @@ import 'nusys-ui/dist/vscode-context-menu-item/index.js';
 
 ```html
 <vscode-button id="open">显示菜单</vscode-button>
-<vscode-context-menu>
-  <vscode-context-menu-item value="copy" label="复制" keybinding="Ctrl+C">
-  </vscode-context-menu-item>
-  <vscode-context-menu-item value="paste" label="粘贴" keybinding="Ctrl+V">
-  </vscode-context-menu-item>
-</vscode-context-menu>
+<vscode-context-menu></vscode-context-menu>
 <output aria-live="polite"> </output>
 ```
 
 ```js
 const menu = document.querySelector('vscode-context-menu');
-document.querySelector('#open').addEventListener('click', () => {
+menu.data = [
+  {label: '复制', value: 'copy', keybinding: 'Ctrl+C'},
+  {label: '粘贴', value: 'paste', keybinding: 'Ctrl+V'},
+];
+menu.show = true;
+document.querySelector('#open').addEventListener('click', (event) => {
+  event.stopPropagation();
   menu.show = true;
 });
 menu.addEventListener('vsc-context-menu-select', (event) => {

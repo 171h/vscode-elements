@@ -1,12 +1,25 @@
-# VSCode Elements
+# Nusys UI
 
-面向使用者的文档请访问[官方文档站点](https://vscode-elements.github.io)。站点另有[镜像](https://vscode-elements.netlify.app)，便于受 [GFW](https://en.wikipedia.org/wiki/Great_Firewall) 影响的用户更快访问。
+本项目基于 VSCode Elements 修改，npm 包名为 `nusys-ui`，组件标签保留 `vscode-` 前缀。面向使用者的中文文档与交互示例在本仓库的 [`docs`](docs/index.md) 中，使用 VitePress 构建。
 
 本文档面向希望参与项目贡献或自行修改代码的开发者。
 
 ## 文档
 
-本仓库的功能变更说明位于 [`docs`](docs/) 目录。其他使用说明请访问[文档站点](https://vscode-elements.github.io/)。
+安装依赖并启动文档：
+
+```bash
+npm ci
+npm run docs:dev
+```
+
+打开终端输出的本地地址（默认 `http://localhost:5173`）。命令会先构建当前组件库、生成 API 并准备示例资源。文档修改支持热更新；组件源码修改后重新执行 `npm run docs:prepare` 并刷新预览。
+
+- [快速开始](docs/guide/getting-started.md)：安装、完整导入、按需导入与 Web Components 用法。
+- [组件索引](docs/components/index.md)：全部 40 个公开组件的中文说明和交互示例。
+- [API 参考](docs/api/index.md)：从当前源码生成属性、方法、事件、插槽与样式接口。
+- [常见问题](docs/guide/faq.md)：包名、主题、图标、事件、SSR 与布局保存。
+- [文档维护](docs/guide/contributing.md)：构建、子路径部署和示例数据来源。
 
 - [表单控件尺寸](docs/form-size.md)：说明统一的 `small`、`medium`、`large` 尺寸、支持的组件、运行时用法、表单组及图标尺寸。
 - [AI 辅助开发指南](AGENTS.md)：说明代理配置、任务示例、验证流程，以及中文文档、注释和 Conventional Commits 提交规范。
@@ -26,13 +39,7 @@ npm link
 npm link nusys-ui
 ```
 
-> [!WARNING]
->
-> 多个包必须通过同一条命令链接，例如：
->
-> ```bash
-> npm link nusys-ui @vscode-elements/webview-playground
-> ```
+多个包需要链接时应在同一条命令中列出。
 
 使用包前请先执行构建脚本。
 
@@ -91,11 +98,19 @@ npm ci
 
 ### serve
 
-启动本地开发服务器。
+启动 VitePress 文档开发服务器，与 `docs:dev` 相同。
 
 ### start
 
-启动开发服务器和 TypeScript 监视编译，并打开默认浏览器。这是开发过程中最常用的命令。
+启动文档与组件预览，与 `docs:dev` 相同。组件源码修改后运行 `docs:prepare` 更新预览资源；持续编译可另开终端运行 `build:watch`。
+
+### docs:dev、docs:build 与 docs:preview
+
+启动开发、构建生产站点与预览生产站点。生产产物位于 `docs/.vitepress/dist`。部署到子目录时设置 `DOCS_BASE`，例如 `/nusys-ui/`。本仓库只提供构建与校验，不自动发布站点。
+
+### docs:prepare、docs:check 与 docs:test
+
+准备当前组件 bundle、Codicon 字体和 API；检查全部组件的覆盖范围、示例代码和本地链接；构建并执行文档浏览器检查。`docs:test` 包含主题、尺寸、键盘、禁用、表单、拖拽、CSP 与移动布局检查。
 
 ### test
 
@@ -119,7 +134,7 @@ npm ci
 
 ### icons
 
-生成文档站点的图标列表。输出应替换 `vscode-elements.github.io/src/content/docs/components/icon.mdx` 中的图标列表章节，使文档与最新 Codicon 集合保持同步。
+输出当前 Codicon 包的图标列表，便于检查可用名称。图标配置与用法见 [主题与图标](docs/guide/theming.md)。
 
 ### vscode-data
 

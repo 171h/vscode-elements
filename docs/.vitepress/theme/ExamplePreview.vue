@@ -76,6 +76,7 @@ onMounted(() => {
       :title="demo.title"
       :srcdoc="document"
       class="example-frame"
+      :style="{height: `${demo.height || 360}px`}"
     ></iframe>
     <p v-else-if="active === 'preview'">正在加载交互示例…</p>
     <pre v-else class="example-source"><code>{{ source }}</code></pre>

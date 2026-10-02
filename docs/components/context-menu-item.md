@@ -16,7 +16,7 @@ import 'nusys-ui/dist/vscode-context-menu/index.js';
 
 ## 使用说明
 
-作为 ContextMenu 的子项，通过 `label`、`value`、`keybinding` 提供操作名称、业务标识与快捷键提示。快捷键文字只是提示，不会注册实际快捷键。`separator` 显示分隔线。
+由 ContextMenu 根据 `data` 数组创建；通过 `label`、`value`、`keybinding` 提供操作名称、业务标识与快捷键提示。快捷键文字只是提示，不会注册实际快捷键。`separator` 显示分隔线。不要依赖手写菜单项插槽自动显示，见 [ContextMenu](./context-menu)。
 
 应用监听菜单容器的 `vsc-context-menu-select`；菜单项的内部通讯事件不作为应用层接口。
 
@@ -28,18 +28,19 @@ import 'nusys-ui/dist/vscode-context-menu/index.js';
 
 ```html
 <vscode-button id="open">显示菜单</vscode-button>
-<vscode-context-menu>
-  <vscode-context-menu-item value="copy" label="复制" keybinding="Ctrl+C">
-  </vscode-context-menu-item>
-  <vscode-context-menu-item value="paste" label="粘贴" keybinding="Ctrl+V">
-  </vscode-context-menu-item>
-</vscode-context-menu>
+<vscode-context-menu></vscode-context-menu>
 <output aria-live="polite"> </output>
 ```
 
 ```js
 const menu = document.querySelector('vscode-context-menu');
-document.querySelector('#open').addEventListener('click', () => {
+menu.data = [
+  {label: '复制', value: 'copy', keybinding: 'Ctrl+C'},
+  {label: '粘贴', value: 'paste', keybinding: 'Ctrl+V'},
+];
+menu.show = true;
+document.querySelector('#open').addEventListener('click', (event) => {
+  event.stopPropagation();
   menu.show = true;
 });
 menu.addEventListener('vsc-context-menu-select', (event) => {

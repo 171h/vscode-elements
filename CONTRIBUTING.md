@@ -4,7 +4,7 @@
 
 即使暂时不准备提交代码，也可以通过修正文档中的错别字、语法错误或不清晰的说明参与贡献。
 
-如果还不熟悉代码，建议从带有 [“good first issue”](https://github.com/vscode-elements/elements/issues?q=is%3Aissue%20state%3Aopen%20label%3A%22good%20first%20issue%22) 标签的任务开始。这些任务相对简单，也对项目有帮助。
+如果还不熟悉代码，建议先检查 [本仓库的问题列表](https://github.com/171h/vscode-elements/issues)，从文档或简单缺陷开始。
 
 决定处理某个问题时，请在问题页面说明，避免重复工作。
 
@@ -12,7 +12,9 @@
 
 请尽量提供[最小可复现示例](https://stackoverflow.com/help/minimal-reproducible-example)。可提供能通过少量命令启动的示例仓库。
 
-也可参考 [dev/\_template.html](dev/_template.html)，在 `dev` 目录中创建演示 HTML 文件。使用 `npm ci` 安装依赖，通过 `npm run start` 启动开发服务器，并将示例 HTML 附在问题报告中。
+也可参考 [文档示例数据](docs/data/examples.mjs)，在 `docs` 中添加最小演示。使用 `npm ci` 安装依赖，通过 `npm run docs:dev` 启动文档，将示例 HTML 与重现步骤附在问题报告中。严格 CSP 资源加载可参考 [检查模板](docs/public/examples/csp-check.html)。
+
+文档修改后执行 `npm run docs:check`、`npm run docs:build` 和适用的 `npm run docs:test`。API 由源码生成，不手工修改 `docs/api/generated/`。完整维护流程见 [文档维护](docs/guide/contributing.md)。
 
 ## 提交拉取请求
 
