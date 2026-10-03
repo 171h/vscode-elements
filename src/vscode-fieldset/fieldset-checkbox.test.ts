@@ -51,6 +51,87 @@ async function settle(el: VscodeFieldset) {
 }
 
 describe('fieldset 复选框', () => {
+  it('minimal 折叠后完整容纳复选框，展开后重新对齐自定义标题', async () => {
+    const el = await makeFieldset({
+      checked: true,
+      mode: 'minimal',
+      label: '启用',
+    });
+    el.size = 'large';
+    fieldsetOf(el).style.marginTop = '20px';
+    legendOf(el).style.cssText =
+      'font-size: 19px; line-height: 36px; padding: 8px';
+    await el.updateComplete;
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    el.checked = false;
+    await settle(el);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const host = el.getBoundingClientRect();
+    const checkbox = checkboxOf(el).getBoundingClientRect();
+    expect(checkbox.top).to.be.at.least(host.top);
+    expect(checkbox.bottom).to.be.at.most(host.bottom);
+    el.checked = true;
+    await settle(el);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const expanded = checkboxOf(el).getBoundingClientRect();
+    const legend = legendOf(el).getBoundingClientRect();
+    expect(expanded.top + expanded.height / 2).to.be.closeTo(
+      legend.top + legend.height / 2,
+      1
+    );
+  });
+
+  for (const scale of [0.5, 2]) {
+    it(`父容器缩放为 ${scale} 时仍对齐标题和边框缺口`, async () => {
+      const wrapper = await fixture<HTMLDivElement>(
+        html`<div
+          style="transform: scale(${scale}); transform-origin: top left"
+        >
+          <vscode-fieldset
+            checkbox
+            checked
+            checkbox-label="启用"
+            style="padding: 7px; border: 2px solid"
+          >
+            <fieldset style="margin: 20px 24px">
+              <legend>标题</legend>
+              <input />
+            </fieldset>
+          </vscode-fieldset>
+        </div>`
+      );
+      const el = wrapper.querySelector<VscodeFieldset>('vscode-fieldset')!;
+      await el.updateComplete;
+      await checkboxOf(el).updateComplete;
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+      const checkbox = checkboxOf(el).getBoundingClientRect();
+      const legend = legendOf(el).getBoundingClientRect();
+      const fieldset = fieldsetOf(el).getBoundingClientRect();
+      expect(checkbox.top + checkbox.height / 2).to.be.closeTo(
+        legend.top + legend.height / 2,
+        1
+      );
+      expect(fieldset.right - checkbox.right).to.be.closeTo(10 * scale, 1);
+      const gapEnd = parseFloat(
+        fieldsetOf(el).style.getPropertyValue('--_vsc-fieldset-checkbox-end')
+      );
+      expect(gapEnd * scale).to.be.closeTo(checkbox.right - fieldset.left, 1);
+    });
+  }
+
+  it('折叠内容变化时保留可见标题内按钮的焦点', async () => {
+    const el = await makeFieldset({mode: 'collapsed'});
+    const button = document.createElement('button');
+    button.textContent = '帮助';
+    legendOf(el).append(button);
+    await settle(el);
+    button.focus();
+    expect(document.activeElement).to.equal(button);
+    fieldsetOf(el).append(document.createElement('div'));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(document.activeElement).to.equal(button);
+  });
+
   it('在边框上放置带标签且与标题对齐的复选框', async () => {
     const el = await makeFieldset({label: 'Enable section'});
     const checkbox = checkboxOf(el);

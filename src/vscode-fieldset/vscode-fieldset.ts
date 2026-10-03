@@ -197,7 +197,14 @@ export class VscodeFieldset extends VscElement {
       }
 
       :host([data-vsc-collapsed][unchecked-mode='minimal']) {
-        min-height: 26px;
+        min-height: var(--_vsc-fieldset-minimal-height, 26px);
+      }
+
+      :host([data-vsc-collapsed][unchecked-mode='minimal'])
+        .checkbox-row
+        vscode-checkbox {
+        top: calc(var(--_vsc-fieldset-minimal-height, 26px) / 2) !important;
+        right: 10px !important;
       }
     `,
   ];
@@ -282,15 +289,36 @@ export class VscodeFieldset extends VscElement {
     if (this._borderFieldset !== fieldset || !checkbox || !legend) {
       this._clearCheckboxBorder();
     }
+    if (checkbox) {
+      const height = Math.max(26, checkbox.offsetHeight);
+      const value = `${height}px`;
+      if (
+        this.style.getPropertyValue('--_vsc-fieldset-minimal-height') !== value
+      ) {
+        this.style.setProperty('--_vsc-fieldset-minimal-height', value);
+      }
+    }
     if (!checkbox || !fieldset || !legend || !legend.getClientRects().length) {
       return;
     }
-    const hostRect = this.getBoundingClientRect();
+    const row = checkbox.parentElement!;
+    const rowRect = row.getBoundingClientRect();
     const fieldsetRect = fieldset.getBoundingClientRect();
     const legendRect = legend.getBoundingClientRect();
     const legendStyle = getComputedStyle(legend);
-    checkbox.style.top = `${legendRect.top + legendRect.height / 2 - hostRect.top}px`;
-    checkbox.style.right = `${hostRect.right - fieldsetRect.right + 10}px`;
+    // 视口距离先还原为布局距离，避免父容器缩放再次放大定位和边框缺口。
+    const scaleX = rowRect.width / parseFloat(getComputedStyle(row).width) || 1;
+    const legendHeight =
+      parseFloat(legendStyle.height) +
+      (legendStyle.boxSizing === 'border-box'
+        ? 0
+        : parseFloat(legendStyle.paddingTop) +
+          parseFloat(legendStyle.paddingBottom) +
+          parseFloat(legendStyle.borderTopWidth) +
+          parseFloat(legendStyle.borderBottomWidth));
+    const scaleY = legendRect.height / legendHeight || 1;
+    checkbox.style.top = `${(legendRect.top + legendRect.height / 2 - rowRect.top) / scaleY}px`;
+    checkbox.style.right = `${(rowRect.right - fieldsetRect.right) / scaleX + 10}px`;
     checkbox.style.setProperty(
       '--vsc-form-control-font-size',
       legendStyle.fontSize
@@ -305,12 +333,12 @@ export class VscodeFieldset extends VscElement {
       fieldset.setAttribute('data-vsc-checkbox-border', '');
     }
     const values = [
-      `${-legendRect.height / 2}px`,
+      `${-legendRect.height / scaleY / 2}px`,
       fieldset.style.borderColor,
-      `${Math.max(0, legendRect.left - fieldsetRect.left)}px`,
-      `${legendRect.right - fieldsetRect.left}px`,
-      `${Math.max(legendRect.right, checkboxRect.left) - fieldsetRect.left}px`,
-      `${checkboxRect.right - fieldsetRect.left}px`,
+      `${Math.max(0, legendRect.left - fieldsetRect.left) / scaleX}px`,
+      `${(legendRect.right - fieldsetRect.left) / scaleX}px`,
+      `${(Math.max(legendRect.right, checkboxRect.left) - fieldsetRect.left) / scaleX}px`,
+      `${(checkboxRect.right - fieldsetRect.left) / scaleX}px`,
     ];
     BORDER_PROPERTIES.forEach((property, index) => {
       const value = values[index];
@@ -415,12 +443,18 @@ export class VscodeFieldset extends VscElement {
     if (!this._contentCollapsed || !fieldset) {
       return;
     }
-    if (fieldset.matches(':focus-within')) {
+    if (
+      this._uncheckedMode() === 'minimal' &&
+      fieldset.querySelector('legend')?.matches(':focus-within')
+    ) {
       this._checkboxEl?.focus();
     }
     for (const element of fieldset.children) {
       if (!(element instanceof HTMLElement) || element.tagName === 'LEGEND') {
         continue;
+      }
+      if (element.matches(':focus-within')) {
+        this._checkboxEl?.focus();
       }
       if (!this._inertContent.has(element)) {
         this._inertContent.set(element, element.inert);
