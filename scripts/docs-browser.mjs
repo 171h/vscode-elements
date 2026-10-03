@@ -116,6 +116,8 @@ try {
   };
   await page.goto(url());
   await page.getByRole('heading', {name: '为 VS Code 扩展构建界面'}).waitFor();
+  await page.getByRole('combobox', {name: '全站主题', exact: true}).waitFor();
+  assert.equal(await page.locator('vscode-theme-selector label').count(), 0);
   await mkdir(resolve(root, '.wireit/docs-screenshots'), {recursive: true});
   await page.screenshot({
     path: resolve(root, '.wireit/docs-screenshots/home.png'),

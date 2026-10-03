@@ -36,10 +36,12 @@ onMounted(async () => {
     if (!customElements.get('vscode-theme-selector'))
       customElements.define('vscode-theme-selector', Selector);
     const selector = document.createElement('vscode-theme-selector');
-    selector.shadowRoot.querySelector('label').textContent = '全站主题';
+    selector.shadowRoot.querySelector('label').remove();
+    selector.shadowRoot
+      .querySelector('select')
+      .setAttribute('aria-label', '全站主题');
     const style = document.createElement('style');
     style.textContent = `select {max-width:130px;height:30px;border-radius:5px;padding:2px 4px;font-size:12px}
-      @media(max-width:1180px){label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}}
       @media(max-width:767px){select{width:90px}}`;
     selector.shadowRoot.append(style);
     selector.shadowRoot.querySelector('option[value="hc-light"]').textContent =
