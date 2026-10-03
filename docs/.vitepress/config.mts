@@ -56,6 +56,7 @@ export default defineConfig({
           {text: '表单已修改状态', link: '/form-dirty-highlight'},
           {text: '分区复选框', link: '/fieldset-checkbox'},
           {text: '标签页与视图拖拽', link: '/tabs-drag-drop'},
+          {text: '标签页溢出与图标', link: '/tabs-overflow'},
           {text: 'CSP 检查模板', link: '/examples/csp'},
         ],
       },

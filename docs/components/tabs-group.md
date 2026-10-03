@@ -58,6 +58,10 @@ import 'nusys-ui/dist/vscode-tab-panel/index.js';
 
 <ComponentExamples component="tabs-group" />
 
+## 溢出设置与分组
+
+溢出布局设置属于组内的 `vscode-tabs`。拖出标题或视图以创建新组时，新组继承来源 tabs 的 `overflow` 与 `wrapAlignment`。设置及交互演示见 [Tabs](./tabs#溢出布局设置)。
+
 ## 相关指南
 
 [主题与图标](../guide/theming) · [表单与校验](../guide/forms) · [常见问题](../guide/faq)

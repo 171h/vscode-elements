@@ -346,6 +346,120 @@ try {
     '保留筛选值'
   );
 
+  frame = await open('tabs', 1);
+  assert.equal(await frame.locator('#gallery-overflow-last').count(), 0);
+  await frame.locator('#gallery-overflow-width').evaluate((element) => {
+    element.value = '280';
+    element.dispatchEvent(new Event('input', {bubbles: true}));
+  });
+  await frame.locator('#gallery-overflow-alignment').selectOption('center');
+  await frame.waitForFunction(() => {
+    const tabs = document.querySelector('#gallery-overflow-tabs');
+    const rows = new Set(
+      Array.from(tabs.querySelectorAll('vscode-tab-header'), (header) =>
+        Math.round(header.getBoundingClientRect().top)
+      )
+    );
+    return tabs.wrapAlignment === 'center' && rows.size > 1;
+  });
+  await frame.locator('#gallery-overflow-mode').selectOption('menu');
+  await frame.locator('#gallery-overflow-tabs .overflow-button').click();
+  await frame
+    .locator('#gallery-overflow-tabs vscode-context-menu-item')
+    .last()
+    .locator('a')
+    .click();
+  await frame.waitForFunction(
+    () => document.querySelector('#gallery-overflow-tabs').selectedIndex === 9
+  );
+  assert.match(
+    await frame.locator('#gallery-overflow-status').textContent(),
+    /帮助与反馈/
+  );
+  await selectTheme('dark-monokai');
+  assert.equal(
+    await frame.locator('#gallery-overflow-mode').inputValue(),
+    'menu',
+    '主题切换保留溢出设置'
+  );
+  await frame.locator('#gallery-overflow-display').selectOption('icon');
+  await frame.locator('#gallery-overflow-position').selectOption('end');
+  await frame.waitForFunction(() =>
+    Array.from(
+      document.querySelectorAll('#gallery-overflow-tabs vscode-tab-header')
+    ).every(
+      (header) => header.iconDisplay === 'icon' && header.iconPosition === 'end'
+    )
+  );
+  await frame.locator('#gallery-overflow-mode').selectOption('scroll');
+  await frame.waitForFunction(
+    () => document.querySelector('#gallery-overflow-tabs').overflow === 'scroll'
+  );
+  const verifyOverflowPreview = async (preview) => {
+    await preview.waitForFunction(
+      () => document.documentElement.dataset.ready === 'true'
+    );
+    await preview.locator('#gallery-overflow-panel').check();
+    await preview.locator('#gallery-overflow-height').selectOption('44');
+    await preview.waitForFunction(() => {
+      const tabs = document.querySelector('#gallery-overflow-tabs');
+      const icon = tabs
+        .querySelector('vscode-tab-header')
+        .shadowRoot.querySelector('.icon');
+      return (
+        tabs.panel && Math.round(icon.getBoundingClientRect().height) === 35
+      );
+    });
+    await preview.locator('#gallery-overflow-width').evaluate((element) => {
+      element.value = '280';
+      element.dispatchEvent(new Event('input', {bubbles: true}));
+    });
+    await preview.locator('#gallery-overflow-mode').selectOption('menu');
+    await preview.locator('#gallery-overflow-tabs .overflow-button').click();
+    await preview
+      .locator('#gallery-overflow-tabs vscode-context-menu-item')
+      .last()
+      .locator('a')
+      .click();
+    await preview.waitForFunction(
+      () => document.querySelector('#gallery-overflow-tabs').selectedIndex === 9
+    );
+    assert.match(
+      await preview.locator('#gallery-overflow-status').textContent(),
+      /帮助与反馈/
+    );
+    assert.equal(
+      await preview
+        .locator('#gallery-overflow-tabs vscode-tab-panel')
+        .last()
+        .isVisible(),
+      true,
+      '菜单选择激活对应面板'
+    );
+  };
+  for (const id of ['tabs', 'tab-header', 'tab-panel']) {
+    await page.goto(url('components/' + id));
+    const element = await page
+      .locator('iframe[title="标签页溢出与标题图标"]')
+      .elementHandle();
+    assert.ok(element, id + ' 必须直接展示新功能');
+    await verifyOverflowPreview(await element.contentFrame());
+  }
+  await page.goto(url('components/'));
+  await page.locator('iframe[title="标签页溢出与标题图标"]').waitFor();
+  await page.goto(url('examples/showcase'));
+  await page.locator('[data-demo="tabs-overflow"] iframe').waitFor();
+  await selectSize('large');
+  const overflowFrame = await page
+    .locator('[data-demo="tabs-overflow"] iframe')
+    .elementHandle()
+    .then((element) => element.contentFrame());
+  await overflowFrame.waitForFunction(
+    () => document.documentElement.dataset.previewSize === 'large'
+  );
+  await verifyOverflowPreview(overflowFrame);
+  await selectTheme('light');
+
   frame = await open('tabs-group');
   const bar = frame.locator('vscode-tabs .header');
   const barRect = await bar.boundingBox();
