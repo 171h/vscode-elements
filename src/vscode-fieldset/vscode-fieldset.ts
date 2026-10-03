@@ -115,8 +115,16 @@ export class VscodeFieldset extends VscElement {
 
   private _disabledControls = new Set<DisabledControl>();
 
-  private _contentObserver = new MutationObserver(() => {
+  private _contentObserver = new MutationObserver((records) => {
     this._syncDisabledControls();
+    if (records.some((record) => record.type === 'childList')) {
+      this._observeLayout();
+    }
+    this._syncCheckboxLayout();
+  });
+
+  private _layoutObserver = new ResizeObserver(() => {
+    this._syncCheckboxLayout();
   });
 
   private _animationStyles = new Map<
@@ -135,6 +143,13 @@ export class VscodeFieldset extends VscElement {
 
       /* 零高度行使复选框覆盖边框，并与边框上的标题垂直居中对齐。 */
       .checkbox-row {
+        --vsc-fieldset-title-foreground: var(
+          --vscode-sideBarSectionHeader-foreground,
+          var(
+            --vscode-sideBarTitle-foreground,
+            var(--vscode-foreground, CanvasText)
+          )
+        );
         display: flex;
         height: 0;
         justify-content: flex-end;
@@ -142,7 +157,21 @@ export class VscodeFieldset extends VscElement {
         z-index: 1;
       }
 
+      .checkbox-row[data-disabled-title] {
+        --vsc-fieldset-title-foreground: var(
+          --vscode-disabledForeground,
+          GrayText
+        );
+      }
+
       .checkbox-row vscode-checkbox {
+        --vscode-foreground: var(--vsc-fieldset-title-foreground);
+        --vscode-font-weight: normal;
+        background: var(
+          --vscode-sideBar-background,
+          var(--vscode-editor-background, Canvas)
+        );
+        padding: 0 4px;
         position: absolute;
         right: 10px;
         top: 13px;
@@ -164,7 +193,12 @@ export class VscodeFieldset extends VscElement {
   override connectedCallback() {
     super.connectedCallback();
     installFieldsetStyles(this);
-    this._contentObserver.observe(this, {childList: true, subtree: true});
+    this._contentObserver.observe(this, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+    });
     if (this._rendered) {
       this._onSlotChange();
     }
@@ -172,6 +206,7 @@ export class VscodeFieldset extends VscElement {
 
   override disconnectedCallback() {
     this._contentObserver.disconnect();
+    this._layoutObserver.disconnect();
     for (const control of this._disabledControls) {
       this._releaseDisabledControl(control);
     }
@@ -199,6 +234,45 @@ export class VscodeFieldset extends VscElement {
     } else {
       this._rendered = true;
     }
+    this._observeLayout();
+    this._syncCheckboxLayout();
+  }
+
+  private _observeLayout() {
+    this._layoutObserver.disconnect();
+    this._layoutObserver.observe(this);
+    const fieldset = this.fieldsetElement;
+    if (fieldset) {
+      this._layoutObserver.observe(fieldset);
+      const legend = fieldset.querySelector('legend');
+      if (legend) {
+        this._layoutObserver.observe(legend);
+      }
+    }
+  }
+
+  /** 根据实际标题同步边框上的复选框，兼容自定义字号和外边距。 */
+  private _syncCheckboxLayout() {
+    const checkbox = this._checkboxEl;
+    const fieldset = this.fieldsetElement;
+    const legend = fieldset?.querySelector('legend');
+    if (!checkbox || !fieldset || !legend || !legend.getClientRects().length) {
+      return;
+    }
+    const hostRect = this.getBoundingClientRect();
+    const fieldsetRect = fieldset.getBoundingClientRect();
+    const legendRect = legend.getBoundingClientRect();
+    const legendStyle = getComputedStyle(legend);
+    checkbox.style.top = `${legendRect.top + legendRect.height / 2 - hostRect.top}px`;
+    checkbox.style.right = `${hostRect.right - fieldsetRect.right + 10}px`;
+    checkbox.style.setProperty(
+      '--vsc-form-control-font-size',
+      legendStyle.fontSize
+    );
+    checkbox.parentElement?.toggleAttribute(
+      'data-disabled-title',
+      fieldset.disabled
+    );
   }
 
   private _onSlotChange() {
@@ -207,6 +281,8 @@ export class VscodeFieldset extends VscElement {
     } else {
       this._syncCheckedState(false);
     }
+    this._observeLayout();
+    this._syncCheckboxLayout();
   }
 
   private _onCheckboxChange() {
@@ -511,17 +587,20 @@ export class VscodeFieldset extends VscElement {
 
   override render(): TemplateResult {
     return html`
-      ${this.checkbox
-        ? html`
-            <div class="checkbox-row" part="checkbox">
-              <vscode-checkbox
-                label=${this.checkboxLabel}
-                ?checked=${this.checked}
-                @change=${this._onCheckboxChange}
-              ></vscode-checkbox>
-            </div>
-          `
-        : nothing}
+      ${
+        this.checkbox
+          ? html`
+              <div class="checkbox-row" part="checkbox">
+                <vscode-checkbox
+                  size=${this.size}
+                  label=${this.checkboxLabel}
+                  ?checked=${this.checked}
+                  @change=${this._onCheckboxChange}
+                ></vscode-checkbox>
+              </div>
+            `
+          : nothing
+      }
       <slot @slotchange=${this._onSlotChange}></slot>
     `;
   }

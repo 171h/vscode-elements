@@ -60,7 +60,7 @@ const styles = css`
     border: 0;
     font-family: inherit;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: bold;
     line-height: 18px;
   }
 

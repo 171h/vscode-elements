@@ -60,13 +60,91 @@ describe('fieldset 复选框', () => {
     const hostRect = el.getBoundingClientRect();
     const fieldsetRect = fieldsetOf(el).getBoundingClientRect();
 
-    expect(
-      checkboxRect.top + checkboxRect.height / 2 - hostRect.top
-    ).to.be.closeTo(
-      legendRect.top + legendRect.height / 2 - fieldsetRect.top,
-      2
+    expect(checkboxRect.top + checkboxRect.height / 2).to.be.closeTo(
+      legendRect.top + legendRect.height / 2,
+      1
     );
-    expect(hostRect.right - checkboxRect.right).to.be.closeTo(10, 1);
+    expect(fieldsetRect.right - checkboxRect.right).to.be.closeTo(10, 1);
+    expect(checkboxRect.right).to.be.lessThan(hostRect.right);
+  });
+
+  for (const size of ['small', 'medium', 'large'] as const) {
+    it(`${size} 尺寸下标签与标题同字号且保持常规字重`, async () => {
+      const el = await makeFieldset({checked: true, label: '启用分区'});
+      el.size = size;
+      el.style.setProperty('--vscode-font-weight', '700');
+      await el.updateComplete;
+      const checkbox = checkboxOf(el);
+      await checkbox.updateComplete;
+      const legend = legendOf(el);
+      const label = checkbox.shadowRoot!.querySelector('.label-inner')!;
+      const icon = checkbox.shadowRoot!.querySelector('.icon')!;
+      const legendStyle = getComputedStyle(legend);
+      const labelStyle = getComputedStyle(label);
+      const legendRect = legend.getBoundingClientRect();
+      const iconRect = icon.getBoundingClientRect();
+      expect(legendStyle.fontWeight).to.equal('700');
+      expect(labelStyle.fontSize).to.equal(legendStyle.fontSize);
+      expect(labelStyle.fontWeight).to.equal('400');
+      expect(labelStyle.color).to.equal(legendStyle.color);
+      expect(Number(labelStyle.opacity)).to.be.within(0.8, 0.95);
+      expect(iconRect.top + iconRect.height / 2).to.be.closeTo(
+        legendRect.top + legendRect.height / 2,
+        1
+      );
+      expect(getComputedStyle(checkbox).backgroundColor).to.equal(
+        getComputedStyle(fieldsetOf(el)).backgroundColor
+      );
+    });
+  }
+
+  it('标题字号和 fieldset 外边距变化后重新对齐', async () => {
+    const el = await makeFieldset({checked: true, label: '启用分区'});
+    const legend = legendOf(el);
+    legend.style.cssText = 'font-size: 19px; line-height: 30px; padding: 8px';
+    fieldsetOf(el).style.margin = '20px 24px';
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const checkbox = checkboxOf(el);
+    const label = checkbox.shadowRoot!.querySelector('.label-inner')!;
+    const checkboxRect = checkbox.getBoundingClientRect();
+    const legendRect = legend.getBoundingClientRect();
+    expect(getComputedStyle(label).fontSize).to.equal('19px');
+    expect(checkboxRect.top + checkboxRect.height / 2).to.be.closeTo(
+      legendRect.top + legendRect.height / 2,
+      1
+    );
+    expect(
+      fieldsetOf(el).getBoundingClientRect().right - checkboxRect.right
+    ).to.be.closeTo(10, 1);
+  });
+
+  it('标签和边框遮挡背景跟随祖先主题变化', async () => {
+    const parent = await fixture<HTMLDivElement>(html`
+      <div
+        style="--vscode-sideBar-background: white; --vscode-sideBarSectionHeader-foreground: black"
+      >
+        <vscode-fieldset checkbox checked checkbox-label="启用分区">
+          <fieldset>
+            <legend>分区</legend>
+            <input />
+          </fieldset>
+        </vscode-fieldset>
+      </div>
+    `);
+    const el = parent.querySelector('vscode-fieldset')!;
+    await el.updateComplete;
+    const checkbox = checkboxOf(el);
+    await checkbox.updateComplete;
+    const label = checkbox.shadowRoot!.querySelector('.label-inner')!;
+    expect(getComputedStyle(label).color).to.equal('rgb(0, 0, 0)');
+    parent.style.setProperty('--vscode-sideBar-background', 'black');
+    parent.style.setProperty(
+      '--vscode-sideBarSectionHeader-foreground',
+      'white'
+    );
+    expect(getComputedStyle(label).color).to.equal('rgb(255, 255, 255)');
+    expect(getComputedStyle(checkbox).backgroundColor).to.equal('rgb(0, 0, 0)');
   });
 
   it('默认模式禁用内容但保持可见', async () => {

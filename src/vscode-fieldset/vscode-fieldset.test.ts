@@ -116,7 +116,7 @@ describe('fieldset 主题', () => {
     expect(getComputedStyle(legend).backgroundColor).to.equal(
       'rgba(0, 0, 0, 0)'
     );
-    expect(getComputedStyle(legend).fontWeight).to.equal('600');
+    expect(getComputedStyle(legend).fontWeight).to.equal('700');
     expect(root.querySelectorAll('[data-vsc-fieldset-styles]')).to.have.length(
       1
     );
