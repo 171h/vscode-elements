@@ -3,7 +3,6 @@ dist
 package.json
 pnpm-lock.yaml
 
-demo-dist
 .baseline
 docs/.vitepress/cache
 docs/.vitepress/dist
