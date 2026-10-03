@@ -57,14 +57,18 @@ try {
         '--vscode-panel-border',
         '--vscode-widget-border',
       ]);
-      fields[0].querySelector('input').focus();
+      const input = fields[0].querySelector('input');
+      input.focus();
       return {
         foreground,
         background,
         titleColor,
         border,
         focus: expected(['--vscode-focusBorder']),
-        outline: getComputedStyle(fields[0]).outlineColor,
+        inputFocused: document.activeElement === input,
+        inputOutline: getComputedStyle(input).outlineColor,
+        inputOutlineStyle: getComputedStyle(input).outlineStyle,
+        outlineStyle: getComputedStyle(fields[0]).outlineStyle,
         fields: fields.map((field) => ({
           foreground: getComputedStyle(field).color,
           background: getComputedStyle(field).backgroundColor,
@@ -89,7 +93,10 @@ try {
       assert.equal(field.titleBorderWidth, '0px', `${theme}: 标题无边框`);
       assert.equal(field.border, result.border, `${theme}: 边框`);
     }
-    assert.equal(result.outline, result.focus, `${theme}: 焦点`);
+    assert.equal(result.inputFocused, true, `${theme}: 输入框保留焦点`);
+    assert.equal(result.inputOutlineStyle, 'solid', `${theme}: 输入框焦点轮廓`);
+    assert.equal(result.inputOutline, result.focus, `${theme}: 输入框焦点颜色`);
+    assert.equal(result.outlineStyle, 'none', `${theme}: 输入聚焦时分区无外框`);
     for (const [size, radius] of [
       ['small', '1px'],
       ['medium', '4px'],
