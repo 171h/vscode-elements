@@ -30,19 +30,23 @@
 
 ### 文档
 
+- **dev**：文档开发服务器监听组件源码与样式，保存后自动重新构建并重载预览；Markdown、Vue 主题与示例数据继续使用热更新。
+
 - **table**：表格示例增加容器宽度滑块，动态观察响应式布局与延迟列宽调整。
 
 - **preview**：在右上角导航栏统一选择 Playground 主题与组件尺寸，保留预览操作状态并记住设置。
 - **examples**：补充全部组件的功能场景与全局 Playground 主题；综合页按类别直接展示组件演示，移除工作台、折叠卡片和多余说明。
 
 - **docs**：保留 VitePress 中文文档站点、全部公开组件的源码 API 与交互示例，文档构建和 CI 改用 pnpm。
-- **dev**：`start` 默认启动文档站点；保留原有 HTML 示例，通过 `pnpm dev` 运行源码开发服务器。
+- **dev**：移除已迁移到文档站点的旧 `dev/` 目录及专用构建和验证脚本；`pnpm dev` 与 `pnpm preview` 统一使用文档站点，生产示例通过 `pnpm docs:build` 构建。
 
 ### 构建
 
-- **tooling**：使用 pnpm、Vite 和 Vitest 替换原包管理、构建和测试流程，移除 Wireit、独立 Rollup 配置与 Web Test Runner。保留 `@vscode-elements/webview-playground` 的环境模拟及原有 HTML 示例。开发者需使用新的 pnpm 命令，详见工具链迁移报告。
+- **tooling**：使用 pnpm、Vite 和 Vitest 替换原包管理、构建和测试流程，移除 Wireit、独立 Rollup 配置与 Web Test Runner。保留 `@vscode-elements/webview-playground` 在文档站点中的环境模拟。开发者需使用新的 pnpm 命令，详见工具链迁移报告。
 
 ### 修复
+
+- **docs**：组件源码监听延后到开发服务器初始化完成后启动，修复带缓存重启时 Vue 热更新插件读取空编译器导致的错误。
 
 - **tabs**：保留标题内按钮、链接、输入框及可编辑内容的原生键盘行为。
 - **context-menu**：关闭及断开连接时清理外部点击监听器和延迟回调，修复溢出菜单程序关闭后无法重新打开的问题。

@@ -4,22 +4,24 @@
 
 ## 构建与开发
 
-- `pnpm dev` 直接编译 `src/`，示例页无需预先生成 `dist/`。
+- `pnpm dev` 与 `pnpm docs:dev` 相同，构建组件并启动文档站点。
 - `pnpm start` / `pnpm docs:dev` 沿用主分支的文档入口，构建组件、生成 API 后启动 VitePress。文档完整性和交互通过 `pnpm docs:check` / `pnpm docs:test` 验证。
 - `pnpm build` 生成 ES 模块、类型声明、单文件包、组件清单和 VS Code 补全数据。
-- `pnpm build:demo` 构建所有 HTML 示例，`pnpm preview` 预览生产页面。
+- `pnpm docs:build` 构建文档及全部交互示例，`pnpm preview` / `pnpm docs:preview` 预览生产站点。
 - `pnpm test` 通过 Vitest 执行真实 Chromium 组件测试与 Node.js 发布工具测试。
-- `pnpm test:build` 自动检查开发和生产环境，包括 playground 的十种主题、全局环境控制、尺寸、禁用状态、键盘焦点、CSP、原生拖拽和单文件包注册。
+- `pnpm test:build` 检查模块导入、组件清单与单文件包注册；`pnpm docs:test` 检查文档示例的十种主题、尺寸、禁用状态、键盘焦点、CSP 和原生拖拽。
 
 已移除 Wireit、独立 Rollup 配置及插件、Web Dev Server、Web Test Runner、Mocha 和 npm 锁文件。保留 `@vscode-elements/webview-playground` 作为开发依赖，用于模拟 VS Code 环境；它不属于旧构建工具。TypeScript 保留用于类型检查与声明生成，组件元数据仍由专用分析器生成。`build:ts`、`build:watch`、`serve`、`wtr:watch` 等旧脚本已删除；使用新命令开发和验证。
 
-开发 HTML 恢复迁移前提交 `2fd1fd01` 的示例内容，仅调整源码入口、历史预览资源入口和开发服务器 CSP。三个历史表格示例的 `component-preview` 标签通过 playground 的 `VscodeDemo` 类提供环境模拟，保留原示例标签与内容。Vite 将 playground 的动态主题模块构建为生产资源，无需手动复制主题文件。
+工具链迁移分支曾恢复提交 `2fd1fd01` 的开发 HTML，合入后重新引入了文档迁移已删除的旧站点。现已删除旧目录及专用构建和验证脚本，示例统一维护在 `docs/`；CI 使用文档浏览器测试验证交互。playground 仍提供文档站点的全局主题选择器。
 
 测试保留 Lit fixture 与 Sinon；DOM 比较、无障碍断言和原生输入由本地 Vitest matcher、axe-core 和 Playwright 提供。新增依赖必须明确声明，不能依赖 npm 的偶然提升。浏览器通过 `pnpm test:install` 单独安装。pnpm 的 `allowBuilds` 仅允许所需的 `rs-module-lexer` 和文档框架所需的 `esbuild` 安装脚本。
 
-主分支合入的 VitePress 文档站点保留其最新稳定版 1.6.4 与 Vue；该框架内部依赖 Vite 5，不强行覆盖为其未声明支持的 Vite 8。组件库构建、历史示例开发和生产构建仍直接使用 Vite 8.3.2，文档通过生成的当前库 bundle 展示组件。
+主分支合入的 VitePress 文档站点保留其 1.6.4 版本与 Vue；该框架内部依赖 Vite 5，不强行覆盖为其未声明支持的 Vite 8。组件库构建直接使用 Vite 8.3.2，文档通过生成的当前库 bundle 展示组件。
 
 ## 验证结果
+
+以下为工具链迁移时的历史验证记录，其中旧 HTML 示例已移除。当前示例验证使用 `pnpm docs:check` 与 `pnpm docs:test`，组件包验证使用 `pnpm test:build`。
 
 在 Windows、Node.js 24.21.0、Playwright 1.63.0 与 Chromium 153 环境验证：
 
@@ -50,4 +52,4 @@ PR 审查补充了三个原生输入回归用例，修复 iframe 焦点恢复、
 
 组件清单生成与模块构建采用一致的测试排除规则，测试桥接 API 不进入发布元数据；构建验证同时检查清单不包含测试工具和测试用例。
 
-CI 使用 pnpm 冻结锁文件安装，在 Windows、Linux 与 macOS 验证构建、类型、格式、浏览器测试及生产示例。PR 审查中的键盘与动画修复已通过三平台远程 CI（提交 `dd6e525a`，[验证记录](https://github.com/171h/vscode-elements/actions/runs/37010406839)）；最新提交的验证状态参见 [PR #15](https://github.com/171h/vscode-elements/pull/15)。本地验证使用 Windows，未运行发布助手或发布包。
+CI 使用 pnpm 冻结锁文件安装，在 Windows、Linux 与 macOS 验证构建、类型、格式、浏览器测试及文档示例。工具链迁移 PR 审查中的键盘与动画修复已通过三平台远程 CI（提交 `dd6e525a`，[验证记录](https://github.com/171h/vscode-elements/actions/runs/37010406839)）；该迁移的验证状态参见 [PR #15](https://github.com/171h/vscode-elements/pull/15)。本地验证使用 Windows，未运行发布助手或发布包。
