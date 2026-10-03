@@ -112,11 +112,21 @@ export class VscodeTooltip extends VscElement {
     this._target.removeEventListener('focusout', this._focusOut);
     const ids = (this._target.getAttribute('aria-describedby') || '')
       .split(/\s+/)
-      .filter((id) => id && id !== this._description.id);
-    if (ids.length) {
-      this._target.setAttribute('aria-describedby', ids.join(' '));
+      .filter(Boolean);
+    if (ids.includes(this._description.id)) {
+      const remaining = ids.filter((id) => id !== this._description.id);
+      if (remaining.length) {
+        this._target.setAttribute('aria-describedby', remaining.join(' '));
+      } else {
+        this._target.removeAttribute('aria-describedby');
+      }
     } else {
-      this._target.removeAttribute('aria-describedby');
+      const elements = this._target.ariaDescribedByElements || [];
+      if (elements.includes(this._description)) {
+        this._target.ariaDescribedByElements = elements.filter(
+          (element) => element !== this._description
+        );
+      }
     }
     this._target = undefined;
   }
@@ -155,6 +165,12 @@ export class VscodeTooltip extends VscElement {
       this.requestUpdate();
     }
     if (target) {
+      const elements = target.ariaDescribedByElements || [];
+      // 元素引用赋值会清空描述属性；继续使用引用，避免属性赋值重置已有说明。
+      if (!target.getAttribute('aria-describedby') && elements.length) {
+        target.ariaDescribedByElements = [...elements, this._description];
+        return;
+      }
       const ids = new Set(
         (target.getAttribute('aria-describedby') || '')
           .split(/\s+/)

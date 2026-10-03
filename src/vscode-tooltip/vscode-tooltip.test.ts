@@ -18,6 +18,71 @@ const setup = () =>
   `);
 
 describe('vscode-tooltip', () => {
+  for (const initiallyHidden of [true, false]) {
+    it(`外部关联提示${initiallyHidden ? '初始隐藏' : '显示后隐藏'}时遵守 hidden，并可恢复显示`, async () => {
+      const root = await fixture<HTMLDivElement>(html`
+        <div>
+          <button id="hidden-tooltip-target">目标</button>
+          <vscode-tooltip
+            for="hidden-tooltip-target"
+            text="提示"
+            open
+            ?hidden=${initiallyHidden}
+          ></vscode-tooltip>
+        </div>
+      `);
+      const el = root.querySelector('vscode-tooltip')!;
+      await el.updateComplete;
+      if (!initiallyHidden) {
+        expect(panel(el).getBoundingClientRect().width).to.be.greaterThan(0);
+        el.hidden = true;
+      }
+      await aTimeout(40);
+      expect(getComputedStyle(el).display).to.equal('none');
+      expect(panel(el).getBoundingClientRect().width).to.equal(0);
+      el.hidden = false;
+      await aTimeout(40);
+      expect(getComputedStyle(el).display).to.equal('contents');
+      expect(panel(el).getBoundingClientRect().width).to.be.greaterThan(0);
+    });
+  }
+
+  it('关联、切换目标和移除时保留元素引用描述及关联期间新增的说明', async () => {
+    const root = await fixture<HTMLDivElement>(html`
+      <div>
+        <button>原目标</button><button>新目标</button> <span>原有说明</span
+        ><span>新增说明</span>
+      </div>
+    `);
+    const [original, replacement] = root.querySelectorAll('button');
+    const [existing, additional] = root.querySelectorAll('span');
+    original.ariaDescribedByElements = [existing];
+    replacement.ariaDescribedByElements = [existing];
+    const el = document.createElement('vscode-tooltip');
+    el.target = original;
+    el.text = '提示';
+    root.append(el);
+    await el.updateComplete;
+    const description = el.querySelector('[role="tooltip"]')!;
+    expect(original.ariaDescribedByElements).to.deep.equal([
+      existing,
+      description,
+    ]);
+    original.ariaDescribedByElements = [existing, description, additional];
+    el.target = replacement;
+    await el.updateComplete;
+    expect(original.ariaDescribedByElements).to.deep.equal([
+      existing,
+      additional,
+    ]);
+    expect(replacement.ariaDescribedByElements).to.deep.equal([
+      existing,
+      description,
+    ]);
+    el.remove();
+    expect(replacement.ariaDescribedByElements).to.deep.equal([existing]);
+  });
+
   it('通过外部 id 关联，替换和延迟创建目标时重新关联，不改变控件层级', async () => {
     const root = await fixture<HTMLDivElement>(html`
       <div>

@@ -7,7 +7,7 @@ export default css`
   :host([hidden]) {
     display: none;
   }
-  :host([for]:not([for=''])) {
+  :host([for]:not([for='']):not([hidden])) {
     display: contents;
   }
   .tooltip {
