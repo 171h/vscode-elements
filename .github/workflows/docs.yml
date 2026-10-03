@@ -1,0 +1,41 @@
+name: 中文文档验证
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'scripts/docs-*.mjs'
+      - 'package*.json'
+      - '.github/workflows/docs.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'scripts/docs-*.mjs'
+      - 'package*.json'
+      - '.github/workflows/docs.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@v7
+      - name: 配置 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: 安装锁定依赖与浏览器
+        run: npm ci
+      - name: 检查文档与示例格式
+        run: npx prettier docs 'scripts/docs-*.mjs' --check
+      - name: 检查组件覆盖与链接
+        run: npm run docs:check
+      - name: 构建并验证浏览器示例
+        run: npm run docs:test
