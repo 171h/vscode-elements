@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>icon/missing-codicon-css</title>
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -17,14 +20,14 @@
 
   <body>
     <main>
-      <div id="size-demo-target">
+      <vscode-demo id="size-demo-target">
         <vscode-icon name="account"></vscode-icon>
         <div class="size-buttons">
           <button type="button" data-size="small">small</button>
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </div>
+      </vscode-demo>
     </main>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {

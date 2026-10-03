@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <!-- <script>window.__vscodeElements_disableRegistryWarning__ = true;</script> -->
     <script type="module" src="/src/main.ts"></script>
     <script type="module" src="/src/main.ts"></script>
@@ -24,12 +27,12 @@
 
   <body>
     <main>
-      <div>
+      <vscode-demo>
         <p><vscode-badge>308 Settings Found</vscode-badge></p>
         <p><vscode-badge variant="counter">6</vscode-badge></p>
         <p><vscode-badge variant="activity-bar-counter">6</vscode-badge></p>
         <p><vscode-badge variant="tab-header-counter">6</vscode-badge></p>
-      </div>
+      </vscode-demo>
     </main>
   </body>
 </html>

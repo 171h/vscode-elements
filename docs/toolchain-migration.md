@@ -8,9 +8,11 @@
 - `pnpm build` 生成 ES 模块、类型声明、单文件包、组件清单和 VS Code 补全数据。
 - `pnpm build:demo` 构建所有 HTML 示例，`pnpm preview` 预览生产页面。
 - `pnpm test` 通过 Vitest 执行真实 Chromium 组件测试与 Node.js 发布工具测试。
-- `pnpm test:build` 自动检查开发和生产环境，包括四种主题、尺寸、禁用状态、键盘焦点、CSP、原生拖拽和单文件包注册。
+- `pnpm test:build` 自动检查开发和生产环境，包括 playground 的十种主题、全局环境控制、尺寸、禁用状态、键盘焦点、CSP、原生拖拽和单文件包注册。
 
-已移除 Wireit、独立 Rollup 配置及插件、Web Dev Server、Web Test Runner、Mocha、npm 锁文件和上游演示依赖。TypeScript 保留用于类型检查与声明生成，组件元数据仍由专用分析器生成。`build:ts`、`build:watch`、`serve`、`wtr:watch` 等旧脚本已删除；使用新命令开发和验证。
+已移除 Wireit、独立 Rollup 配置及插件、Web Dev Server、Web Test Runner、Mocha 和 npm 锁文件。保留 `@vscode-elements/webview-playground` 作为开发依赖，用于模拟 VS Code 环境；它不属于旧构建工具。TypeScript 保留用于类型检查与声明生成，组件元数据仍由专用分析器生成。`build:ts`、`build:watch`、`serve`、`wtr:watch` 等旧脚本已删除；使用新命令开发和验证。
+
+开发 HTML 恢复迁移前提交 `2fd1fd01` 的示例内容，仅调整源码入口、历史预览资源入口和开发服务器 CSP。三个历史表格示例的 `component-preview` 标签通过 playground 的 `VscodeDemo` 类提供环境模拟，保留原示例标签与内容。Vite 将 playground 的动态主题模块构建为生产资源，无需手动复制主题文件。
 
 测试保留 Lit fixture 与 Sinon；DOM 比较、无障碍断言和原生输入由本地 Vitest matcher、axe-core 和 Playwright 提供。新增依赖必须明确声明，不能依赖 npm 的偶然提升。浏览器通过 `pnpm test:install` 单独安装。pnpm 的 `allowBuilds` 仅允许所需的 `rs-module-lexer` 安装脚本。
 

@@ -8,6 +8,7 @@ import {gzipSync} from 'node:zlib';
 import {createServer as createHttpServer} from 'node:http';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
+import {waitForPlaygroundTheme} from './playground-theme.mjs';
 
 // 模块产物只能导入包内文件或已声明的运行时依赖。
 const packageJson = JSON.parse(readFileSync('package.json', 'utf8'));
@@ -79,14 +80,17 @@ try {
     await page.waitForFunction(
       () =>
         document.querySelector('vscode-textfield')?.shadowRoot &&
-        document.querySelector('dev-theme-selector')?.shadowRoot
+        document.querySelector('vscode-theme-selector')?.shadowRoot
     );
-    for (const theme of ['dark-v2', 'light-v2', 'hc-black', 'hc-light']) {
-      await page.locator('dev-theme-selector select').selectOption(theme);
-      await page.waitForFunction(
-        (id) => document.documentElement.dataset.theme === id,
-        theme
-      );
+    const selector = page.locator('vscode-theme-selector select');
+    const themes = await selector
+      .locator('option')
+      .evaluateAll((options) => options.map((option) => option.value));
+    assert.equal(themes.length, 10);
+    await waitForPlaygroundTheme(page, await selector.inputValue());
+    for (const theme of themes) {
+      await selector.selectOption(theme);
+      await waitForPlaygroundTheme(page, theme);
       assert(await page.locator('vscode-textfield').first().isVisible());
     }
     for (const size of ['small', 'medium', 'large']) {
@@ -111,6 +115,52 @@ try {
     assert(await page.evaluate(() => document.activeElement !== document.body));
     await page.goto(url + 'dev/_template-csp.html');
     await page.waitForFunction(() => !!customElements.get('vscode-button'));
+    await page.evaluate(() =>
+      document.body.append(document.createElement('vscode-dev-toolbar'))
+    );
+    await page.locator('vscode-dev-toolbar .open-toolbar-button').click();
+    await page
+      .locator('vscode-dev-toolbar vscode-theme-selector select')
+      .selectOption('dark-v2');
+    await waitForPlaygroundTheme(page, 'dark-v2');
+    await page.locator('vscode-dev-toolbar vscode-toggle-motion input').check();
+    assert(
+      await page.evaluate(() =>
+        document.body.classList.contains('vscode-reduce-motion')
+      )
+    );
+    await page
+      .locator('vscode-dev-toolbar vscode-toggle-underline input')
+      .check();
+    assert.equal(
+      await page.evaluate(() =>
+        document.documentElement.style.getPropertyValue(
+          '--text-link-decoration'
+        )
+      ),
+      'underline'
+    );
+    await page
+      .locator('vscode-dev-toolbar vscode-view-container-selector select')
+      .selectOption('sidebar');
+    assert.equal(
+      await page.evaluate(() =>
+        document.body.style.getPropertyValue('--playground-body-background')
+      ),
+      'var(--vscode-sideBar-background)'
+    );
+    for (const file of [
+      'collapsible-table',
+      'other-examples',
+      'scrollable-content',
+    ]) {
+      await page.goto(url + `dev/vscode-table/${file}.html`);
+      await page.waitForFunction(
+        () =>
+          !!document.querySelector('component-preview')?.shadowRoot &&
+          !!customElements.get('vscode-table')
+      );
+    }
     assert.deepEqual(errors, [], name + '页面运行时错误');
     await page.close();
     for (const script of [
@@ -123,7 +173,10 @@ try {
       ]);
       console.log(stdout.trim());
     }
-    console.log(name + '：主题、尺寸、禁用状态、输入、键盘焦点和 CSP 通过');
+    console.log(
+      name +
+        '：十种主题、尺寸、禁用状态、输入、键盘焦点、CSP、全局环境控制和历史示例通过'
+    );
   }
   const bundle = readFileSync('dist/bundled.js');
   const tags = manifest.modules

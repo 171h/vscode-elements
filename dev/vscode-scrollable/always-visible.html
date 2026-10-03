@@ -21,9 +21,13 @@
       }
     </style>
     <script nonce="abc123">
-      window.litNonce = 'abc123';
+      window.vscodeWebviewPlaygroundNonce = 'abc123';
     </script>
-    <script type="module" src="/dev/demo.ts" nonce="abc123"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+      nonce="abc123"
+    ></script>
     <script type="module" src="/src/main.ts" nonce="abc123"></script>
     <script nonce="abc123">
       const logEvents = (selector, eventType) => {
@@ -36,7 +40,7 @@
 
   <body>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-scrollable always-visible>
           <p style="text-align: justify">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
@@ -55,7 +59,7 @@
           <p>&nbsp;</p>
           <div>aaa</div>
         </vscode-scrollable>
-      </div>
+      </vscode-demo>
       <div style="width: 200px; height: 200px; overflow: auto">
         <p>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam volutpat

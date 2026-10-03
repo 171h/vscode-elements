@@ -23,6 +23,8 @@ const sources = files('src', '.ts').filter(
 );
 
 export default defineConfig(({mode}) => ({
+  // playground 已提供原生 ES 模块，统一加载入口以避免主题缓存重新优化。
+  optimizeDeps: {exclude: ['@vscode-elements/webview-playground']},
   server: {port: 8000, open: '/dev/index.html'},
   preview: {port: 8000},
   html: {cspNonce: 'abc123'},

@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -23,7 +26,7 @@
   <body>
     <h1>组件示例</h1>
     <main>
-      <div id="size-demo-target">
+      <vscode-demo id="size-demo-target">
         <form action="/">
           <vscode-radio-group>
             <vscode-radio name="radio-example" value="1">Lorem</vscode-radio>
@@ -53,7 +56,7 @@
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </div>
+      </vscode-demo>
 
       <form action="/">
         <p>

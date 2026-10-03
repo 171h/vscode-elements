@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/vscode-context-menu/index.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -40,7 +43,7 @@
 
   <body>
     <h1>上下文菜单</h1>
-    <div>
+    <vscode-demo>
       <button id="toggle-menu-button">toggle</button>
       <div class="menu-wrapper">
         <vscode-context-menu
@@ -84,6 +87,6 @@
           });
         });
       </script>
-    </div>
+    </vscode-demo>
   </body>
 </html>

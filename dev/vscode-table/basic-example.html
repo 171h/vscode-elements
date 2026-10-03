@@ -15,7 +15,10 @@
         height: 300px;
       }
     </style>
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -28,7 +31,7 @@
 
   <body>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-table>
           <vscode-table-header>
             <vscode-table-header-cell>id</vscode-table-header-cell>
@@ -135,7 +138,7 @@
           </vscode-table-body>
           <p>默认插槽中的内容。</p>
         </vscode-table>
-      </div>
+      </vscode-demo>
     </main>
   </body>
 </html>

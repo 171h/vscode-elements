@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
   </head>
 
@@ -18,7 +21,7 @@
       <div class="story">
         <h2 class="story-title">基础示例</h2>
         <div class="story-content">
-          <div>
+          <component-preview>
             <div style="display: grid; gap: 12px; align-items: center">
               <div>
                 <label>Indeterminate</label>
@@ -33,14 +36,14 @@
                 ></vscode-progress-bar>
               </div>
             </div>
-          </div>
+          </component-preview>
         </div>
       </div>
 
       <div class="story">
         <h2 class="story-title">标签页面板内的进度条</h2>
         <div class="story-content">
-          <div>
+          <component-preview>
             <vscode-tabs class="panel-example" panel>
               <vscode-tab-header slot="header">Build</vscode-tab-header>
               <vscode-tab-panel>
@@ -63,7 +66,7 @@
                 </div>
               </vscode-tab-panel>
             </vscode-tabs>
-          </div>
+          </component-preview>
           <style>
             .panel-example vscode-tab-panel {
               min-height: 48px;

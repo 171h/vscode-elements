@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/vscode-single-select/index.ts"></script>
     <script type="module" src="/src/vscode-option/index.ts"></script>
   </head>
@@ -20,7 +23,7 @@
     <p>
       <code>vscode-option</code> 在 <code>vscode-single-select</code> 之后注册！
     </p>
-    <div id="size-demo-target">
+    <vscode-demo id="size-demo-target">
       <vscode-single-select id="select-example">
         <vscode-option description="Consectetur adipiscing elit"
           >Lorem</vscode-option
@@ -37,7 +40,7 @@
         <button type="button" data-size="medium">medium</button>
         <button type="button" data-size="large">large</button>
       </div>
-    </div>
+    </vscode-demo>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {
         button.addEventListener('click', () => {

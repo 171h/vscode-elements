@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -38,7 +41,7 @@
   <body>
     <h1>自定义样式</h1>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-tree indent-guides="none">
           <vscode-tree-item><span>Home</span></vscode-tree-item>
           <vscode-tree-item>
@@ -94,7 +97,7 @@
             <vscode-tree-item><span>Transcripts</span></vscode-tree-item>
           </vscode-tree-item>
         </vscode-tree>
-      </div>
+      </vscode-demo>
     </main>
   </body>
 </html>

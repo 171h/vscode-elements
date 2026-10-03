@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/vscode-multi-select/index.ts"></script>
     <script type="module" src="/src/vscode-option/index.ts"></script>
     <script>
@@ -24,7 +27,7 @@
   <body>
     <h1>多选框</h1>
     <p>描述</p>
-    <div id="size-demo-target">
+    <vscode-demo id="size-demo-target">
       <vscode-multi-select id="my-select">
         <vscode-option value="A">A</vscode-option>
         <vscode-option value="B">B</vscode-option>
@@ -44,7 +47,7 @@
         <button type="button" data-size="medium">medium</button>
         <button type="button" data-size="large">large</button>
       </div>
-    </div>
+    </vscode-demo>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {
         button.addEventListener('click', () => {

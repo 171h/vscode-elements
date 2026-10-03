@@ -1,6 +1,7 @@
 // 先在 8096 端口启动开发服务器，再运行此脚本检查所有内置主题。
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
+import {waitForPlaygroundTheme} from './playground-theme.mjs';
 
 const browser = await chromium.launch({headless: true});
 try {
@@ -10,7 +11,7 @@ try {
   await page.goto(
     `${process.argv[2] || 'http://127.0.0.1:8096'}/dev/vscode-tabs/drag-drop.html`
   );
-  const selector = page.locator('dev-theme-selector select');
+  const selector = page.locator('vscode-theme-selector select');
   await selector.waitFor();
   await page.waitForFunction(
     () =>
@@ -20,12 +21,10 @@ try {
   const themes = await selector
     .locator('option')
     .evaluateAll((options) => options.map((option) => option.value));
+  await waitForPlaygroundTheme(page, await selector.inputValue());
   for (const theme of themes) {
     await selector.selectOption(theme);
-    await page.waitForFunction(
-      (id) => document.documentElement.dataset.theme === id,
-      theme
-    );
+    await waitForPlaygroundTheme(page, theme);
     const result = await page.evaluate(() => {
       const expected = (keys) => {
         const el = document.createElement('span');

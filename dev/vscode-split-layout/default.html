@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/vscode-split-layout/index.ts"></script>
     <script type="module" src="/src/vscode-scrollable/index.ts"></script>
   </head>
@@ -17,7 +20,7 @@
   <body>
     <h1>分割布局</h1>
     <h2>垂直示例</h2>
-    <div>
+    <vscode-demo>
       <vscode-split-layout style="width: 500px; height: 250px">
         <div slot="start" class="split-layout-content start">
           <vscode-scrollable style="width: 100%; height: 100%">
@@ -72,6 +75,6 @@
           </vscode-scrollable>
         </div>
       </vscode-split-layout>
-    </div>
+    </vscode-demo>
   </body>
 </html>

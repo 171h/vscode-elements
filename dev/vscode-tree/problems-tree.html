@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <style>
       main {
@@ -151,12 +154,12 @@
       <code>(no-console)</code> 链接行为相同：只记录日志，不改变选择。
     </p>
     <main>
-      <div class="frame">
+      <vscode-demo class="frame">
         <vscode-tree class="problems-tree">
           <!-- 根节点 -->
           <vscode-tree-item branch open data-node="problems-root">
             <span class="tree-label">
-              <span class="tree-label-text">vite.config.ts</span>
+              <span class="tree-label-text">rollup.config.js</span>
             </span>
             <vscode-badge slot="decoration" variant="counter" aria-hidden="true"
               >3</vscode-badge
@@ -276,7 +279,7 @@
           <button type="button" data-icon-size="medium">medium</button>
           <button type="button" data-icon-size="large">large</button>
         </div>
-      </div>
+      </vscode-demo>
     </main>
     <script type="module">
       const contextMenu = document.getElementById('problem-context-menu');
@@ -386,7 +389,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('div')
+              .closest('vscode-demo')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

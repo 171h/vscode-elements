@@ -43,7 +43,7 @@ VS Code 工作区设置禁用 Vite 扩展的自动启动，打开项目不会自
 | `pnpm checksize`                      | 构建并报告单文件包的 gzip 字节数，支持 Windows                                              |
 | `pnpm clean`                          | 删除生成产物                                                                                |
 
-Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup 配置、Web Dev Server 或 Web Test Runner。组件库输出保留 `dist/main.js`、各组件入口、类型声明及 `dist/bundled.js`。模块构建将 Lit 等运行时依赖保留为外部导入，单文件构建包含运行时依赖。示例使用本地主题工具，提供暗色、亮色和两种高对比度主题。
+Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup 配置、Web Dev Server 或 Web Test Runner。组件库输出保留 `dist/main.js`、各组件入口、类型声明及 `dist/bundled.js`。模块构建将 Lit 等运行时依赖保留为外部导入，单文件构建包含运行时依赖。示例保留 `@vscode-elements/webview-playground`，提供十种 VS Code 主题以及减少动画、链接下划线和视图容器切换，保持与文档网站一致的环境模拟。
 
 本地项目可使用 `pnpm link` 链接组件库，链接前先执行 `pnpm build`。浏览器测试使用真实 Chromium，保留布局、表单关联、焦点、键盘和原生鼠标行为；测试辅助库只提供 Lit fixture 和 DOM 结构比较。
 

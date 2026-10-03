@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -23,7 +26,7 @@
   <body>
     <h1>带图标</h1>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-tree>
           <vscode-tree-item>
             <vscode-icon name="folder" slot="icon-branch"></vscode-icon>
@@ -5580,7 +5583,7 @@
           <button type="button" data-icon-size="medium">medium</button>
           <button type="button" data-icon-size="large">large</button>
         </div>
-      </div>
+      </vscode-demo>
     </main>
     <script type="module">
       document
@@ -5588,7 +5591,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('div')
+              .closest('vscode-demo')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

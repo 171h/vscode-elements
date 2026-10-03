@@ -10,7 +10,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <style>
       :root {
@@ -351,7 +354,7 @@
       <h1>VSCode Elements · 组件展示页</h1>
       <p>在同一页面查看所有开发场景。先使用全局控件，再操作下方组件。</p>
       <div class="controls" aria-label="全局示例控件">
-        <dev-theme-selector id="theme-control"></dev-theme-selector>
+        <vscode-theme-selector id="theme-control"></vscode-theme-selector>
         <span>Size</span><button data-global-size="small">Small</button
         ><button data-global-size="medium">Medium</button
         ><button data-global-size="large">Large</button> <span>Icon</span
@@ -1181,7 +1184,7 @@
                 ></vscode-table-header
               ><vscode-table-body
                 ><vscode-table-row
-                  ><vscode-table-cell>示例主题工具</vscode-table-cell
+                  ><vscode-table-cell>webview-playground</vscode-table-cell
                   ><vscode-table-cell>2.1.0</vscode-table-cell
                   ><vscode-table-cell>12,430</vscode-table-cell
                   ><vscode-table-cell

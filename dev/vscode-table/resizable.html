@@ -28,10 +28,14 @@
         height: 300px;
       }
     </style>
-    <script type="module" src="/dev/demo.ts" nonce="abc123"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+      nonce="abc123"
+    ></script>
     <script type="module" src="/src/main.ts" nonce="abc123"></script>
     <script nonce="abc123">
-      window.litNonce = 'abc123';
+      window.vscodeWebviewPlaygroundNonce = 'abc123';
 
       const logEvents = (selector, eventType) => {
         document.querySelector(selector).addEventListener(eventType, (ev) => {
@@ -44,7 +48,7 @@
   <body>
     <h1>基础示例</h1>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-table
           class="table"
           columns='["100px", "200px"]'
@@ -1255,7 +1259,7 @@
             </vscode-table-row>
           </vscode-table-body>
         </vscode-table>
-      </div>
+      </vscode-demo>
     </main>
   </body>
 </html>

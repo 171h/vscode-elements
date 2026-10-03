@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -29,7 +32,7 @@
     <h1>空值选项</h1>
     <main>
       <h2>VSCode Elements 单选框</h2>
-      <div id="size-demo-target">
+      <vscode-demo id="size-demo-target">
         <form action="">
           <vscode-single-select id="vscode-select" name="select" required>
             <vscode-option value="">--- Choose an option ---</vscode-option>
@@ -44,7 +47,7 @@
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </div>
+      </vscode-demo>
       <script type="module">
         logEvents('#vscode-select', 'change');
       </script>

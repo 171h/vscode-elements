@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -22,7 +25,7 @@
 
   <body>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-toolbar-container>
           <vscode-toolbar-button icon="plus">Markdown</vscode-toolbar-button>
           <vscode-toolbar-button icon="plus" toggleable
@@ -39,7 +42,7 @@
             toggleable
           ></vscode-toolbar-button>
         </vscode-toolbar-container>
-      </div>
+      </vscode-demo>
     </main>
   </body>
 </html>

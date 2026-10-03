@@ -21,7 +21,7 @@
 
   <body style="background-color: #1f1f1f">
     <main>
-      <div>
+      <vscode-demo>
         <vscode-tabs panel>
           <vscode-icon
             label="最大化面板"
@@ -50,9 +50,9 @@
           <vscode-tab-header slot="header">Panel 2</vscode-tab-header>
           <vscode-tab-panel> panel 2 </vscode-tab-panel>
         </vscode-tabs>
-      </div>
+      </vscode-demo>
       <p>&nbsp;</p>
-      <div>
+      <vscode-demo>
         <vscode-tabs>
           <vscode-tab-header>Tab 1</vscode-tab-header>
           <vscode-tab-panel>Panel 1</vscode-tab-panel>
@@ -67,7 +67,7 @@
           <button type="button" data-icon-size="medium">medium</button>
           <button type="button" data-icon-size="large">large</button>
         </div>
-      </div>
+      </vscode-demo>
     </main>
     <script type="module">
       document
@@ -75,7 +75,7 @@
         .forEach((button) => {
           button.addEventListener('click', () => {
             button
-              .closest('div')
+              .closest('vscode-demo')
               .querySelectorAll('vscode-icon')
               .forEach((icon) => {
                 icon.setAttribute('size', button.dataset.iconSize);

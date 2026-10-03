@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -22,7 +25,7 @@
 
   <body>
     <main>
-      <div id="size-demo-target">
+      <vscode-demo id="size-demo-target">
         <vscode-form-group id="form-group">
           <vscode-label for="textfield">Label example</vscode-label>
           <vscode-textfield id="textfield"></vscode-textfield
@@ -32,7 +35,7 @@
           <button type="button" data-size="medium">medium</button>
           <button type="button" data-size="large">large</button>
         </div>
-      </div>
+      </vscode-demo>
     </main>
     <script type="module">
       document.querySelectorAll('.size-buttons button').forEach((button) => {

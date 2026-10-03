@@ -23,7 +23,7 @@
       nonce="abc123"
     />
     <script nonce="abc123">
-      window.litNonce = 'abc123';
+      window.vscodeWebviewPlaygroundNonce = 'abc123';
       window.vscodeElementsNonce = 'abc123';
 
       const logEvents = (selector, eventType) => {
@@ -32,7 +32,11 @@
         });
       };
     </script>
-    <script type="module" src="/dev/demo.ts" nonce="abc123"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+      nonce="abc123"
+    ></script>
     <script type="module" src="/src/main.ts" nonce="abc123"></script>
   </head>
 
@@ -40,7 +44,7 @@
     <vscode-dev-toolbar></vscode-dev-toolbar>
     <h1>CSP</h1>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-form-helper>
           <p>根据当前编辑器控制窗口标题，变量按上下文替换：</p>
           <ul>
@@ -99,7 +103,7 @@
             </li>
           </ul>
         </vscode-form-helper>
-      </div>
+      </vscode-demo>
     </main>
   </body>
 </html>

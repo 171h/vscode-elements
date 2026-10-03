@@ -9,7 +9,10 @@
       href="/node_modules/@vscode/codicons/dist/codicon.css"
       id="vscode-codicon-stylesheet"
     />
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <script>
       const logEvents = (selector, eventType) => {
@@ -23,7 +26,7 @@
   <body>
     <h1>样式属性映射</h1>
     <main>
-      <div>
+      <vscode-demo>
         <vscode-table resizable>
           <vscode-table-header slot="header">
             <vscode-table-header-cell>Name</vscode-table-header-cell>
@@ -46,7 +49,7 @@
             </vscode-table-row>
           </vscode-table-body>
         </vscode-table>
-      </div>
+      </vscode-demo>
     </main>
   </body>
 </html>

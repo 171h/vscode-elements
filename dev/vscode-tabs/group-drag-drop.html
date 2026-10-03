@@ -4,7 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>标签页组拖拽</title>
-    <script type="module" src="/dev/demo.ts"></script>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
     <script type="module" src="/src/main.ts"></script>
     <style>
       body {
@@ -57,7 +60,7 @@
   </head>
   <body>
     <h1>标签页组拖拽</h1>
-    <dev-theme-selector></dev-theme-selector>
+    <vscode-theme-selector></vscode-theme-selector>
     <p>
       拖拽标签栏空白背景可在容器之间移动整组。将标签页标题拖到容器可拆分为独立组，将
       fieldset 标题拖到容器可为该视图创建新组。空容器的虚线区域可接收拖拽内容。

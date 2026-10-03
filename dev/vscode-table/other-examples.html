@@ -5,15 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>table/other-examples</title>
-    <script type="module" src="/dev/demo.ts"></script>
-    <script type="module" src="/src/vscode-split-layout/index.ts"></script>
-    <script type="module" src="/src/vscode-scrollable/index.ts"></script>
-    <script type="module" src="/src/vscode-table/index.ts"></script>
-    <script type="module" src="/src/vscode-table-header/index.ts"></script>
-    <script type="module" src="/src/vscode-table-header-cell/index.ts"></script>
-    <script type="module" src="/src/vscode-table-cell/index.ts"></script>
-    <script type="module" src="/src/vscode-table-row/index.ts"></script>
-    <script type="module" src="/src/vscode-table-body/index.ts"></script>
+    <script type="module" src="/dev/legacy-preview.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
   </head>
 
   <body class="vscode-light">
@@ -29,7 +22,7 @@
             height: 200px;
           }
         </style>
-        <div>
+        <component-preview>
           <vscode-split-layout
             initialpos="75%"
             split="vertical"
@@ -166,7 +159,7 @@
             </div>
             <div slot="end">&nbsp;</div>
           </vscode-split-layout>
-        </div>
+        </component-preview>
       </div>
     </div>
     <div class="story">
@@ -179,7 +172,7 @@
           }
         </style>
 
-        <div>
+        <component-preview>
           <vscode-table
             class="example-columns"
             zebra
@@ -275,7 +268,7 @@
               </vscode-table-row>
             </vscode-table-body>
           </vscode-table>
-        </div>
+        </component-preview>
       </div>
     </div>
     <div class="story">
@@ -303,7 +296,7 @@
           for="toggle-delayed-resizing"
           >Delayed resizing</label
         >
-        <div>
+        <component-preview>
           <vscode-table
             class="large-table-example"
             columns='["100px", "200px"]'
@@ -5309,7 +5302,7 @@
               </vscode-table-row>
             </vscode-table-body>
           </vscode-table>
-        </div>
+        </component-preview>
         <script type="module">
           const cb = document.querySelector('#toggle-delayed-resizing');
           const tbl = document.querySelector('.large-table-example');
@@ -5356,7 +5349,7 @@
           for="toggle-delayed-resizing-2"
           >Delayed resizing</label
         >
-        <div>
+        <component-preview>
           <vscode-table
             class="large-table-example-2"
             columns='["100px", "200px"]'
@@ -6690,7 +6683,7 @@
               </vscode-table-row>
             </vscode-table-body>
           </vscode-table>
-        </div>
+        </component-preview>
         <script type="module">
           const cb = document.querySelector('#toggle-delayed-resizing-2');
           const tbl = document.querySelector('.large-table-example-2');
