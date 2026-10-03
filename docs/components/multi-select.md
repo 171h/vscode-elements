@@ -16,13 +16,13 @@ import 'nusys-ui/dist/vscode-option/index.js';
 
 ## 使用说明
 
-JavaScript `value` 是字符串数组，`selected-indexes` 对应多个索引。各选项通过 `selected` 设置初始选择。组合框模式支持过滤与创建选项，读取表单同名值使用 `FormData.getAll()`。
+JavaScript `value` 是字符串数组，`selectedIndexes` 是仅通过 JavaScript 设置的多个索引。各选项通过 `selected` 设置初始选择。组合框模式支持过滤与创建选项，读取表单同名值使用 `FormData.getAll()`。
 
 展示区按 `abbreviation`、标签、业务值的顺序选择文字，空间不足时折叠并提供完整提示。详见 [多选标签](../multi-select-labels)。动态构建选项时避免把过滤输入当作已选业务值。
 
 ## 交互示例
 
-使用页面底部的全站主题和示例尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
+使用右上角导航栏的全站主题和尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
 
 <ExamplePreview example="multi-select" />
 
@@ -54,6 +54,16 @@ update();
 ## 组合框过滤与创建
 
 <ExamplePreview example="combobox" />
+
+## 功能场景
+
+设置 `value`、`selectedIndexes`，调用 `selectAll()` 或 `selectNone()` 都会同步表单关联值与必填校验。程序设置不会自动触发 `change`；用户点击、键盘选择和下拉全选／清空会触发 `change`。读取渲染后的标签时等待 `await select.updateComplete`。
+
+下拉框的全选操作跳过未选中的 `disabled` 选项，并保留已有选择。程序调用 `selectAll()` 仍会选中全部选项，包括禁用项；应用可按业务需要用 `value` 或 `selectedIndexes` 控制选择。
+
+下列场景补充状态、组合约束、数据操作和交互边界。每项列出覆盖的公开功能，代码视图可直接查阅实际运行代码。
+
+<ComponentExamples component="multi-select" />
 
 ## 相关指南
 

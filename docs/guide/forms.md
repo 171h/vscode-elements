@@ -45,9 +45,9 @@ form.addEventListener('submit', (event) => {
 
 ```js
 const field = document.querySelector('#project');
-field.setCustomValidity('');
+field.wrappedElement.setCustomValidity('');
 if (field.value.trim() === '') {
-  field.setCustomValidity('请填写项目名称');
+  field.wrappedElement.setCustomValidity('请填写项目名称');
 }
 field.reportValidity();
 ```
