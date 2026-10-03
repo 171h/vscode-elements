@@ -4,13 +4,14 @@ import {withBase} from 'vitepress';
 import {examples} from '../../data/examples.mjs';
 import {previewDocument} from '../../data/preview.mjs';
 import {siteTheme} from './theme-state.mjs';
+import {previewSize} from './preview-state.mjs';
 
 const props = defineProps({example: {type: String, required: true}});
 const iframe = ref(null);
-const size = ref('medium');
 const active = ref('preview');
 const mounted = ref(false);
 const initialTheme = ref(null);
+const initialSize = ref('medium');
 const demo = computed(() => examples[props.example]);
 const source = computed(() =>
   demo.value
@@ -28,21 +29,26 @@ const document = computed(() =>
     ? previewDocument(demo.value, {
         base: withBase('/'),
         theme: initialTheme.value,
-        size: size.value,
+        size: initialSize.value,
       })
     : undefined
 );
 onMounted(() => {
   initialTheme.value = siteTheme.value;
+  initialSize.value = previewSize.value;
   mounted.value = true;
 });
 function syncTheme() {
   iframe.value?.contentWindow?.postMessage(
-    {type: 'nusys-docs-theme', theme: siteTheme.value},
+    {
+      type: 'nusys-docs-settings',
+      theme: siteTheme.value,
+      size: previewSize.value,
+    },
     window.location.origin
   );
 }
-watch(siteTheme, syncTheme, {flush: 'post'});
+watch([siteTheme, previewSize], syncTheme, {flush: 'post'});
 </script>
 
 <template>
@@ -64,14 +70,6 @@ watch(siteTheme, syncTheme, {flush: 'post'});
           代码
         </button>
       </div>
-      <label
-        >尺寸
-        <select v-model="size">
-          <option value="small">小</option>
-          <option value="medium">中</option>
-          <option value="large">大</option>
-        </select></label
-      >
     </div>
     <iframe
       ref="iframe"
@@ -118,15 +116,7 @@ button[aria-pressed='true'] {
   background: var(--vp-c-bg);
   color: var(--vp-c-brand-1);
 }
-select {
-  padding: 3px 6px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg);
-}
-button:focus-visible,
-select:focus-visible {
+button:focus-visible {
   outline: 2px solid var(--vp-c-brand-1);
   outline-offset: 2px;
 }

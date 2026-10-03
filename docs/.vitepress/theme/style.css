@@ -1,19 +1,9 @@
 :root {
-  --vp-layout-bottom-height: 52px;
   --vp-c-brand-1: #16855b;
   --vp-c-brand-2: #169667;
   --vp-c-brand-3: #16a36f;
   --vp-font-family-base: 'Segoe UI', 'Microsoft YaHei', sans-serif;
   --vp-layout-max-width: 1480px;
-}
-.VPContent {
-  padding-bottom: var(--vp-layout-bottom-height);
-}
-.VPSidebar {
-  padding-bottom: calc(32px + var(--vp-layout-bottom-height));
-}
-.VPFooter {
-  margin-bottom: var(--vp-layout-bottom-height);
 }
 .dark {
   --vp-c-brand-1: #6ee7b7;
@@ -22,6 +12,29 @@
 }
 .VPNavBar {
   border-bottom: 1px solid var(--vp-c-divider);
+}
+@media (max-width: 1279px) {
+  .VPNavBar .DocSearch-Button {
+    width: 36px;
+    padding: 0;
+    justify-content: center;
+    background: transparent;
+  }
+  .VPNavBar .DocSearch-Button-Placeholder,
+  .VPNavBar .DocSearch-Button-Keys {
+    display: none;
+  }
+  .VPNavBar .DocSearch-Search-Icon {
+    margin-right: 0;
+  }
+}
+@media (max-width: 767px) {
+  .VPNavBar .wrapper {
+    padding-left: 12px;
+  }
+  .VPNavBar .VPNavBarHamburger {
+    width: 40px;
+  }
 }
 .VPDoc .content-container {
   max-width: 860px !important;

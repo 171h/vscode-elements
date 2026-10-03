@@ -102,6 +102,18 @@ try {
         id
       );
   };
+  const selectSize = async (size) => {
+    await page
+      .locator('.VPNavBar .global-size-selector select')
+      .selectOption(size);
+    for (const frame of page
+      .frames()
+      .filter((candidate) => candidate.parentFrame()))
+      await frame.waitForFunction(
+        (size) => document.documentElement.dataset.previewSize === size,
+        size
+      );
+  };
   await page.goto(url());
   await page.getByRole('heading', {name: '为 VS Code 扩展构建界面'}).waitFor();
   await mkdir(resolve(root, '.wireit/docs-screenshots'), {recursive: true});
@@ -123,12 +135,14 @@ try {
     }
     await selectTheme('dark-v2');
     await selectTheme('light-v2');
+    await selectSize('large');
+    await selectSize('medium');
     assert.equal(await page.locator('vscode-theme-selector').count(), 1);
     assert.equal(await page.locator('.VPSwitchAppearance').count(), 0);
     assert.equal(
       await page.locator('.example select').count(),
-      await page.locator('.example').count(),
-      '子页面仅保留尺寸选择器'
+      0,
+      '子页面不得保留主题或尺寸选择器'
     );
     assert.ok(
       await frame.locator(`vscode-${component.id}`).count(),
@@ -163,7 +177,7 @@ try {
   ]) {
     await selectTheme(theme);
     for (const size of ['small', 'medium', 'large']) {
-      await sample.getByLabel('尺寸').selectOption(size);
+      await selectSize(size);
       frame = page.frames().find((candidate) => candidate.parentFrame());
       await frame.waitForFunction(
         () => document.documentElement.dataset.ready === 'true'
@@ -205,7 +219,7 @@ try {
     }
   }
   await selectTheme('light');
-  await sample.getByLabel('尺寸').selectOption('medium');
+  await selectSize('medium');
   frame = page.frames().find((candidate) => candidate.parentFrame());
   await frame.waitForFunction(
     () => document.documentElement.dataset.ready === 'true'
@@ -241,12 +255,19 @@ try {
   await frame.getByText('提交值：0.25', {exact: true}).waitFor();
   await selectTheme('dark-monokai');
   assert.equal(await input.inputValue(), '25%', '主题切换不得清空输入');
+  await selectSize('large');
+  assert.equal(await input.inputValue(), '25%', '尺寸切换不得清空输入');
   await page.reload();
   await page.locator('vscode-theme-selector select').waitFor();
   assert.equal(
     await page.locator('vscode-theme-selector select').inputValue(),
     'dark-monokai'
   );
+  assert.equal(
+    await page.locator('.global-size-selector select').inputValue(),
+    'large'
+  );
+  await selectSize('medium');
   await selectTheme('light');
 
   frame = await open('form-container');
@@ -362,6 +383,26 @@ try {
   });
   await page.goto(url());
   await selectTheme('light-quiet');
+  for (const width of [320, 390, 768, 960, 1280, 1440]) {
+    await page.setViewportSize({width, height: 1000});
+    const controls = page.locator('.VPNavBar .global-theme-bar');
+    const box = await controls.boundingBox();
+    assert.ok(
+      box && box.y < 64 && box.x + box.width <= width,
+      `导航栏控件必须在 ${width}px 屏幕内`
+    );
+    assert.equal(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth + 1
+      ),
+      true,
+      `${width}px 导航栏不应横向溢出`
+    );
+    await selectTheme('dark-v2');
+    await selectSize('small');
+  }
+  await page.setViewportSize({width: 1440, height: 1000});
+  await selectSize('medium');
   await page.getByRole('button', {name: '搜索文档', exact: true}).click();
   await page.locator('#localsearch-input').fill('百分比');
   await page
