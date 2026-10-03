@@ -1,6 +1,7 @@
 import {html, LitElement, TemplateResult} from 'lit';
 import {property, query, state} from 'lit/decorators.js';
 import {ifDefined} from 'lit/directives/if-defined.js';
+import {live} from 'lit/directives/live.js';
 import {customElement, VscElement} from '../includes/VscElement.js';
 import {FormControlSize} from '../includes/form-control-size.js';
 import {MarkableFormControl} from '../includes/form-control-dirty.styles.js';
@@ -601,7 +602,7 @@ export class VscodeTextfield
           ?readonly=${this.readonly}
           ?required=${this.required}
           step=${ifDefined(this.step)}
-          .value=${this._displayValue}
+          .value=${live(this._displayValue)}
           @blur=${this._onBlur}
           @change=${this._onChange}
           @focus=${this._onFocus}
