@@ -207,6 +207,22 @@
         height: 220px;
         width: 100%;
       }
+      #gallery-overflow-container {
+        width: 420px;
+        max-width: 100%;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      #gallery-overflow-tabs vscode-tab-panel {
+        min-height: 90px;
+        padding: 16px;
+      }
+      #gallery-overflow-width {
+        width: 140px;
+        padding: 0;
+      }
+      .tabs-overflow-controls {
+        margin-bottom: 16px;
+      }
       .sidebar-drag-demo {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
@@ -998,11 +1014,6 @@
             data-components="vscode-tabs vscode-tab-header vscode-tab-panel"
           >
             <h3>标签页 · 激活内容与面板样式</h3>
-            <p>
-              <a href="./vscode-tabs/overflow-icons.html"
-                >查看标题溢出与图标示例</a
-              >
-            </p>
             <vscode-tabs id="demo-tabs" panel
               ><vscode-tab-header>Overview</vscode-tab-header
               ><vscode-tab-panel
@@ -1021,6 +1032,104 @@
                 >Panel-style tab header.</vscode-tab-panel
               ></vscode-tabs
             >
+          </article>
+          <article
+            id="tabs-overflow-card"
+            class="demo-card wide"
+            data-components="vscode-tabs vscode-tab-header vscode-tab-panel vscode-context-menu vscode-icon 溢出 换行 滚动 菜单 图标"
+          >
+            <h3>标签页 · 换行、水平滚动与溢出菜单</h3>
+            <p>
+              调整宽度并切换显示方式。换行时可选择对齐方式；水平滚动时悬停组件显示覆盖式滚动条；菜单模式下点击右侧
+              ... 访问隐藏项，选中的隐藏标签会显示在标题栏末位。
+              <a href="./vscode-tabs/overflow-icons.html"
+                >打开完整溢出与图标示例</a
+              >
+            </p>
+            <div class="controls tabs-overflow-controls">
+              <label
+                >溢出方式<select id="gallery-overflow-mode">
+                  <option value="wrap">换行</option>
+                  <option value="scroll">水平滚动</option>
+                  <option value="menu">上下文菜单</option>
+                </select></label
+              >
+              <label
+                >换行对齐<select id="gallery-overflow-alignment">
+                  <option value="start">左对齐</option>
+                  <option value="center">居中</option>
+                </select></label
+              >
+              <label
+                >容器宽度<input
+                  id="gallery-overflow-width"
+                  type="range"
+                  min="160"
+                  max="800"
+                  value="420"
+                />
+                <output
+                  id="gallery-overflow-width-value"
+                  for="gallery-overflow-width"
+                  >420px</output
+                >
+              </label>
+              <label
+                >图文模式<select id="gallery-overflow-display">
+                  <option value="icon-text">图标和文字</option>
+                  <option value="icon">仅图标</option>
+                  <option value="text">仅文字</option>
+                </select></label
+              >
+              <label
+                >图标位置<select id="gallery-overflow-position">
+                  <option value="start">左侧</option>
+                  <option value="end">右侧</option>
+                </select></label
+              >
+            </div>
+            <div id="gallery-overflow-container">
+              <vscode-tabs id="gallery-overflow-tabs">
+                <vscode-tab-header icon="files">文件</vscode-tab-header
+                ><vscode-tab-panel>文件内容</vscode-tab-panel>
+                <vscode-tab-header icon="search">搜索</vscode-tab-header
+                ><vscode-tab-panel>搜索内容</vscode-tab-panel>
+                <vscode-tab-header icon="source-control"
+                  >源代码管理</vscode-tab-header
+                ><vscode-tab-panel>源代码管理内容</vscode-tab-panel>
+                <vscode-tab-header icon="debug-alt"
+                  >运行与调试</vscode-tab-header
+                ><vscode-tab-panel>运行与调试内容</vscode-tab-panel>
+                <vscode-tab-header icon="extensions">扩展</vscode-tab-header
+                ><vscode-tab-panel>扩展内容</vscode-tab-panel>
+                <vscode-tab-header
+                  ><svg slot="icon" viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M2 2h12v12H2zM4 4v8h8V4z"
+                    /></svg
+                  >自定义 SVG</vscode-tab-header
+                ><vscode-tab-panel>自定义 SVG 图标</vscode-tab-panel>
+                <vscode-tab-header
+                  ><span
+                    slot="icon"
+                    class="codicon codicon-terminal"
+                    aria-hidden="true"
+                  ></span
+                  >自定义字体</vscode-tab-header
+                ><vscode-tab-panel>通过插槽使用字体图标</vscode-tab-panel>
+                <vscode-tab-header icon="gear">设置</vscode-tab-header
+                ><vscode-tab-panel>设置内容</vscode-tab-panel>
+                <vscode-tab-header icon="history">历史记录</vscode-tab-header
+                ><vscode-tab-panel>历史记录内容</vscode-tab-panel>
+                <vscode-tab-header icon="info">帮助与反馈</vscode-tab-header
+                ><vscode-tab-panel>帮助与反馈内容</vscode-tab-panel>
+                <vscode-button slot="addons" id="gallery-overflow-last"
+                  >选择末项</vscode-button
+                >
+              </vscode-tabs>
+            </div>
+            <p id="gallery-overflow-status" role="status">当前选中：文件</p>
           </article>
           <article
             id="sidebar-drag-card"
@@ -1438,6 +1547,45 @@
           `[${new Date().toLocaleTimeString()}] ${event.type} on <${name}>\n` +
           eventLog.textContent;
       });
+    </script>
+    <script type="module">
+      await customElements.whenDefined('vscode-tabs');
+      const tabs = document.querySelector('#gallery-overflow-tabs');
+      const headers = [...tabs.querySelectorAll('vscode-tab-header')];
+      const mode = document.querySelector('#gallery-overflow-mode');
+      const alignment = document.querySelector('#gallery-overflow-alignment');
+      const width = document.querySelector('#gallery-overflow-width');
+      const display = document.querySelector('#gallery-overflow-display');
+      const position = document.querySelector('#gallery-overflow-position');
+      const update = () => {
+        tabs.overflow = mode.value;
+        tabs.wrapAlignment = alignment.value;
+        alignment.disabled = mode.value !== 'wrap';
+        document.querySelector('#gallery-overflow-container').style.width =
+          width.value + 'px';
+        document.querySelector('#gallery-overflow-width-value').value =
+          width.value + 'px';
+        headers.forEach((header) => {
+          header.iconDisplay = display.value;
+          header.iconPosition = position.value;
+        });
+      };
+      [mode, alignment, width, display, position].forEach((control) =>
+        control.addEventListener('input', update)
+      );
+      const updateStatus = () => {
+        document.querySelector('#gallery-overflow-status').textContent =
+          '当前选中：' + headers[tabs.selectedIndex].textContent.trim();
+      };
+      tabs.addEventListener('vsc-tabs-select', updateStatus);
+      document
+        .querySelector('#gallery-overflow-last')
+        .addEventListener('click', async () => {
+          tabs.selectedIndex = headers.length - 1;
+          await tabs.updateComplete;
+          updateStatus();
+        });
+      update();
     </script>
   </body>
 </html>
