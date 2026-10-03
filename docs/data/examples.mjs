@@ -152,6 +152,10 @@ export const examples = {
                   <option value="end">右侧</option>
                 </select></label
               >
+              <label>面板风格<input id="gallery-overflow-panel" type="checkbox" /></label>
+              <label>标题内容高度<select id="gallery-overflow-height">
+                <option value="">默认</option><option value="20">20px</option><option value="32">32px</option><option value="44">44px</option>
+              </select></label>
             </div>
             <div id="gallery-overflow-container">
               <vscode-tabs id="gallery-overflow-tabs">
@@ -200,7 +204,10 @@ export const examples = {
       const width = document.querySelector('#gallery-overflow-width');
       const display = document.querySelector('#gallery-overflow-display');
       const position = document.querySelector('#gallery-overflow-position');
+      const panel = document.querySelector('#gallery-overflow-panel');
+      const height = document.querySelector('#gallery-overflow-height');
       const update = () => {
+        tabs.panel = panel.checked;
         tabs.overflow = mode.value;
         tabs.wrapAlignment = alignment.value;
         alignment.disabled = mode.value !== 'wrap';
@@ -211,9 +218,11 @@ export const examples = {
         headers.forEach((header) => {
           header.iconDisplay = display.value;
           header.iconPosition = position.value;
+          if (height.value) header.style.setProperty('--vsc-tab-header-height', height.value + 'px');
+          else header.style.removeProperty('--vsc-tab-header-height');
         });
       };
-      [mode, alignment, width, display, position].forEach((control) =>
+      [mode, alignment, width, display, position, panel, height].forEach((control) =>
         control.addEventListener('input', update)
       );
       const updateStatus = () => {

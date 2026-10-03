@@ -51,6 +51,8 @@
 
 ## 交互示例
 
-切换溢出方式、对齐、容器宽度和图标配置。全站主题设置同步到示例；通过右侧菜单访问隐藏标签。
+切换溢出方式、对齐、容器宽度和图标配置，并调整面板风格及标题内容高度观察图标缩放。全站主题设置同步到示例；通过右侧菜单访问隐藏标签。
+
+同一演示可在 [综合体验](./examples/showcase#demo-tabs-overflow)、[Tabs](./components/tabs#溢出与标题图标)、[TabHeader](./components/tab-header#溢出与标题图标) 和 [TabPanel](./components/tab-panel#溢出标题与面板切换) 页面直接操作。
 
 <ExamplePreview example="tabs-overflow" />

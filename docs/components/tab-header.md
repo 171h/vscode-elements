@@ -66,6 +66,32 @@ tabs.addEventListener('vsc-tabs-layout-change', (event) => {
 });
 ```
 
+## 图标设置
+
+| 设置            | 取值                                                 | 默认        |
+| --------------- | ---------------------------------------------------- | ----------- |
+| `icon`          | Codicon 名称，如 `files`、`gear`                     | 无图标      |
+| `icon-position` | `start` 左侧、`end` 右侧                             | `start`     |
+| `icon-display`  | `icon` 仅图标、`icon-text` 图标和文字、`text` 仅文字 | `icon-text` |
+
+自定义 SVG 或字体图标放入 `icon` 插槽，优先于 `icon` 属性。SVG 提供 `viewBox` 并使用 `currentColor`；字体样式由调用方提供。Codicon 样式表的 `id` 为 `vscode-codicon-stylesheet`，接入方式见 [主题与图标](../guide/theming)。
+
+```html
+<vscode-tab-header icon="gear" icon-position="end">设置</vscode-tab-header>
+<vscode-tab-header icon-display="icon">
+  <svg slot="icon" viewBox="0 0 16 16" aria-hidden="true">
+    <path fill="currentColor" d="M2 2h12v12H2z" />
+  </svg>
+  自定义工具
+</vscode-tab-header>
+<vscode-tab-header>
+  <span slot="icon" class="codicon codicon-terminal" aria-hidden="true"></span>
+  终端
+</vscode-tab-header>
+```
+
+图标随单行标题内容高度缩放，默认占其 80%。可使用 `--vsc-tab-header-height` 设置内容最小高度，默认 20px，`panel` 风格默认 31px。长标题换行时图标保持单行尺寸。仅图标模式仍需保留有意义的标题文字或 `aria-label`；图标不作为无障碍名称。
+
 ## 溢出与标题图标
 
 选择换行、水平滚动或上下文菜单，调整容器宽度、换行对齐、图文显示和图标位置。菜单中的隐藏标签被选中后会显示在标题栏末位。此示例同时提供 Codicon、自定义 SVG 和字体图标。

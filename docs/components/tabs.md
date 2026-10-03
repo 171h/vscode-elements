@@ -68,6 +68,28 @@ tabs.addEventListener('vsc-tabs-layout-change', (event) => {
 });
 ```
 
+## 溢出布局设置
+
+容器宽度不足时，通过 `overflow` 选择标题显示方式。默认从原有单行标题改为自动换行；需要保留单行布局时设置 `scroll` 或 `menu`。
+
+| 设置             | 取值                                              | 默认    |
+| ---------------- | ------------------------------------------------- | ------- |
+| `overflow`       | `wrap` 换行、`scroll` 水平滚动、`menu` 隐藏项菜单 | `wrap`  |
+| `wrap-alignment` | `start` 左对齐、`center` 居中，仅对换行有效       | `start` |
+
+换行时标题栏随内容增高，超长标题也可折行。滚动条仅在溢出且悬停组件时覆盖标题和面板分隔线，不增加布局高度。菜单模式在右端显示 `...`；选择隐藏标签后，该标签出现在可见标题末位，菜单更新为其他隐藏项。DOM 顺序、`selectedIndex` 和选择事件索引保持原有对应关系。
+
+```html
+<vscode-tabs overflow="menu" wrap-alignment="center">
+  <vscode-tab-header icon="files">文件</vscode-tab-header>
+  <vscode-tab-panel>文件内容</vscode-tab-panel>
+  <vscode-tab-header icon="search">搜索</vscode-tab-header>
+  <vscode-tab-panel>搜索内容</vscode-tab-panel>
+</vscode-tabs>
+```
+
+程序设置 `selectedIndex` 同样展示目标标题。滚动模式下自动滚入视口；菜单模式下自动显示在可见末位。方向键移动标题焦点，Enter 激活；菜单可用方向键和 Enter 选择，Escape 关闭并恢复焦点。`addons` 中的应用操作仍会占用标题栏空间。
+
 ## 溢出与标题图标
 
 选择换行、水平滚动或上下文菜单，调整容器宽度、换行对齐、图文显示和图标位置。菜单中的隐藏标签被选中后会显示在标题栏末位。此示例同时提供 Codicon、自定义 SVG 和字体图标。
