@@ -59,6 +59,8 @@ update();
 
 设置 `value`、`selectedIndexes`，调用 `selectAll()` 或 `selectNone()` 都会同步表单关联值与必填校验。程序设置不会自动触发 `change`；用户点击、键盘选择和下拉全选／清空会触发 `change`。读取渲染后的标签时等待 `await select.updateComplete`。
 
+下拉框的全选操作跳过未选中的 `disabled` 选项，并保留已有选择。程序调用 `selectAll()` 仍会选中全部选项，包括禁用项；应用可按业务需要用 `value` 或 `selectedIndexes` 控制选择。
+
 下列场景补充状态、组合约束、数据操作和交互边界。每项列出覆盖的公开功能，代码视图可直接查阅实际运行代码。
 
 <ComponentExamples component="multi-select" />

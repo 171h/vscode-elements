@@ -78,6 +78,20 @@ export async function testScenarios(page, url) {
   assert.equal(await frame.locator('output').textContent(), 'json');
 
   frame = await open('multi-form');
+  await page
+    .locator('[data-scenario="multi-form"] iframe')
+    .scrollIntoViewIfNeeded();
+  await frame.locator('vscode-multi-select').evaluate((el) => {
+    el.open = true;
+  });
+  await frame.locator('vscode-multi-select #select-all').click();
+  await frame.locator('vscode-multi-select .button-accept').click();
+  await frame.getByRole('button', {name: '提交全部值'}).click();
+  assert.deepEqual(JSON.parse(await frame.locator('output').textContent()), [
+    'html',
+    'md',
+    'json',
+  ]);
   await frame.getByRole('button', {name: '选择前两项'}).click();
   await frame.getByRole('button', {name: '提交全部值'}).click();
   assert.deepEqual(JSON.parse(await frame.locator('output').textContent()), [

@@ -741,6 +741,42 @@ Ipsum`);
     expect(change.callCount).to.eq(3);
   });
 
+  for (const selected of [false, true]) {
+    it(`下拉全选跳过未选中的禁用项并保留原有选择（禁用项初始选中：${selected}）`, async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <vscode-multi-select name="formats" open required>
+            <vscode-option value="html" selected>HTML</vscode-option>
+            <vscode-option value="md">Markdown</vscode-option>
+            <vscode-option value="xml" disabled>XML</vscode-option>
+            <vscode-option value="locked" disabled ?selected=${selected}>
+              固定格式
+            </vscode-option>
+          </vscode-multi-select>
+        </form>
+      `);
+      const el = form.querySelector<VscodeMultiSelect>('vscode-multi-select')!;
+      const change = sinon.spy();
+      el.addEventListener('change', change);
+      await el.updateComplete;
+      const before = [...el.value];
+      el.shadowRoot!.querySelector<HTMLElement>('#select-all')!.click();
+      await el.updateComplete;
+      const expected = [...before, 'md'];
+      expect(el.value).to.eql(expected);
+      expect(new FormData(form).getAll('formats')).to.eql(expected);
+      expect(el.validity.valueMissing).to.be.false;
+      expect(change.callCount).to.eq(1);
+
+      el.selectAll();
+      expect(el.value).to.eql([
+        ...expected,
+        ...['xml', 'locked'].filter((value) => !expected.includes(value)),
+      ]);
+      expect(change.callCount).to.eq(1);
+    });
+  }
+
   it('selects multiple options with keyboard');
   it('selectedIndexes sync with values');
   it(

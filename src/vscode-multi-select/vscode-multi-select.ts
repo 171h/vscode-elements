@@ -378,7 +378,13 @@ export class VscodeMultiSelect
   }
 
   private _onMultiSelectAllClick(): void {
-    this.selectAll();
+    const indexes = new Set(this.selectedIndexes);
+    this._opts.options.forEach((option) => {
+      if (!option.disabled) {
+        indexes.add(option.index);
+      }
+    });
+    this.selectedIndexes = [...indexes];
     this._dispatchChangeEvent();
   }
 
