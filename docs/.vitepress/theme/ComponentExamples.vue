@@ -11,7 +11,7 @@ defineProps({component: {type: String, required: true}});
     class="scenario"
     :data-scenario="id"
   >
-    <h3 :id="id">{{ extraExamples[id].title }}</h3>
+    <h3 :id="`${component}-${id}`">{{ extraExamples[id].title }}</h3>
     <ul>
       <li v-for="feature in extraExamples[id].features" :key="feature">
         {{ feature }}

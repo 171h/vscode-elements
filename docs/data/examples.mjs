@@ -1,5 +1,7 @@
 import {extraExamples} from './scenarios.mjs';
+import {workbench} from './workbench.mjs';
 export const examples = {
+  workbench,
   ...extraExamples,
   badge: {
     height: 120,

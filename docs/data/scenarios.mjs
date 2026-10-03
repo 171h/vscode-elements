@@ -133,13 +133,13 @@ export const extraExamples = {
   'form-layouts': demo(
     '布局、必填标记与辅助信息',
     [
-      'FormGroup horizontal/vertical、尺寸',
+      'FormGroup horizontal/vertical/settings-group、尺寸',
       'Label for/required 与 Helper 内容',
       'FormContainer responsive/breakpoint',
     ],
-    `<vscode-form-container responsive breakpoint="560"><vscode-form-group variant="horizontal" size="small"><vscode-label for="small" required size="small">名称</vscode-label><vscode-textfield id="small" size="small" required placeholder="小尺寸横向布局"></vscode-textfield><vscode-form-helper>必填标记仅提示，required 在控件上设置。</vscode-form-helper></vscode-form-group><vscode-form-group variant="vertical" size="large"><vscode-label for="large" size="large">说明</vscode-label><vscode-textarea id="large" size="large" rows="2"></vscode-textarea><vscode-form-helper>大尺寸纵向布局，调整窗口观察响应式。</vscode-form-helper></vscode-form-group></vscode-form-container>`,
+    `<vscode-form-container responsive breakpoint="560"><vscode-form-group variant="horizontal" size="small"><vscode-label for="small" required size="small">名称</vscode-label><vscode-textfield id="small" size="small" required placeholder="小尺寸横向布局"></vscode-textfield><vscode-form-helper>必填标记仅提示，required 在控件上设置。</vscode-form-helper></vscode-form-group><vscode-form-group variant="vertical" size="large"><vscode-label for="large" size="large">说明</vscode-label><vscode-textarea id="large" size="large" rows="2"></vscode-textarea><vscode-form-helper>大尺寸纵向布局，调整窗口观察响应式。</vscode-form-helper></vscode-form-group><vscode-form-group variant="settings-group"><vscode-label for="setting">设置分组</vscode-label><vscode-textfield id="setting" value="设置面板样式"></vscode-textfield><vscode-form-helper>标题、控件和说明纵向排列。</vscode-form-helper></vscode-form-group></vscode-form-container>`,
     '',
-    410
+    560
   ),
   'form-dirty-controls': demo(
     '已修改状态与高亮开关',
@@ -416,9 +416,9 @@ export const extraExamples = {
       'resize=both/horizontal/vertical/none',
       'readonly、disabled、长度与必填校验',
     ],
-    `<div class="columns"><div><vscode-label for="code">代码（可双向缩放）</vscode-label><vscode-textarea id="code" monospace resize="both" rows="4" cols="24"  value="const project = 'Nusys';"></vscode-textarea></div><div><vscode-label for="notes">说明（垂直缩放）</vscode-label><vscode-textarea id="notes" resize="vertical" required minlength="5" maxlength="80" rows="4" placeholder="5 至 80 个字符"></vscode-textarea></div><vscode-textarea aria-label="只读" readonly value="只读文档"></vscode-textarea><vscode-textarea aria-label="禁用" disabled value="禁用内容"></vscode-textarea></div><vscode-button id="check">检查说明</vscode-button><output aria-live="polite"></output>`,
+    `<div class="columns"><div><vscode-label for="code">代码（可双向缩放）</vscode-label><vscode-textarea id="code" monospace resize="both" rows="4" cols="24"  value="const project = 'Nusys';"></vscode-textarea></div><div><vscode-label for="notes">说明（垂直缩放）</vscode-label><vscode-textarea id="notes" resize="vertical" required minlength="5" maxlength="80" rows="4" placeholder="5 至 80 个字符"></vscode-textarea></div><vscode-textarea aria-label="仅水平缩放" resize="horizontal" value="拖动右下角调整宽度"></vscode-textarea><vscode-textarea aria-label="只读" resize="none" readonly value="只读文档"></vscode-textarea><vscode-textarea aria-label="禁用" disabled value="禁用内容"></vscode-textarea></div><vscode-button id="check">检查说明</vscode-button><output aria-live="polite"></output>`,
     `document.querySelector('#check').onclick=()=>{const field=document.querySelector('#notes');document.querySelector('output').textContent=field.checkValidity()?'有效说明':field.validationMessage;};`,
-    450
+    560
   ),
   'checkbox-form': demo(
     '开关、混合状态与表单',
