@@ -28,7 +28,7 @@ npm run docs:preview
 | `docs/data/components.mjs` | 组件名称、分类与摘要                      |
 | `docs/data/examples.mjs`   | 经审核的本地 HTML、CSS、JavaScript 示例   |
 | `docs/data/scenarios.mjs`  | 全部组件的功能场景与覆盖说明              |
-| `docs/data/workbench.mjs`  | 综合工作台的表单、资源与任务联动          |
+| `docs/data/showcase.mjs`   | 综合页的演示分类与去重                    |
 | `docs/api/generated/`      | 从当前自定义元素清单生成的 API，不提交    |
 | `docs/public/assets/`      | 当前库 bundle 与 Codicon 静态资源，不提交 |
 | `docs/.vitepress/`         | 配置、主题和示例预览组件                  |
@@ -44,6 +44,6 @@ npm run docs:preview
 
 每个组件还必须在 `componentScenarios` 中登记功能场景；场景的 `features` 明确列出状态、属性、事件、方法和组合方式。关联的子组件共用符合结构约束的场景。新增公共功能时同步场景，而不是只增加 API 列表。交互涉及表单提交时验证真实 `FormData`，不要只读取控件的 `value`。
 
-[综合体验](../examples/showcase)复用同一份示例数据，组件卡片展开后才加载预览。主题选择器来自 `@vscode-elements/webview-playground`，只在全局布局中挂载；通过消息更新所有预览的主题变量，保留用户操作状态。不要在组件页面或示例内新增主题选择器。
+[综合体验](../examples/showcase)复用同一份示例数据，组件场景直接展示。主题选择器来自 `@vscode-elements/webview-playground`，只在全局布局中挂载；通过消息更新所有预览的主题变量与尺寸，保留用户操作状态。不要在组件页面或示例内新增主题选择器。
 
 仓库 `.vscode/settings.json` 设置 `vite.autoStart: false`，禁用 Vite 扩展打开文件夹时自动执行 `npx vite --port=4000`。需要预览时手动执行 `npm run docs:dev`。

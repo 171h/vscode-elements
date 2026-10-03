@@ -5,6 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {components} from '../docs/data/components.mjs';
 import {examples} from '../docs/data/examples.mjs';
 import {componentScenarios, extraExamples} from '../docs/data/scenarios.mjs';
+import {showcaseGroups} from '../docs/data/showcase.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const docs = resolve(root, 'docs');
@@ -22,6 +23,17 @@ assert.deepEqual(
 );
 assert.equal(components.length, exportedIds.size, '组件索引不能重复');
 const tags = new Set(components.map((component) => `vscode-${component.id}`));
+const demos = showcaseGroups.flatMap((group) => group.items);
+assert.equal(
+  demos.length,
+  Object.keys(examples).length,
+  '综合页的示例不可重复或缺失'
+);
+assert.deepEqual(
+  new Set(demos.map((demo) => demo.id)),
+  new Set(Object.keys(examples)),
+  '综合页必须覆盖全部示例'
+);
 for (const component of components) {
   assert.ok(examples[component.example], `${component.id} 缺少示例`);
   assert.ok(

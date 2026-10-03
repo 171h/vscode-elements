@@ -39,6 +39,9 @@
 .VPDoc .content-container {
   max-width: 860px !important;
 }
+.component-showcase .content-container {
+  max-width: 1120px !important;
+}
 .vp-doc h1 {
   letter-spacing: -0.03em;
 }

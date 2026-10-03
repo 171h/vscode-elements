@@ -47,5 +47,11 @@ export function previewDocument(
   await Promise.all(Array.from(document.querySelectorAll('*')).map(el=>el.updateComplete));
   await new Promise(requestAnimationFrame);
   document.documentElement.dataset.ready='true';
+  let heightFrame;
+  const resize = new ResizeObserver(() => {
+    cancelAnimationFrame(heightFrame);
+    heightFrame = requestAnimationFrame(() => window.parent.postMessage({type:'nusys-docs-height',height:Math.ceil(document.body.getBoundingClientRect().height)},new URL(document.baseURI).origin));
+  });
+  resize.observe(document.body);
   <\/script></body></html>`;
 }

@@ -12,6 +12,8 @@
 
 此功能仅用于文档站点，组件库不依赖 Playground；应用中的主题仍由 VS Code 宿主提供。主题来源及实现参见 [Playground 仓库](https://github.com/vscode-elements/webview-playground)。
 
+全站尺寸控制示例中未显式指定尺寸的表单控件；用于对比的小／中／大尺寸样例和图标的像素尺寸保持原有设置。
+
 ```css
 :root {
   --vscode-font-family: 'Segoe UI', sans-serif;
