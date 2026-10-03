@@ -49,9 +49,11 @@ Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup �
 
 ## 文档
 
-中文文档站点位于 [docs](docs/index.md)，包含 [快速开始](docs/guide/getting-started.md)、[全部组件](docs/components/index.md)、[源码 API](docs/api/index.md) 和 [文档维护](docs/guide/contributing.md)。执行 `pnpm docs:dev` 后访问终端输出的地址（默认 `http://localhost:5173`）。文档修改支持热更新；组件源码修改后执行 `pnpm docs:prepare` 并刷新预览。
+中文文档站点位于 [docs](docs/index.md)，包含 [快速开始](docs/guide/getting-started.md)、[全部组件](docs/components/index.md)、[源码 API](docs/api/index.md) 和 [文档维护](docs/guide/contributing.md)。执行 `pnpm dev` 或 `pnpm docs:dev` 后访问终端输出的地址（默认 `http://localhost:5173`）。Markdown、Vue 主题和示例数据支持热更新；组件源码和样式保存后自动重新构建并重载文档页，示例临时输入会重置。修改公共 API 或 JSDoc 后执行 `pnpm docs:prepare` 更新 API 文档。
 
 `pnpm docs:check` 检查组件覆盖、示例与链接；`pnpm docs:build` 构建生产站点；`pnpm docs:preview` 预览站点；`pnpm docs:test` 构建并执行文档浏览器交互检查。输出位于 `docs/.vitepress/dist/`，通过 `DOCS_BASE` 支持子路径部署。[综合体验](docs/examples/showcase.md) 复用全部组件场景，导航栏统一管理主题和尺寸并保留预览状态。组件示例统一维护在 `docs/`，开发预览使用 `pnpm dev` 或 `pnpm docs:dev`。
+
+`pnpm docs:test:dev` 在独立副本中验证 Markdown 热更新、组件源码和样式自动重载，以及编译错误后的恢复，不修改开发者的源码。
 
 开发要求参见 [AGENTS.md](AGENTS.md) 和 [CONTRIBUTING.md](CONTRIBUTING.md)。工具链迁移与功能、性能验证结果参见 [迁移报告](docs/toolchain-migration.md)。
 

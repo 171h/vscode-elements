@@ -73,6 +73,7 @@ VSCode Elements 是基于 Lit 的 Web Components 组件库，用于开发 VS Cod
 | `pnpm docs:prepare`  | 构建组件并生成文档 API 与示例资源                         |
 | `pnpm docs:check`    | 检查组件覆盖、示例和本地链接                              |
 | `pnpm docs:test`     | 构建并执行文档浏览器交互检查                              |
+| `pnpm docs:test:dev` | 在独立副本中验证文档热更新与组件源码自动重载              |
 | `pnpm typecheck`     | 检查源码与测试类型                                        |
 | `pnpm build`         | 通过 Vite 构建包、组件清单、自定义补全数据与打包文件      |
 | `pnpm lint`          | 使用 ESLint 检查 TypeScript                               |
