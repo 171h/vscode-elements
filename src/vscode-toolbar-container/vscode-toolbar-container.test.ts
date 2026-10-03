@@ -1,5 +1,5 @@
 import {VscodeToolbarContainer} from './index.js';
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 
 describe('vscode-toolbar-container', () => {
   it('is defined', () => {

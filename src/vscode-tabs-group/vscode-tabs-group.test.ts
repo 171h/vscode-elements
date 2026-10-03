@@ -1,4 +1,4 @@
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import './vscode-tabs-group.js';
 import '../vscode-tabs/index.js';
 import '../vscode-fieldset/index.js';
@@ -169,6 +169,42 @@ describe('标签页组拖拽', () => {
     expect(tabsOf(left)).to.have.length(2);
     expect(tabsOf(left)[0].textContent).to.not.contain('One');
     expect(tabsOf(left)[0].textContent).to.contain('Two');
+  });
+
+  it('拖出标题或视图创建新组时继承来源的溢出方式与换行对齐', async () => {
+    for (const overflow of ['wrap', 'scroll', 'menu'] as const) {
+      for (const kind of ['header', 'view']) {
+        const {left, right} = await setup();
+        const source = tabsOf(left)[0];
+        source.panel = true;
+        source.overflow = overflow;
+        source.wrapAlignment = 'center';
+        await source.updateComplete;
+        const target =
+          kind === 'header'
+            ? source.querySelector('vscode-tab-header')!
+            : source.querySelector('vscode-fieldset legend')!;
+        const transfer = start(target);
+        const bounds = right.getBoundingClientRect();
+        const y = bounds.top + bounds.height / 2;
+        dragAt(right, transfer, 'dragover', y);
+        dragAt(right, transfer, 'drop', y);
+        const created = tabsOf(right)[0];
+        await created.updateComplete;
+        expect(created.panel, `${overflow}: ${kind}`).to.equal(true);
+        expect(created.overflow).to.equal(overflow);
+        expect(created.wrapAlignment).to.equal('center');
+        expect(created.getAttribute('overflow')).to.equal(overflow);
+        expect(created.getAttribute('wrap-alignment')).to.equal('center');
+        expect(created.querySelector('vscode-tab-header')!.active).to.equal(
+          true
+        );
+        expect(created.querySelector('vscode-tab-panel')!.hidden).to.equal(
+          false
+        );
+        end();
+      }
+    }
   });
 
   it('将拖拽视图提升为带自动生成标签页的新组', async () => {

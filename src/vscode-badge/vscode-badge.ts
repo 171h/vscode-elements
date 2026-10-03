@@ -4,7 +4,7 @@ import {customElement, VscElement} from '../includes/VscElement.js';
 import styles from './vscode-badge.styles.js';
 
 /**
- * 展示数量或状态信息。徽章也可用于[文本框](https://vscode-elements.github.io/components/textfield)和[标签页标题](https://vscode-elements.github.io/components/tabs)组件。
+ * 展示数量或状态信息。徽章也可用于文本框和标签页标题组件。
  *
  * @tag vscode-badge
  *
@@ -21,10 +21,8 @@ export class VscodeBadge extends VscElement {
 
   @property({reflect: true})
   variant:
-    | 'default'
-    | 'counter'
-    | 'activity-bar-counter'
-    | 'tab-header-counter' = 'default';
+    'default' | 'counter' | 'activity-bar-counter' | 'tab-header-counter' =
+    'default';
 
   override render(): TemplateResult {
     return html`<div class="root"><slot></slot></div>`;

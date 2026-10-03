@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import {$, $$, clickOnElement} from '../includes/test-helpers.js';
 import '../vscode-radio/index.js';
 import {VscodeRadio} from '../vscode-radio/index.js';

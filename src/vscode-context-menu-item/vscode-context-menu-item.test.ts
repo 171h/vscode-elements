@@ -1,5 +1,5 @@
 import {VscodeContextMenuItem} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-context-menu-item', () => {
   it('is defined', () => {
@@ -15,6 +15,6 @@ describe('vscode-context-menu-item', () => {
       ></vscode-context-menu-item>`
     );
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 });

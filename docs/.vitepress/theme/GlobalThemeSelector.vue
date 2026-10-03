@@ -1,12 +1,18 @@
 <script setup>
 import {onMounted, onUnmounted, ref} from 'vue';
 import {readPlaygroundTheme} from './theme-state.mjs';
+import {
+  previewSize,
+  restorePreviewSize,
+  setPreviewSize,
+} from './preview-state.mjs';
 
 const host = ref(null);
 const error = ref('');
 let observer;
 let disposed = false;
 onMounted(async () => {
+  restorePreviewSize();
   try {
     const {VscodeThemeSelector: Selector} =
       await import('@vscode-elements/webview-playground/dist/theme-selector.js');
@@ -30,7 +36,14 @@ onMounted(async () => {
     if (!customElements.get('vscode-theme-selector'))
       customElements.define('vscode-theme-selector', Selector);
     const selector = document.createElement('vscode-theme-selector');
-    selector.shadowRoot.querySelector('label').textContent = '全站主题';
+    selector.shadowRoot.querySelector('label').remove();
+    selector.shadowRoot
+      .querySelector('select')
+      .setAttribute('aria-label', '全站主题');
+    const style = document.createElement('style');
+    style.textContent = `select {max-width:130px;height:30px;border-radius:5px;padding:2px 4px;font-size:12px}
+      @media(max-width:767px){select{width:90px}}`;
+    selector.shadowRoot.append(style);
     selector.shadowRoot.querySelector('option[value="hc-light"]').textContent =
       '浅色高对比度';
     selector.shadowRoot.querySelector('option[value="hc-dark"]').textContent =
@@ -59,36 +72,48 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="global-theme-bar" aria-label="全站主题设置">
+  <div class="global-theme-bar" aria-label="全站演示设置">
     <div ref="host" class="global-theme-selector"></div>
+    <select
+      class="global-size-selector"
+      aria-label="全站尺寸"
+      :value="previewSize"
+      @change="setPreviewSize($event.target.value)"
+    >
+      <option value="small">小</option>
+      <option value="medium">中</option>
+      <option value="large">大</option>
+    </select>
     <span v-if="error" role="alert">{{ error }}</span>
-    <span v-else class="theme-hint">文档与示例同步 · 自动记住选择</span>
   </div>
 </template>
 
 <style scoped>
 .global-theme-bar {
-  position: fixed;
-  bottom: 0;
-  inset-inline: 0;
-  z-index: 40;
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 16px;
-  min-height: 48px;
-  padding: 8px 16px;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-left: 12px;
+  color: var(--vp-c-text-1);
+}
+.global-size-selector {
+  height: 30px;
+  padding: 2px 4px;
+  border: 1px solid var(--vp-c-text-1);
+  border-radius: 5px;
   background: var(--vp-c-bg);
   color: var(--vp-c-text-1);
-  border-top: 1px solid var(--vp-c-divider);
-}
-.theme-hint {
   font-size: 12px;
-  color: var(--vp-c-text-2);
 }
-@media (max-width: 640px) {
-  .theme-hint {
-    display: none;
+.global-size-selector:focus-visible {
+  outline: 2px solid var(--vp-c-brand-1);
+  outline-offset: 2px;
+}
+@media (max-width: 1180px) {
+  .global-theme-bar {
+    gap: 8px;
+    margin-left: 8px;
   }
 }
 </style>

@@ -67,7 +67,7 @@ field.setAttribute('size', 'small');
 各组件页的预览提供 **small**、**medium**、**large** 尺寸切换，可交互检查支持的组件。启动文档站点后打开 [按钮](./components/button) 或 [文本框](./components/textfield)：
 
 ```bash
-npm run docs:dev
+pnpm docs:dev
 ```
 
 ## 表单组

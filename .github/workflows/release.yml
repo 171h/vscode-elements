@@ -1,6 +1,6 @@
 name: Release
 
-# `npm run release` 更新版本与变更日志后创建并推送标签。
+# `pnpm release` 更新版本与变更日志后创建并推送标签。
 # 推送标签会触发发布；手动运行工作流可重试发布。
 on:
   push:
@@ -43,12 +43,15 @@ jobs:
           ref: refs/tags/${{ env.VERSION_TAG }}
           fetch-depth: 0
 
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
-          cache: npm
+          cache: pnpm
 
       - name: Verify release version
         shell: bash
@@ -72,36 +75,45 @@ jobs:
           fi
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
+
+      - name: 安装浏览器
+        run: pnpm test:install
 
       - name: Build
-        run: npm run build
+        run: pnpm build
+
+      - name: 构建生产示例
+        run: pnpm build:demo
+
+      - name: 验证开发与生产环境
+        run: pnpm test:build
 
       - name: Test
-        run: npm run test
+        run: pnpm test
 
       - name: Test release scripts
-        run: npm run test:release
+        run: pnpm test:release
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
       - name: Check formatting
-        run: npm run prettier
+        run: pnpm prettier
 
       - name: Verify changelog and extract release notes
         run: node scripts/extract-release-notes.mjs "$PACKAGE_VERSION"
 
       - name: Pack package
-        run: npm pack
+        run: pnpm pack
 
       - name: Publish to npmjs
         shell: bash
         run: |
-          if npm view "nusys-ui@${PACKAGE_VERSION}" version >/dev/null 2>&1; then
+          if pnpm view "nusys-ui@${PACKAGE_VERSION}" version >/dev/null 2>&1; then
             echo "nusys-ui@${PACKAGE_VERSION} is already published; skipping npm publish."
           else
-            npm publish "nusys-ui-${PACKAGE_VERSION}.tgz" --access=public --provenance
+            pnpm publish "nusys-ui-${PACKAGE_VERSION}.tgz" --access=public --provenance
           fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -6,11 +6,13 @@
 
 ## 文档的全站主题
 
-页面底部的「全站主题」使用 `@vscode-elements/webview-playground` 的 `vscode-theme-selector`，提供 Light+、Light Modern、Quiet Light、Solarized Light、Dark+、Dark Modern、Solarized Dark、Monokai 以及两种高对比度主题。
+右上角导航栏的「全站主题」使用 `@vscode-elements/webview-playground` 的 `vscode-theme-selector`，提供 Light+、Light Modern、Quiet Light、Solarized Light、Dark+、Dark Modern、Solarized Dark、Monokai 以及两种高对比度主题。
 
-文档布局、所有组件预览和综合体验页同步使用选中主题的完整变量。选择自动保存在浏览器本地，跨页面导航和刷新后恢复。每个示例只保留尺寸选择；切换主题不会重建预览，因此输入值、选中项及拖拽布局保持不变。VitePress 默认外观切换已停用。
+文档布局、所有组件预览和综合体验页同步使用选中主题的完整变量。选择自动保存在浏览器本地，跨页面导航和刷新后恢复。主题与尺寸统一在导航栏选择，所有示例同步更新；切换主题或尺寸不会重建预览，因此输入值、选中项及拖拽布局保持不变。VitePress 默认外观切换已停用。
 
 此功能仅用于文档站点，组件库不依赖 Playground；应用中的主题仍由 VS Code 宿主提供。主题来源及实现参见 [Playground 仓库](https://github.com/vscode-elements/webview-playground)。
+
+全站尺寸控制示例中未显式指定尺寸的表单控件；用于对比的小／中／大尺寸样例和图标的像素尺寸保持原有设置。
 
 ```css
 :root {

@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>single-select/select-mode/initial-form-value</title>
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/src/vscode-single-select/index.ts"></script>
+    <script type="module" src="/src/vscode-option/index.ts"></script>
+  </head>
+
+  <body>
+    <vscode-demo id="size-demo-target">
+      <form action="#" id="fr">
+        <vscode-single-select id="select" name="test">
+          <vscode-option value="lorem">Lorem</vscode-option>
+          <vscode-option value="ipsum">Ipsum</vscode-option>
+          <vscode-option value="dolor">Dolor</vscode-option>
+        </vscode-single-select>
+        <select name="test2" id="select2">
+          <option value="lorem">Lorem</option>
+          <option value="ipsum">Ipsum</option>
+          <option value="dolor">Dolor</option>
+        </select>
+        <button type="submit" id="bt">Get Value</button>
+      </form>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
+    </vscode-demo>
+    <pre id="out"></pre>
+    <script type="module">
+      const sl = document.getElementById('select');
+      const output = document.getElementById('out');
+      const fr = document.getElementById('fr');
+
+      fr.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+
+        const fd = new FormData(fr);
+        let out = '';
+
+        for (let [name, value] of fd) {
+          out += `${name}: ${value}\n`;
+        }
+
+        output.innerHTML = out;
+      });
+    </script>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-single-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,12 +1,34 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import sinon from 'sinon';
-import {aTimeout, expect, fixture, html} from '@open-wc/testing';
-import {sendKeys, sendMouse} from '@web/test-runner-commands';
+import {aTimeout, expect, fixture, html} from '../includes/testing.js';
+import {sendKeys, sendMouse} from '../includes/browser-commands.js';
 import '../vscode-icon/vscode-icon.js';
 import '../vscode-label/vscode-label.js';
 import {VscodeTextfield} from './index.js';
 
 describe('vscode-textfield', () => {
+  it('选择文件后更新组件不会回写非空文件路径', async () => {
+    const el = await fixture<VscodeTextfield>(
+      html`<vscode-textfield type="file" multiple></vscode-textfield>`
+    );
+    const input = el.wrappedElement;
+    const transfer = new DataTransfer();
+    transfer.items.add(
+      new File(['演示内容'], 'demo.txt', {type: 'text/plain'})
+    );
+    input.files = transfer.files;
+    input.dispatchEvent(new Event('input', {bubbles: true, composed: true}));
+    await el.updateComplete;
+    expect(el.value).to.equal(input.value);
+    expect(input.files?.[0].name).to.equal('demo.txt');
+    el.size = 'large';
+    await el.updateComplete;
+    expect(input.files?.[0].name).to.equal('demo.txt');
+    input.value = '';
+    input.dispatchEvent(new Event('input', {bubbles: true, composed: true}));
+    await el.updateComplete;
+    expect(input.files?.length).to.equal(0);
+  });
   it('is defined', () => {
     const el = document.createElement('vscode-textfield');
     expect(el).to.instanceOf(VscodeTextfield);
@@ -22,14 +44,14 @@ describe('vscode-textfield', () => {
     await aTimeout(10);
     const el = container.querySelector('#textfield');
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('renders with default values', async () => {
     const el = await fixture<VscodeTextfield>(
       html`<vscode-textfield></vscode-textfield>`
     );
-    expect(el).shadowDom.to.equal(
+    expect(el).toMatchShadowDOM(
       `
       <div class="root">
         <slot name="content-before"></slot>

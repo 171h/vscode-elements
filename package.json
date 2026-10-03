@@ -14,108 +14,34 @@
   ],
   "customElements": "custom-elements.json",
   "scripts": {
-    "build": "wireit",
-    "build:ts": "wireit",
-    "build:watch": "wireit",
-    "clean": "rimraf -g .wireit coverage dist custom-elements.json stats.html vscode.*-custom-data.json tsconfig.tsbuildinfo",
+    "build": "vite build && tsc -p tsconfig.build.json && vite build --mode bundle && pnpm analyze && pnpm vscode-data",
+    "build:demo": "vite build --mode demo",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf -g dist demo-dist coverage custom-elements.json vscode.*-custom-data.json",
     "lint": "eslint \"./src/**/*.ts\"",
     "lint:fix": "eslint \"./src/**/*.ts\" --fix",
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
-    "analyze": "wireit",
-    "serve": "npm run docs:dev",
-    "start": "npm run docs:dev",
-    "test": "wireit",
-    "test:coverage": "wireit",
-    "test:watch": "concurrently --raw \"tsc --watch --preserveWatchOutput\" \"wtr --watch\"",
-    "wtr:watch": "wtr --watch",
-    "checksize": "npm run build && cat dist/bundled.js | gzip -9 | wc -c",
+    "analyze": "cem analyze --litelement --globs=\"src/**/*.ts\" --exclude=\"src/**/*.test.ts\" --exclude=\"src/includes/testing.ts\" --exclude=\"src/includes/test-helpers.ts\" --exclude=\"src/includes/browser-commands.ts\" --exclude=\"src/main.ts\" --exclude=\"src/*/index.ts\"",
+    "start": "pnpm docs:dev",
+    "preview": "vite preview --outDir demo-dist",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
+    "checksize": "pnpm build && node scripts/checksize.mjs",
     "icons": "node scripts/generateIconList.js",
-    "vscode-data": "wireit",
-    "ncu": "ncu -u",
+    "vscode-data": "node scripts/generate-custom-data.mjs",
     "release": "node scripts/release.mjs",
-    "test:release": "node --test scripts/release-lib.test.mjs",
-    "prepare": "npx playwright install chromium --only-shell",
-    "docs:dev": "npm run docs:prepare && vitepress dev docs",
-    "docs:build": "npm run docs:prepare && vitepress build docs",
+    "test:release": "vitest run --project release",
+    "test:install": "playwright install chromium --with-deps",
+    "test:build": "node scripts/verify-build.mjs",
+    "docs:dev": "pnpm docs:prepare && vitepress dev docs",
+    "docs:build": "pnpm docs:prepare && vitepress build docs",
     "docs:preview": "vitepress preview docs",
-    "docs:prepare": "npm run build && node scripts/docs-prepare.mjs",
-    "docs:check": "npm run docs:prepare && node scripts/docs-check.mjs",
-    "docs:test": "npm run docs:build && node scripts/docs-browser.mjs"
-  },
-  "wireit": {
-    "analyze": {
-      "command": "cem analyze --litelement --globs=\"src/**/*.ts\" --exclude=\"src/main.ts\" --exclude=\"src/test/**/*\" --exclude=\"src/*/index.ts\"",
-      "files": [
-        "src/**/*.ts",
-        "tsconfig.json"
-      ],
-      "output": [
-        "custom-elements.json"
-      ]
-    },
-    "build": {
-      "command": "rollup -c --file dist/bundled.js",
-      "dependencies": [
-        "analyze",
-        "vscode-data",
-        "build:ts"
-      ],
-      "files": [
-        "rollup.config.json"
-      ],
-      "output": [
-        "dist/bundled.js"
-      ]
-    },
-    "build:ts": {
-      "command": "tsc --build",
-      "files": [
-        "src/**/*.ts",
-        "tsconfig.json"
-      ],
-      "output": [
-        "dist/**",
-        "!dist/bundled.js"
-      ]
-    },
-    "build:watch": {
-      "command": "tsc --watch",
-      "service": true
-    },
-    "test": {
-      "command": "wtr",
-      "dependencies": [
-        "build:ts"
-      ],
-      "files": [
-        "src/**/*.ts"
-      ],
-      "output": []
-    },
-    "test:coverage": {
-      "command": "wtr --coverage",
-      "dependencies": [
-        "build:ts"
-      ],
-      "files": [
-        "src/**/*.ts"
-      ],
-      "output": []
-    },
-    "vscode-data": {
-      "command": "node scripts/generate-custom-data.mjs",
-      "dependencies": [
-        "analyze"
-      ],
-      "files": [
-        "custom-elements.json"
-      ],
-      "output": [
-        "vscode.html-custom-data.json",
-        "vscode.css-custom-data.json"
-      ]
-    }
+    "docs:prepare": "pnpm build && node scripts/docs-prepare.mjs",
+    "docs:check": "pnpm docs:prepare && node scripts/docs-check.mjs",
+    "docs:test": "pnpm docs:build && node scripts/docs-browser.mjs",
+    "dev": "vite"
   },
   "keywords": [
     "web-components",
@@ -147,48 +73,36 @@
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.23.0",
-    "@esm-bundle/chai": "^4.3.4-fix.0",
-    "@open-wc/testing": "^4.0.0",
-    "@rollup/plugin-node-resolve": "^16.0.1",
-    "@rollup/plugin-replace": "^6.0.2",
-    "@rollup/plugin-terser": "^1.0.0",
-    "@types/chai": "4.3.20",
-    "@types/mocha": "^10.0.10",
+    "@open-wc/testing-helpers": "^3.0.1",
     "@types/node": "^24.0.0",
+    "@types/sinon": "^21.0.1",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
-    "@vscode-elements/webview-playground": "^1.9.0",
+    "@vitest/browser-playwright": "5.0.3",
+    "@vitest/coverage-v8": "5.0.3",
+    "@vscode-elements/webview-playground": "1.9.0",
     "@vscode/codicons": "^0.0.46-24",
-    "@web/dev-server": "^1.0.0",
-    "@web/dev-server-esbuild": "^2.0.0",
-    "@web/dev-server-rollup": "^1.0.0",
-    "@web/test-runner": "^1.0.0",
-    "@web/test-runner-commands": "^0.9.0",
-    "@web/test-runner-mocha": "^1.0.0",
-    "@web/test-runner-playwright": "^1.0.0",
-    "@webcomponents/webcomponentsjs": "^2.8.0",
-    "chokidar": "^5.0.0",
-    "concurrently": "^10.0.0",
+    "axe-core": "^4.13.0",
     "custom-element-vs-code-integration": "^1.5.0",
     "custom-elements-manifest-deprecator": "^1.2.0",
-    "deepmerge": "^4.3.1",
-    "dotenv": "^17.0.0",
+    "eslint": "^9.39.5",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-lit": "^2.0.0",
     "eslint-plugin-wc": "^3.0.0",
-    "mocha": "^11.1.0",
-    "npm-check-updates": "^22.0.0",
+    "playwright": "^1.58.2",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
-    "rollup": "^4.39.0",
-    "rollup-plugin-filesize": "^10.0.0",
-    "rollup-plugin-visualizer": "^7.0.0",
     "semver": "^7.7.1",
     "sinon": "^22.0.0",
     "ts-lit-plugin": "^2.0.2",
     "typescript": "^5.8.2",
+    "vite": "8.3.2",
+    "vitest": "5.0.3",
     "vitepress": "^1.6.4",
-    "vue": "^3.5.0",
-    "wireit": "^0.14.11"
+    "vue": "^3.5.0"
+  },
+  "packageManager": "pnpm@12.8.1",
+  "engines": {
+    "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
   }
 }

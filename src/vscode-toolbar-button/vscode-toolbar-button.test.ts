@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import sinon from 'sinon';
 import {VscodeToolbarButton} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import {clickOnElement} from '../includes/test-helpers.js';
 
 describe('vscode-toolbar-button', () => {
@@ -17,7 +17,7 @@ describe('vscode-toolbar-button', () => {
       >`
     );
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('sets accessible label to icon button', async () => {
@@ -28,7 +28,7 @@ describe('vscode-toolbar-button', () => {
       ></vscode-toolbar-button>`
     );
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('dispatch change event', async () => {

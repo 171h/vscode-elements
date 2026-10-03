@@ -2,7 +2,7 @@
 import {$, clickOnElement} from '../includes/test-helpers.js';
 import {VscodeCollapsible} from './index.js';
 import '../vscode-icon/index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-collapsible', () => {
   it('is defined', () => {
@@ -15,7 +15,7 @@ describe('vscode-collapsible', () => {
       <vscode-collapsible title="Test title">Test content</vscode-collapsible>
     `);
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('title should be visible', async () => {

@@ -1,6 +1,6 @@
 // 借鉴 Shoelace 的实现
 
-import {sendMouse} from '@web/test-runner-commands';
+import {sendMouse} from './browser-commands.js';
 
 function determineMousePosition(
   el: Element,

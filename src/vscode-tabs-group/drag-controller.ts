@@ -138,8 +138,7 @@ export class TabsGroupDragController {
     const own = this.tabs();
 
     return event.composedPath().find((el) => own.includes(el as VscodeTabs)) as
-      | VscodeTabs
-      | undefined;
+      VscodeTabs | undefined;
   }
 
   private start = (event: DragEvent) => {

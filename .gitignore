@@ -2,11 +2,7 @@
 node_modules
 /lib/
 /test/
-.wireit/
-/docs/.vitepress/cache/
-/docs/.vitepress/dist/
-/docs/public/assets/
-/docs/api/generated/
+.vscode/settings.json
 
 /dist/
 /coverage/
@@ -16,7 +12,17 @@ debug.log
 stats.html
 tsconfig.tsbuildinfo
 
-bendera-vscode-webview-elements-*.tgz
-vscode-elements-elements-*.tgz
+nusys-ui-*.tgz
 custom-elements.json
 vscode.*-custom-data.json
+
+/demo-dist/
+/.baseline/
+
+/.vitest/
+
+/docs/.vitepress/cache/
+/docs/.vitepress/dist/
+/docs/public/assets/
+/docs/api/generated/
+/.vitepress/cache/

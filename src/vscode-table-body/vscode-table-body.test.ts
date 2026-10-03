@@ -1,5 +1,5 @@
 import {VscodeTableBody} from './index.js';
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 
 describe('vscode-table-body', () => {
   it('is defined', () => {

@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "types": []
+  },
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/includes/test-helpers.ts",
+    "src/includes/testing.ts",
+    "src/test/**",
+    "src/includes/browser-commands.ts"
+  ]
+}

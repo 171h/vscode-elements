@@ -11,6 +11,9 @@ hero:
     - theme: alt
       text: 浏览组件
       link: /components/
+    - theme: alt
+      text: 综合体验
+      link: /examples/showcase
 features:
   - title: 原生 Web Components
     details: 使用 HTML 标签和 JavaScript 属性，按需导入，支持 Vue、React 和原生 Webview。

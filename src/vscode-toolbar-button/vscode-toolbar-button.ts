@@ -59,9 +59,11 @@ export class VscodeToolbarButton extends VscElement {
         class=${classMap({checked: this.toggleable && this.checked})}
         @click=${this._handleButtonClick}
       >
-        ${this.icon
-          ? html`<vscode-icon name=${this.icon}></vscode-icon>`
-          : nothing}
+        ${
+          this.icon
+            ? html`<vscode-icon name=${this.icon}></vscode-icon>`
+            : nothing
+        }
         <slot
           @slotchange=${this._handleSlotChange}
           class=${classMap({empty: this._isSlotEmpty, textOnly: !this.icon})}

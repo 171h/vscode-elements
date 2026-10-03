@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>multi-select/events</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/src/vscode-multi-select/index.ts"></script>
+    <script type="module" src="/src/vscode-option/index.ts"></script>
+    <script>
+      const logEvents = (selector, eventType) => {
+        document.querySelector(selector).addEventListener(eventType, (ev) => {
+          console.log(ev);
+        });
+      };
+    </script>
+  </head>
+
+  <body>
+    <h1>多选框</h1>
+    <vscode-demo id="size-demo-target">
+      <h2>change 事件</h2>
+      <vscode-multi-select id="select-1">
+        <vscode-option>Lorem</vscode-option>
+        <vscode-option>Ipsum</vscode-option>
+        <vscode-option>Dolor</vscode-option>
+      </vscode-multi-select>
+      <script type="module">
+        logEvents('#select-1', 'change');
+      </script>
+      <div class="size-buttons">
+        <button type="button" data-size="small">small</button>
+        <button type="button" data-size="medium">medium</button>
+        <button type="button" data-size="large">large</button>
+      </div>
+    </vscode-demo>
+
+    <vscode-demo>
+      <h2>invalid 事件</h2>
+      <form action="#">
+        <vscode-multi-select id="select-2" name="select-2" required>
+          <vscode-option>Lorem</vscode-option>
+          <vscode-option>Ipsum</vscode-option>
+          <vscode-option>Dolor</vscode-option>
+        </vscode-multi-select>
+        <button type="submit">Submit</button>
+      </form>
+      <script type="module">
+        logEvents('#select-2', 'invalid');
+      </script>
+    </vscode-demo>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll('#size-demo-target vscode-multi-select')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

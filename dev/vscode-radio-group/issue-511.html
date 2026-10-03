@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>radio-group/issue-511</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/src/main.ts"></script>
+    <script>
+      const logEvents = (selector, eventType) => {
+        document.querySelector(selector).addEventListener(eventType, (ev) => {
+          console.log(ev);
+        });
+      };
+    </script>
+    <script type="module">
+      class DemoElement extends HTMLElement {
+        static template = (() => {
+          const t = document.createElement('template');
+          t.innerHTML = `
+            <vscode-radio-group>
+              <vscode-radio value="1">Option 1</vscode-radio>
+              <vscode-radio value="2">Option 2</vscode-radio>
+              <vscode-radio value="3" default-checked>Option 3</vscode-radio>
+            </vscode-radio-group>
+          `;
+
+          return t;
+        })();
+
+        constructor() {
+          super();
+
+          const shadow = this.attachShadow({mode: 'open'});
+          shadow.appendChild(DemoElement.template.content.cloneNode(true));
+
+          const sheet = new CSSStyleSheet();
+          sheet.replaceSync(`
+            :host {
+              display: block;
+              padding: 16px;
+            }
+          `);
+
+          shadow.adoptedStyleSheets = [sheet];
+        }
+      }
+
+      customElements.define('demo-element', DemoElement);
+    </script>
+  </head>
+
+  <body>
+    <h1>组件示例</h1>
+    <main>
+      <vscode-demo id="size-demo-target">
+        <demo-element></demo-element>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
+      </vscode-demo>
+    </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          const demoElement = document.querySelector(
+            '#size-demo-target demo-element'
+          );
+          demoElement.shadowRoot
+            .querySelectorAll('vscode-radio')
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

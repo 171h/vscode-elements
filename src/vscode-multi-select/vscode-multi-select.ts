@@ -99,6 +99,8 @@ export class VscodeMultiSelect
   @property({type: Array, attribute: false})
   set selectedIndexes(val: number[]) {
     this._opts.selectedIndexes = val;
+    this._setFormValue();
+    this._manageRequired();
   }
   get selectedIndexes(): number[] {
     return this._opts.selectedIndexes;
@@ -152,10 +154,14 @@ export class VscodeMultiSelect
 
   selectAll() {
     this._opts.selectAll();
+    this._setFormValue();
+    this._manageRequired();
   }
 
   selectNone() {
     this._opts.selectNone();
+    this._setFormValue();
+    this._manageRequired();
   }
 
   private _internals: ElementInternals;
@@ -183,6 +189,8 @@ export class VscodeMultiSelect
 
   protected override updated(): void {
     this._updateFaceValues();
+    this._setFormValue();
+    this._manageRequired();
   }
 
   /** @internal */
@@ -272,7 +280,7 @@ export class VscodeMultiSelect
   private _setFormValue() {
     const fd = new FormData();
 
-    this._values.forEach((v) => {
+    this.value.forEach((v) => {
       fd.append(this.name ?? '', v);
     });
 
@@ -365,25 +373,19 @@ export class VscodeMultiSelect
   }
 
   private _onMultiDeselectAllClick(): void {
-    this._opts.selectedIndexes = [];
-    this._values = [];
-    this._options = this._options.map((op) => ({...op, selected: false}));
-    this._manageRequired();
+    this.selectNone();
     this._dispatchChangeEvent();
   }
 
   private _onMultiSelectAllClick(): void {
-    this._opts.selectedIndexes = [];
-    this._values = [];
-    this._options = this._options.map((op) => ({...op, selected: true}));
-    this._options.forEach((op, index) => {
-      this._selectedIndexes.push(index);
-      this._values.push(op.value);
-      this._dispatchChangeEvent();
+    const indexes = new Set(this.selectedIndexes);
+    this._opts.options.forEach((option) => {
+      if (!option.disabled) {
+        indexes.add(option.index);
+      }
     });
-
-    this._setFormValue();
-    this._manageRequired();
+    this.selectedIndexes = [...indexes];
+    this._dispatchChangeEvent();
   }
 
   protected override _onComboboxInputBlur(): void {
@@ -572,11 +574,13 @@ export class VscodeMultiSelect
             >${label}</span
           >`;
         })}
-        ${labels.length > 0
-          ? html`<span class="select-face-badge ${classMap(moreTagClasses)}"
-              >+${hiddenCount > 0 ? hiddenCount : labels.length}</span
-            >`
-          : nothing}
+        ${
+          labels.length > 0
+            ? html`<span class="select-face-badge ${classMap(moreTagClasses)}"
+                >+${hiddenCount > 0 ? hiddenCount : labels.length}</span
+              >`
+            : nothing
+        }
       </div>
     `;
   }
@@ -648,7 +652,7 @@ export class VscodeMultiSelect
   }
 
   protected override _renderDropdownControls(): TemplateResult {
-    return this._filteredOptions.length > 0
+    return this._opts.numOfVisibleOptions > 0
       ? html`
           <div class="dropdown-controls">
             <button

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect, fixture, html, aTimeout} from '@open-wc/testing';
-import {sendKeys} from '@web/test-runner-commands';
+import {expect, fixture, html, aTimeout} from '../includes/testing.js';
+import {sendKeys} from '../includes/browser-commands.js';
 import sinon from 'sinon';
 import {$$, clickOnElement} from '../includes/test-helpers.js';
 import {$} from '../includes/test-helpers.js';
@@ -57,7 +57,7 @@ describe('vscode-tree', () => {
 
   it('is accessible', async () => {
     const el = await fixture<VscodeTree>(html`
-      <vscode-tree>
+      <vscode-tree style="background: #1e1e1e">
         <vscode-tree-item open>
           Item 1
           <vscode-tree-item open>
@@ -82,7 +82,7 @@ describe('vscode-tree', () => {
       </vscode-tree>
     `);
 
-    expect(el).to.be.accessible;
+    await expect(el).toBeAccessible();
   });
 
   it('focuses first item by default', async () => {
@@ -485,7 +485,7 @@ describe('vscode-tree', () => {
       el.expandAll();
       await el.updateComplete;
 
-      expect(el).lightDom.to.eq(
+      expect(el).toMatchDOM(
         `
       <vscode-tree-item aria-expanded="true" branch open>
         Item 1
@@ -552,7 +552,7 @@ describe('vscode-tree', () => {
       el.collapseAll();
       await el.updateComplete;
 
-      expect(el).lightDom.to.eq(
+      expect(el).toMatchDOM(
         `
       <vscode-tree-item aria-expanded="false" branch>
         Item 1

@@ -144,7 +144,6 @@ async function main() {
     if (!isCurrentVersion) {
       const releaseFiles = [
         'package.json',
-        'package-lock.json',
         'CHANGELOG.md',
         'src/includes/VscElement.ts',
       ];
@@ -164,15 +163,7 @@ async function main() {
           path.join(repoRoot, 'package.json'),
           `${JSON.stringify(packageJson, null, 2)}\n`
         );
-        const packageLock = JSON.parse(
-          fs.readFileSync(path.join(repoRoot, 'package-lock.json'), 'utf8')
-        );
-        packageLock.version = version;
-        packageLock.packages[''].version = version;
-        fs.writeFileSync(
-          path.join(repoRoot, 'package-lock.json'),
-          `${JSON.stringify(packageLock, null, 2)}\n`
-        );
+        // pnpm 锁文件不记录根项目版本，无需随发布改写。
         execFileSync('node', ['scripts/update-version-number.mjs'], {
           cwd: repoRoot,
           stdio: 'inherit',
