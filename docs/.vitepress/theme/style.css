@@ -1,0 +1,82 @@
+:root {
+  --vp-layout-bottom-height: 52px;
+  --vp-c-brand-1: #16855b;
+  --vp-c-brand-2: #169667;
+  --vp-c-brand-3: #16a36f;
+  --vp-font-family-base: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  --vp-layout-max-width: 1480px;
+}
+.VPContent {
+  padding-bottom: var(--vp-layout-bottom-height);
+}
+.VPSidebar {
+  padding-bottom: calc(32px + var(--vp-layout-bottom-height));
+}
+.VPFooter {
+  margin-bottom: var(--vp-layout-bottom-height);
+}
+.dark {
+  --vp-c-brand-1: #6ee7b7;
+  --vp-c-brand-2: #34d399;
+  --vp-c-brand-3: #10b981;
+}
+.VPNavBar {
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+.VPDoc .content-container {
+  max-width: 860px !important;
+}
+.vp-doc h1 {
+  letter-spacing: -0.03em;
+}
+.VPHero .main {
+  max-width: 960px;
+  margin: 0 auto;
+  text-align: center;
+}
+.VPHero .name,
+.VPHero .text {
+  max-width: 960px;
+}
+.VPHero .tagline {
+  max-width: 720px;
+  margin: 0 auto;
+}
+.VPHero .actions {
+  justify-content: center;
+}
+.vp-doc table {
+  width: 100%;
+  font-size: 13px;
+}
+.vp-doc th {
+  white-space: nowrap;
+}
+.component-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 12px;
+  margin: 24px 0;
+}
+.component-card {
+  display: block;
+  padding: 18px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 10px;
+  color: var(--vp-c-text-1) !important;
+  text-decoration: none !important;
+  background: var(--vp-c-bg-soft);
+}
+.component-card:hover {
+  border-color: var(--vp-c-brand-1);
+}
+.component-card strong {
+  display: block;
+  margin-bottom: 8px;
+}
+.component-card p {
+  font-size: 13px;
+  color: var(--vp-c-text-2);
+  margin: 0;
+  line-height: 1.6;
+}

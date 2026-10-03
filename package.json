@@ -23,8 +23,8 @@
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
     "analyze": "wireit",
-    "serve": "wireit",
-    "start": "concurrently --raw \"tsc --watch --preserveWatchOutput\" \"wds --watch\"",
+    "serve": "npm run docs:dev",
+    "start": "npm run docs:dev",
     "test": "wireit",
     "test:coverage": "wireit",
     "test:watch": "concurrently --raw \"tsc --watch --preserveWatchOutput\" \"wtr --watch\"",
@@ -35,7 +35,13 @@
     "ncu": "ncu -u",
     "release": "node scripts/release.mjs",
     "test:release": "node --test scripts/release-lib.test.mjs",
-    "prepare": "npx playwright install chromium --only-shell"
+    "prepare": "npx playwright install chromium --only-shell",
+    "docs:dev": "npm run docs:prepare && vitepress dev docs",
+    "docs:build": "npm run docs:prepare && vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:prepare": "npm run build && node scripts/docs-prepare.mjs",
+    "docs:check": "npm run docs:prepare && node scripts/docs-check.mjs",
+    "docs:test": "npm run docs:build && node scripts/docs-browser.mjs"
   },
   "wireit": {
     "analyze": {
@@ -75,10 +81,6 @@
     },
     "build:watch": {
       "command": "tsc --watch",
-      "service": true
-    },
-    "serve": {
-      "command": "wds --watch",
       "service": true
     },
     "test": {
@@ -130,9 +132,9 @@
     "url": "git+https://github.com/171h/vscode-elements.git"
   },
   "bugs": {
-    "url": "https://github.com/vscode-elements/elements/issues"
+    "url": "https://github.com/171h/vscode-elements/issues"
   },
-  "homepage": "https://vscode-elements.github.io",
+  "homepage": "https://github.com/171h/vscode-elements#文档",
   "dependencies": {
     "@lit/context": "^1.1.3",
     "lit": "^3.2.1",
@@ -142,7 +144,6 @@
     "@vscode/codicons": ">=0.0.40"
   },
   "devDependencies": {
-    "@bendera/wds-plugin-directory-index": "^0.7.0",
     "@custom-elements-manifest/analyzer": "^0.11.0",
     "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.23.0",
@@ -156,11 +157,10 @@
     "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
-    "@vscode-elements/webview-playground": "^1.6.0",
+    "@vscode-elements/webview-playground": "^1.9.0",
     "@vscode/codicons": "^0.0.46-24",
     "@web/dev-server": "^1.0.0",
     "@web/dev-server-esbuild": "^2.0.0",
-    "@web/dev-server-legacy": "^3.0.0",
     "@web/dev-server-rollup": "^1.0.0",
     "@web/test-runner": "^1.0.0",
     "@web/test-runner-commands": "^0.9.0",
@@ -187,6 +187,8 @@
     "sinon": "^22.0.0",
     "ts-lit-plugin": "^2.0.2",
     "typescript": "^5.8.2",
+    "vitepress": "^1.6.4",
+    "vue": "^3.5.0",
     "wireit": "^0.14.11"
   }
 }
