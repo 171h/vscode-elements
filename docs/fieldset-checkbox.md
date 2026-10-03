@@ -15,13 +15,15 @@
 
 标题默认加粗。复选框及其标签位于右上角边框线上，与当前标题垂直居中对齐；标签字号跟随标题，使用常规字重和略淡的标题颜色。切换组件尺寸或自定义标题字号后，仍保持此对齐关系。
 
-标题和复选框标签的背景共用 `--vsc-fieldset-header-background`，默认取 `--vscode-sideBar-background`，再回退到 `--vscode-editor-background`。在编辑区参数页或自定义容器中，将此变量设置在 `vscode-fieldset` 或其祖先上，以匹配实际承载表面：
+标题和复选框标签的背景共用 `--vsc-fieldset-header-background`，默认值为 `transparent`，不绘制任何背景颜色，也不回退到侧栏或编辑区背景。主题切换后仍保持透明。应用可在 `vscode-fieldset` 或其祖先上显式设置同一变量：
 
 ```css
 vscode-fieldset {
-  --vsc-fieldset-header-background: var(--vscode-editor-background);
+  --vsc-fieldset-header-background: transparent;
 }
 ```
+
+顶部边框在标题和右上角复选框及标签区域分别留出缺口。缺口通过单独绘制和裁剪装饰线实现，不使用背景色遮挡，也不裁剪分区内容或弹出层；标签长度、字号和尺寸变化后会重新计算。
 
 输入框获得焦点时，分区不增加外侧焦点框；输入控件自身和可聚焦标题仍保留焦点提示。
 
@@ -113,7 +115,7 @@ minimal 模式隐藏原生 fieldset，因此不能通过 legend 拖动视图。�
 
 外层分区未勾选时保留参数 DOM 和取值；默认行为不会将勾选状态写入业务对象，应用应在事件中更新模型。启用框在独立的 shadow DOM 中，不会混入原生 fieldset 的 legend 名称。保留现有组件标签及事件接口，无需将业务专用单位、校验或国际化逻辑移入组件库。
 
-`ext-engineer` 的参数页使用编辑区背景，可按上例覆盖背景变量，并沿用其 12px 标题与布局令牌：
+`ext-engineer` 的参数页可保留默认透明背景，并沿用其 12px 标题与布局令牌：
 
 ```css
 .parameter-area vscode-fieldset > fieldset {

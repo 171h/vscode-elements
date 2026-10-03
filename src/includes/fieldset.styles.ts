@@ -44,6 +44,48 @@ const styles = css`
     --vsc-form-control-border-radius: 6px;
   }
 
+  /* 单独绘制顶部边框，只裁剪装饰线，不裁剪内容、焦点轮廓或弹出层。 */
+  :where(vscode-fieldset > fieldset[data-vsc-checkbox-border]) {
+    position: relative;
+    border-top-color: transparent !important;
+  }
+
+  :where(vscode-fieldset > fieldset[data-vsc-checkbox-border])::before {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    top: var(--_vsc-fieldset-border-top);
+    left: -1px;
+    right: -1px;
+    height: var(--vsc-form-control-border-radius, 4px);
+    border: 1px solid
+      var(
+        --_vsc-fieldset-border-color,
+        var(
+          --vscode-contrastBorder,
+          var(
+            --vscode-sideBarSectionHeader-border,
+            var(
+              --vscode-panel-border,
+              var(--vscode-widget-border, currentColor)
+            )
+          )
+        )
+      );
+    border-bottom: 0;
+    border-radius: inherit;
+    mask-image: linear-gradient(
+      to right,
+      black 0 var(--_vsc-fieldset-legend-start),
+      transparent var(--_vsc-fieldset-legend-start)
+        var(--_vsc-fieldset-legend-end),
+      black var(--_vsc-fieldset-legend-end) var(--_vsc-fieldset-checkbox-start),
+      transparent var(--_vsc-fieldset-checkbox-start)
+        var(--_vsc-fieldset-checkbox-end),
+      black var(--_vsc-fieldset-checkbox-end) 100%
+    );
+  }
+
   :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) > legend {
     box-sizing: border-box;
     max-width: 100%;
@@ -55,11 +97,8 @@ const styles = css`
         var(--vscode-foreground, CanvasText)
       )
     );
-    /* 标题与右上角启用框共用背景变量，调用方可匹配实际承载表面。 */
-    background: var(
-      --vsc-fieldset-header-background,
-      var(--vscode-sideBar-background, var(--vscode-editor-background, Canvas))
-    );
+    /* 标题与右上角启用框共用背景变量，默认透明，不绘制背景颜色。 */
+    background: var(--vsc-fieldset-header-background, transparent);
     border: 0;
     font-family: inherit;
     font-size: 11px;
@@ -102,6 +141,9 @@ const styles = css`
 
   @media (forced-colors: active) {
     :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) {
+      border-color: CanvasText;
+    }
+    :where(vscode-fieldset > fieldset[data-vsc-checkbox-border])::before {
       border-color: CanvasText;
     }
   }

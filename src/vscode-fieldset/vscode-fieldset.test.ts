@@ -25,7 +25,7 @@ describe('fieldset 主题', () => {
       'rgb(255, 255, 0)'
     );
     expect(getComputedStyle(legend).backgroundColor).to.equal(
-      'rgb(10, 20, 30)'
+      'rgba(0, 0, 0, 0)'
     );
     expect(getComputedStyle(legend).borderTopWidth).to.equal('0px');
     expect(getComputedStyle(legend).color).to.equal('rgb(200, 210, 220)');
@@ -39,7 +39,7 @@ describe('fieldset 主题', () => {
     expect(new FormData(form).has('value')).to.equal(false);
   });
 
-  it('暗色主题下标题背景匹配侧栏且保持可读', async () => {
+  it('暗色主题下标题背景透明且保持可读', async () => {
     const el = await fixture<HTMLElement>(
       html` <vscode-fieldset
         style="--vscode-sideBar-background: #181818; --vscode-sideBarSectionHeader-foreground: #cccccc"
@@ -52,7 +52,7 @@ describe('fieldset 主题', () => {
     );
     const legend = el.querySelector('legend')!;
     expect(getComputedStyle(legend).backgroundColor).to.equal(
-      'rgb(24, 24, 24)'
+      'rgba(0, 0, 0, 0)'
     );
     expect(getComputedStyle(legend).color).to.equal('rgb(204, 204, 204)');
   });
@@ -117,7 +117,7 @@ describe('fieldset 主题', () => {
       'rgb(20, 30, 40)'
     );
     expect(getComputedStyle(legend).backgroundColor).to.equal(
-      'rgb(20, 30, 40)'
+      'rgba(0, 0, 0, 0)'
     );
     expect(getComputedStyle(legend).fontWeight).to.equal('700');
     expect(root.querySelectorAll('[data-vsc-fieldset-styles]')).to.have.length(

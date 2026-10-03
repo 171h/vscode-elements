@@ -26,6 +26,14 @@ export type FieldsetCheckedChangeCallback = (
 const COLLAPSED_ATTR = 'data-vsc-collapsed';
 const DURATION = 180;
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
+const BORDER_PROPERTIES = [
+  '--_vsc-fieldset-border-top',
+  '--_vsc-fieldset-border-color',
+  '--_vsc-fieldset-legend-start',
+  '--_vsc-fieldset-legend-end',
+  '--_vsc-fieldset-checkbox-start',
+  '--_vsc-fieldset-checkbox-end',
+];
 
 type DisabledControl = VscElement & {disabled: boolean};
 
@@ -55,7 +63,7 @@ const disabledControlStates = new WeakMap<
  * @cssprop --vscode-contrastBorder
  * @cssprop --vscode-focusBorder
  * @cssprop --vscode-disabledForeground
- * @cssprop --vsc-fieldset-header-background - 标题和复选框标签共用的背景，默认跟随侧栏背景并回退到编辑区背景。
+ * @cssprop [--vsc-fieldset-header-background=transparent] - 标题和复选框标签共用的背景，默认透明。
  * @cssprop [--vsc-form-control-border-radius=4px] - 边框圆角；small 使用 1px，large 使用 6px。
  *
  * @csspart checkbox - 位于边框上的复选框容器。
@@ -124,6 +132,8 @@ export class VscodeFieldset extends VscElement {
 
   private _contentCollapsed = false;
 
+  private _borderFieldset?: HTMLFieldSetElement;
+
   private _contentObserver = new MutationObserver((records) => {
     this._syncDisabledControls();
     this._syncInertContent();
@@ -177,13 +187,7 @@ export class VscodeFieldset extends VscElement {
       .checkbox-row vscode-checkbox {
         --vscode-foreground: var(--vsc-fieldset-title-foreground);
         --vscode-font-weight: normal;
-        background: var(
-          --vsc-fieldset-header-background,
-          var(
-            --vscode-sideBar-background,
-            var(--vscode-editor-background, Canvas)
-          )
-        );
+        background: var(--vsc-fieldset-header-background, transparent);
         padding: 0 4px;
         position: absolute;
         right: 10px;
@@ -220,6 +224,7 @@ export class VscodeFieldset extends VscElement {
   override disconnectedCallback() {
     this._contentObserver.disconnect();
     this._layoutObserver.disconnect();
+    this._clearCheckboxBorder();
     this._restoreInertContent();
     for (const control of this._disabledControls) {
       this._releaseDisabledControl(control);
@@ -256,6 +261,9 @@ export class VscodeFieldset extends VscElement {
   private _observeLayout() {
     this._layoutObserver.disconnect();
     this._layoutObserver.observe(this);
+    if (this._checkboxEl) {
+      this._layoutObserver.observe(this._checkboxEl);
+    }
     const fieldset = this.fieldsetElement;
     if (fieldset) {
       this._layoutObserver.observe(fieldset);
@@ -271,6 +279,9 @@ export class VscodeFieldset extends VscElement {
     const checkbox = this._checkboxEl;
     const fieldset = this.fieldsetElement;
     const legend = fieldset?.querySelector('legend');
+    if (this._borderFieldset !== fieldset || !checkbox || !legend) {
+      this._clearCheckboxBorder();
+    }
     if (!checkbox || !fieldset || !legend || !legend.getClientRects().length) {
       return;
     }
@@ -288,6 +299,33 @@ export class VscodeFieldset extends VscElement {
       'data-disabled-title',
       fieldset.disabled
     );
+    const checkboxRect = checkbox.getBoundingClientRect();
+    this._borderFieldset = fieldset;
+    if (!fieldset.hasAttribute('data-vsc-checkbox-border')) {
+      fieldset.setAttribute('data-vsc-checkbox-border', '');
+    }
+    const values = [
+      `${-legendRect.height / 2}px`,
+      fieldset.style.borderColor,
+      `${Math.max(0, legendRect.left - fieldsetRect.left)}px`,
+      `${legendRect.right - fieldsetRect.left}px`,
+      `${Math.max(legendRect.right, checkboxRect.left) - fieldsetRect.left}px`,
+      `${checkboxRect.right - fieldsetRect.left}px`,
+    ];
+    BORDER_PROPERTIES.forEach((property, index) => {
+      const value = values[index];
+      if (fieldset.style.getPropertyValue(property) !== value) {
+        fieldset.style.setProperty(property, value);
+      }
+    });
+  }
+
+  private _clearCheckboxBorder() {
+    this._borderFieldset?.removeAttribute('data-vsc-checkbox-border');
+    for (const property of BORDER_PROPERTIES) {
+      this._borderFieldset?.style.removeProperty(property);
+    }
+    this._borderFieldset = undefined;
   }
 
   private _onSlotChange() {

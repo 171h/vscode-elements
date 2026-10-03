@@ -69,6 +69,45 @@ describe('fieldset 复选框', () => {
     expect(checkboxRect.right).to.be.lessThan(hostRect.right);
   });
 
+  it('仅对装饰线设置缺口，保留透明背景、内容溢出和调用方边框颜色', async () => {
+    const el = await makeFieldset({checked: true, label: '启用分区'});
+    const fieldset = fieldsetOf(el);
+    fieldset.style.borderColor = 'rgb(200, 50, 20)';
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const line = getComputedStyle(fieldset, '::before');
+    expect(getComputedStyle(fieldset).borderTopColor).to.equal(
+      'rgba(0, 0, 0, 0)'
+    );
+    expect(line.borderTopColor).to.equal('rgb(200, 50, 20)');
+    expect(line.maskImage).to.not.equal('none');
+    expect(getComputedStyle(fieldset).maskImage).to.equal('none');
+    expect(getComputedStyle(fieldset).overflow).to.equal('visible');
+    expect(getComputedStyle(checkboxOf(el)).backgroundColor).to.equal(
+      'rgba(0, 0, 0, 0)'
+    );
+    el.checkbox = false;
+    await el.updateComplete;
+    expect(getComputedStyle(fieldset).borderTopColor).to.equal(
+      'rgb(200, 50, 20)'
+    );
+    expect(getComputedStyle(fieldset, '::before').content).to.equal('none');
+  });
+
+  it('标签长度改变时重新测量边框缺口', async () => {
+    const el = await makeFieldset({checked: true, label: '启用'});
+    const fieldset = fieldsetOf(el);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    const initial = getComputedStyle(fieldset, '::before').maskImage;
+    el.checkboxLabel = '启用此风荷载参数分区';
+    await el.updateComplete;
+    await checkboxOf(el).updateComplete;
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(getComputedStyle(fieldset, '::before').maskImage).to.not.equal(
+      initial
+    );
+  });
+
   for (const size of ['small', 'medium', 'large'] as const) {
     it(`${size} 尺寸下标签与标题同字号且保持常规字重`, async () => {
       const el = await makeFieldset({checked: true, label: '启用分区'});
@@ -94,7 +133,10 @@ describe('fieldset 复选框', () => {
         1
       );
       expect(getComputedStyle(checkbox).backgroundColor).to.equal(
-        getComputedStyle(fieldsetOf(el)).backgroundColor
+        'rgba(0, 0, 0, 0)'
+      );
+      expect(getComputedStyle(legend).backgroundColor).to.equal(
+        'rgba(0, 0, 0, 0)'
       );
     });
   }
@@ -120,7 +162,7 @@ describe('fieldset 复选框', () => {
     ).to.be.closeTo(10, 1);
   });
 
-  it('标签和边框遮挡背景跟随祖先主题变化', async () => {
+  it('主题变化后标题和复选框区域仍保持透明', async () => {
     const parent = await fixture<HTMLDivElement>(html`
       <div
         style="--vscode-sideBar-background: white; --vscode-sideBarSectionHeader-foreground: black"
@@ -138,6 +180,12 @@ describe('fieldset 复选框', () => {
     const checkbox = checkboxOf(el);
     await checkbox.updateComplete;
     const label = checkbox.shadowRoot!.querySelector('.label-inner')!;
+    for (const element of [legendOf(el), checkbox, label]) {
+      expect(getComputedStyle(element).backgroundColor).to.equal(
+        'rgba(0, 0, 0, 0)'
+      );
+      expect(getComputedStyle(element).backgroundImage).to.equal('none');
+    }
     expect(getComputedStyle(label).color).to.equal('rgb(0, 0, 0)');
     parent.style.setProperty('--vscode-sideBar-background', 'black');
     parent.style.setProperty(
@@ -145,7 +193,12 @@ describe('fieldset 复选框', () => {
       'white'
     );
     expect(getComputedStyle(label).color).to.equal('rgb(255, 255, 255)');
-    expect(getComputedStyle(checkbox).backgroundColor).to.equal('rgb(0, 0, 0)');
+    for (const element of [legendOf(el), checkbox, label]) {
+      expect(getComputedStyle(element).backgroundColor).to.equal(
+        'rgba(0, 0, 0, 0)'
+      );
+      expect(getComputedStyle(element).backgroundImage).to.equal('none');
+    }
   });
 
   it('标题与启用框共用可覆盖的背景变量，并实时响应变化', async () => {
