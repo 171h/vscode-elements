@@ -16,6 +16,8 @@ pnpm test:install
 
 `packageManager` 字段固定 pnpm 版本，`pnpm-lock.yaml` 锁定依赖；浏览器安装单独执行，不在依赖安装时隐式下载。Linux 的浏览器安装可能需要安装系统依赖的权限。
 
+VS Code 工作区设置禁用 Vite 扩展的自动启动，打开项目不会自动执行 `npx vite --port=4000`。需要开发服务器时，手动运行 `pnpm start`。
+
 ## 开发、构建与测试
 
 所有命令均在仓库根目录执行：
