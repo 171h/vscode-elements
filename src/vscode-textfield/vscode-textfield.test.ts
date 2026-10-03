@@ -7,6 +7,28 @@ import '../vscode-label/vscode-label.js';
 import {VscodeTextfield} from './index.js';
 
 describe('vscode-textfield', () => {
+  it('选择文件后更新组件不会回写非空文件路径', async () => {
+    const el = await fixture<VscodeTextfield>(
+      html`<vscode-textfield type="file" multiple></vscode-textfield>`
+    );
+    const input = el.wrappedElement;
+    const transfer = new DataTransfer();
+    transfer.items.add(
+      new File(['演示内容'], 'demo.txt', {type: 'text/plain'})
+    );
+    input.files = transfer.files;
+    input.dispatchEvent(new Event('input', {bubbles: true, composed: true}));
+    await el.updateComplete;
+    expect(el.value).to.equal(input.value);
+    expect(input.files?.[0].name).to.equal('demo.txt');
+    el.size = 'large';
+    await el.updateComplete;
+    expect(input.files?.[0].name).to.equal('demo.txt');
+    input.value = '';
+    input.dispatchEvent(new Event('input', {bubbles: true, composed: true}));
+    await el.updateComplete;
+    expect(input.files?.length).to.equal(0);
+  });
   it('is defined', () => {
     const el = document.createElement('vscode-textfield');
     expect(el).to.instanceOf(VscodeTextfield);

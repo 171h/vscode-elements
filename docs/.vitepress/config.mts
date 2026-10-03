@@ -21,6 +21,7 @@ export default defineConfig({
     nav: [
       {text: '指南', link: '/guide/getting-started'},
       {text: '组件', link: '/components/'},
+      {text: '综合体验', link: '/examples/showcase'},
       {text: 'API', link: '/api/'},
       {text: '常见问题', link: '/guide/faq'},
     ],
@@ -29,6 +30,7 @@ export default defineConfig({
         text: '开始使用',
         items: [
           {text: '快速开始', link: '/guide/getting-started'},
+          {text: '综合体验', link: '/examples/showcase'},
           {text: '表单与校验', link: '/guide/forms'},
           {text: '主题与图标', link: '/guide/theming'},
           {text: 'Webview 与 CSP', link: '/guide/webview'},

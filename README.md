@@ -17,6 +17,7 @@ npm run docs:dev
 
 - [快速开始](docs/guide/getting-started.md)：安装、完整导入、按需导入与 Web Components 用法。
 - [组件索引](docs/components/index.md)：全部 40 个公开组件的中文说明和交互示例。
+- [综合体验](docs/examples/showcase.md)：按类别直接展示全部组件的使用场景与功能。
 - [API 参考](docs/api/index.md)：从当前源码生成属性、方法、事件、插槽与样式接口。
 - [常见问题](docs/guide/faq.md)：包名、主题、图标、事件、SSR 与布局保存。
 - [文档维护](docs/guide/contributing.md)：构建、子路径部署和示例数据来源。

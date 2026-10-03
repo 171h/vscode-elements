@@ -1,17 +1,42 @@
 <script setup>
-import {computed, onMounted, ref, watch} from 'vue';
+import {computed, onMounted, onUnmounted, ref, watch} from 'vue';
 import {withBase} from 'vitepress';
 import {examples} from '../../data/examples.mjs';
 import {previewDocument} from '../../data/preview.mjs';
 import {siteTheme} from './theme-state.mjs';
+import {previewSize} from './preview-state.mjs';
 
-const props = defineProps({example: {type: String, required: true}});
+const props = defineProps({
+  example: {type: String, required: true},
+  bare: {type: Boolean, default: false},
+});
 const iframe = ref(null);
-const size = ref('medium');
 const active = ref('preview');
 const mounted = ref(false);
 const initialTheme = ref(null);
+const initialSize = ref('medium');
+const measuredHeight = ref(0);
 const demo = computed(() => examples[props.example]);
+const frameHeight = computed(() => {
+  if (!props.bare || !measuredHeight.value) return demo.value.height || 360;
+  const minimum = /vscode-(single-select|multi-select|context-menu)/.test(
+    demo.value.html
+  )
+    ? demo.value.height || 360
+    : 80;
+  return Math.max(minimum, measuredHeight.value);
+});
+function resizePreview(event) {
+  if (
+    !props.bare ||
+    event.source !== iframe.value?.contentWindow ||
+    event.origin !== window.location.origin ||
+    event.data?.type !== 'nusys-docs-height'
+  )
+    return;
+  if (Number.isFinite(event.data.height))
+    measuredHeight.value = Math.min(4000, Math.max(80, event.data.height));
+}
 const source = computed(() =>
   demo.value
     ? [
@@ -28,26 +53,33 @@ const document = computed(() =>
     ? previewDocument(demo.value, {
         base: withBase('/'),
         theme: initialTheme.value,
-        size: size.value,
+        size: initialSize.value,
       })
     : undefined
 );
 onMounted(() => {
+  window.addEventListener('message', resizePreview);
   initialTheme.value = siteTheme.value;
+  initialSize.value = previewSize.value;
   mounted.value = true;
 });
+onUnmounted(() => window.removeEventListener('message', resizePreview));
 function syncTheme() {
   iframe.value?.contentWindow?.postMessage(
-    {type: 'nusys-docs-theme', theme: siteTheme.value},
+    {
+      type: 'nusys-docs-settings',
+      theme: siteTheme.value,
+      size: previewSize.value,
+    },
     window.location.origin
   );
 }
-watch(siteTheme, syncTheme, {flush: 'post'});
+watch([siteTheme, previewSize], syncTheme, {flush: 'post'});
 </script>
 
 <template>
   <section v-if="demo" class="example" :aria-label="demo.title">
-    <div class="example-toolbar">
+    <div v-if="!bare" class="example-toolbar">
       <div class="example-tabs" role="group" aria-label="示例视图">
         <button
           type="button"
@@ -64,14 +96,6 @@ watch(siteTheme, syncTheme, {flush: 'post'});
           代码
         </button>
       </div>
-      <label
-        >尺寸
-        <select v-model="size">
-          <option value="small">小</option>
-          <option value="medium">中</option>
-          <option value="large">大</option>
-        </select></label
-      >
     </div>
     <iframe
       ref="iframe"
@@ -79,7 +103,7 @@ watch(siteTheme, syncTheme, {flush: 'post'});
       :title="demo.title"
       :srcdoc="document"
       class="example-frame"
-      :style="{height: `${demo.height || 360}px`}"
+      :style="{height: `${frameHeight}px`}"
       @load="syncTheme"
     ></iframe>
     <p v-else-if="active === 'preview'">正在加载交互示例…</p>
@@ -118,15 +142,7 @@ button[aria-pressed='true'] {
   background: var(--vp-c-bg);
   color: var(--vp-c-brand-1);
 }
-select {
-  padding: 3px 6px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 4px;
-  color: var(--vp-c-text-1);
-  background: var(--vp-c-bg);
-}
-button:focus-visible,
-select:focus-visible {
+button:focus-visible {
   outline: 2px solid var(--vp-c-brand-1);
   outline-offset: 2px;
 }
