@@ -18,7 +18,7 @@ import ExamplePreview from './ExamplePreview.vue';
         >
           <h3 :id="`demo-${demo.id}`">
             <a :href="withBase(`/components/${demo.component}`)">{{
-              examples[demo.id].title
+              demo.componentName + examples[demo.id].title
             }}</a>
           </h3>
           <ExamplePreview :example="demo.id" bare />

@@ -29,6 +29,20 @@ export async function testShowcase(page, url, selectTheme, screenshots) {
   });
   await page.evaluate(() => window.scrollTo(0, 0));
   const demos = showcaseGroups.flatMap((group) => group.items);
+  for (const demo of demos) {
+    const component = components.find((item) => item.id === demo.component);
+    const title = component.title.split(' ').at(-1) + examples[demo.id].title;
+    assert.equal(
+      await outline.locator(`a[href="#demo-${demo.id}"]`).textContent(),
+      title,
+      `${demo.id} 的导航标题必须以组件名称开始`
+    );
+    assert.equal(
+      await page.locator(`#demo-${demo.id} a`).textContent(),
+      title,
+      `${demo.id} 的示例标题必须与导航一致`
+    );
+  }
   assert.equal(await page.locator('[data-demo]').count(), demos.length);
   assert.equal(
     await page

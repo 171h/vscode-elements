@@ -24,6 +24,11 @@ export const showcaseGroups = groups.map((title) => ({
           seen.add(id);
           return true;
         })
-        .map((id) => ({id, component: component.id, wide: wide.test(id)}))
+        .map((id) => ({
+          id,
+          component: component.id,
+          componentName: component.title.split(' ').at(-1),
+          wide: wide.test(id),
+        }))
     ),
 }));
