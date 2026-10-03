@@ -69,6 +69,42 @@ export async function testShowcase(page, url, selectTheme, screenshots) {
   );
   for (const component of components)
     assert.ok(tags.has(`vscode-${component.id}`), `综合页缺少 ${component.id}`);
+  const tooltipFrame = frames.get('tooltip');
+  const tooltipSearch = tooltipFrame.getByRole('button', {
+    name: '搜索',
+    exact: true,
+  });
+  await tooltipSearch.hover();
+  await tooltipFrame
+    .getByRole('tooltip', {name: '搜索 (Ctrl+Shift+F)'})
+    .waitFor();
+  const tooltipBounds = await tooltipFrame
+    .locator('vscode-tooltip .tooltip')
+    .last()
+    .evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      return {
+        left: rect.left,
+        right: rect.right,
+        top: rect.top,
+        bottom: rect.bottom,
+        width: innerWidth,
+        height: innerHeight,
+      };
+    });
+  assert.ok(
+    tooltipBounds.left >= 8 &&
+      tooltipBounds.right <= tooltipBounds.width - 7 &&
+      tooltipBounds.top >= 8 &&
+      tooltipBounds.bottom <= tooltipBounds.height - 7,
+    '综合页气泡与箭头应保留视口安全边距'
+  );
+  await page
+    .locator('[data-demo="tooltip"] iframe')
+    .screenshot({path: `${screenshots}/showcase-tooltip.png`});
+  await tooltipSearch.focus();
+  await page.keyboard.press('Escape');
+  await tooltipFrame.getByRole('tooltip').waitFor({state: 'hidden'});
   await testResponsiveTable(frames.get('table-responsive'));
   const frame = frames.get('percentage');
   const input = frame.locator('vscode-textfield input');
@@ -125,6 +161,6 @@ export async function testShowcase(page, url, selectTheme, screenshots) {
     fullPage: false,
   });
   console.log(
-    `已验证综合页直接展示 ${demos.length} 个示例、全部 40 个组件、统一主题与尺寸、输入及表单状态保留和移动布局。`
+    `已验证综合页直接展示 ${demos.length} 个示例、全部 ${components.length} 个组件、统一主题与尺寸、输入及表单状态保留和移动布局。`
   );
 }

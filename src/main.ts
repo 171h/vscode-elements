@@ -1,4 +1,6 @@
 export {VscodeBadge} from './vscode-badge/index.js';
+export {VscodeTooltip} from './vscode-tooltip/index.js';
+export type {TooltipPlacement} from './vscode-tooltip/index.js';
 export {VscodeButton} from './vscode-button/index.js';
 export {VscodeButtonGroup} from './vscode-button-group/index.js';
 export {VscodeCheckbox} from './vscode-checkbox/index.js';

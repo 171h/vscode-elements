@@ -19,11 +19,12 @@ const measuredHeight = ref(0);
 const demo = computed(() => examples[props.example]);
 const frameHeight = computed(() => {
   if (!props.bare || !measuredHeight.value) return demo.value.height || 360;
-  const minimum = /vscode-(single-select|multi-select|context-menu)/.test(
-    demo.value.html
-  )
-    ? demo.value.height || 360
-    : 80;
+  const minimum =
+    /vscode-(single-select|multi-select|context-menu|tooltip)/.test(
+      demo.value.html
+    )
+      ? demo.value.height || 360
+      : 80;
   return Math.max(minimum, measuredHeight.value);
 });
 function resizePreview(event) {

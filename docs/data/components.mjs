@@ -1,6 +1,13 @@
 export const groups = ['基础与反馈', '表单控件', '布局与导航', '数据展示'];
 const definitions = [
   [
+    'tooltip',
+    '悬浮提示 Tooltip',
+    '基础与反馈',
+    '带四向箭头、跟随主题的活动栏风格提示。',
+    'tooltip',
+  ],
+  [
     'badge',
     '徽章 Badge',
     '基础与反馈',

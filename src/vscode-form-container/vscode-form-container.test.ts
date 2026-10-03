@@ -603,7 +603,7 @@ describe('vscode-form-container', () => {
       ]);
     });
 
-    it('keeps the state while the modifications follow each other quickly', async () => {
+    it('连续输入时保持已修改状态，停止输入后按时恢复', async () => {
       const id = nextFormId('short-duration');
       const el = await createForm(id, 'mark-duration="400"');
       const textfield = el.querySelector('vscode-textfield')!;
@@ -613,27 +613,31 @@ describe('vscode-form-container', () => {
         events.push((ev as CustomEvent<{dirty: boolean}>).detail.dirty);
       });
 
-      textfield.focus();
-      await sendKeys({type: 'a'});
+      // 保留真实键盘输入，仅控制倒计时和自动标记间隔，避免 CI 通信延迟改变输入节奏。
+      const clock = sinon.useFakeTimers({
+        toFake: ['setTimeout', 'clearTimeout', 'performance'],
+      });
+      try {
+        textfield.focus();
+        await sendKeys({type: 'a'});
 
-      // 连续按键的间隔短于状态持续时间，
-      // 因此倒计时应在过期前重新开始。
-      for (const character of 'bcdef') {
-        await delay(100);
-        await sendKeys({type: character});
+        // 连续按键的间隔短于状态持续时间，倒计时应在过期前重新开始。
+        for (const character of 'bcdef') {
+          await clock.tickAsync(100);
+          await sendKeys({type: character});
+        }
+        await el.updateComplete;
+
+        expect(events, '连续输入期间状态不应关闭').to.deep.eq([true]);
+        expect(el.dirty).to.be.true;
+
+        await clock.tickAsync(400);
+        await el.updateComplete;
+        expect(el.dirty).to.be.false;
+        expect(events, '停止输入后应关闭状态').to.deep.eq([true, false]);
+      } finally {
+        clock.restore();
       }
-
-      expect(
-        events,
-        'the state is not turned off while the user types'
-      ).to.deep.eq([true]);
-      expect(el.dirty).to.be.true;
-
-      await waitFor(() => !el.dirty);
-      expect(events, 'the state is turned off after the typing').to.deep.eq([
-        true,
-        false,
-      ]);
     });
 
     it('uses the default duration for a bare mark-duration attribute', async () => {

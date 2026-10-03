@@ -59,6 +59,8 @@ Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup �
 
 标签页新增功能与交互约定参见 [标签页溢出显示](docs/tabs-overflow.md)，涵盖换行、滚动、溢出菜单与标题图标布局。
 
+悬浮提示的四向箭头、外部目标关联和字段持续提示参见 [Tooltip 使用说明](docs/components/tooltip.md)，组件页与综合体验页均提供可交互示例。
+
 ### release
 
 从干净的工作区运行 `pnpm release`。默认建议递增 `patch` 版本；可用 `pnpm release -- minor`、`pnpm release -- major` 或 `pnpm release -- 3.1.0` 指定其他版本。命令会提示确认最终的 `v` 前缀版本标签及发布操作。
