@@ -55,6 +55,7 @@ const disabledControlStates = new WeakMap<
  * @cssprop --vscode-contrastBorder
  * @cssprop --vscode-focusBorder
  * @cssprop --vscode-disabledForeground
+ * @cssprop --vsc-fieldset-header-background - 标题和复选框标签共用的背景，默认跟随侧栏背景并回退到编辑区背景。
  * @cssprop [--vsc-form-control-border-radius=4px] - 边框圆角；small 使用 1px，large 使用 6px。
  *
  * @csspart checkbox - 位于边框上的复选框容器。
@@ -82,6 +83,10 @@ export class VscodeFieldset extends VscElement {
    */
   @property({type: Boolean, reflect: true})
   checked = false;
+
+  /** 显式禁用整个分区，包括标题复选框；重新启用时保留勾选状态和参数值。 */
+  @property({type: Boolean, reflect: true})
+  disabled = false;
 
   /**
    * 未勾选时的内容展示方式；可选值见 FieldsetUncheckedMode。
@@ -115,8 +120,13 @@ export class VscodeFieldset extends VscElement {
 
   private _disabledControls = new Set<DisabledControl>();
 
+  private _inertContent = new Map<HTMLElement, boolean>();
+
+  private _contentCollapsed = false;
+
   private _contentObserver = new MutationObserver((records) => {
     this._syncDisabledControls();
+    this._syncInertContent();
     if (records.some((record) => record.type === 'childList')) {
       this._observeLayout();
     }
@@ -168,8 +178,11 @@ export class VscodeFieldset extends VscElement {
         --vscode-foreground: var(--vsc-fieldset-title-foreground);
         --vscode-font-weight: normal;
         background: var(
-          --vscode-sideBar-background,
-          var(--vscode-editor-background, Canvas)
+          --vsc-fieldset-header-background,
+          var(
+            --vscode-sideBar-background,
+            var(--vscode-editor-background, Canvas)
+          )
         );
         padding: 0 4px;
         position: absolute;
@@ -207,6 +220,7 @@ export class VscodeFieldset extends VscElement {
   override disconnectedCallback() {
     this._contentObserver.disconnect();
     this._layoutObserver.disconnect();
+    this._restoreInertContent();
     for (const control of this._disabledControls) {
       this._releaseDisabledControl(control);
     }
@@ -220,6 +234,7 @@ export class VscodeFieldset extends VscElement {
       !this._rendered ||
       changed.has('checked') ||
       changed.has('checkbox') ||
+      changed.has('disabled') ||
       changed.has('uncheckedMode')
     ) {
       const animate = this._rendered;
@@ -323,20 +338,23 @@ export class VscodeFieldset extends VscElement {
       this._initialDisabled = fieldset.disabled;
     }
     if (this._checkboxEl) {
-      this._checkboxEl.disabled = this._initialDisabled;
+      this._checkboxEl.disabled = this._initialDisabled || this.disabled;
     }
     if (!this.checkbox) {
       this._stopAnimation();
       this.removeAttribute(COLLAPSED_ATTR);
       this._clearAnimationStyles();
-      fieldset.disabled = this._initialDisabled;
+      fieldset.disabled = this._initialDisabled || this.disabled;
+      this._contentCollapsed = false;
+      this._syncInertContent();
       this._syncDisabledControls();
       return;
     }
-    fieldset.disabled = this._initialDisabled || !this.checked;
-    this._syncDisabledControls();
-
     const mode = this._uncheckedMode();
+    this._contentCollapsed = !this.checked && mode !== 'visible';
+    this._syncInertContent();
+    fieldset.disabled = this._initialDisabled || this.disabled || !this.checked;
+    this._syncDisabledControls();
 
     if (!this.checked && mode === 'minimal') {
       this._collapseMinimal(fieldset, animate);
@@ -347,10 +365,43 @@ export class VscodeFieldset extends VscElement {
     }
   }
 
+  /** 折叠动画开始即移出键盘导航和无障碍树，保留 DOM、取值及原有 inert。 */
+  private _syncInertContent() {
+    const fieldset = this.fieldsetElement;
+    for (const [element, original] of this._inertContent) {
+      if (!this._contentCollapsed || element.parentElement !== fieldset) {
+        element.inert = original;
+        this._inertContent.delete(element);
+      }
+    }
+    if (!this._contentCollapsed || !fieldset) {
+      return;
+    }
+    if (fieldset.matches(':focus-within')) {
+      this._checkboxEl?.focus();
+    }
+    for (const element of fieldset.children) {
+      if (!(element instanceof HTMLElement) || element.tagName === 'LEGEND') {
+        continue;
+      }
+      if (!this._inertContent.has(element)) {
+        this._inertContent.set(element, element.inert);
+      }
+      element.inert = true;
+    }
+  }
+
+  private _restoreInertContent() {
+    for (const [element, original] of this._inertContent) {
+      element.inert = original;
+    }
+    this._inertContent.clear();
+  }
+
   /** 同步库控件的实际禁用状态，并保留其原有 disabled 值。 */
   private _syncDisabledControls() {
     const fieldset = this.fieldsetElement;
-    const disabled = this.checkbox && !!fieldset?.disabled;
+    const disabled = (this.checkbox || this.disabled) && !!fieldset?.disabled;
 
     for (const control of this._disabledControls) {
       if (!disabled || !fieldset?.contains(control)) {

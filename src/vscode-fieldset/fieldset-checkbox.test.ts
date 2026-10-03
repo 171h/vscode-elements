@@ -1,6 +1,7 @@
 import {expect, fixture, html} from '../includes/testing.js';
-import {emulateMedia} from '../includes/browser-commands.js';
+import {emulateMedia, sendKeys} from '../includes/browser-commands.js';
 import './index.js';
+import '../vscode-textfield/index.js';
 import type {FieldsetUncheckedMode} from './index.js';
 import type {VscFieldsetCheckedChangeEvent, VscodeFieldset} from './index.js';
 import type {VscodeCheckbox} from '../vscode-checkbox/index.js';
@@ -147,6 +148,119 @@ describe('fieldset 复选框', () => {
     expect(getComputedStyle(checkbox).backgroundColor).to.equal('rgb(0, 0, 0)');
   });
 
+  it('标题与启用框共用可覆盖的背景变量，并实时响应变化', async () => {
+    const el = await makeFieldset({checked: true, label: '启用分区'});
+    el.style.setProperty('--vscode-sideBar-background', 'black');
+    el.style.setProperty('--vsc-fieldset-header-background', 'rgb(25, 35, 45)');
+    const checkbox = checkboxOf(el);
+    expect(getComputedStyle(legendOf(el)).backgroundColor).to.equal(
+      'rgb(25, 35, 45)'
+    );
+    expect(getComputedStyle(checkbox).backgroundColor).to.equal(
+      'rgb(25, 35, 45)'
+    );
+    el.style.setProperty(
+      '--vsc-fieldset-header-background',
+      'rgb(220, 230, 240)'
+    );
+    expect(getComputedStyle(legendOf(el)).backgroundColor).to.equal(
+      'rgb(220, 230, 240)'
+    );
+    expect(getComputedStyle(checkbox).backgroundColor).to.equal(
+      'rgb(220, 230, 240)'
+    );
+    expect(getComputedStyle(fieldsetOf(el)).backgroundColor).to.equal(
+      'rgb(0, 0, 0)'
+    );
+  });
+
+  it('动态禁用整个分区，并在恢复后保留勾选状态、值和原有控件禁用状态', async () => {
+    const el = await fixture<VscodeFieldset>(html`
+      <vscode-fieldset checkbox checked checkbox-label="考虑风荷载">
+        <fieldset>
+          <legend>风荷载</legend>
+          <vscode-textfield value="0.5"></vscode-textfield>
+          <vscode-textfield disabled value="保留"></vscode-textfield>
+        </fieldset>
+      </vscode-fieldset>
+    `);
+    const fields = el.querySelectorAll('vscode-textfield');
+    el.disabled = true;
+    await el.updateComplete;
+    expect(checkboxOf(el).disabled).to.equal(true);
+    expect(fieldsetOf(el).disabled).to.equal(true);
+    expect(fields[0].disabled).to.equal(true);
+    toggle(el);
+    expect(el.checked).to.equal(true);
+    el.disabled = false;
+    await el.updateComplete;
+    expect(checkboxOf(el).disabled).to.equal(false);
+    expect(fields[0].disabled).to.equal(false);
+    expect(fields[0].value).to.equal('0.5');
+    expect(fields[1].disabled).to.equal(true);
+    expect(fields[1].value).to.equal('保留');
+  });
+
+  for (const mode of ['collapsed', 'minimal'] as const) {
+    it(`${mode} 动画期间移出可交互内容并恢复焦点及原有 inert`, async () => {
+      const el = await makeFieldset({checked: true, mode, label: '启用分区'});
+      const link = document.createElement('a');
+      link.href = '#details';
+      link.textContent = '帮助';
+      const retained = document.createElement('div');
+      retained.inert = true;
+      fieldsetOf(el).append(link, retained);
+      link.focus();
+      el.checked = false;
+      await el.updateComplete;
+      expect(link.inert).to.equal(true);
+      expect(el.shadowRoot!.activeElement).to.equal(checkboxOf(el));
+      link.focus();
+      expect(document.activeElement).to.not.equal(link);
+      await settle(el);
+      await sendKeys({press: 'Space'});
+      await settle(el);
+      expect(el.checked).to.equal(true);
+      expect(link.inert).to.equal(false);
+      expect(retained.inert).to.equal(true);
+      expect(el.querySelector('input')!.value).to.equal('kept');
+    });
+  }
+
+  it('无启用框时也支持动态禁用和恢复库控件', async () => {
+    const el = await fixture<VscodeFieldset>(html`
+      <vscode-fieldset
+        ><fieldset>
+          <legend>分区</legend>
+          <vscode-textfield value="0.5"></vscode-textfield></fieldset
+      ></vscode-fieldset>
+    `);
+    const field = el.querySelector('vscode-textfield')!;
+    el.disabled = true;
+    await el.updateComplete;
+    expect(field.disabled).to.equal(true);
+    el.disabled = false;
+    await el.updateComplete;
+    expect(field.disabled).to.equal(false);
+    expect(field.value).to.equal('0.5');
+  });
+
+  it('动态加入和移出的折叠内容同步 inert，断开连接后恢复原始状态', async () => {
+    const el = await makeFieldset({mode: 'collapsed'});
+    const fieldset = fieldsetOf(el);
+    const button = document.createElement('button');
+    fieldset.append(button);
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(button.inert).to.equal(true);
+    button.remove();
+    await new Promise((resolve) => requestAnimationFrame(resolve));
+    expect(button.inert).to.equal(false);
+    const content = contentOf(el);
+    expect(content.inert).to.equal(true);
+    el.remove();
+    expect(content.inert).to.equal(false);
+  });
+
   it('默认模式禁用内容但保持可见', async () => {
     const el = await makeFieldset();
     const fieldset = fieldsetOf(el);
@@ -176,6 +290,7 @@ describe('fieldset 复选框', () => {
     expect(el.checked).to.equal(true);
     expect(fieldset.disabled).to.equal(false);
     expect(getComputedStyle(contentOf(el)).display).to.not.equal('none');
+    expect(contentOf(el).inert).to.equal(false);
     expect(fieldset.getBoundingClientRect().height).to.be.closeTo(expanded, 1);
   });
 

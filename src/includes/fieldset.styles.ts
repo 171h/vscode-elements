@@ -55,8 +55,11 @@ const styles = css`
         var(--vscode-foreground, CanvasText)
       )
     );
-    /** legend 位于 fieldset 边框缺口，此处不会绘制 fieldset 背景。不透明背景会覆盖边框后的表面，形成矩形色块，在暗色主题下尤其明显。透明背景与表面融合，主题前景色保证标题可读。 */
-    background: transparent;
+    /* 标题与右上角启用框共用背景变量，调用方可匹配实际承载表面。 */
+    background: var(
+      --vsc-fieldset-header-background,
+      var(--vscode-sideBar-background, var(--vscode-editor-background, Canvas))
+    );
     border: 0;
     font-family: inherit;
     font-size: 11px;
@@ -68,11 +71,6 @@ const styles = css`
     > legend[draggable='true'] {
     cursor: grab;
     user-select: none;
-  }
-
-  :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset):focus-within {
-    outline: 1px solid var(--vscode-focusBorder, Highlight);
-    outline-offset: -1px;
   }
 
   :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset)
@@ -105,12 +103,6 @@ const styles = css`
   @media (forced-colors: active) {
     :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) {
       border-color: CanvasText;
-    }
-    :where(
-      vscode-fieldset > fieldset,
-      vscode-tab-panel > fieldset
-    ):focus-within {
-      outline-color: Highlight;
     }
   }
 `;
