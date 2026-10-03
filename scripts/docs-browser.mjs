@@ -8,6 +8,7 @@ import {components} from '../docs/data/components.mjs';
 import {componentScenarios} from '../docs/data/scenarios.mjs';
 import {testScenarios} from './docs-scenarios-test.mjs';
 import {testShowcase} from './docs-showcase-test.mjs';
+import {testFieldsetThemes} from './docs-fieldset-test.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = resolve(root, 'docs/.vitepress/dist');
@@ -309,6 +310,9 @@ try {
     false
   );
   await fieldTip.waitFor({state: 'hidden'});
+  // 恢复尺寸测试前的默认环境，避免固定高度预览继承 large 尺寸。
+  await selectTheme('light');
+  await selectSize('medium');
 
   frame = await open('textfield', 1);
   const input = frame.locator('vscode-textfield input');
@@ -352,6 +356,7 @@ try {
   assert.match(await frame.locator('output').textContent(), /新项目/);
 
   frame = await open('fieldset');
+  await testFieldsetThemes(page, frame, selectTheme, selectSize);
   await frame.locator('vscode-fieldset').evaluate((element) => {
     element.checked = false;
   });

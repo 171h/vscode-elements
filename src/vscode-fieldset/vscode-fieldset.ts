@@ -26,6 +26,14 @@ export type FieldsetCheckedChangeCallback = (
 const COLLAPSED_ATTR = 'data-vsc-collapsed';
 const DURATION = 180;
 const REDUCED_MOTION = '(prefers-reduced-motion: reduce)';
+const BORDER_PROPERTIES = [
+  '--_vsc-fieldset-border-top',
+  '--_vsc-fieldset-border-color',
+  '--_vsc-fieldset-legend-start',
+  '--_vsc-fieldset-legend-end',
+  '--_vsc-fieldset-checkbox-start',
+  '--_vsc-fieldset-checkbox-end',
+];
 
 type DisabledControl = VscElement & {disabled: boolean};
 
@@ -55,6 +63,7 @@ const disabledControlStates = new WeakMap<
  * @cssprop --vscode-contrastBorder
  * @cssprop --vscode-focusBorder
  * @cssprop --vscode-disabledForeground
+ * @cssprop [--vsc-fieldset-header-background=transparent] - 标题和复选框标签共用的背景，默认透明。
  * @cssprop [--vsc-form-control-border-radius=4px] - 边框圆角；small 使用 1px，large 使用 6px。
  *
  * @csspart checkbox - 位于边框上的复选框容器。
@@ -82,6 +91,10 @@ export class VscodeFieldset extends VscElement {
    */
   @property({type: Boolean, reflect: true})
   checked = false;
+
+  /** 显式禁用整个分区，包括标题复选框；重新启用时保留勾选状态和参数值。 */
+  @property({type: Boolean, reflect: true})
+  disabled = false;
 
   /**
    * 未勾选时的内容展示方式；可选值见 FieldsetUncheckedMode。
@@ -115,8 +128,23 @@ export class VscodeFieldset extends VscElement {
 
   private _disabledControls = new Set<DisabledControl>();
 
-  private _contentObserver = new MutationObserver(() => {
+  private _inertContent = new Map<HTMLElement, boolean>();
+
+  private _contentCollapsed = false;
+
+  private _borderFieldset?: HTMLFieldSetElement;
+
+  private _contentObserver = new MutationObserver((records) => {
     this._syncDisabledControls();
+    this._syncInertContent();
+    if (records.some((record) => record.type === 'childList')) {
+      this._observeLayout();
+    }
+    this._syncCheckboxLayout();
+  });
+
+  private _layoutObserver = new ResizeObserver(() => {
+    this._syncCheckboxLayout();
   });
 
   private _animationStyles = new Map<
@@ -135,6 +163,13 @@ export class VscodeFieldset extends VscElement {
 
       /* 零高度行使复选框覆盖边框，并与边框上的标题垂直居中对齐。 */
       .checkbox-row {
+        --vsc-fieldset-title-foreground: var(
+          --vscode-sideBarSectionHeader-foreground,
+          var(
+            --vscode-sideBarTitle-foreground,
+            var(--vscode-foreground, CanvasText)
+          )
+        );
         display: flex;
         height: 0;
         justify-content: flex-end;
@@ -142,7 +177,18 @@ export class VscodeFieldset extends VscElement {
         z-index: 1;
       }
 
+      .checkbox-row[data-disabled-title] {
+        --vsc-fieldset-title-foreground: var(
+          --vscode-disabledForeground,
+          GrayText
+        );
+      }
+
       .checkbox-row vscode-checkbox {
+        --vscode-foreground: var(--vsc-fieldset-title-foreground);
+        --vscode-font-weight: normal;
+        background: var(--vsc-fieldset-header-background, transparent);
+        padding: 0 4px;
         position: absolute;
         right: 10px;
         top: 13px;
@@ -151,7 +197,14 @@ export class VscodeFieldset extends VscElement {
       }
 
       :host([data-vsc-collapsed][unchecked-mode='minimal']) {
-        min-height: 26px;
+        min-height: var(--_vsc-fieldset-minimal-height, 26px);
+      }
+
+      :host([data-vsc-collapsed][unchecked-mode='minimal'])
+        .checkbox-row
+        vscode-checkbox {
+        top: calc(var(--_vsc-fieldset-minimal-height, 26px) / 2) !important;
+        right: 10px !important;
       }
     `,
   ];
@@ -164,7 +217,12 @@ export class VscodeFieldset extends VscElement {
   override connectedCallback() {
     super.connectedCallback();
     installFieldsetStyles(this);
-    this._contentObserver.observe(this, {childList: true, subtree: true});
+    this._contentObserver.observe(this, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class'],
+    });
     if (this._rendered) {
       this._onSlotChange();
     }
@@ -172,6 +230,9 @@ export class VscodeFieldset extends VscElement {
 
   override disconnectedCallback() {
     this._contentObserver.disconnect();
+    this._layoutObserver.disconnect();
+    this._clearCheckboxBorder();
+    this._restoreInertContent();
     for (const control of this._disabledControls) {
       this._releaseDisabledControl(control);
     }
@@ -185,6 +246,7 @@ export class VscodeFieldset extends VscElement {
       !this._rendered ||
       changed.has('checked') ||
       changed.has('checkbox') ||
+      changed.has('disabled') ||
       changed.has('uncheckedMode')
     ) {
       const animate = this._rendered;
@@ -199,6 +261,99 @@ export class VscodeFieldset extends VscElement {
     } else {
       this._rendered = true;
     }
+    this._observeLayout();
+    this._syncCheckboxLayout();
+  }
+
+  private _observeLayout() {
+    this._layoutObserver.disconnect();
+    this._layoutObserver.observe(this);
+    if (this._checkboxEl) {
+      this._layoutObserver.observe(this._checkboxEl);
+    }
+    const fieldset = this.fieldsetElement;
+    if (fieldset) {
+      this._layoutObserver.observe(fieldset);
+      const legend = fieldset.querySelector('legend');
+      if (legend) {
+        this._layoutObserver.observe(legend);
+      }
+    }
+  }
+
+  /** 根据实际标题同步边框上的复选框，兼容自定义字号和外边距。 */
+  private _syncCheckboxLayout() {
+    const checkbox = this._checkboxEl;
+    const fieldset = this.fieldsetElement;
+    const legend = fieldset?.querySelector('legend');
+    if (this._borderFieldset !== fieldset || !checkbox || !legend) {
+      this._clearCheckboxBorder();
+    }
+    if (checkbox) {
+      const height = Math.max(26, checkbox.offsetHeight);
+      const value = `${height}px`;
+      if (
+        this.style.getPropertyValue('--_vsc-fieldset-minimal-height') !== value
+      ) {
+        this.style.setProperty('--_vsc-fieldset-minimal-height', value);
+      }
+    }
+    if (!checkbox || !fieldset || !legend || !legend.getClientRects().length) {
+      return;
+    }
+    const row = checkbox.parentElement!;
+    const rowRect = row.getBoundingClientRect();
+    const fieldsetRect = fieldset.getBoundingClientRect();
+    const legendRect = legend.getBoundingClientRect();
+    const legendStyle = getComputedStyle(legend);
+    // 视口距离先还原为布局距离，避免父容器缩放再次放大定位和边框缺口。
+    const scaleX = rowRect.width / parseFloat(getComputedStyle(row).width) || 1;
+    const legendHeight =
+      parseFloat(legendStyle.height) +
+      (legendStyle.boxSizing === 'border-box'
+        ? 0
+        : parseFloat(legendStyle.paddingTop) +
+          parseFloat(legendStyle.paddingBottom) +
+          parseFloat(legendStyle.borderTopWidth) +
+          parseFloat(legendStyle.borderBottomWidth));
+    const scaleY = legendRect.height / legendHeight || 1;
+    checkbox.style.top = `${(legendRect.top + legendRect.height / 2 - rowRect.top) / scaleY}px`;
+    checkbox.style.right = `${(rowRect.right - fieldsetRect.right) / scaleX + 10}px`;
+    checkbox.style.setProperty(
+      '--vsc-form-control-font-size',
+      legendStyle.fontSize
+    );
+    checkbox.parentElement?.toggleAttribute(
+      'data-disabled-title',
+      fieldset.disabled
+    );
+    const checkboxRect = checkbox.getBoundingClientRect();
+    this._borderFieldset = fieldset;
+    if (!fieldset.hasAttribute('data-vsc-checkbox-border')) {
+      fieldset.setAttribute('data-vsc-checkbox-border', '');
+    }
+    const values = [
+      `${-legendRect.height / scaleY / 2}px`,
+      fieldset.style.borderColor,
+      `${Math.max(0, legendRect.left - fieldsetRect.left) / scaleX}px`,
+      `${(legendRect.right - fieldsetRect.left) / scaleX}px`,
+      `${(Math.max(legendRect.right, checkboxRect.left) - fieldsetRect.left) / scaleX}px`,
+      `${(checkboxRect.right - fieldsetRect.left) / scaleX}px`,
+    ];
+    BORDER_PROPERTIES.forEach((property, index) => {
+      const value = values[index];
+      if (fieldset.style.getPropertyValue(property) !== value) {
+        fieldset.style.setProperty(property, value);
+      }
+    });
+  }
+
+  private _clearCheckboxBorder() {
+    this._borderFieldset?.removeAttribute('data-vsc-checkbox-border');
+    for (const property of BORDER_PROPERTIES) {
+      this._borderFieldset?.style.removeProperty(property);
+    }
+    this._borderFieldset = undefined;
   }
 
   private _onSlotChange() {
@@ -207,6 +362,8 @@ export class VscodeFieldset extends VscElement {
     } else {
       this._syncCheckedState(false);
     }
+    this._observeLayout();
+    this._syncCheckboxLayout();
   }
 
   private _onCheckboxChange() {
@@ -247,20 +404,23 @@ export class VscodeFieldset extends VscElement {
       this._initialDisabled = fieldset.disabled;
     }
     if (this._checkboxEl) {
-      this._checkboxEl.disabled = this._initialDisabled;
+      this._checkboxEl.disabled = this._initialDisabled || this.disabled;
     }
     if (!this.checkbox) {
       this._stopAnimation();
       this.removeAttribute(COLLAPSED_ATTR);
       this._clearAnimationStyles();
-      fieldset.disabled = this._initialDisabled;
+      fieldset.disabled = this._initialDisabled || this.disabled;
+      this._contentCollapsed = false;
+      this._syncInertContent();
       this._syncDisabledControls();
       return;
     }
-    fieldset.disabled = this._initialDisabled || !this.checked;
-    this._syncDisabledControls();
-
     const mode = this._uncheckedMode();
+    this._contentCollapsed = !this.checked && mode !== 'visible';
+    this._syncInertContent();
+    fieldset.disabled = this._initialDisabled || this.disabled || !this.checked;
+    this._syncDisabledControls();
 
     if (!this.checked && mode === 'minimal') {
       this._collapseMinimal(fieldset, animate);
@@ -271,10 +431,49 @@ export class VscodeFieldset extends VscElement {
     }
   }
 
+  /** 折叠动画开始即移出键盘导航和无障碍树，保留 DOM、取值及原有 inert。 */
+  private _syncInertContent() {
+    const fieldset = this.fieldsetElement;
+    for (const [element, original] of this._inertContent) {
+      if (!this._contentCollapsed || element.parentElement !== fieldset) {
+        element.inert = original;
+        this._inertContent.delete(element);
+      }
+    }
+    if (!this._contentCollapsed || !fieldset) {
+      return;
+    }
+    if (
+      this._uncheckedMode() === 'minimal' &&
+      fieldset.querySelector('legend')?.matches(':focus-within')
+    ) {
+      this._checkboxEl?.focus();
+    }
+    for (const element of fieldset.children) {
+      if (!(element instanceof HTMLElement) || element.tagName === 'LEGEND') {
+        continue;
+      }
+      if (element.matches(':focus-within')) {
+        this._checkboxEl?.focus();
+      }
+      if (!this._inertContent.has(element)) {
+        this._inertContent.set(element, element.inert);
+      }
+      element.inert = true;
+    }
+  }
+
+  private _restoreInertContent() {
+    for (const [element, original] of this._inertContent) {
+      element.inert = original;
+    }
+    this._inertContent.clear();
+  }
+
   /** 同步库控件的实际禁用状态，并保留其原有 disabled 值。 */
   private _syncDisabledControls() {
     const fieldset = this.fieldsetElement;
-    const disabled = this.checkbox && !!fieldset?.disabled;
+    const disabled = (this.checkbox || this.disabled) && !!fieldset?.disabled;
 
     for (const control of this._disabledControls) {
       if (!disabled || !fieldset?.contains(control)) {
@@ -516,6 +715,7 @@ export class VscodeFieldset extends VscElement {
           ? html`
               <div class="checkbox-row" part="checkbox">
                 <vscode-checkbox
+                  size=${this.size}
                   label=${this.checkboxLabel}
                   ?checked=${this.checked}
                   @change=${this._onCheckboxChange}

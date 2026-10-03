@@ -30,13 +30,16 @@ describe('fieldset 主题', () => {
     expect(getComputedStyle(legend).borderTopWidth).to.equal('0px');
     expect(getComputedStyle(legend).color).to.equal('rgb(200, 210, 220)');
     fieldset.querySelector('input')!.focus();
-    expect(getComputedStyle(fieldset).outlineColor).to.equal('rgb(0, 255, 0)');
+    expect(getComputedStyle(fieldset).outlineStyle).to.equal('none');
+    expect(getComputedStyle(fieldset).borderTopColor).to.equal(
+      'rgb(255, 255, 0)'
+    );
     expect(new FormData(form).get('value')).to.equal('kept');
     fieldset.disabled = true;
     expect(new FormData(form).has('value')).to.equal(false);
   });
 
-  it('暗色主题下标题保持透明且可读', async () => {
+  it('暗色主题下标题背景透明且保持可读', async () => {
     const el = await fixture<HTMLElement>(
       html` <vscode-fieldset
         style="--vscode-sideBar-background: #181818; --vscode-sideBarSectionHeader-foreground: #cccccc"
@@ -116,7 +119,7 @@ describe('fieldset 主题', () => {
     expect(getComputedStyle(legend).backgroundColor).to.equal(
       'rgba(0, 0, 0, 0)'
     );
-    expect(getComputedStyle(legend).fontWeight).to.equal('600');
+    expect(getComputedStyle(legend).fontWeight).to.equal('700');
     expect(root.querySelectorAll('[data-vsc-fieldset-styles]')).to.have.length(
       1
     );

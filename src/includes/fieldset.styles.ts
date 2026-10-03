@@ -44,6 +44,48 @@ const styles = css`
     --vsc-form-control-border-radius: 6px;
   }
 
+  /* 单独绘制顶部边框，只裁剪装饰线，不裁剪内容、焦点轮廓或弹出层。 */
+  :where(vscode-fieldset > fieldset[data-vsc-checkbox-border]) {
+    position: relative;
+    border-top-color: transparent !important;
+  }
+
+  :where(vscode-fieldset > fieldset[data-vsc-checkbox-border])::before {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    top: var(--_vsc-fieldset-border-top);
+    left: -1px;
+    right: -1px;
+    height: var(--vsc-form-control-border-radius, 4px);
+    border: 1px solid
+      var(
+        --_vsc-fieldset-border-color,
+        var(
+          --vscode-contrastBorder,
+          var(
+            --vscode-sideBarSectionHeader-border,
+            var(
+              --vscode-panel-border,
+              var(--vscode-widget-border, currentColor)
+            )
+          )
+        )
+      );
+    border-bottom: 0;
+    border-radius: inherit;
+    mask-image: linear-gradient(
+      to right,
+      black 0 var(--_vsc-fieldset-legend-start),
+      transparent var(--_vsc-fieldset-legend-start)
+        var(--_vsc-fieldset-legend-end),
+      black var(--_vsc-fieldset-legend-end) var(--_vsc-fieldset-checkbox-start),
+      transparent var(--_vsc-fieldset-checkbox-start)
+        var(--_vsc-fieldset-checkbox-end),
+      black var(--_vsc-fieldset-checkbox-end) 100%
+    );
+  }
+
   :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) > legend {
     box-sizing: border-box;
     max-width: 100%;
@@ -55,12 +97,12 @@ const styles = css`
         var(--vscode-foreground, CanvasText)
       )
     );
-    /** legend 位于 fieldset 边框缺口，此处不会绘制 fieldset 背景。不透明背景会覆盖边框后的表面，形成矩形色块，在暗色主题下尤其明显。透明背景与表面融合，主题前景色保证标题可读。 */
-    background: transparent;
+    /* 标题与右上角启用框共用背景变量，默认透明，不绘制背景颜色。 */
+    background: var(--vsc-fieldset-header-background, transparent);
     border: 0;
     font-family: inherit;
     font-size: 11px;
-    font-weight: 600;
+    font-weight: bold;
     line-height: 18px;
   }
 
@@ -68,11 +110,6 @@ const styles = css`
     > legend[draggable='true'] {
     cursor: grab;
     user-select: none;
-  }
-
-  :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset):focus-within {
-    outline: 1px solid var(--vscode-focusBorder, Highlight);
-    outline-offset: -1px;
   }
 
   :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset)
@@ -106,11 +143,8 @@ const styles = css`
     :where(vscode-fieldset > fieldset, vscode-tab-panel > fieldset) {
       border-color: CanvasText;
     }
-    :where(
-      vscode-fieldset > fieldset,
-      vscode-tab-panel > fieldset
-    ):focus-within {
-      outline-color: Highlight;
+    :where(vscode-fieldset > fieldset[data-vsc-checkbox-border])::before {
+      border-color: CanvasText;
     }
   }
 `;
