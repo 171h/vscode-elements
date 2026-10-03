@@ -3,6 +3,7 @@ node_modules
 /lib/
 /test/
 .wireit/
+/.vitepress/cache/
 /docs/.vitepress/cache/
 /docs/.vitepress/dist/
 /docs/public/assets/
