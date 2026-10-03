@@ -1,4 +1,5 @@
 {
+  "vite.autoStart": false,
   "files.readonlyInclude": {
     "dist/**/*": true,
     "node_modules/**/*": true

@@ -44,9 +44,10 @@ function toggle(el: VscodeFieldset) {
 /** 等待折叠或展开动画结束。 */
 async function settle(el: VscodeFieldset) {
   await el.updateComplete;
-  await new Promise((resolve) => setTimeout(resolve, DURATION + 80));
+  await Promise.all(
+    el.getAnimations({subtree: true}).map((animation) => animation.finished)
+  );
 }
-const DURATION = 180;
 
 describe('fieldset 复选框', () => {
   it('在边框上放置带标签且与标题对齐的复选框', async () => {

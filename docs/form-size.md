@@ -64,10 +64,10 @@ field.size = 'large';
 field.setAttribute('size', 'small');
 ```
 
-`dev/` 下的现有页面提供 **small**、**medium**、**large** 按钮，可交互检查支持的组件。启动本地开发服务器后打开对应示例：
+各组件页的预览提供 **small**、**medium**、**large** 尺寸切换，可交互检查支持的组件。启动文档站点后打开 [按钮](./components/button) 或 [文本框](./components/textfield)：
 
 ```bash
-npm run serve
+npm run docs:dev
 ```
 
 ## 表单组
