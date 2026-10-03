@@ -22,7 +22,7 @@ import 'nusys-ui/dist/vscode-context-menu-item/index.js';
 
 ## 交互示例
 
-选择主题和尺寸，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
+使用页面底部的全站主题和示例尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
 
 <ExamplePreview example="context-menu" />
 

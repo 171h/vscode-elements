@@ -8,6 +8,7 @@ export default defineConfig({
   base: process.env.DOCS_BASE || '/',
   lastUpdated: true,
   cleanUrls: true,
+  appearance: false,
   vite: {
     vue: {
       template: {

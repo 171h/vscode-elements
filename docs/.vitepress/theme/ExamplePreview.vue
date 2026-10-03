@@ -1,14 +1,16 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue';
+import {computed, onMounted, ref, watch} from 'vue';
 import {withBase} from 'vitepress';
 import {examples} from '../../data/examples.mjs';
 import {previewDocument} from '../../data/preview.mjs';
+import {siteTheme} from './theme-state.mjs';
 
 const props = defineProps({example: {type: String, required: true}});
-const theme = ref('light');
+const iframe = ref(null);
 const size = ref('medium');
 const active = ref('preview');
 const mounted = ref(false);
+const initialTheme = ref(null);
 const demo = computed(() => examples[props.example]);
 const source = computed(() =>
   demo.value
@@ -25,14 +27,22 @@ const document = computed(() =>
   mounted.value && demo.value
     ? previewDocument(demo.value, {
         base: withBase('/'),
-        theme: theme.value,
+        theme: initialTheme.value,
         size: size.value,
       })
     : undefined
 );
 onMounted(() => {
+  initialTheme.value = siteTheme.value;
   mounted.value = true;
 });
+function syncTheme() {
+  iframe.value?.contentWindow?.postMessage(
+    {type: 'nusys-docs-theme', theme: siteTheme.value},
+    window.location.origin
+  );
+}
+watch(siteTheme, syncTheme, {flush: 'post'});
 </script>
 
 <template>
@@ -55,14 +65,6 @@ onMounted(() => {
         </button>
       </div>
       <label
-        >主题
-        <select v-model="theme">
-          <option value="light">浅色</option>
-          <option value="dark">深色</option>
-          <option value="contrast">高对比度</option>
-        </select></label
-      >
-      <label
         >尺寸
         <select v-model="size">
           <option value="small">小</option>
@@ -72,11 +74,13 @@ onMounted(() => {
       >
     </div>
     <iframe
+      ref="iframe"
       v-if="active === 'preview' && mounted"
       :title="demo.title"
       :srcdoc="document"
       class="example-frame"
       :style="{height: `${demo.height || 360}px`}"
+      @load="syncTheme"
     ></iframe>
     <p v-else-if="active === 'preview'">正在加载交互示例…</p>
     <pre v-else class="example-source"><code>{{ source }}</code></pre>

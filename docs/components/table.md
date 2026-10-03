@@ -25,7 +25,7 @@ Header 直接包含 HeaderCell；Body 包含 Row，Row 包含 Cell。该组件�
 
 ## 交互示例
 
-选择主题和尺寸，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
+使用页面底部的全站主题和示例尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
 
 <ExamplePreview example="table" />
 

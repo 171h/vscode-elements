@@ -82,6 +82,23 @@ try {
     );
     return frame;
   };
+  const selectTheme = async (id) => {
+    await page.locator('vscode-theme-selector select').selectOption(id);
+    await page.waitForFunction(
+      (theme) =>
+        document.documentElement.style.getPropertyValue(
+          '--vscode-editor-background'
+        ) && localStorage.getItem('vscode-playground:theme') === theme,
+      id
+    );
+    for (const frame of page
+      .frames()
+      .filter((candidate) => candidate.parentFrame()))
+      await frame.waitForFunction(
+        (theme) => document.documentElement.dataset.themeId === theme,
+        id
+      );
+  };
   await page.goto(url());
   await page.getByRole('heading', {name: '为 VS Code 扩展构建界面'}).waitFor();
   await mkdir(resolve(root, '.wireit/docs-screenshots'), {recursive: true});
@@ -91,6 +108,15 @@ try {
   });
   for (const component of components) {
     const frame = await open(component.id);
+    await selectTheme('dark-v2');
+    await selectTheme('light-v2');
+    assert.equal(await page.locator('vscode-theme-selector').count(), 1);
+    assert.equal(await page.locator('.VPSwitchAppearance').count(), 0);
+    assert.equal(
+      await page.locator('.example select').count(),
+      await page.locator('.example').count(),
+      '子页面仅保留尺寸选择器'
+    );
     assert.ok(
       await frame.locator(`vscode-${component.id}`).count(),
       `${component.id} 的示例没有展示目标组件`
@@ -110,9 +136,20 @@ try {
 
   let frame = await open('button');
   const sample = page.locator('.example').first();
-  for (const theme of ['light', 'dark', 'contrast']) {
+  for (const theme of [
+    'light',
+    'light-v2',
+    'light-quiet',
+    'light-solarized',
+    'dark',
+    'dark-v2',
+    'dark-solarized',
+    'dark-monokai',
+    'hc-light',
+    'hc-dark',
+  ]) {
+    await selectTheme(theme);
     for (const size of ['small', 'medium', 'large']) {
-      await sample.getByLabel('主题').selectOption(theme);
       await sample.getByLabel('尺寸').selectOption(size);
       frame = page.frames().find((candidate) => candidate.parentFrame());
       await frame.waitForFunction(
@@ -122,9 +159,19 @@ try {
         await frame.locator('vscode-button').first().getAttribute('size'),
         size
       );
+      await selectTheme(theme);
+      const token = '--vscode-editor-background';
       assert.equal(
-        await frame.locator('body').getAttribute('class'),
-        theme === 'contrast' ? 'vscode-high-contrast' : `vscode-${theme}`
+        await frame.evaluate(
+          (name) =>
+            getComputedStyle(document.documentElement).getPropertyValue(name),
+          token
+        ),
+        await page.evaluate(
+          (name) =>
+            getComputedStyle(document.documentElement).getPropertyValue(name),
+          token
+        )
       );
       assert.equal(
         await frame
@@ -144,7 +191,7 @@ try {
       assert.notEqual(contrast.color, contrast.background);
     }
   }
-  await sample.getByLabel('主题').selectOption('light');
+  await selectTheme('light');
   await sample.getByLabel('尺寸').selectOption('medium');
   frame = page.frames().find((candidate) => candidate.parentFrame());
   await frame.waitForFunction(
@@ -179,6 +226,15 @@ try {
   );
   await frame.getByRole('button', {name: '读取表单'}).click();
   await frame.getByText('提交值：0.25', {exact: true}).waitFor();
+  await selectTheme('dark-monokai');
+  assert.equal(await input.inputValue(), '25%', '主题切换不得清空输入');
+  await page.reload();
+  await page.locator('vscode-theme-selector select').waitFor();
+  assert.equal(
+    await page.locator('vscode-theme-selector select').inputValue(),
+    'dark-monokai'
+  );
+  await selectTheme('light');
 
   frame = await open('form-container');
   await frame.locator('vscode-textfield input').fill('新项目');
@@ -286,11 +342,13 @@ try {
   );
 
   await page.goto(url('api/generated/textfield'));
+  await selectTheme('hc-dark');
   await page.screenshot({
     path: resolve(root, '.wireit/docs-screenshots/api.png'),
     fullPage: false,
   });
   await page.goto(url());
+  await selectTheme('light-quiet');
   await page.getByRole('button', {name: '搜索文档', exact: true}).click();
   await page.locator('#localsearch-input').fill('百分比');
   await page
@@ -301,6 +359,7 @@ try {
   await page.keyboard.press('Escape');
   await page.setViewportSize({width: 390, height: 844});
   await page.goto(url('components/button'));
+  await selectTheme('hc-light');
   assert.equal(
     await page.evaluate(
       () => document.documentElement.scrollWidth <= innerWidth + 1

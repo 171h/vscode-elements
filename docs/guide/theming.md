@@ -2,7 +2,15 @@
 
 ## VS Code 主题变量
 
-组件读取 `--vscode-*` 变量并提供回退值。在 VS Code Webview 中这些变量由宿主提供；普通浏览器应提供主题变量，避免明暗表面的颜色混用。文档示例提供独立的浅色、深色和高对比度预览，不改变应用的宿主主题。
+组件读取 `--vscode-*` 变量并提供回退值。在 VS Code Webview 中这些变量由宿主提供；普通浏览器应提供主题变量，避免明暗表面的颜色混用。
+
+## 文档的全站主题
+
+页面底部的「全站主题」使用 `@vscode-elements/webview-playground` 的 `vscode-theme-selector`，提供 Light+、Light Modern、Quiet Light、Solarized Light、Dark+、Dark Modern、Solarized Dark、Monokai 以及两种高对比度主题。
+
+文档布局、所有组件预览和综合体验页同步使用选中主题的完整变量。选择自动保存在浏览器本地，跨页面导航和刷新后恢复。每个示例只保留尺寸选择；切换主题不会重建预览，因此输入值、选中项及拖拽布局保持不变。VitePress 默认外观切换已停用。
+
+此功能仅用于文档站点，组件库不依赖 Playground；应用中的主题仍由 VS Code 宿主提供。主题来源及实现参见 [Playground 仓库](https://github.com/vscode-elements/webview-playground)。
 
 ```css
 :root {
