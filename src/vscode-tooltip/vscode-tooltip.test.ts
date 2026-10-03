@@ -1,4 +1,10 @@
-import {expect, fixture, html, aTimeout} from '../includes/testing.js';
+import {
+  expect,
+  fixture,
+  html,
+  aTimeout,
+  waitUntil,
+} from '../includes/testing.js';
 import {VscodeTooltip, TooltipPlacement} from './index.js';
 import '../vscode-textfield/index.js';
 import '../vscode-radio-group/index.js';
@@ -232,24 +238,28 @@ describe('vscode-tooltip', () => {
     `);
     const el = root.querySelector('vscode-tooltip')!;
     const scroll = root.querySelector<HTMLDivElement>('#tooltip-scroll')!;
-    await aTimeout(60);
-    expect(getComputedStyle(panel(el)).visibility).to.equal('visible');
+    // IntersectionObserver 回调后还需等待定位帧，CI 的调度不保证在固定毫秒内完成。
+    const waitForVisibility = (visibility: 'visible' | 'hidden') =>
+      waitUntil(
+        () =>
+          panel(el).matches(':popover-open') &&
+          getComputedStyle(panel(el)).visibility === visibility,
+        `持续提示未切换到 ${visibility} 状态`,
+        {timeout: 3000}
+      );
+    await waitForVisibility('visible');
     scroll.scrollTop = 150;
-    await aTimeout(60);
-    expect(getComputedStyle(panel(el)).visibility).to.equal('hidden');
+    await waitForVisibility('hidden');
     scroll.scrollTop = 0;
-    await aTimeout(60);
-    expect(getComputedStyle(panel(el)).visibility).to.equal('visible');
+    await waitForVisibility('visible');
     scroll.inert = true;
-    await aTimeout(40);
-    expect(getComputedStyle(panel(el)).visibility).to.equal('hidden');
+    await waitForVisibility('hidden');
     scroll.inert = false;
+    await waitForVisibility('visible');
     scroll.hidden = true;
-    await aTimeout(40);
-    expect(getComputedStyle(panel(el)).visibility).to.equal('hidden');
+    await waitForVisibility('hidden');
     scroll.hidden = false;
-    await aTimeout(60);
-    expect(getComputedStyle(panel(el)).visibility).to.equal('visible');
+    await waitForVisibility('visible');
   });
 
   it('鼠标可移入提示，Escape 后内容更新不重新打开', async () => {
