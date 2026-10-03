@@ -733,8 +733,10 @@ export class VscodeTabs extends VscElement {
         </button>
         <div
           class="scrollbar"
-          ?hidden=${this.overflow !== 'scroll' ||
-          this._scrollWidth <= this._scrollViewportWidth}
+          ?hidden=${
+            this.overflow !== 'scroll' ||
+            this._scrollWidth <= this._scrollViewportWidth
+          }
           .style=${stylePropertyMap({
             width: `${this._scrollViewportWidth}px`,
             left: `${this._scrollOffset}px`,

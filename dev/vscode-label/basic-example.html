@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>label/basic-example</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/src/main.ts"></script>
+    <script>
+      const logEvents = (selector, eventType) => {
+        document.querySelector(selector).addEventListener(eventType, (ev) => {
+          console.log(ev);
+        });
+      };
+    </script>
+  </head>
+
+  <body>
+    <main>
+      <vscode-demo id="size-demo-target">
+        <vscode-form-group id="form-group">
+          <vscode-label for="textfield">Label example</vscode-label>
+          <vscode-textfield id="textfield"></vscode-textfield
+        ></vscode-form-group>
+        <div class="size-buttons">
+          <button type="button" data-size="small">small</button>
+          <button type="button" data-size="medium">medium</button>
+          <button type="button" data-size="large">large</button>
+        </div>
+      </vscode-demo>
+    </main>
+    <script type="module">
+      document.querySelectorAll('.size-buttons button').forEach((button) => {
+        button.addEventListener('click', () => {
+          document
+            .querySelectorAll(
+              '#size-demo-target vscode-form-group, #size-demo-target vscode-label, #size-demo-target vscode-textfield'
+            )
+            .forEach((el) => {
+              el.setAttribute('size', button.dataset.size);
+            });
+        });
+      });
+    </script>
+  </body>
+</html>

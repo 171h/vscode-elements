@@ -306,33 +306,35 @@ export class VscodeContextMenu extends VscElement {
 
     return html`
       <div class="context-menu" tabindex="0">
-        ${this.data
-          ? this.data.map(
-              (
-                {
-                  label = '',
-                  keybinding = '',
-                  value = '',
-                  separator = false,
-                  tabindex = 0,
-                },
-                index
-              ) => html`
-                <vscode-context-menu-item
-                  label=${label}
-                  keybinding=${keybinding}
-                  value=${value}
-                  ?separator=${separator}
-                  ?selected=${index === selectedIndex}
-                  tabindex=${tabindex}
-                  @vsc-click=${this._onItemClick}
-                  @mouseover=${this._onItemMouseOver}
-                  @mouseout=${this._onItemMouseOut}
-                  data-index=${index}
-                ></vscode-context-menu-item>
-              `
-            )
-          : html`<slot></slot>`}
+        ${
+          this.data
+            ? this.data.map(
+                (
+                  {
+                    label = '',
+                    keybinding = '',
+                    value = '',
+                    separator = false,
+                    tabindex = 0,
+                  },
+                  index
+                ) => html`
+                  <vscode-context-menu-item
+                    label=${label}
+                    keybinding=${keybinding}
+                    value=${value}
+                    ?separator=${separator}
+                    ?selected=${index === selectedIndex}
+                    tabindex=${tabindex}
+                    @vsc-click=${this._onItemClick}
+                    @mouseover=${this._onItemMouseOver}
+                    @mouseout=${this._onItemMouseOut}
+                    data-index=${index}
+                  ></vscode-context-menu-item>
+                `
+              )
+            : html`<slot></slot>`
+        }
       </div>
     `;
   }

@@ -1,5 +1,5 @@
 import {VscodeTableCell} from './index.js';
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 
 describe('vscode-table-cell', () => {
   it('is defined', () => {

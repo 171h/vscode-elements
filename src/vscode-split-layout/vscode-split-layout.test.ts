@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import {VscodeSplitLayout} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
-import {resetMouse} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {resetMouse} from '../includes/browser-commands.js';
 import {parseValue} from './vscode-split-layout.js';
 import {dragElement} from '../includes/test-helpers.js';
 import sinon from 'sinon';

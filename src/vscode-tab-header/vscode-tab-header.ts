@@ -129,8 +129,9 @@ export class VscodeTabHeader extends VscElement {
         <span
           class=${classMap({icon: true, trailing: this.iconPosition === 'end'})}
           aria-hidden="true"
-          ?hidden=${this.iconDisplay === 'text' ||
-          (!this.icon && !this._hasCustomIcon)}
+          ?hidden=${
+            this.iconDisplay === 'text' || (!this.icon && !this._hasCustomIcon)
+          }
           .style=${stylePropertyMap({
             fontSize: `${this._iconSize}px`,
             width: `${this._iconSize}px`,
@@ -138,9 +139,11 @@ export class VscodeTabHeader extends VscElement {
           })}
         >
           <slot name="icon" @slotchange=${this._onIconSlotChange}>
-            ${this.icon
-              ? html`<vscode-icon name=${this.icon}></vscode-icon>`
-              : nothing}
+            ${
+              this.icon
+                ? html`<vscode-icon name=${this.icon}></vscode-icon>`
+                : nothing
+            }
           </slot>
         </span>
         <div class="main"><slot></slot></div>

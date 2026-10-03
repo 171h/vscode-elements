@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect, fixture, html} from '@open-wc/testing';
-import {sendKeys} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {sendKeys} from '../includes/browser-commands.js';
 import sinon from 'sinon';
 import '../vscode-option/index.js';
 import {clickOnElement, moveMouseOnElement} from '../includes/test-helpers.js';
@@ -569,7 +569,7 @@ Ipsum`);
       'ul.options li:nth-child(2)'
     );
 
-    expect(op).lightDom.to.eq(`
+    expect(op).toMatchDOM(`
       <span class="checkbox-icon checked"></span>
       <span class="option-label">Ipsum</span>
     `);
@@ -597,7 +597,7 @@ Ipsum`);
 
     const desc = el.shadowRoot!.querySelector<HTMLDivElement>('.description');
 
-    expect(desc).lightDom.to.eq('Test description');
+    expect(desc).toMatchDOM('Test description');
   });
 
   it('changes the label of an option in an existing select', async () => {
@@ -619,7 +619,7 @@ Ipsum`);
     const li = el.shadowRoot!.querySelectorAll<HTMLLIElement>('li')[1];
     const label = li.querySelector('.option-label');
 
-    expect(label).lightDom.to.eq('Test label');
+    expect(label).toMatchDOM('Test label');
   });
 
   it('changes the disabled state of an option in an existing select', async () => {

@@ -1,5 +1,5 @@
-import {expect, fixture, html} from '@open-wc/testing';
-import {sendKeys} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {sendKeys} from '../includes/browser-commands.js';
 import './index.js';
 import '../vscode-textfield/index.js';
 import '../vscode-button/index.js';
@@ -9,11 +9,13 @@ import type {VscodeButton} from '../vscode-button/index.js';
 
 async function settle(element: VscodeFieldset) {
   await element.updateComplete;
+  // 等待真实动画结束，避免 CI 负载导致固定延时不足。
   await Promise.all(
     element
       .getAnimations({subtree: true})
-      .map((animation) => animation.finished)
+      .map((animation) => animation.finished.catch(() => undefined))
   );
+  await element.updateComplete;
 }
 
 describe('fieldset 审查问题回归', () => {

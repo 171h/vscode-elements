@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect, fixture, html} from '@open-wc/testing';
-import {emulateMedia} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {emulateMedia} from '../includes/browser-commands.js';
 import {literal, unsafeStatic} from 'lit/static-html.js';
 import '../vscode-checkbox/index.js';
 import '../vscode-multi-select/index.js';
@@ -159,6 +159,13 @@ describe('modified state of the form controls', () => {
         testCase.background
       );
 
+      if (testCase.box) {
+        expect(
+          getComputedStyle(surface()).borderTopColor,
+          '标记前的边框颜色'
+        ).to.eq('rgb(60, 60, 60)');
+      }
+
       form.mark();
       await form.updateComplete;
       await control.updateComplete;
@@ -187,10 +194,6 @@ describe('modified state of the form controls', () => {
       if (testCase.box) {
         expect(style.boxShadow, 'the box has a ring').to.not.eq('none');
         expect(style.animationName).to.contain('vsc-form-control-dirty-ring');
-        expect(style.borderTopColor, 'the border before the transition').to.eq(
-          'rgb(60, 60, 60)'
-        );
-
         // 边框渐变为状态颜色，因此在过渡结束后
         // 读取其值。
         await delay(400);

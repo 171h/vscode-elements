@@ -383,9 +383,11 @@ export class VscodeScrollable extends VscElement {
             zIndex: String(this._scrollbarTrackZ),
           })}
         ></div>
-        ${this._isDragging
-          ? html`<div class="prevent-interaction"></div>`
-          : nothing}
+        ${
+          this._isDragging
+            ? html`<div class="prevent-interaction"></div>`
+            : nothing
+        }
         <div
           class=${classMap({
             'scrollbar-track': true,

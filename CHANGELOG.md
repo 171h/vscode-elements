@@ -34,8 +34,13 @@
 
 - **preview**：在右上角导航栏统一选择 Playground 主题与组件尺寸，保留预览操作状态并记住设置。
 - **examples**：补充全部组件的功能场景与全局 Playground 主题；综合页按类别直接展示组件演示，移除工作台、折叠卡片和多余说明。
-- **docs**：在仓库内建立 VitePress 中文文档站点，提供全部公开组件的使用说明、源码 API、交互示例与常见问题。
-- **dev**：将有用示例整合到文档，移除旧开发页面；`start` 与 `serve` 改为启动文档预览。
+
+- **docs**：保留 VitePress 中文文档站点、全部公开组件的源码 API 与交互示例，文档构建和 CI 改用 pnpm。
+- **dev**：`start` 默认启动文档站点；保留原有 HTML 示例，通过 `pnpm dev` 运行源码开发服务器。
+
+### 构建
+
+- **tooling**：使用 pnpm、Vite 和 Vitest 替换原包管理、构建和测试流程，移除 Wireit、独立 Rollup 配置与 Web Test Runner。保留 `@vscode-elements/webview-playground` 的环境模拟及原有 HTML 示例。开发者需使用新的 pnpm 命令，详见工具链迁移报告。
 
 ### 修复
 

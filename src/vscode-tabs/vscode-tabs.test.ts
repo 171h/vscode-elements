@@ -9,7 +9,7 @@ import {
   html,
   elementUpdated,
   waitUntil,
-} from '@open-wc/testing';
+} from '../includes/testing.js';
 
 describe('vscode-tabs', () => {
   it('is defined', () => {
@@ -33,7 +33,7 @@ describe('vscode-tabs', () => {
       </div>
     `);
 
-    await expect(el).to.be.accessible({});
+    await expect(el).toBeAccessible();
   });
 });
 
@@ -205,7 +205,7 @@ describe('标题溢出菜单', () => {
 
   it('包含菜单的组件可访问', async () => {
     const {el} = await createTabs();
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 });
 
@@ -297,7 +297,7 @@ describe('溢出边界与键盘操作', () => {
     await waitUntil(
       () => !!menu.shadowRoot?.querySelector('[role="menuitem"]')
     );
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
     menu.dispatchEvent(
       new KeyboardEvent('keydown', {
         key: 'ArrowDown',

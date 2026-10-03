@@ -7,7 +7,7 @@ import {
   html,
   elementUpdated,
   waitUntil,
-} from '@open-wc/testing';
+} from '../includes/testing.js';
 
 describe('vscode-tab-header', () => {
   it('is defined', () => {
@@ -77,7 +77,7 @@ describe('标题图标', () => {
       </vscode-tabs>
     `);
     await elementUpdated(el);
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 });
 

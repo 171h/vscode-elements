@@ -1,0 +1,1438 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>VSCode Elements · 组件展示页</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/src/main.ts"></script>
+    <style>
+      :root {
+        font-family: var(--vscode-font-family, system-ui, sans-serif);
+        color: var(--vscode-foreground);
+        background: var(--vscode-editor-background);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-width: 320px;
+        background: var(--vscode-editor-background, #1e1e1e);
+        color: var(--vscode-foreground, #ccc);
+      }
+      body.vscode-light {
+        color-scheme: light;
+      }
+      body.vscode-dark,
+      body.vscode-high-contrast {
+        color-scheme: dark;
+      }
+      body.vscode-high-contrast-light {
+        color-scheme: light;
+      }
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        padding: 18px clamp(16px, 4vw, 48px);
+        border-bottom: 1px solid var(--vscode-panel-border, #454545);
+        background: color-mix(
+          in srgb,
+          var(--vscode-editor-background, #1e1e1e) 94%,
+          transparent
+        );
+        backdrop-filter: blur(12px);
+      }
+      header h1 {
+        margin: 0 0 4px;
+        font-size: 22px;
+      }
+      header p {
+        margin: 0 0 14px;
+        opacity: 0.75;
+      }
+      .controls,
+      .toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+      }
+      .controls label {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+      }
+      button,
+      select,
+      input {
+        font: inherit;
+      }
+      button,
+      select {
+        min-height: 28px;
+        padding: 3px 9px;
+        color: inherit;
+        background: var(--vscode-editor-background);
+        border: 1px solid var(--vscode-panel-border, #666);
+        border-radius: 3px;
+        cursor: pointer;
+      }
+      button:hover {
+        border-color: var(--vscode-focusBorder, #0078d4);
+      }
+      input {
+        min-height: 28px;
+        padding: 3px 7px;
+        color: var(--vscode-input-foreground, var(--vscode-foreground));
+        background: var(
+          --vscode-input-background,
+          var(--vscode-editor-background)
+        );
+        border: 1px solid
+          var(--vscode-input-border, var(--vscode-panel-border, transparent));
+        border-radius: 3px;
+      }
+      input::placeholder {
+        color: var(
+          --vscode-input-placeholderForeground,
+          var(--vscode-descriptionForeground)
+        );
+        opacity: 1;
+      }
+      input:focus-visible {
+        border-color: var(--vscode-focusBorder, #0078d4);
+        outline: 1px solid var(--vscode-focusBorder, #0078d4);
+        outline-offset: -1px;
+      }
+      main {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 20px clamp(16px, 4vw, 48px) 64px;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        margin-bottom: 20px;
+      }
+      nav a {
+        padding: 5px 9px;
+        color: inherit;
+        border-radius: 3px;
+        text-decoration: none;
+        background: var(--vscode-editor-inactiveSelectionBackground, #2a2d2e);
+        font-size: 12px;
+      }
+      nav a:hover {
+        background: var(--vscode-focusBorder, #0078d4);
+        color: white;
+      }
+      section {
+        scroll-margin-top: 130px;
+        margin: 30px 0 44px;
+      }
+      section > h2 {
+        margin: 0 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--vscode-panel-border, #454545);
+        font-size: 18px;
+      }
+      section > p {
+        opacity: 0.75;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 14px;
+        align-items: start;
+      }
+      .demo-card {
+        min-width: 0;
+        padding: 14px;
+        border: 1px solid var(--vscode-panel-border, #454545);
+        border-radius: 6px;
+        background: color-mix(
+          in srgb,
+          var(--vscode-editor-background, #1e1e1e) 92%,
+          #888 8%
+        );
+      }
+      .demo-card vscode-textarea,
+      .demo-card vscode-textfield,
+      .demo-card vscode-label,
+      .demo-card vscode-single-select,
+      .demo-card vscode-multi-select,
+      .demo-card vscode-form-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+      }
+      .demo-card h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+      }
+      .demo-card h4 {
+        margin: 0;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+      }
+      .stack {
+        display: grid;
+        gap: 10px;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+      }
+      .wide {
+        grid-column: 1 / -1;
+      }
+      .split-demo {
+        height: 220px;
+        width: 100%;
+      }
+      .sidebar-drag-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+      }
+      .sidebar-drag-demo vscode-tabs {
+        min-width: 0;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .sidebar-drag-demo vscode-tab-panel {
+        min-height: 300px;
+        padding: 8px;
+      }
+      .sidebar-drag-demo fieldset {
+        min-height: 80px;
+      }
+      .tabs-group-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+      .tabs-group-demo vscode-tabs-group {
+        min-width: 0;
+        padding: 8px;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .tabs-group-demo vscode-tab-panel {
+        min-height: 160px;
+        padding: 8px;
+      }
+      .tabs-group-demo fieldset {
+        min-height: 64px;
+      }
+      .fieldset-checkbox-demo {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+        gap: 16px;
+        align-items: start;
+      }
+      .demo-card a {
+        color: var(--vscode-textLink-foreground, #3794ff);
+      }
+      .pane {
+        display: grid;
+        place-items: center;
+        height: 100%;
+        min-width: 0;
+        padding: 14px;
+        overflow: auto;
+        background: var(--vscode-editor-inactiveSelectionBackground, #2a2d2e);
+      }
+      .scroll-demo {
+        height: 130px;
+        border: 1px solid var(--vscode-panel-border, #454545);
+      }
+      .table-demo {
+        width: 100%;
+        height: 260px;
+      }
+      .tree-demo {
+        min-height: 250px;
+      }
+      .vertical-divider {
+        width: 56px;
+        margin: 0 -18px;
+        transform: rotate(90deg);
+      }
+      vscode-progress-ring {
+        width: 26px;
+        height: 26px;
+      }
+      vscode-progress-ring[size='small'] {
+        width: 16px;
+        height: 16px;
+      }
+      vscode-progress-ring[size='large'] {
+        width: 30px;
+        height: 30px;
+      }
+      vscode-toolbar-button[size='small'] {
+        --vsc-icon-size: 14px;
+      }
+      vscode-toolbar-button[size='medium'] {
+        --vsc-icon-size: 16px;
+      }
+      vscode-toolbar-button[size='large'] {
+        --vsc-icon-size: 20px;
+      }
+      vscode-button[block][size='small']::part(base) {
+        min-height: 16px;
+      }
+      vscode-button[block][size='small'] {
+        height: 16px;
+      }
+      vscode-button[block][size='medium']::part(base) {
+        min-height: 26px;
+      }
+      vscode-button[block][size='medium'] {
+        height: 26px;
+      }
+      vscode-button[block][size='large']::part(base) {
+        min-height: 30px;
+      }
+      vscode-button[block][size='large'] {
+        height: 30px;
+      }
+      .event-log {
+        min-height: 34px;
+        max-height: 130px;
+        overflow: auto;
+        padding: 7px;
+        font:
+          12px ui-monospace,
+          monospace;
+        white-space: pre-wrap;
+        color: var(--vscode-editorWidget-foreground, var(--vscode-foreground));
+        background: var(
+          --vscode-editorWidget-background,
+          var(--vscode-editor-background)
+        );
+        border: 1px solid
+          var(--vscode-editorWidget-border, var(--vscode-panel-border));
+        border-radius: 3px;
+      }
+      .muted {
+        opacity: 0.7;
+        font-size: 12px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      @media (max-width: 640px) {
+        header {
+          position: static;
+        }
+        section {
+          scroll-margin-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body class="vscode-dark">
+    <header>
+      <h1>VSCode Elements · 组件展示页</h1>
+      <p>在同一页面查看所有开发场景。先使用全局控件，再操作下方组件。</p>
+      <div class="controls" aria-label="全局示例控件">
+        <vscode-theme-selector id="theme-control"></vscode-theme-selector>
+        <span>Size</span><button data-global-size="small">Small</button
+        ><button data-global-size="medium">Medium</button
+        ><button data-global-size="large">Large</button> <span>Icon</span
+        ><button data-global-icon-size="small">Small</button
+        ><button data-global-icon-size="medium">Medium</button
+        ><button data-global-icon-size="large">Large</button>
+        <label
+          >Filter
+          <input id="filter-control" type="search" placeholder="组件名称"
+        /></label>
+        <button id="reset-control" type="button">Reset controls</button>
+      </div>
+    </header>
+    <main>
+      <nav aria-label="组件章节">
+        <a href="#actions">Actions</a><a href="#forms">Forms</a
+        ><a href="#selection">Selection</a><a href="#layout">Layout</a
+        ><a href="#data">Data display</a><a href="#navigation">Navigation</a
+        ><a href="#feedback">Feedback</a>
+      </nav>
+
+      <section id="actions" data-component-section="actions">
+        <h2>操作、图标与菜单</h2>
+        <div class="grid">
+          <article
+            class="demo-card"
+            data-components="vscode-button vscode-icon"
+          >
+            <h3>按钮样式</h3>
+            <div class="stack">
+              <div class="row">
+                <vscode-button>Default</vscode-button
+                ><vscode-button secondary>Secondary</vscode-button
+                ><vscode-button
+                  icon="settings-gear"
+                  icon-only
+                  aria-label="设置"
+                ></vscode-button>
+              </div>
+              <div class="row">
+                <vscode-button disabled>Disabled</vscode-button
+                ><vscode-button icon="sync" icon-spin>Loading</vscode-button
+                ><vscode-button icon="add" icon-after="chevron-right"
+                  >With icons</vscode-button
+                >
+              </div>
+              <vscode-button block icon="check">Block button</vscode-button>
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-button-group vscode-button"
+          >
+            <h3>按钮组与下拉菜单</h3>
+            <vscode-button-group
+              ><vscode-button>Run</vscode-button
+              ><vscode-button>Debug</vscode-button
+              ><vscode-button
+                aria-label="更多"
+                icon="ellipsis"
+                icon-only
+              ></vscode-button
+            ></vscode-button-group>
+            <p class="muted">组合操作与纯图标操作。</p>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-toolbar-container vscode-toolbar-button vscode-icon"
+          >
+            <h3>工具栏</h3>
+            <vscode-toolbar-container
+              ><vscode-toolbar-button
+                label="新建"
+                icon="add"
+              ></vscode-toolbar-button
+              ><vscode-toolbar-button
+                label="保存"
+                icon="save"
+              ></vscode-toolbar-button
+              ><vscode-toolbar-button
+                label="固定"
+                icon="pin"
+                toggleable
+                checked
+              ></vscode-toolbar-button
+            ></vscode-toolbar-container>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-badge vscode-icon vscode-divider"
+          >
+            <h3>徽章、图标与分隔线</h3>
+            <div class="row">
+              <vscode-icon name="check" size="large"></vscode-icon
+              ><vscode-badge>3</vscode-badge
+              ><vscode-badge variant="counter">New</vscode-badge
+              ><vscode-badge variant="activity-bar-counter">12</vscode-badge
+              ><vscode-badge variant="tab-header-counter">4</vscode-badge>
+            </div>
+            <vscode-divider></vscode-divider>
+            <div class="row">
+              <vscode-icon name="sync" spin></vscode-icon
+              ><vscode-icon
+                name="warning"
+                action-icon
+                label="警告"
+              ></vscode-icon
+              ><vscode-icon name="missing-icon"></vscode-icon>
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-context-menu vscode-context-menu-item"
+          >
+            <h3>上下文菜单</h3>
+            <vscode-button id="context-menu-toggle" icon="menu"
+              >Toggle menu</vscode-button
+            >
+            <vscode-context-menu
+              id="context-menu"
+              prevent-close
+            ></vscode-context-menu>
+            <p class="muted">切换、键盘导航、分隔符与快捷键。</p>
+          </article>
+        </div>
+      </section>
+
+      <section id="forms" data-component-section="forms">
+        <h2>表单与输入类型</h2>
+        <div class="grid">
+          <article
+            class="demo-card wide"
+            data-components="vscode-textfield vscode-label vscode-icon"
+          >
+            <h3>文本框 · 所有输入类型</h3>
+            <div class="grid">
+              <div class="stack">
+                <vscode-label for="tf-text">Text</vscode-label
+                ><vscode-textfield
+                  id="tf-text"
+                  placeholder="占位文字"
+                  value="Hello"
+                ></vscode-textfield
+                ><vscode-label for="tf-email">Email</vscode-label
+                ><vscode-textfield
+                  id="tf-email"
+                  type="email"
+                  placeholder="name@example.com"
+                ></vscode-textfield
+                ><vscode-label for="tf-password">Password</vscode-label
+                ><vscode-textfield
+                  id="tf-password"
+                  type="password"
+                  value="secret"
+                ></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-number">Number / step</vscode-label
+                ><vscode-textfield
+                  id="tf-number"
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  value="12.5"
+                ></vscode-textfield
+                ><vscode-label for="tf-date">Date / time</vscode-label
+                ><vscode-textfield id="tf-date" type="date"></vscode-textfield
+                ><vscode-label for="tf-file">File</vscode-label
+                ><vscode-textfield id="tf-file" type="file"></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-search">Search with slots</vscode-label
+                ><vscode-textfield
+                  id="tf-search"
+                  type="search"
+                  clearable
+                  placeholder="搜索"
+                  ><vscode-icon
+                    name="search"
+                    slot="content-before"
+                  ></vscode-icon
+                  ><vscode-icon
+                    name="sparkle"
+                    slot="content-after"
+                    action-icon
+                    label="搜索操作"
+                  ></vscode-icon></vscode-textfield
+                ><vscode-label for="tf-pattern">Required + pattern</vscode-label
+                ><vscode-textfield
+                  id="tf-pattern"
+                  required
+                  pattern="^/.*"
+                  placeholder="/workspace/path"
+                ></vscode-textfield
+                ><vscode-label for="tf-percentage">Percentage</vscode-label
+                ><vscode-textfield
+                  id="tf-percentage"
+                  percentage
+                  value="0.25"
+                ></vscode-textfield
+                ><vscode-textfield disabled value="Disabled"></vscode-textfield>
+              </div>
+            </div>
+            <h3 style="margin-top: 18px">其他支持的原生类型</h3>
+            <div class="grid">
+              <div class="stack">
+                <vscode-label for="tf-color">Color</vscode-label>
+                <vscode-textfield id="tf-color" type="color"></vscode-textfield>
+                <vscode-label for="tf-datetime">Datetime local</vscode-label>
+                <vscode-textfield
+                  id="tf-datetime"
+                  type="datetime-local"
+                ></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-month">Month</vscode-label>
+                <vscode-textfield id="tf-month" type="month"></vscode-textfield>
+                <vscode-label for="tf-time">Time</vscode-label>
+                <vscode-textfield id="tf-time" type="time"></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-tel">Telephone</vscode-label>
+                <vscode-textfield
+                  id="tf-tel"
+                  type="tel"
+                  placeholder="+1 555 0100"
+                ></vscode-textfield>
+                <vscode-label for="tf-url">URL</vscode-label>
+                <vscode-textfield
+                  id="tf-url"
+                  type="url"
+                  placeholder="https://example.com"
+                ></vscode-textfield>
+              </div>
+              <div class="stack">
+                <vscode-label for="tf-week">Week</vscode-label>
+                <vscode-textfield id="tf-week" type="week"></vscode-textfield>
+                <vscode-label for="tf-readonly">Readonly</vscode-label>
+                <vscode-textfield
+                  id="tf-readonly"
+                  readonly
+                  value="Read-only value"
+                ></vscode-textfield>
+              </div>
+            </div>
+          </article>
+          <article class="demo-card" data-components="vscode-textarea">
+            <h3>多行文本框</h3>
+            <div class="stack">
+              <vscode-textarea rows="3" placeholder="简短文字"></vscode-textarea
+              ><vscode-textarea
+                rows="3"
+                maxlength="80"
+                resize="vertical"
+                value="Resizable, maxlength and readonly"
+              ></vscode-textarea
+              ><vscode-textarea
+                rows="2"
+                readonly
+                value="Read only"
+              ></vscode-textarea>
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-checkbox vscode-checkbox-group vscode-label"
+          >
+            <h3>复选框</h3>
+            <p class="muted">水平排列</p>
+            <vscode-checkbox-group label="偏好设置"
+              ><vscode-checkbox label="通知" checked></vscode-checkbox
+              ><vscode-checkbox label="遥测" indeterminate></vscode-checkbox
+              ><vscode-checkbox label="禁用选项" disabled></vscode-checkbox
+            ></vscode-checkbox-group>
+            <p class="muted">垂直排列</p>
+            <vscode-checkbox-group variant="vertical"
+              ><vscode-checkbox label="保存时格式化" checked></vscode-checkbox
+              ><vscode-checkbox label="自动保存" toggle></vscode-checkbox
+            ></vscode-checkbox-group>
+            <vscode-checkbox label="独立必填控件" required></vscode-checkbox>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-radio vscode-radio-group"
+          >
+            <h3>单选按钮组</h3>
+            <p class="muted">水平排列</p>
+            <vscode-radio-group label="环境"
+              ><vscode-radio name="env" value="dev">Development</vscode-radio
+              ><vscode-radio name="env" value="stage" default-checked
+                >Staging</vscode-radio
+              ><vscode-radio name="env" value="prod" disabled
+                >Production</vscode-radio
+              ></vscode-radio-group
+            >
+            <p class="muted">垂直排列</p>
+            <vscode-radio-group variant="vertical"
+              ><vscode-radio name="channel" value="stable" checked
+                >Stable</vscode-radio
+              ><vscode-radio name="channel" value="insiders"
+                >Insiders</vscode-radio
+              ></vscode-radio-group
+            >
+          </article>
+          <article
+            id="fieldset-checkbox-card"
+            class="demo-card wide"
+            data-components="vscode-fieldset vscode-checkbox"
+          >
+            <h3>Fieldset 复选框 · 区域开关</h3>
+            <p class="muted">
+              复选框位于边框右上角并与标题对齐。visible
+              模式保留禁用内容，collapsed 隐藏标题下方的内容，minimal
+              仅保留复选框。高度变化带有动画。
+              <a href="./vscode-fieldset/checkbox.html">打开独立测试页面</a>
+            </p>
+            <div class="fieldset-checkbox-demo">
+              <vscode-fieldset checkbox checkbox-label="保持可见">
+                <fieldset>
+                  <legend>保持可见</legend>
+                  <label>值 <input value="已禁用，仍可见" /></label>
+                </fieldset>
+              </vscode-fieldset>
+              <vscode-fieldset
+                checkbox
+                checked
+                checkbox-label="折叠"
+                unchecked-mode="collapsed"
+              >
+                <fieldset>
+                  <legend>折叠</legend>
+                  <label>值 <input /></label>
+                </fieldset>
+              </vscode-fieldset>
+              <vscode-fieldset
+                checkbox
+                checked
+                checkbox-label="最小显示"
+                unchecked-mode="minimal"
+              >
+                <fieldset>
+                  <legend>最小显示</legend>
+                  <label>值 <input /></label>
+                </fieldset>
+              </vscode-fieldset>
+            </div>
+          </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper vscode-single-select vscode-multi-select vscode-option"
+          >
+            <h3>表单容器与校验</h3>
+            <vscode-form-container
+              ><vscode-form-group label="项目"
+                ><vscode-single-select name="project" required
+                  ><vscode-option value="elements"
+                    >VSCode Elements</vscode-option
+                  ><vscode-option value="playground"
+                    >Webview Playground</vscode-option
+                  ><vscode-option value="disabled" disabled
+                    >Unavailable</vscode-option
+                  ></vscode-single-select
+                ><vscode-form-helper
+                  >Required single select.</vscode-form-helper
+                ></vscode-form-group
+              ><vscode-form-group label="标签"
+                ><vscode-multi-select name="tags" combobox required
+                  ><vscode-option value="web" selected
+                    >Web components</vscode-option
+                  ><vscode-option value="lit">Lit</vscode-option
+                  ><vscode-option value="a11y"
+                    >Accessibility</vscode-option
+                  ></vscode-multi-select
+                ><vscode-form-helper
+                  >Combobox, multiple values and required
+                  validation.</vscode-form-helper
+                ></vscode-form-group
+              >
+              <div class="row">
+                <vscode-button type="submit">Submit</vscode-button
+                ><vscode-button type="reset" secondary>Reset</vscode-button>
+              </div></vscode-form-container
+            >
+          </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper"
+          >
+            <h3>表单容器的已修改状态</h3>
+            <p class="muted">
+              修改表单后，表单控件背景变为浅蓝色，并在指定时间后渐变回正常状态。同一时间仅高亮一个表单。
+            </p>
+            <div class="grid">
+              <vscode-form-container id="dirty-form-default">
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-default">Default (5s)</vscode-label>
+                  <vscode-textfield id="dirty-default"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+              <vscode-form-container id="dirty-form-fast" mark-duration="1.5s">
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-fast">1.5s</vscode-label>
+                  <vscode-textfield id="dirty-fast"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+              <vscode-form-container
+                id="dirty-form-forever"
+                mark-duration="forever"
+              >
+                <vscode-form-group variant="vertical" size="small">
+                  <vscode-label for="dirty-forever">forever</vscode-label>
+                  <vscode-textfield id="dirty-forever"></vscode-textfield>
+                </vscode-form-group>
+              </vscode-form-container>
+            </div>
+          </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-form-container vscode-form-group vscode-form-helper vscode-single-select vscode-multi-select vscode-option vscode-button"
+          >
+            <h3>下拉选择框的已修改状态</h3>
+            <p class="muted">
+              选择任一下拉框的选项后，该表单中每个下拉框的展示区域都变为浅蓝色。选择模式、组合框模式，以及空选中、预选和多选场景均适用。下方演示状态结束的三种方式。
+            </p>
+            <div class="grid">
+              <div class="stack">
+                <h4>默认持续时间</h4>
+                <p class="muted">5 秒后状态渐变回主题正常状态。</p>
+                <vscode-form-container id="dirty-form-dropdowns">
+                  <div class="grid">
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-empty"
+                        >Empty select</vscode-label
+                      >
+                      <vscode-single-select id="dirty-drop-empty">
+                        <vscode-option value="one">One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-single-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-selected"
+                        >Preselected select</vscode-label
+                      >
+                      <vscode-single-select id="dirty-drop-selected">
+                        <vscode-option value="one">One</vscode-option>
+                        <vscode-option value="two" selected>Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-single-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-combobox"
+                        >Combobox</vscode-label
+                      >
+                      <vscode-single-select id="dirty-drop-combobox" combobox>
+                        <vscode-option value="one">One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-single-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-multi"
+                        >Multiple</vscode-label
+                      >
+                      <vscode-multi-select id="dirty-drop-multi">
+                        <vscode-option value="one" selected>One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-multi-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-multi-combobox"
+                        >Multiple combobox</vscode-label
+                      >
+                      <vscode-multi-select
+                        id="dirty-drop-multi-combobox"
+                        combobox
+                      >
+                        <vscode-option value="one" selected>One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-multi-select>
+                    </vscode-form-group>
+                    <vscode-form-group variant="vertical" size="small">
+                      <vscode-label for="dirty-drop-open">Open</vscode-label>
+                      <vscode-multi-select id="dirty-drop-open" open>
+                        <vscode-option value="one" selected>One</vscode-option>
+                        <vscode-option value="two">Two</vscode-option>
+                        <vscode-option value="three">Three</vscode-option>
+                      </vscode-multi-select>
+                    </vscode-form-group>
+                  </div>
+                  <div class="row">
+                    <vscode-button id="dirty-drop-select" type="button"
+                      >Select a value</vscode-button
+                    >
+                  </div>
+                </vscode-form-container>
+              </div>
+
+              <div class="stack">
+                <h4>永久状态</h4>
+                <p class="muted">
+                  没有时间限制：状态保持到修改其他表单，或调用
+                  <code>reset()</code>。
+                </p>
+                <vscode-form-container
+                  id="dirty-form-dropdown-forever"
+                  mark-duration="forever"
+                >
+                  <vscode-form-group variant="vertical" size="small">
+                    <vscode-label for="dirty-drop-forever"
+                      >Perpetual</vscode-label
+                    >
+                    <vscode-single-select id="dirty-drop-forever">
+                      <vscode-option value="one">One</vscode-option>
+                      <vscode-option value="two">Two</vscode-option>
+                    </vscode-single-select>
+                  </vscode-form-group>
+                </vscode-form-container>
+                <div class="row">
+                  <vscode-button id="dirty-drop-reset" secondary type="button"
+                    >reset()</vscode-button
+                  >
+                </div>
+              </div>
+
+              <div class="stack">
+                <h4>短持续时间与互斥</h4>
+                <p class="muted">
+                  状态在 1.5
+                  秒后结束。选择此表单中的下拉框会立即恢复上方永久表单，使页面中仅高亮一个表单。
+                </p>
+                <vscode-form-container
+                  id="dirty-form-dropdown-short"
+                  mark-duration="1.5s"
+                >
+                  <vscode-form-group variant="vertical" size="small">
+                    <vscode-label for="dirty-drop-short">1.5s</vscode-label>
+                    <vscode-multi-select id="dirty-drop-short" open>
+                      <vscode-option value="one" selected>One</vscode-option>
+                      <vscode-option value="two">Two</vscode-option>
+                    </vscode-multi-select>
+                  </vscode-form-group>
+                  <vscode-form-group variant="vertical" size="small">
+                    <vscode-label for="dirty-drop-short-combobox"
+                      >1.5s combobox</vscode-label
+                    >
+                    <vscode-single-select
+                      id="dirty-drop-short-combobox"
+                      combobox
+                    >
+                      <vscode-option value="one">One</vscode-option>
+                      <vscode-option value="two">Two</vscode-option>
+                    </vscode-single-select>
+                  </vscode-form-group>
+                </vscode-form-container>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="selection" data-component-section="selection">
+        <h2>选择与展开</h2>
+        <div class="grid">
+          <article
+            class="demo-card"
+            data-components="vscode-single-select vscode-option"
+          >
+            <h3>单选框模式</h3>
+            <div class="stack">
+              <vscode-single-select label="选择模式"
+                ><vscode-option value="one">One</vscode-option
+                ><vscode-option value="two" selected
+                  >Two (selected)</vscode-option
+                ><vscode-option value="three" description="With description"
+                  >Three</vscode-option
+                ></vscode-single-select
+              ><vscode-single-select
+                label="组合框"
+                combobox
+                creatable
+                placeholder="输入或选择"
+                ><vscode-option value="alpha">Alpha</vscode-option
+                ><vscode-option value="beta">Beta</vscode-option
+                ><vscode-option value="gamma" disabled
+                  >Gamma (disabled)</vscode-option
+                ></vscode-single-select
+              >
+            </div>
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-multi-select vscode-option"
+          >
+            <h3>多选框模式</h3>
+            <div class="stack">
+              <vscode-multi-select label="选择模式"
+                ><vscode-option value="one" selected>One</vscode-option
+                ><vscode-option value="two">Two</vscode-option
+                ><vscode-option value="three"
+                  >Three</vscode-option
+                ></vscode-multi-select
+              ><vscode-multi-select label="组合框" combobox
+                ><vscode-option value="red">Red</vscode-option
+                ><vscode-option value="green" selected>Green</vscode-option
+                ><vscode-option value="blue"
+                  >Blue</vscode-option
+                ></vscode-multi-select
+              >
+            </div>
+          </article>
+          <article class="demo-card" data-components="vscode-collapsible">
+            <h3>折叠面板</h3>
+            <div class="stack">
+              <vscode-collapsible title="Collapsed by default"
+                ><p>通过标题切换隐藏内容。</p></vscode-collapsible
+              ><vscode-collapsible title="Open with actions" open
+                ><span slot="actions"
+                  ><vscode-button
+                    icon-only
+                    aria-label="更多"
+                    icon="ellipsis"
+                  ></vscode-button
+                ></span>
+                <p>标题操作与展开状态。</p></vscode-collapsible
+              >
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="layout" data-component-section="layout">
+        <h2>布局演示</h2>
+        <p>拖动手柄、切换标签页并滚动各面板，检查布局组件之间的交互。</p>
+        <div class="grid">
+          <article
+            class="demo-card wide"
+            data-components="vscode-tabs vscode-tab-header vscode-tab-panel"
+          >
+            <h3>标签页 · 激活内容与面板样式</h3>
+            <vscode-tabs id="demo-tabs" panel
+              ><vscode-tab-header>Overview</vscode-tab-header
+              ><vscode-tab-panel
+                ><div class="stack">
+                  <vscode-textfield placeholder="标签页内容"></vscode-textfield>
+                  <p>激活面板内容。</p>
+                </div></vscode-tab-panel
+              ><vscode-tab-header>Settings</vscode-tab-header
+              ><vscode-tab-panel
+                ><vscode-checkbox
+                  label="启用功能"
+                  checked
+                ></vscode-checkbox></vscode-tab-panel
+              ><vscode-tab-header>Third panel</vscode-tab-header
+              ><vscode-tab-panel
+                >Panel-style tab header.</vscode-tab-panel
+              ></vscode-tabs
+            >
+          </article>
+          <article
+            id="sidebar-drag-card"
+            class="demo-card wide"
+            data-components="vscode-tabs vscode-tab-header vscode-tab-panel vscode-fieldset fieldset drag drop"
+          >
+            <h3>标签页 / fieldset · 侧栏拖拽</h3>
+            <p class="muted">
+              拖拽标签页标题可排序，拖拽视图标题可移动视图。悬停在标签页中间可显示其面板，在边缘放置可创建标签页。将标签页标题拖入另一面板可合并其视图，也可在下方两个侧栏之间移动视图。
+              <a href="./vscode-tabs/drag-drop.html">打开独立测试页面</a>
+            </p>
+            <div class="sidebar-drag-demo">
+              <vscode-tabs id="sidebar-drag-primary">
+                <vscode-tab-header>资源管理器</vscode-tab-header>
+                <vscode-tab-panel>
+                  <vscode-fieldset>
+                    <fieldset>
+                      <legend>文件</legend>
+                      <label>筛选 <input value="移动时保留此值" /></label>
+                    </fieldset>
+                  </vscode-fieldset>
+                  <fieldset>
+                    <legend>大纲</legend>
+                    <p>类和函数大纲</p>
+                  </fieldset>
+                  <fieldset>
+                    <legend>时间线</legend>
+                    <p>最近编辑记录</p>
+                  </fieldset>
+                </vscode-tab-panel>
+                <vscode-tab-header>搜索</vscode-tab-header>
+                <vscode-tab-panel>
+                  <fieldset>
+                    <legend>搜索结果</legend>
+                    <label>查询 <input /></label>
+                  </fieldset>
+                </vscode-tab-panel>
+                <vscode-tab-header>空面板</vscode-tab-header>
+                <vscode-tab-panel></vscode-tab-panel>
+              </vscode-tabs>
+              <vscode-tabs id="sidebar-drag-secondary">
+                <vscode-tab-header>辅助侧栏</vscode-tab-header>
+                <vscode-tab-panel>
+                  <fieldset>
+                    <legend>笔记</legend>
+                    <p>将任一侧栏的视图拖到此处。</p>
+                  </fieldset>
+                </vscode-tab-panel>
+              </vscode-tabs>
+            </div>
+          </article>
+          <article
+            id="tabs-group-card"
+            class="demo-card wide"
+            data-components="vscode-tabs-group vscode-tabs vscode-tab-header vscode-tab-panel drag drop"
+          >
+            <h3>标签页组 · 容器与跨容器移动</h3>
+            <p class="muted">
+              拖拽标签栏背景可移动整组，将标签页标题拖到容器可拆分出新组，将
+              fieldset 标题拖出可为该视图创建新组。空容器显示可放置组的位置。
+              <a href="./vscode-tabs/group-drag-drop.html">打开独立测试页面</a>
+            </p>
+            <div class="tabs-group-demo">
+              <vscode-tabs-group id="gallery-group-primary">
+                <vscode-tabs>
+                  <vscode-tab-header>资源管理器</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>文件</legend>
+                      <label>筛选 <input value="保留此值" /></label>
+                    </fieldset>
+                  </vscode-tab-panel>
+                  <vscode-tab-header>搜索</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>搜索结果</legend>
+                      <p>拖拽标签栏背景可调整组的顺序。</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+                <vscode-tabs>
+                  <vscode-tab-header>笔记</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>草稿</legend>
+                      <p>将标签页或视图拖到容器可拆分为独立组。</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+              </vscode-tabs-group>
+              <vscode-tabs-group id="gallery-group-secondary">
+                <vscode-tabs>
+                  <vscode-tab-header>辅助视图</vscode-tab-header>
+                  <vscode-tab-panel>
+                    <fieldset>
+                      <legend>收件箱</legend>
+                      <p>在两个容器之间移动组。</p>
+                    </fieldset>
+                  </vscode-tab-panel>
+                </vscode-tabs>
+              </vscode-tabs-group>
+            </div>
+          </article>
+          <article
+            class="demo-card wide"
+            data-components="vscode-split-layout vscode-scrollable"
+          >
+            <h3>分割布局 · 水平、垂直、嵌套与尺寸约束</h3>
+            <vscode-split-layout
+              class="split-demo"
+              split="horizontal"
+              min-start="60"
+              min-end="60"
+              reset-on-dbl-click
+              ><div slot="start" class="pane">
+                <vscode-scrollable always-visible class="scroll-demo"
+                  >Start pane<br /><br />Drag the divider. Double-click to
+                  reset.<br /><br />Scrollable content.</vscode-scrollable
+                >
+              </div>
+              <div slot="end" class="pane">
+                <vscode-split-layout class="split-demo" split="vertical"
+                  ><div slot="start" class="pane">Nested top</div>
+                  <div slot="end" class="pane">
+                    Nested bottom
+                  </div></vscode-split-layout
+                >
+              </div></vscode-split-layout
+            >
+          </article>
+          <article class="demo-card" data-components="vscode-scrollable">
+            <h3>滚动容器样式</h3>
+            <vscode-scrollable class="scroll-demo" always-visible
+              ><div style="width: 700px; height: 280px; padding: 10px">
+                Oversized content tests both scrollbars and always-visible
+                tracks.
+              </div></vscode-scrollable
+            >
+          </article>
+        </div>
+      </section>
+
+      <section id="data" data-component-section="data">
+        <h2>数据展示</h2>
+        <div class="grid">
+          <article
+            class="demo-card wide"
+            data-components="vscode-table vscode-table-header vscode-table-header-cell vscode-table-body vscode-table-row vscode-table-cell"
+          >
+            <h3>表格 · 边框、斑马纹、缩放与滚动</h3>
+            <vscode-table
+              class="table-demo"
+              bordered-columns
+              bordered-rows
+              zebra-odd
+              resizable
+              scrollable
+              ><vscode-table-header
+                ><vscode-table-header-cell min-width="140px"
+                  >Package</vscode-table-header-cell
+                ><vscode-table-header-cell min-width="90px"
+                  >Version</vscode-table-header-cell
+                ><vscode-table-header-cell>Downloads</vscode-table-header-cell
+                ><vscode-table-header-cell
+                  >State</vscode-table-header-cell
+                ></vscode-table-header
+              ><vscode-table-body
+                ><vscode-table-row
+                  ><vscode-table-cell>webview-playground</vscode-table-cell
+                  ><vscode-table-cell>2.1.0</vscode-table-cell
+                  ><vscode-table-cell>12,430</vscode-table-cell
+                  ><vscode-table-cell
+                    >Stable</vscode-table-cell
+                  ></vscode-table-row
+                ><vscode-table-row
+                  ><vscode-table-cell>vscode-elements</vscode-table-cell
+                  ><vscode-table-cell>3.0.1</vscode-table-cell
+                  ><vscode-table-cell>8,902</vscode-table-cell
+                  ><vscode-table-cell
+                    >Current</vscode-table-cell
+                  ></vscode-table-row
+                ><vscode-table-row
+                  ><vscode-table-cell>lit</vscode-table-cell
+                  ><vscode-table-cell>3.2.0</vscode-table-cell
+                  ><vscode-table-cell>44,128</vscode-table-cell
+                  ><vscode-table-cell
+                    >Dependency</vscode-table-cell
+                  ></vscode-table-row
+                ></vscode-table-body
+              ></vscode-table
+            >
+          </article>
+          <article
+            class="demo-card"
+            data-components="vscode-tree vscode-tree-item"
+          >
+            <h3>树 · 嵌套、激活与多选</h3>
+            <div class="row">
+              <vscode-button id="tree-expand" icon="expand-all"
+                >Expand all</vscode-button
+              ><vscode-button id="tree-collapse" icon="collapse-all" secondary
+                >Collapse all</vscode-button
+              >
+            </div>
+            <vscode-tree
+              id="tree-demo"
+              class="tree-demo"
+              multi-select
+              expand-mode="singleClick"
+            >
+              <vscode-tree-item branch active
+                >Explorer
+                <vscode-tree-item branch
+                  >src
+                  <vscode-tree-item>index.ts</vscode-tree-item>
+                  <vscode-tree-item>main.ts</vscode-tree-item>
+                </vscode-tree-item>
+              </vscode-tree-item>
+              <vscode-tree-item branch open
+                >Components
+                <vscode-tree-item>Button</vscode-tree-item>
+                <vscode-tree-item>Textfield</vscode-tree-item>
+                <vscode-tree-item>Table</vscode-tree-item>
+              </vscode-tree-item>
+              <vscode-tree-item>README.md</vscode-tree-item>
+            </vscode-tree>
+          </article>
+        </div>
+      </section>
+
+      <section id="navigation" data-component-section="navigation">
+        <h2>导航与结构</h2>
+        <div class="grid">
+          <article class="demo-card" data-components="vscode-label">
+            <h3>标签状态</h3>
+            <vscode-label>Default label</vscode-label
+            ><vscode-label required>Required label</vscode-label
+            ><vscode-label disabled>Disabled label</vscode-label>
+          </article>
+          <article class="demo-card" data-components="vscode-divider">
+            <h3>分隔线方向</h3>
+            <p class="muted">垂直排列</p>
+            <div class="row" style="height: 70px">
+              <span>Before</span
+              ><vscode-divider class="vertical-divider"></vscode-divider
+              ><span>After</span>
+            </div>
+            <p class="muted">水平排列</p>
+            <vscode-divider></vscode-divider>
+          </article>
+        </div>
+      </section>
+
+      <section id="feedback" data-component-section="feedback">
+        <h2>进度与事件检查</h2>
+        <div class="grid">
+          <article class="demo-card" data-components="vscode-progress-bar">
+            <h3>进度条</h3>
+            <div class="stack">
+              <vscode-progress-bar
+                value="24"
+                max="100"
+                aria-label="构建进度"
+              ></vscode-progress-bar
+              ><vscode-progress-bar
+                indeterminate
+                long-running-threshold="1"
+              ></vscode-progress-bar
+              ><vscode-progress-bar
+                indeterminate
+                aria-label="加载中"
+              ></vscode-progress-bar>
+            </div>
+          </article>
+          <article class="demo-card" data-components="vscode-progress-ring">
+            <h3>进度环</h3>
+            <div class="row">
+              <vscode-progress-ring aria-label="加载中"></vscode-progress-ring>
+              <span class="muted">Follows the global form-control size.</span>
+            </div>
+          </article>
+          <article class="demo-card wide">
+            <h3>事件日志</h3>
+            <p class="muted">操作控件时，在此捕获冒泡的组件事件。</p>
+            <div id="event-log" class="event-log" role="log">Ready.</div>
+            <vscode-button id="clear-log" type="button" icon="clear-all"
+              >Clear log</vscode-button
+            >
+          </article>
+        </div>
+      </section>
+    </main>
+    <script>
+      const themeControl = document.querySelector('#theme-control');
+      const eventLog = document.querySelector('#event-log');
+      const setTheme = (theme) => {
+        const dropdown = themeControl.shadowRoot?.querySelector('select');
+        if (!dropdown) return;
+        dropdown.value = theme;
+        dropdown.dispatchEvent(new Event('change'));
+      };
+      const setIconSize = (size) =>
+        document
+          .querySelectorAll('main vscode-icon, main vscode-toolbar-button')
+          .forEach((el) => el.setAttribute('size', size));
+      const setSize = (size) => {
+        document
+          .querySelectorAll(
+            'main vscode-button, main vscode-checkbox, main vscode-radio, main vscode-textfield, main vscode-textarea, main vscode-single-select, main vscode-multi-select, main vscode-form-group, main vscode-progress-ring, main vscode-table, main vscode-tree'
+          )
+          .forEach((el) => el.setAttribute('size', size));
+        document
+          .querySelectorAll(
+            'main vscode-fieldset, main vscode-fieldset > fieldset, main vscode-tab-panel > fieldset'
+          )
+          .forEach((el) => el.setAttribute('size', size));
+        setIconSize(size);
+      };
+      document
+        .querySelectorAll('[data-global-size]')
+        .forEach((button) =>
+          button.addEventListener('click', () =>
+            setSize(button.dataset.globalSize)
+          )
+        );
+      document
+        .querySelectorAll('[data-global-icon-size]')
+        .forEach((button) =>
+          button.addEventListener('click', () =>
+            setIconSize(button.dataset.globalIconSize)
+          )
+        );
+      const contextMenu = document.querySelector('#context-menu');
+      contextMenu.data = [
+        {label: 'Rename', keybinding: 'F2'},
+        {label: 'Copy', keybinding: 'Ctrl+C'},
+        {separator: true},
+        {label: 'Delete', keybinding: 'Delete'},
+      ];
+      document
+        .querySelector('#context-menu-toggle')
+        .addEventListener('click', () => {
+          contextMenu.show = !contextMenu.show;
+        });
+      document.querySelector('#tree-expand').addEventListener('click', () => {
+        document.querySelector('#tree-demo').expandAll();
+      });
+      document.querySelector('#tree-collapse').addEventListener('click', () => {
+        document.querySelector('#tree-demo').collapseAll();
+      });
+      document
+        .querySelector('#filter-control')
+        .addEventListener('input', (event) => {
+          const query = event.target.value.toLowerCase().trim();
+          document
+            .querySelectorAll('[data-component-section]')
+            .forEach((section) => {
+              let visible = false;
+              section.querySelectorAll('[data-components]').forEach((card) => {
+                const match = !query || card.dataset.components.includes(query);
+                card.classList.toggle('hidden', !match);
+                visible ||= match;
+              });
+              section.classList.toggle('hidden', !!query && !visible);
+            });
+        });
+      document.querySelector('#reset-control').addEventListener('click', () => {
+        setTheme('dark-v2');
+        setSize('medium');
+        setIconSize('medium');
+        document.querySelector('#filter-control').value = '';
+        document
+          .querySelectorAll('[data-components], [data-component-section]')
+          .forEach((el) => el.classList.remove('hidden'));
+      });
+      // 关闭的下拉框无法点击选项，因此通过代码选中一个值，
+      // 以展示下拉框的状态。
+      // change 事件像真实选择事件一样冒泡，
+      // 并标记表单已修改。
+      document
+        .querySelector('#dirty-drop-select')
+        .addEventListener('click', () => {
+          const dropdown = document.querySelector('#dirty-drop-empty');
+          const options = Array.from(
+            dropdown.querySelectorAll('vscode-option')
+          ).map((option) => option.value);
+          const index = options.indexOf(dropdown.value);
+
+          dropdown.value = options[(index + 1) % options.length];
+          dropdown.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+      document
+        .querySelector('#dirty-drop-reset')
+        .addEventListener('click', () => {
+          document.querySelector('#dirty-form-dropdown-forever').reset();
+        });
+      document.querySelector('#clear-log').addEventListener('click', () => {
+        eventLog.textContent = 'Cleared.';
+      });
+      document.addEventListener('vsc-tabs-layout-change', (event) => {
+        eventLog.textContent =
+          `[${new Date().toLocaleTimeString()}] ${event.type}：已移动 ${event.detail.views.length} 个视图\n` +
+          eventLog.textContent;
+      });
+      document.addEventListener('click', (event) => {
+        const target = event
+          .composedPath()
+          .find(
+            (item) =>
+              item instanceof HTMLElement && item.tagName.startsWith('VSCODE-')
+          );
+        if (!target || target === eventLog) return;
+        const name = target.tagName.toLowerCase();
+        eventLog.textContent =
+          `[${new Date().toLocaleTimeString()}] ${event.type} on <${name}>\n` +
+          eventLog.textContent;
+      });
+    </script>
+  </body>
+</html>

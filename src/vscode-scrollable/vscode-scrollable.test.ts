@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {resetMouse} from '@web/test-runner-commands';
+import {resetMouse} from '../includes/browser-commands.js';
 import {clickOnElement, dragElement} from '../includes/test-helpers.js';
 import {VscodeScrollable} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import sinon from 'sinon';
 
 describe('vscode-scrollable', () => {

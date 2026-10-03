@@ -1,5 +1,5 @@
 import {VscodeTabPanel} from './index.js';
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 
 describe('vscode-tab-panel', () => {
   it('is defined', () => {

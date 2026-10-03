@@ -1,5 +1,5 @@
 import {VscodeBadge} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-badge', () => {
   it('is defined', () => {
@@ -10,6 +10,6 @@ describe('vscode-badge', () => {
   it('is accessible', async () => {
     const el = await fixture(html`<vscode-label>42</vscode-label>`);
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 });

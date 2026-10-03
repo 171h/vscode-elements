@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {sendKeys} from '@web/test-runner-commands';
+import {sendKeys} from '../includes/browser-commands.js';
 import {
   $,
   $$,
@@ -9,7 +9,7 @@ import {
 } from '../includes/test-helpers.js';
 import type {VscodeOption} from '../vscode-option/vscode-option.js';
 import {VscodeSingleSelect} from './index.js';
-import {aTimeout, expect, fixture, html} from '@open-wc/testing';
+import {aTimeout, expect, fixture, html} from '../includes/testing.js';
 import sinon from 'sinon';
 import {VscodeScrollable} from '../main.js';
 
@@ -303,7 +303,7 @@ describe('vscode-single-select', () => {
       secondOption.click();
       await el.updateComplete;
 
-      expect(face).lightDom.to.eq(`
+      expect(face).toMatchDOM(`
         <span class="text">
           Ipsum
         </span>
@@ -312,7 +312,7 @@ describe('vscode-single-select', () => {
       `);
       expect(el.value).to.eq('Ipsum');
       expect(el.selectedIndex).to.eq(1);
-      expect(spy).to.be.called;
+      expect(spy.called).to.be.true;
     });
 
     it('changes form value', async () => {
@@ -501,7 +501,7 @@ describe('vscode-single-select', () => {
       await sendKeys({press: 'ArrowDown'});
       await sendKeys({press: 'Enter'});
 
-      expect(el.shadowRoot?.querySelector('.text')).lightDom.to.eq('Dolor');
+      expect(el.shadowRoot?.querySelector('.text')).toMatchDOM('Dolor');
       expect(el.value).to.eq('Dolor');
       expect(el.selectedIndex).to.eq(2);
       expect(spy.calledWithMatch({type: 'change'})).to.be.true;
@@ -612,7 +612,7 @@ describe('vscode-single-select', () => {
       const dropdown = el.shadowRoot?.querySelector('.dropdown');
       const scrollable = el.shadowRoot?.querySelector('.scrollable');
 
-      expect(scrollable).lightDom.to.eq(
+      expect(scrollable).toMatchDOM(
         `
         <ul class="options">
           <li class="option single-select">
@@ -653,7 +653,7 @@ describe('vscode-single-select', () => {
 
       const options = el.shadowRoot?.querySelector('.options');
 
-      expect(options).lightDom.to.eq(
+      expect(options).toMatchDOM(
         `
         <li class="option single-select">App<b>l</b><b>e</b></li>
         <li class="option single-select active"><b>L</b><b>e</b>mon</li>
@@ -768,7 +768,7 @@ describe('vscode-single-select', () => {
 
       expect(input.value).to.eq('Austria');
       expect(activeOpt).not.null;
-      expect(activeOpt as HTMLLIElement).lightDom.to.eq('Austria');
+      expect(activeOpt as HTMLLIElement).toMatchDOM('Austria');
       expect(optionsEl?.scrollTop).to.eq(0);
       expect(el.value).to.eq('Austria');
       expect(el.selectedIndex).to.eq(9);
@@ -819,7 +819,7 @@ describe('vscode-single-select', () => {
 
       const scrollable = el.shadowRoot?.querySelector('.scrollable');
 
-      expect(scrollable).lightDom.to.eq(
+      expect(scrollable).toMatchDOM(
         `
         <ul class="options">
           <li class="no-options">
@@ -846,7 +846,7 @@ describe('vscode-single-select', () => {
 
       const scrollable = el.shadowRoot?.querySelector('.scrollable');
 
-      expect(scrollable).lightDom.to.eq(
+      expect(scrollable).toMatchDOM(
         `
         <ul class="options">
           <li class="option single-select">
@@ -879,7 +879,7 @@ describe('vscode-single-select', () => {
 
       const scrollable = el.shadowRoot?.querySelector('.scrollable');
 
-      expect(scrollable).lightDom.to.eq(
+      expect(scrollable).toMatchDOM(
         `
           <ul class="options">
             <li class="option placeholder">Add "Sit"</li>
@@ -909,7 +909,7 @@ describe('vscode-single-select', () => {
 
       const scrollable = el.shadowRoot?.querySelector('.scrollable');
 
-      expect(scrollable).lightDom.to.eq(
+      expect(scrollable).toMatchDOM(
         `
         <ul class="options">
           <li class="option single-select"><b>D</b><b>o</b><b>l</b>or</li>
@@ -940,7 +940,7 @@ describe('vscode-single-select', () => {
       await sendKeys({down: 'ArrowDown'});
       await sendKeys({down: 'Enter'});
 
-      expect(el).lightDom.to.eq(`
+      expect(el).toMatchDOM(`
         <vscode-option>Lorem</vscode-option>
         <vscode-option>Ipsum</vscode-option>
         <vscode-option>Dolor</vscode-option>
@@ -985,7 +985,7 @@ describe('vscode-single-select', () => {
       await clickOnElement(el);
       const activeOption = el.shadowRoot?.querySelector('.option.active');
 
-      expect(activeOption).lightDom.to.eq('Ipsum');
+      expect(activeOption).toMatchDOM('Ipsum');
     });
 
     //#region 键盘交互
@@ -1011,7 +1011,7 @@ describe('vscode-single-select', () => {
 
       const activeOption = el.shadowRoot?.querySelector('.option.active');
 
-      expect(activeOption).lightDom.to.eq('Do<b>l</b>or');
+      expect(activeOption).toMatchDOM('Do<b>l</b>or');
     });
     //#endregion
     //#endregion
@@ -1144,7 +1144,7 @@ describe('vscode-single-select', () => {
         'ul.options li:nth-child(2)'
       );
 
-      expect(op).lightDom.to.eq('Ipsum');
+      expect(op).toMatchDOM('Ipsum');
       expect(op?.classList.contains('selected')).to.be.true;
     });
 
@@ -1170,7 +1170,7 @@ describe('vscode-single-select', () => {
 
       const desc = el.shadowRoot!.querySelector<HTMLDivElement>('.description');
 
-      expect(desc).lightDom.to.eq('Test description');
+      expect(desc).toMatchDOM('Test description');
     });
 
     it('changes the label of an option in an existing select', async () => {
@@ -1192,7 +1192,7 @@ describe('vscode-single-select', () => {
 
       const li = el.shadowRoot!.querySelectorAll<HTMLLIElement>('li')[1];
 
-      expect(li).lightDom.to.eq('Test label');
+      expect(li).toMatchDOM('Test label');
     });
 
     it('changes the disabled state of an option in an existing select', async () => {
@@ -1233,7 +1233,7 @@ describe('vscode-single-select', () => {
 
       const activeOption = el.shadowRoot?.querySelector('.option.active');
 
-      expect(activeOption).lightDom.to.eq('Sit');
+      expect(activeOption).toMatchDOM('Sit');
     });
 
     it('skips disabled options when dropdown is open', async () => {
@@ -1255,7 +1255,7 @@ describe('vscode-single-select', () => {
       const options =
         el.shadowRoot?.querySelectorAll<HTMLLIElement>('.option')!;
 
-      expect(options[3]).lightDom.to.eq('Sit');
+      expect(options[3]).toMatchDOM('Sit');
       expect(options[3].classList.contains('active')).to.be.true;
     });
 
@@ -1275,7 +1275,7 @@ describe('vscode-single-select', () => {
       const options =
         el.shadowRoot?.querySelectorAll<HTMLLIElement>('.option')!;
 
-      expect(options[1]).lightDom.eq('Ipsum');
+      expect(options[1]).toMatchDOM('Ipsum');
       expect(options[1].classList.contains('active')).to.be.true;
     });
 

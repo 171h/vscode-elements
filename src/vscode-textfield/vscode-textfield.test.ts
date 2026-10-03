@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
 import sinon from 'sinon';
-import {aTimeout, expect, fixture, html} from '@open-wc/testing';
-import {sendKeys, sendMouse} from '@web/test-runner-commands';
+import {aTimeout, expect, fixture, html} from '../includes/testing.js';
+import {sendKeys, sendMouse} from '../includes/browser-commands.js';
 import '../vscode-icon/vscode-icon.js';
 import '../vscode-label/vscode-label.js';
 import {VscodeTextfield} from './index.js';
@@ -44,14 +44,14 @@ describe('vscode-textfield', () => {
     await aTimeout(10);
     const el = container.querySelector('#textfield');
 
-    await expect(el).to.be.accessible();
+    await expect(el).toBeAccessible();
   });
 
   it('renders with default values', async () => {
     const el = await fixture<VscodeTextfield>(
       html`<vscode-textfield></vscode-textfield>`
     );
-    expect(el).shadowDom.to.equal(
+    expect(el).toMatchShadowDOM(
       `
       <div class="root">
         <slot name="content-before"></slot>

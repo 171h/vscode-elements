@@ -60,7 +60,6 @@ const origin = `http://127.0.0.1:${server.address().port}`;
 const url = (path = '') => `${origin}${base}${path}`;
 const browser = await chromium.launch({
   headless: true,
-  channel: 'chromium-headless-shell',
 });
 try {
   const page = await browser.newPage({viewport: {width: 1440, height: 1000}});
@@ -118,9 +117,9 @@ try {
   assert.equal(await page.locator('vscode-theme-selector label').count(), 0);
   await page.getByRole('combobox', {name: '全站尺寸', exact: true}).waitFor();
   assert.equal(await page.locator('.global-theme-bar label').count(), 0);
-  await mkdir(resolve(root, '.wireit/docs-screenshots'), {recursive: true});
+  await mkdir(resolve(root, 'coverage/docs-screenshots'), {recursive: true});
   await page.screenshot({
-    path: resolve(root, '.wireit/docs-screenshots/home.png'),
+    path: resolve(root, 'coverage/docs-screenshots/home.png'),
     fullPage: true,
   });
   for (const component of components) {
@@ -233,7 +232,7 @@ try {
     '取消'
   );
   await page.screenshot({
-    path: resolve(root, '.wireit/docs-screenshots/button.png'),
+    path: resolve(root, 'coverage/docs-screenshots/button.png'),
     fullPage: true,
   });
   await sample.getByRole('button', {name: '代码', exact: true}).click();
@@ -494,7 +493,7 @@ try {
   await page.goto(url('api/generated/textfield'));
   await selectTheme('hc-dark');
   await page.screenshot({
-    path: resolve(root, '.wireit/docs-screenshots/api.png'),
+    path: resolve(root, 'coverage/docs-screenshots/api.png'),
     fullPage: false,
   });
   await page.goto(url());
@@ -538,7 +537,7 @@ try {
     '移动端不应出现页面横向溢出'
   );
   await page.screenshot({
-    path: resolve(root, '.wireit/docs-screenshots/mobile.png'),
+    path: resolve(root, 'coverage/docs-screenshots/mobile.png'),
     fullPage: true,
   });
   await page.getByRole('button', {name: '目录', exact: true}).click();
@@ -551,7 +550,7 @@ try {
     page,
     url,
     selectTheme,
-    resolve(root, '.wireit/docs-screenshots')
+    resolve(root, 'coverage/docs-screenshots')
   );
   assert.deepEqual(errors, [], '页面不得出现运行时或本地资源错误');
   console.log(

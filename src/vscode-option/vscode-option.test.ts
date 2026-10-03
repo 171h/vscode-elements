@@ -1,5 +1,5 @@
 import {VscodeOption} from './index.js';
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 
 describe('vscode-option', () => {
   it('is defined', () => {

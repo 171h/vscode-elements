@@ -5,16 +5,16 @@
 在仓库根目录执行：
 
 ```sh
-npm ci
-npm run docs:dev
+pnpm install --frozen-lockfile
+pnpm docs:dev
 ```
 
-开发命令先构建组件、生成 API 和复制示例资源，再启动 VitePress。修改组件源码后重新运行 `npm run docs:prepare` 并刷新示例；修改 Markdown、主题或示例数据由 VitePress 热更新。
+开发命令先构建组件、生成 API 和复制示例资源，再启动 VitePress。修改组件源码后重新运行 `pnpm docs:prepare` 并刷新示例；修改 Markdown、主题或示例数据由 VitePress 热更新。
 
 ```sh
-npm run docs:check
-npm run docs:build
-npm run docs:preview
+pnpm docs:check
+pnpm docs:build
+pnpm docs:preview
 ```
 
 构建输出在 `docs/.vitepress/dist`。部署到子路径时设置 `DOCS_BASE`（例如 `/nusys-ui/`）；预览、示例和资源均跟随该路径。未配置任何自动发布或远程推送。
@@ -46,4 +46,4 @@ npm run docs:preview
 
 [综合体验](../examples/showcase)复用同一份示例数据，组件场景直接展示。主题选择器来自 `@vscode-elements/webview-playground`，只在全局布局中挂载；通过消息更新所有预览的主题变量与尺寸，保留用户操作状态。不要在组件页面或示例内新增主题选择器。
 
-仓库 `.vscode/settings.json` 设置 `vite.autoStart: false`，禁用 Vite 扩展打开文件夹时自动执行 `npx vite --port=4000`。需要预览时手动执行 `npm run docs:dev`。
+仓库 `.vscode/settings.json` 设置 `vite.autoStart: false`，禁用 Vite 扩展打开文件夹时自动执行 `npx vite --port=4000`。需要预览时手动执行 `pnpm docs:dev`。

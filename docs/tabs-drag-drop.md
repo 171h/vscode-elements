@@ -78,7 +78,7 @@ legend 无边框且背景透明，与 fieldset 边框后方表面融合，避免
 
 同一套样式适用于包装组件和面板直属原生 fieldset，不影响嵌套表单 fieldset。低优先级允许应用覆盖 CSS。由于 shadow slot 无法为原生 fieldset 的 legend 后代设置样式，样式会在所属文档或 shadow root 中安装一次。
 
-文档示例提供浅色、深色和高对比度主题。启动文档站点后，运行 `npm run docs:test` 检查预览、键盘、表单与布局，并在 `.wireit/` 下保存截图。
+文档示例提供浅色、深色和高对比度主题。启动文档站点后，运行 `pnpm docs:test` 检查预览、键盘、表单与布局，并在 `coverage/` 下保存截图。
 
 ## VS Code 参考
 
