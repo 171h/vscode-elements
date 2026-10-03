@@ -1,6 +1,48 @@
 import assert from 'node:assert/strict';
 import {componentScenarios} from '../docs/data/scenarios.mjs';
 
+export async function testResponsiveTable(frame) {
+  const width = frame.getByRole('slider', {name: '容器宽度'});
+  await width.focus();
+  await width.press('Home');
+  await frame.waitForFunction(
+    () => document.querySelector('vscode-table').compact
+  );
+  assert.equal(await width.inputValue(), '240');
+  await width.press('End');
+  await frame.waitForFunction(
+    () => !document.querySelector('vscode-table').compact
+  );
+  assert.equal(await width.inputValue(), '800');
+  await frame.waitForFunction(() => {
+    const container = document.querySelector('#table-container');
+    return (
+      document.querySelector('#container-width-value').textContent ===
+      Math.round(container.getBoundingClientRect().width) + ' px'
+    );
+  });
+  const widths = await frame
+    .locator('vscode-table')
+    .evaluateAll((tables) =>
+      tables.map((table) => table.getBoundingClientRect().width)
+    );
+  assert.ok(
+    widths[0] > 350 && Math.abs(widths[0] - widths[1]) < 1,
+    '两张表格应随同一容器变宽'
+  );
+  assert.equal(
+    await frame
+      .locator('vscode-table')
+      .nth(1)
+      .evaluate((table) => table.delayedResizing),
+    true
+  );
+  await width.press('Home');
+  await frame.waitForFunction(
+    () => document.querySelector('vscode-table').compact
+  );
+}
+
 export async function testScenarios(page, url) {
   const open = async (id) => {
     const component = Object.keys(componentScenarios).find((key) =>
@@ -184,6 +226,10 @@ export async function testScenarios(page, url) {
   );
   await frame.getByRole('button', {name: '打开 1', exact: true}).click();
   assert.equal(await frame.locator('output').textContent(), '打开 1');
+
+  await page.setViewportSize({width: 1440, height: 1000});
+  frame = await open('table-responsive');
+  await testResponsiveTable(frame);
 
   frame = await open('tree-controls');
   await frame.getByRole('button', {name: '展开全部'}).click();

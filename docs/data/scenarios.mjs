@@ -271,12 +271,12 @@ export const extraExamples = {
     [
       'responsive/breakpoint、column-label',
       'small/medium/large、delayed-resizing',
-      '窄容器中的标签式布局',
+      '动态调整容器宽度、窄容器中的标签式布局',
     ],
-    `<div style="width:100%;max-width:280px">${table('responsive breakpoint="350" size="small" bordered-rows')}</div><p>上方窄表格会显示 column-label，下方拖动列宽结束后更新。</p>${table('resizable delayed-resizing size="large" bordered-columns')}`,
-    `document.querySelectorAll('vscode-table').forEach(table=>table.columns=['40%','30%','auto']);`,
+    `<div class="table-width-control"><label for="container-width">容器宽度</label><input id="container-width" type="range" min="240" max="800" step="10" value="280"><output id="container-width-value" for="container-width"></output></div><div id="table-container" style="width:280px;max-width:100%"><p>响应式表格</p>${table('responsive breakpoint="350" size="small" bordered-rows')}<p>延迟列宽调整</p>${table('resizable delayed-resizing size="large" bordered-columns')}</div>`,
+    `document.querySelectorAll('vscode-table').forEach(table=>table.columns=['40%','30%','auto']);const container=document.querySelector('#table-container');const width=document.querySelector('#container-width');width.addEventListener('input',()=>container.style.width=width.value+'px');const reportWidth=()=>document.querySelector('#container-width-value').textContent=Math.round(container.getBoundingClientRect().width)+' px';new ResizeObserver(reportWidth).observe(container);reportWidth();`,
     690,
-    'vscode-table-body {max-height:200px;overflow:auto}'
+    'vscode-table-body {max-height:200px;overflow:auto} .table-width-control {display:flex;align-items:center;flex-wrap:wrap;gap:8px} .table-width-control input {width:180px;max-width:100%;accent-color:var(--vscode-focusBorder)} .table-width-control output {display:inline;margin:0}'
   ),
   'tree-variants': demo(
     '展开方式、箭头和缩进线',
