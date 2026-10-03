@@ -7,7 +7,6 @@ node_modules
 /docs/.vitepress/dist/
 /docs/public/assets/
 /docs/api/generated/
-.vscode/settings.json
 
 /dist/
 /coverage/
