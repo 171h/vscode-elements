@@ -1,0 +1,51 @@
+name: 中文文档验证
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'scripts/docs-*.mjs'
+      - 'package*.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'vite.config.ts'
+      - '.github/workflows/docs.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'docs/**'
+      - 'src/**'
+      - 'scripts/docs-*.mjs'
+      - 'package*.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'vite.config.ts'
+      - '.github/workflows/docs.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出源码
+        uses: actions/checkout@v7
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+      - name: 配置 Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: 安装锁定依赖与浏览器
+        run: pnpm install --frozen-lockfile
+      - name: 安装浏览器
+        run: pnpm test:install
+      - name: 检查文档与示例格式
+        run: pnpm exec prettier docs 'scripts/docs-*.mjs' --check
+      - name: 检查组件覆盖与链接
+        run: pnpm docs:check
+      - name: 构建并验证浏览器示例
+        run: pnpm docs:test

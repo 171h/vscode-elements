@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'nonce-docs-example'; style-src 'self' 'nonce-docs-example'; font-src 'self';"
+    />
+    <title>Nusys UI · CSP 资源检查</title>
+    <link
+      id="vscode-codicon-stylesheet"
+      rel="stylesheet"
+      href="../assets/codicon.css"
+      nonce="docs-example"
+    />
+    <script
+      type="module"
+      src="../assets/nusys-ui.js"
+      nonce="docs-example"
+    ></script>
+    <style nonce="docs-example">
+      :root {
+        color-scheme: light;
+        --vscode-foreground: #242424;
+        --vscode-editor-background: #fff;
+        --vscode-settings-textInputBackground: #fff;
+        --vscode-settings-textInputForeground: #242424;
+        --vscode-settings-textInputBorder: #767676;
+      }
+      body {
+        max-width: 680px;
+        margin: 40px auto;
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+      }
+      vscode-textarea {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>严格 CSP 下的资源加载</h1>
+    <p>
+      检查图标、输入和辅助说明；开发者工具中应没有资源加载错误。固定 nonce
+      仅用于本地演示。
+    </p>
+    <vscode-form-group variant="vertical">
+      <vscode-label for="description">说明</vscode-label>
+      <vscode-textarea id="description" rows="4"></vscode-textarea>
+      <vscode-form-helper>此页面没有依赖 node_modules URL。</vscode-form-helper>
+    </vscode-form-group>
+    <vscode-button icon="save">保存</vscode-button>
+    <output aria-live="polite"></output>
+    <script type="module" nonce="docs-example">
+      await customElements.whenDefined('vscode-button');
+      document.querySelector('vscode-button').addEventListener('click', () => {
+        document.querySelector('output').textContent = '脚本与组件加载成功';
+      });
+    </script>
+  </body>
+</html>

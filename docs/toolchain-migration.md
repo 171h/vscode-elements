@@ -4,7 +4,8 @@
 
 ## 构建与开发
 
-- `pnpm start` 直接编译 `src/`，示例页无需预先生成 `dist/`。
+- `pnpm dev` 直接编译 `src/`，示例页无需预先生成 `dist/`。
+- `pnpm start` / `pnpm docs:dev` 沿用主分支的文档入口，构建组件、生成 API 后启动 VitePress。文档完整性和交互通过 `pnpm docs:check` / `pnpm docs:test` 验证。
 - `pnpm build` 生成 ES 模块、类型声明、单文件包、组件清单和 VS Code 补全数据。
 - `pnpm build:demo` 构建所有 HTML 示例，`pnpm preview` 预览生产页面。
 - `pnpm test` 通过 Vitest 执行真实 Chromium 组件测试与 Node.js 发布工具测试。
@@ -14,7 +15,9 @@
 
 开发 HTML 恢复迁移前提交 `2fd1fd01` 的示例内容，仅调整源码入口、历史预览资源入口和开发服务器 CSP。三个历史表格示例的 `component-preview` 标签通过 playground 的 `VscodeDemo` 类提供环境模拟，保留原示例标签与内容。Vite 将 playground 的动态主题模块构建为生产资源，无需手动复制主题文件。
 
-测试保留 Lit fixture 与 Sinon；DOM 比较、无障碍断言和原生输入由本地 Vitest matcher、axe-core 和 Playwright 提供。新增依赖必须明确声明，不能依赖 npm 的偶然提升。浏览器通过 `pnpm test:install` 单独安装。pnpm 的 `allowBuilds` 仅允许所需的 `rs-module-lexer` 安装脚本。
+测试保留 Lit fixture 与 Sinon；DOM 比较、无障碍断言和原生输入由本地 Vitest matcher、axe-core 和 Playwright 提供。新增依赖必须明确声明，不能依赖 npm 的偶然提升。浏览器通过 `pnpm test:install` 单独安装。pnpm 的 `allowBuilds` 仅允许所需的 `rs-module-lexer` 和文档框架所需的 `esbuild` 安装脚本。
+
+主分支合入的 VitePress 文档站点保留其最新稳定版 1.6.4 与 Vue；该框架内部依赖 Vite 5，不强行覆盖为其未声明支持的 Vite 8。组件库构建、历史示例开发和生产构建仍直接使用 Vite 8.3.2，文档通过生成的当前库 bundle 展示组件。
 
 ## 验证结果
 

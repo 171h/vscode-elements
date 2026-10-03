@@ -95,9 +95,8 @@ option.abbreviation = ''; // 展示区域恢复为标签
 
 ## 交互示例
 
-`dev/vscode-multi-select/selected-labels.html` 展示选择模式与组合框模式中的空选中、部分选中、折叠、截断和缩写场景。启动开发服务器并打开该页面：
+在以下示例中选择选项，检查完整文字、缩写和当前业务值。改变浏览器宽度可检查标签折叠：
 
-```bash
-npm run start
-# http://localhost:8000/dev/vscode-multi-select/selected-labels.html
-```
+<ExamplePreview example="multi-select" />
+
+更多属性见 [MultiSelect API](./api/generated/multi-select)。

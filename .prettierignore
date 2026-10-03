@@ -4,3 +4,8 @@ pnpm-lock.yaml
 
 demo-dist
 .baseline
+docs/.vitepress/cache
+docs/.vitepress/dist
+docs/public/assets
+docs/api/generated
+coverage

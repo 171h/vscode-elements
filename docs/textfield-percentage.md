@@ -91,9 +91,8 @@ field.validity.rangeOverflow; // true
 
 ## 交互示例
 
-`dev/vscode-textfield/percentage.html` 提供显示文字与程序值对照、可编辑必填框、带 `min`/`max`/`step` 的文本框、运行时模式切换，以及提交小数值的表单。启动开发服务器并打开页面：
+以下示例提供显示文字与程序值对照，以及带 `min`/`max`/`step` 校验并提交小数值的表单：
 
-```bash
-npm run start
-# http://localhost:8000/dev/vscode-textfield/percentage.html
-```
+<ExamplePreview example="percentage" />
+
+更多属性见 [Textfield API](./api/generated/textfield)。

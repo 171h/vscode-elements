@@ -12,7 +12,9 @@
 
 请尽量提供[最小可复现示例](https://stackoverflow.com/help/minimal-reproducible-example)。可提供能通过少量命令启动的示例仓库。
 
-也可参考 [dev/\_template.html](dev/_template.html)，在 `dev` 目录中创建演示 HTML 文件。使用 `pnpm install --frozen-lockfile` 安装依赖，通过 `pnpm start` 启动开发服务器，并将示例 HTML 附在问题报告中。
+也可参考 [dev/\_template.html](dev/_template.html)，在 `dev` 目录中创建演示 HTML 文件。使用 `pnpm install --frozen-lockfile` 安装依赖，通过 `pnpm dev` 启动开发服务器，并将示例 HTML 附在问题报告中。
+
+面向使用者的示例优先维护在 `docs/data/examples.mjs` 与组件文档中，执行 `pnpm docs:dev` 预览。历史 HTML 示例使用 `pnpm dev` 启动，详细文档流程参见 [文档维护](docs/guide/contributing.md)。文档或示例修改应执行 `pnpm docs:check`、`pnpm docs:test`，并验证明暗主题、键盘、焦点与禁用状态。
 
 ## 提交拉取请求
 

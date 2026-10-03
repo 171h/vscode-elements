@@ -6,15 +6,15 @@
 
 VSCode Elements 是基于 Lit 的 Web Components 组件库，用于开发 VS Code 扩展。npm 包名为 `nusys-ui`，组件标签保留 `vscode-` 前缀。开发环境使用 Node.js 22.12+（22.x）、24.x 或 26+，并使用 pnpm 和现有的 `pnpm-lock.yaml` 管理依赖。
 
-| 目录或文件           | 用途                               |
-| -------------------- | ---------------------------------- |
-| `src/vscode-*/`      | 组件实现、样式、导出与测试         |
-| `src/includes/`      | 共享基类、工具函数、表单控件与样式 |
-| `src/main.ts`        | 组件库的公共导出入口               |
-| `dev/`               | HTML 示例与统一组件展示页          |
-| `docs/`              | 功能变更与组件行为说明             |
-| `scripts/`           | 元数据生成与发布工具               |
-| `.github/workflows/` | 验证与发布工作流                   |
+| 目录或文件           | 用途                                   |
+| -------------------- | -------------------------------------- |
+| `src/vscode-*/`      | 组件实现、样式、导出与测试             |
+| `src/includes/`      | 共享基类、工具函数、表单控件与样式     |
+| `src/main.ts`        | 组件库的公共导出入口                   |
+| `dev/`               | HTML 示例与统一组件展示页              |
+| `docs/`              | VitePress 中文文档、交互示例与源码 API |
+| `scripts/`           | 元数据生成与发布工具                   |
+| `.github/workflows/` | 验证与发布工作流                       |
 
 本文档配置的是仓库的 AI 辅助开发流程。组件库目前不提供 AI 服务或模型 SDK；新增运行时 AI 功能时，应先明确功能需求及其与宿主环境的集成方案。
 
@@ -69,7 +69,11 @@ VSCode Elements 是基于 Lit 的 Web Components 组件库，用于开发 VS Cod
 
 | 命令                 | 用途                                                      |
 | -------------------- | --------------------------------------------------------- |
-| `pnpm start`         | 启动 Vite 开发服务器并直接编译源码                        |
+| `pnpm start`         | 启动 VitePress 中文文档站点                               |
+| `pnpm dev`           | 启动历史 HTML 示例的 Vite 开发服务器                      |
+| `pnpm docs:prepare`  | 构建组件并生成文档 API 与示例资源                         |
+| `pnpm docs:check`    | 检查组件覆盖、示例和本地链接                              |
+| `pnpm docs:test`     | 构建并执行文档浏览器交互检查                              |
 | `pnpm typecheck`     | 检查源码与测试类型                                        |
 | `pnpm build`         | 通过 Vite 构建包、组件清单、自定义补全数据与打包文件      |
 | `pnpm lint`          | 使用 ESLint 检查 TypeScript                               |
@@ -82,7 +86,7 @@ VSCode Elements 是基于 Lit 的 Web Components 组件库，用于开发 VS Cod
 
 组件修改交付前，应执行 lint、格式检查、构建和浏览器测试。发布工具修改还应执行 `pnpm test:release`。仅修改文档时，检查格式与本地链接即可，无需运行完整组件测试。优先格式化本次修改的文件，避免使用 `pnpm prettier:fix` 修改无关文件。
 
-运行 `pnpm start` 后，访问 `http://localhost:8000/dev/index.html` 检查组件展示页。视觉或交互修改应检查适用的主题、尺寸、键盘导航、焦点和禁用状态。只有实际成功执行的检查才能报告为通过；缺少依赖或无法访问浏览器时，应说明原因。
+运行 `pnpm start` 后，访问终端输出的文档站点地址（默认 `http://localhost:5173`）。历史组件展示页使用 `pnpm dev`，地址为 `http://localhost:8000/dev/index.html`。视觉或交互修改应检查适用的主题、尺寸、键盘导航、焦点和禁用状态。文档变更还应执行 `pnpm docs:check` 与 `pnpm docs:test`。只有实际成功执行的检查才能报告为通过；缺少依赖或无法访问浏览器时，应说明原因。
 
 ## 组件开发约定
 
