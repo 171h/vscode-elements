@@ -103,9 +103,7 @@ try {
       );
   };
   const selectSize = async (size) => {
-    await page
-      .locator('.VPNavBar .global-size-selector select')
-      .selectOption(size);
+    await page.locator('.VPNavBar .global-size-selector').selectOption(size);
     for (const frame of page
       .frames()
       .filter((candidate) => candidate.parentFrame()))
@@ -118,6 +116,8 @@ try {
   await page.getByRole('heading', {name: '为 VS Code 扩展构建界面'}).waitFor();
   await page.getByRole('combobox', {name: '全站主题', exact: true}).waitFor();
   assert.equal(await page.locator('vscode-theme-selector label').count(), 0);
+  await page.getByRole('combobox', {name: '全站尺寸', exact: true}).waitFor();
+  assert.equal(await page.locator('.global-theme-bar label').count(), 0);
   await mkdir(resolve(root, '.wireit/docs-screenshots'), {recursive: true});
   await page.screenshot({
     path: resolve(root, '.wireit/docs-screenshots/home.png'),
@@ -266,7 +266,7 @@ try {
     'dark-monokai'
   );
   assert.equal(
-    await page.locator('.global-size-selector select').inputValue(),
+    await page.locator('.global-size-selector').inputValue(),
     'large'
   );
   await selectSize('medium');

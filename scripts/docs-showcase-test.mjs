@@ -80,7 +80,7 @@ export async function testShowcase(page, url, selectTheme, screenshots) {
     assert.equal(await input.inputValue(), '35%');
   }
   for (const size of ['small', 'large', 'medium']) {
-    await page.locator('.global-size-selector select').selectOption(size);
+    await page.locator('.global-size-selector').selectOption(size);
     for (const preview of frames.values())
       await preview.waitForFunction(
         (size) => document.documentElement.dataset.previewSize === size,

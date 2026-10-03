@@ -74,17 +74,16 @@ onUnmounted(() => {
 <template>
   <div class="global-theme-bar" aria-label="全站演示设置">
     <div ref="host" class="global-theme-selector"></div>
-    <label class="global-size-selector"
-      ><span>尺寸</span>
-      <select
-        :value="previewSize"
-        @change="setPreviewSize($event.target.value)"
-      >
-        <option value="small">小</option>
-        <option value="medium">中</option>
-        <option value="large">大</option>
-      </select>
-    </label>
+    <select
+      class="global-size-selector"
+      aria-label="全站尺寸"
+      :value="previewSize"
+      @change="setPreviewSize($event.target.value)"
+    >
+      <option value="small">小</option>
+      <option value="medium">中</option>
+      <option value="large">大</option>
+    </select>
     <span v-if="error" role="alert">{{ error }}</span>
   </div>
 </template>
@@ -99,12 +98,6 @@ onUnmounted(() => {
   color: var(--vp-c-text-1);
 }
 .global-size-selector {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  white-space: nowrap;
-}
-.global-size-selector select {
   height: 30px;
   padding: 2px 4px;
   border: 1px solid var(--vp-c-text-1);
@@ -113,18 +106,11 @@ onUnmounted(() => {
   color: var(--vp-c-text-1);
   font-size: 12px;
 }
-.global-size-selector select:focus-visible {
+.global-size-selector:focus-visible {
   outline: 2px solid var(--vp-c-brand-1);
   outline-offset: 2px;
 }
 @media (max-width: 1180px) {
-  .global-size-selector span {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
   .global-theme-bar {
     gap: 8px;
     margin-left: 8px;
