@@ -31,6 +31,12 @@ import 'nusys-ui/dist/vscode-radio-group/index.js';
 </vscode-radio-group>
 ```
 
+## 功能场景
+
+下列场景补充状态、组合约束、数据操作和交互边界。每项列出覆盖的公开功能，代码视图可直接查阅实际运行代码。
+
+<ComponentExamples component="radio" />
+
 ## 相关指南
 
 [主题与图标](../guide/theming) · [表单与校验](../guide/forms) · [常见问题](../guide/faq)

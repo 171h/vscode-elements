@@ -4,6 +4,7 @@ import {resolve, dirname, extname} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {components} from '../docs/data/components.mjs';
 import {examples} from '../docs/data/examples.mjs';
+import {componentScenarios, extraExamples} from '../docs/data/scenarios.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const docs = resolve(root, 'docs');
@@ -23,6 +24,23 @@ assert.equal(components.length, exportedIds.size, '组件索引不能重复');
 const tags = new Set(components.map((component) => `vscode-${component.id}`));
 for (const component of components) {
   assert.ok(examples[component.example], `${component.id} 缺少示例`);
+  assert.ok(
+    componentScenarios[component.id]?.length,
+    `${component.id} 缺少功能场景`
+  );
+  const content = await readFile(
+    resolve(docs, 'components', `${component.id}.md`),
+    'utf8'
+  );
+  assert.ok(
+    content.includes(`<ComponentExamples component="${component.id}" />`),
+    `${component.id} 未展示功能场景`
+  );
+  for (const id of componentScenarios[component.id])
+    assert.ok(
+      extraExamples[id]?.features.length,
+      `${component.id} 的 ${id} 未声明功能覆盖`
+    );
   await access(resolve(docs, 'components', `${component.id}.md`));
   await access(resolve(docs, 'api/generated', `${component.id}.md`));
 }

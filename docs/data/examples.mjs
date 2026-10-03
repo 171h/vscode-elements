@@ -1,4 +1,6 @@
+import {extraExamples} from './scenarios.mjs';
 export const examples = {
+  ...extraExamples,
   badge: {
     height: 120,
     title: '徽章与计数',

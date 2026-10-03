@@ -18,7 +18,7 @@ import 'nusys-ui/dist/vscode-button/index.js';
 
 `type` 支持 text、password、email、number、file 等输入类型；完整范围见 API。`readonly` 保留读取与焦点，`disabled` 禁止交互与提交。`content-before` 和 `content-after` 插槽可放图标等内容。
 
-用 `name` 参与表单，使用 `required`、`pattern`、`min`、`max`、`step` 与长度约束。`checkValidity()` 判断有效性，`reportValidity()` 显示提示，`setCustomValidity()` 设置应用错误。`invalid` 仅控制样式，不能替代校验。
+用 `name` 参与表单，使用 `required`、`pattern`、`min`、`max`、`step` 与长度约束。`checkValidity()` 判断有效性，`reportValidity()` 显示提示，对 `wrappedElement.setCustomValidity()` 设置应用错误，再调用组件的校验方法同步结果。`invalid` 仅控制样式，不能替代校验。
 
 `percentage` 模式下，界面百分数和 `value` 的小数值单位不同，详见 [百分比输入](../textfield-percentage)。文件输入通过 `wrappedElement.files` 读取文件，不能用程序设置非空文件路径。
 
@@ -51,6 +51,12 @@ document.querySelector('#validate').addEventListener('click', () => {
 ## 百分比与程序值
 
 <ExamplePreview example="percentage" />
+
+## 功能场景
+
+下列场景补充状态、组合约束、数据操作和交互边界。每项列出覆盖的公开功能，代码视图可直接查阅实际运行代码。
+
+<ComponentExamples component="textfield" />
 
 ## 相关指南
 

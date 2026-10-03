@@ -48,6 +48,12 @@ Header 直接包含 HeaderCell；Body 包含 Row，Row 包含 Cell。该组件�
 </vscode-table>
 ```
 
+## 功能场景
+
+下列场景补充状态、组合约束、数据操作和交互边界。每项列出覆盖的公开功能，代码视图可直接查阅实际运行代码。
+
+<ComponentExamples component="table" />
+
 ## 相关指南
 
 [主题与图标](../guide/theming) · [表单与校验](../guide/forms) · [常见问题](../guide/faq)

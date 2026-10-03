@@ -5,6 +5,8 @@ import {resolve, extname, sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {chromium} from 'playwright';
 import {components} from '../docs/data/components.mjs';
+import {componentScenarios} from '../docs/data/scenarios.mjs';
+import {testScenarios} from './docs-scenarios-test.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const dist = resolve(root, 'docs/.vitepress/dist');
@@ -108,6 +110,16 @@ try {
   });
   for (const component of components) {
     const frame = await open(component.id);
+    for (const id of componentScenarios[component.id]) {
+      const preview = page.locator(`[data-scenario="${id}"] iframe`);
+      await preview.waitFor();
+      const scenarioFrame = await (
+        await preview.elementHandle()
+      ).contentFrame();
+      await scenarioFrame.waitForFunction(
+        () => document.documentElement.dataset.ready === 'true'
+      );
+    }
     await selectTheme('dark-v2');
     await selectTheme('light-v2');
     assert.equal(await page.locator('vscode-theme-selector').count(), 1);
@@ -376,6 +388,7 @@ try {
     .locator('.VPSidebar')
     .getByText('快速开始', {exact: true})
     .waitFor();
+  await testScenarios(page, url);
   assert.deepEqual(errors, [], '页面不得出现运行时或本地资源错误');
   console.log(
     '已验证全部组件与 API 页面、三种主题及尺寸、焦点与禁用、百分比提交、表单高亮、fieldset 恢复、选择框、标签与视图及组拖拽、菜单、树、CSP、中文搜索和移动布局。'
