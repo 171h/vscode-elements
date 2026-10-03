@@ -25,18 +25,33 @@ export function previewDocument(
     root.style.colorScheme = ['vscode-dark','vscode-high-contrast'].includes(theme.kind) ? 'dark' : 'light';
   }
   applyTheme(${initialTheme});
+  const fixedSizes = new WeakSet(document.querySelectorAll('[size]'));
+  function applySize(size) {
+    if (!['small','medium','large'].includes(size)) return;
+    document.documentElement.dataset.previewSize = size;
+    document.querySelectorAll('[class],body').forEach(el => el.style.setProperty('--vsc-form-control-size',size));
+    document.querySelectorAll('*').forEach(el => {
+      if (fixedSizes.has(el)) return;
+      if(el.localName.startsWith('vscode-') && ['small','medium','large'].includes(el.size)) el.size=size;
+      if(el.localName==='fieldset') el.setAttribute('size',size);
+    });
+  }
   window.addEventListener('message', event => {
-    if(event.source === window.parent && event.origin === new URL(document.baseURI).origin && event.data?.type === 'nusys-docs-theme') applyTheme(event.data.theme);
+    if(event.source !== window.parent || event.origin !== new URL(document.baseURI).origin || event.data?.type !== 'nusys-docs-settings') return;
+    applyTheme(event.data.theme);
+    applySize(event.data.size);
   });
-  document.querySelectorAll('[class],body').forEach(el => el.style.setProperty('--vsc-form-control-size','${size}'));
-  document.querySelectorAll('*').forEach(el => {
-    if(el.localName.startsWith('vscode-') && 'size' in el && !el.hasAttribute('size')) el.size='${size}';
-    if(el.localName==='fieldset' && !el.hasAttribute('size')) el.setAttribute('size','${size}');
-  });
+  applySize('${size}');
   await Promise.all(Array.from(document.querySelectorAll('*')).map(el=>el.updateComplete));
   ${example.js || ''}
   await Promise.all(Array.from(document.querySelectorAll('*')).map(el=>el.updateComplete));
   await new Promise(requestAnimationFrame);
   document.documentElement.dataset.ready='true';
+  let heightFrame;
+  const resize = new ResizeObserver(() => {
+    cancelAnimationFrame(heightFrame);
+    heightFrame = requestAnimationFrame(() => window.parent.postMessage({type:'nusys-docs-height',height:Math.ceil(document.body.getBoundingClientRect().height)},new URL(document.baseURI).origin));
+  });
+  resize.observe(document.body);
   <\/script></body></html>`;
 }

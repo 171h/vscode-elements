@@ -1,4 +1,5 @@
 dist
+/.vitepress/cache/
 package.json
 pnpm-lock.yaml
 

@@ -688,6 +688,95 @@ Ipsum`);
     expect(el.value).to.eql(['asdf']);
   });
 
+  it('选择 API 同步表单的所有同名值与必填状态', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <vscode-multi-select name="formats" required>
+          <vscode-option value="html" selected>HTML</vscode-option>
+          <vscode-option value="md">Markdown</vscode-option>
+          <vscode-option value="json">JSON</vscode-option>
+        </vscode-multi-select>
+      </form>
+    `);
+    const el = form.querySelector<VscodeMultiSelect>('vscode-multi-select')!;
+    await el.updateComplete;
+    expect(new FormData(form).getAll('formats')).to.eql(['html']);
+    el.value = ['md', 'json'];
+    expect(new FormData(form).getAll('formats')).to.eql(['md', 'json']);
+    el.selectedIndexes = [0, 1];
+    expect(new FormData(form).getAll('formats')).to.eql(['html', 'md']);
+    el.selectNone();
+    expect(new FormData(form).getAll('formats')).to.eql([]);
+    expect(el.validity.valueMissing).to.be.true;
+    el.selectAll();
+    expect(new FormData(form).getAll('formats')).to.eql(['html', 'md', 'json']);
+    expect(el.validity.valueMissing).to.be.false;
+    el.name = 'export';
+    await el.updateComplete;
+    expect(new FormData(form).getAll('formats')).to.eql([]);
+    expect(new FormData(form).getAll('export')).to.eql(['html', 'md', 'json']);
+  });
+
+  it('鼠标选择与下拉全选、清空同步表单值且每次只触发一次 change', async () => {
+    const form = await fixture<HTMLFormElement>(html`
+      <form>
+        <vscode-multi-select name="formats" open required>
+          <vscode-option value="html">HTML</vscode-option>
+          <vscode-option value="md">Markdown</vscode-option>
+        </vscode-multi-select>
+      </form>
+    `);
+    const el = form.querySelector<VscodeMultiSelect>('vscode-multi-select')!;
+    const change = sinon.spy();
+    el.addEventListener('change', change);
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('li.option')!.click();
+    expect(new FormData(form).getAll('formats')).to.eql(['html']);
+    await el.updateComplete;
+    el.shadowRoot!.querySelector<HTMLElement>('#select-all')!.click();
+    expect(new FormData(form).getAll('formats')).to.eql(['html', 'md']);
+    el.shadowRoot!.querySelector<HTMLElement>('#select-none')!.click();
+    expect(new FormData(form).getAll('formats')).to.eql([]);
+    expect(el.validity.valueMissing).to.be.true;
+    expect(change.callCount).to.eq(3);
+  });
+
+  for (const selected of [false, true]) {
+    it(`下拉全选跳过未选中的禁用项并保留原有选择（禁用项初始选中：${selected}）`, async () => {
+      const form = await fixture<HTMLFormElement>(html`
+        <form>
+          <vscode-multi-select name="formats" open required>
+            <vscode-option value="html" selected>HTML</vscode-option>
+            <vscode-option value="md">Markdown</vscode-option>
+            <vscode-option value="xml" disabled>XML</vscode-option>
+            <vscode-option value="locked" disabled ?selected=${selected}>
+              固定格式
+            </vscode-option>
+          </vscode-multi-select>
+        </form>
+      `);
+      const el = form.querySelector<VscodeMultiSelect>('vscode-multi-select')!;
+      const change = sinon.spy();
+      el.addEventListener('change', change);
+      await el.updateComplete;
+      const before = [...el.value];
+      el.shadowRoot!.querySelector<HTMLElement>('#select-all')!.click();
+      await el.updateComplete;
+      const expected = [...before, 'md'];
+      expect(el.value).to.eql(expected);
+      expect(new FormData(form).getAll('formats')).to.eql(expected);
+      expect(el.validity.valueMissing).to.be.false;
+      expect(change.callCount).to.eq(1);
+
+      el.selectAll();
+      expect(el.value).to.eql([
+        ...expected,
+        ...['xml', 'locked'].filter((value) => !expected.includes(value)),
+      ]);
+      expect(change.callCount).to.eq(1);
+    });
+  }
+
   it('selects multiple options with keyboard');
   it('selectedIndexes sync with values');
   it(

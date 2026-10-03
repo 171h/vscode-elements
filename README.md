@@ -52,7 +52,7 @@ Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup �
 
 中文文档站点位于 [docs](docs/index.md)，包含 [快速开始](docs/guide/getting-started.md)、[全部组件](docs/components/index.md)、[源码 API](docs/api/index.md) 和 [文档维护](docs/guide/contributing.md)。执行 `pnpm docs:dev` 后访问终端输出的地址（默认 `http://localhost:5173`）。文档修改支持热更新；组件源码修改后执行 `pnpm docs:prepare` 并刷新预览。
 
-`pnpm docs:check` 检查组件覆盖、示例与链接；`pnpm docs:build` 构建生产站点；`pnpm docs:preview` 预览站点；`pnpm docs:test` 构建并执行文档浏览器交互检查。输出位于 `docs/.vitepress/dist/`，通过 `DOCS_BASE` 支持子路径部署。历史开发 HTML 保留在 `dev/`，通过 `pnpm dev` 独立运行。
+`pnpm docs:check` 检查组件覆盖、示例与链接；`pnpm docs:build` 构建生产站点；`pnpm docs:preview` 预览站点；`pnpm docs:test` 构建并执行文档浏览器交互检查。输出位于 `docs/.vitepress/dist/`，通过 `DOCS_BASE` 支持子路径部署。[综合体验](docs/examples/showcase.md) 复用全部组件场景，导航栏统一管理主题和尺寸并保留预览状态。历史开发 HTML 保留在 `dev/`，通过 `pnpm dev` 独立运行。
 
 开发要求参见 [AGENTS.md](AGENTS.md) 和 [CONTRIBUTING.md](CONTRIBUTING.md)。工具链迁移与功能、性能验证结果参见 [迁移报告](docs/toolchain-migration.md)。
 

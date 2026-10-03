@@ -25,3 +25,4 @@ vscode.*-custom-data.json
 /docs/.vitepress/dist/
 /docs/public/assets/
 /docs/api/generated/
+/.vitepress/cache/

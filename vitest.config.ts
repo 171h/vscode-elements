@@ -24,6 +24,8 @@ export default defineConfig({
         },
       },
       {
+        // 文件输入框使用 live 指令，提前优化以避免测试过程中重载页面。
+        optimizeDeps: {include: ['lit/directives/live.js']},
         test: {
           name: 'components',
           globals: true,

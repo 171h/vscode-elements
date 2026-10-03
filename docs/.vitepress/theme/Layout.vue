@@ -5,6 +5,6 @@ import GlobalThemeSelector from './GlobalThemeSelector.vue';
 
 <template>
   <DefaultTheme.Layout>
-    <template #layout-bottom><GlobalThemeSelector /></template>
+    <template #nav-bar-content-after><GlobalThemeSelector /></template>
   </DefaultTheme.Layout>
 </template>
