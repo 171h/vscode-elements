@@ -1,5 +1,6 @@
 import {defineConfig} from 'vitepress';
 import {components, groups} from '../data/components.mjs';
+import {watchComponentSources} from '../../scripts/docs-source-watch.mjs';
 
 export default defineConfig({
   lang: 'zh-CN',
@@ -10,6 +11,7 @@ export default defineConfig({
   cleanUrls: true,
   appearance: false,
   vite: {
+    plugins: [watchComponentSources()],
     vue: {
       template: {
         compilerOptions: {isCustomElement: (tag) => tag.startsWith('vscode-')},

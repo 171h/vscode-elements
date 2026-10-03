@@ -16,7 +16,6 @@ nusys-ui-*.tgz
 custom-elements.json
 vscode.*-custom-data.json
 
-/demo-dist/
 /.baseline/
 
 /.vitest/

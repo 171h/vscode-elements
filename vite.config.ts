@@ -23,50 +23,37 @@ const sources = files('src', '.ts').filter(
 );
 
 export default defineConfig(({mode}) => ({
-  // playground 已提供原生 ES 模块，统一加载入口以避免主题缓存重新优化。
-  optimizeDeps: {exclude: ['@vscode-elements/webview-playground']},
-  server: {port: 8000, open: '/dev/index.html'},
-  preview: {port: 8000},
-  html: {cspNonce: 'abc123'},
-  build:
-    mode === 'demo'
-      ? {
-          outDir: 'demo-dist',
-          rolldownOptions: {input: files('dev', '.html')},
-        }
-      : {
-          target: 'es2021',
-          sourcemap: true,
-          emptyOutDir: mode !== 'bundle',
-          minify: mode === 'bundle',
-          lib: {
-            entry:
-              mode === 'bundle'
-                ? 'src/main.ts'
-                : Object.fromEntries(
-                    sources.map((file) => [
-                      relative('src', file)
-                        .replace(/\\/g, '/')
-                        .replace(/\.ts$/, ''),
-                      file,
-                    ])
-                  ),
-            formats: ['es'],
-            fileName:
-              mode === 'bundle'
-                ? () => 'bundled.js'
-                : (_format, name) => name + '.js',
+  build: {
+    target: 'es2021',
+    sourcemap: true,
+    emptyOutDir: mode !== 'bundle',
+    minify: mode === 'bundle',
+    lib: {
+      entry:
+        mode === 'bundle'
+          ? 'src/main.ts'
+          : Object.fromEntries(
+              sources.map((file) => [
+                relative('src', file).replace(/\\/g, '/').replace(/\.ts$/, ''),
+                file,
+              ])
+            ),
+      formats: ['es'],
+      fileName:
+        mode === 'bundle'
+          ? () => 'bundled.js'
+          : (_format, name) => name + '.js',
+    },
+    rolldownOptions:
+      mode === 'bundle'
+        ? // 单文件产物启用完整压缩；模块产物保留可供使用方优化的代码。
+          {output: {minify: true, comments: false}}
+        : {
+            external: (id) =>
+              externalPackages.some(
+                (name) => id === name || id.startsWith(name + '/')
+              ),
+            output: {preserveModules: true, preserveModulesRoot: 'src'},
           },
-          rolldownOptions:
-            mode === 'bundle'
-              ? // 单文件产物启用完整压缩；模块产物保留可供使用方优化的代码。
-                {output: {minify: true, comments: false}}
-              : {
-                  external: (id) =>
-                    externalPackages.some(
-                      (name) => id === name || id.startsWith(name + '/')
-                    ),
-                  output: {preserveModules: true, preserveModulesRoot: 'src'},
-                },
-        },
+  },
 }));

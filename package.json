@@ -15,16 +15,15 @@
   "customElements": "custom-elements.json",
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json && vite build --mode bundle && pnpm analyze && pnpm vscode-data",
-    "build:demo": "vite build --mode demo",
     "typecheck": "tsc --noEmit",
-    "clean": "rimraf -g dist demo-dist coverage custom-elements.json vscode.*-custom-data.json",
+    "clean": "rimraf -g dist coverage custom-elements.json vscode.*-custom-data.json",
     "lint": "eslint \"./src/**/*.ts\"",
     "lint:fix": "eslint \"./src/**/*.ts\" --fix",
     "prettier": "prettier . --check",
     "prettier:fix": "prettier . --write",
     "analyze": "cem analyze --litelement --globs=\"src/**/*.ts\" --exclude=\"src/**/*.test.ts\" --exclude=\"src/includes/testing.ts\" --exclude=\"src/includes/test-helpers.ts\" --exclude=\"src/includes/browser-commands.ts\" --exclude=\"src/main.ts\" --exclude=\"src/*/index.ts\"",
     "start": "pnpm docs:dev",
-    "preview": "vite preview --outDir demo-dist",
+    "preview": "pnpm docs:preview",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
@@ -41,7 +40,8 @@
     "docs:prepare": "pnpm build && node scripts/docs-prepare.mjs",
     "docs:check": "pnpm docs:prepare && node scripts/docs-check.mjs",
     "docs:test": "pnpm docs:build && node scripts/docs-browser.mjs",
-    "dev": "vite"
+    "docs:test:dev": "pnpm docs:prepare && node scripts/docs-dev-test.mjs",
+    "dev": "pnpm docs:dev"
   },
   "keywords": [
     "web-components",

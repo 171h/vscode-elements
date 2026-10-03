@@ -49,3 +49,5 @@ jobs:
         run: pnpm docs:check
       - name: 构建并验证浏览器示例
         run: pnpm docs:test
+      - name: 验证开发热更新
+        run: pnpm docs:test:dev

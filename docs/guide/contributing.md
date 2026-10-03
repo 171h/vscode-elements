@@ -9,12 +9,15 @@ pnpm install --frozen-lockfile
 pnpm docs:dev
 ```
 
-开发命令先构建组件、生成 API 和复制示例资源，再启动 VitePress。修改组件源码后重新运行 `pnpm docs:prepare` 并刷新示例；修改 Markdown、主题或示例数据由 VitePress 热更新。
+开发命令先构建组件、生成 API 和复制示例资源，再启动 VitePress。`pnpm dev`、`pnpm start` 与 `pnpm docs:dev` 使用相同入口。修改 Markdown、Vue 主题或示例数据由 VitePress 热更新；保存组件源码或样式后，Vite 8 自动重新构建 bundle 并重载文档页，无需手动刷新。自定义元素通过页面重载应用新的类定义，示例临时输入会重置，已保存的主题和尺寸继续保留。
+
+源码监听只在开发服务器中启用，不修改发布用的 `dist/`；生产文档仍加载完整构建生成的 bundle。修改公共 API、JSDoc 或构建配置后，停止开发服务器并重新执行 `pnpm docs:dev`，以重新生成 API 和加载配置；也可单独执行 `pnpm docs:prepare` 更新 API。
 
 ```sh
 pnpm docs:check
 pnpm docs:build
 pnpm docs:preview
+pnpm docs:test:dev
 ```
 
 构建输出在 `docs/.vitepress/dist`。部署到子路径时设置 `DOCS_BASE`（例如 `/nusys-ui/`）；预览、示例和资源均跟随该路径。未配置任何自动发布或远程推送。

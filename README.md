@@ -25,16 +25,15 @@ VS Code 工作区设置禁用 Vite 扩展的自动启动，打开项目不会自
 | 命令                                  | 用途                                                                                        |
 | ------------------------------------- | ------------------------------------------------------------------------------------------- |
 | `pnpm start` / `pnpm docs:dev`        | 构建组件并启动 VitePress 中文文档站点                                                       |
-| `pnpm dev`                            | Vite 开发服务器，直接编译源码并打开 `http://localhost:8000/dev/index.html`                  |
+| `pnpm dev`                            | 与 `pnpm docs:dev` 相同，启动 VitePress 中文文档站点                                        |
 | `pnpm build`                          | Vite 构建模块入口与单文件压缩包，TypeScript 生成类型声明，再生成组件清单和 VS Code 补全数据 |
-| `pnpm build:demo`                     | Vite 构建所有示例页，输出至 `demo-dist/`                                                    |
-| `pnpm preview`                        | 预览生产构建的示例页面                                                                      |
+| `pnpm preview`                        | 与 `pnpm docs:preview` 相同，预览生产文档站点                                               |
 | `pnpm typecheck`                      | 检查组件和测试的 TypeScript 类型                                                            |
 | `pnpm test`                           | Vitest 执行 Chromium 组件测试与 Node.js 发布工具测试                                        |
 | `pnpm test:watch`                     | Vitest 监视模式                                                                             |
 | `pnpm test:coverage`                  | 执行测试并生成 V8 覆盖率报告                                                                |
 | `pnpm test:release`                   | 仅执行发布工具测试                                                                          |
-| `pnpm test:build`                     | 验证开发页、生产示例、主题、CSP、原生拖拽与单文件产物                                       |
+| `pnpm test:build`                     | 验证模块导入、组件清单与单文件产物                                                          |
 | `pnpm test:install`                   | 安装 Playwright Chromium 与所需系统依赖                                                     |
 | `pnpm lint` / `pnpm lint:fix`         | ESLint 检查 / 修复源码                                                                      |
 | `pnpm prettier` / `pnpm prettier:fix` | Prettier 检查 / 格式化仓库文件                                                              |
@@ -50,13 +49,17 @@ Vite 负责开发、生产构建和生产预览；不再使用 Wireit、Rollup �
 
 ## 文档
 
-中文文档站点位于 [docs](docs/index.md)，包含 [快速开始](docs/guide/getting-started.md)、[全部组件](docs/components/index.md)、[源码 API](docs/api/index.md) 和 [文档维护](docs/guide/contributing.md)。执行 `pnpm docs:dev` 后访问终端输出的地址（默认 `http://localhost:5173`）。文档修改支持热更新；组件源码修改后执行 `pnpm docs:prepare` 并刷新预览。
+中文文档站点位于 [docs](docs/index.md)，包含 [快速开始](docs/guide/getting-started.md)、[全部组件](docs/components/index.md)、[源码 API](docs/api/index.md) 和 [文档维护](docs/guide/contributing.md)。执行 `pnpm dev` 或 `pnpm docs:dev` 后访问终端输出的地址（默认 `http://localhost:5173`）。Markdown、Vue 主题和示例数据支持热更新；组件源码和样式保存后自动重新构建并重载文档页，示例临时输入会重置。修改公共 API 或 JSDoc 后执行 `pnpm docs:prepare` 更新 API 文档。
 
-`pnpm docs:check` 检查组件覆盖、示例与链接；`pnpm docs:build` 构建生产站点；`pnpm docs:preview` 预览站点；`pnpm docs:test` 构建并执行文档浏览器交互检查。输出位于 `docs/.vitepress/dist/`，通过 `DOCS_BASE` 支持子路径部署。[综合体验](docs/examples/showcase.md) 复用全部组件场景，导航栏统一管理主题和尺寸并保留预览状态。历史开发 HTML 保留在 `dev/`，通过 `pnpm dev` 独立运行。
+`pnpm docs:check` 检查组件覆盖、示例与链接；`pnpm docs:build` 构建生产站点；`pnpm docs:preview` 预览站点；`pnpm docs:test` 构建并执行文档浏览器交互检查。输出位于 `docs/.vitepress/dist/`，通过 `DOCS_BASE` 支持子路径部署。[综合体验](docs/examples/showcase.md) 复用全部组件场景，导航栏统一管理主题和尺寸并保留预览状态。组件示例统一维护在 `docs/`，开发预览使用 `pnpm dev` 或 `pnpm docs:dev`。
+
+`pnpm docs:test:dev` 在独立副本中验证 Markdown 热更新、组件源码和样式自动重载，以及编译错误后的恢复，不修改开发者的源码。
 
 开发要求参见 [AGENTS.md](AGENTS.md) 和 [CONTRIBUTING.md](CONTRIBUTING.md)。工具链迁移与功能、性能验证结果参见 [迁移报告](docs/toolchain-migration.md)。
 
 标签页新增功能与交互约定参见 [标签页溢出显示](docs/tabs-overflow.md)，涵盖换行、滚动、溢出菜单与标题图标布局。
+
+悬浮提示的四向箭头、外部目标关联和字段持续提示参见 [Tooltip 使用说明](docs/components/tooltip.md)，组件页与综合体验页均提供可交互示例。
 
 ### release
 

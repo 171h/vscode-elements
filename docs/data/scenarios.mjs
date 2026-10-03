@@ -21,6 +21,7 @@ const tree = (attrs = '') =>
 const split = (attrs = '') =>
   `<vscode-split-layout ${attrs} style="height:180px"><div slot="start">起始面板</div><div slot="end">结束面板</div></vscode-split-layout>`;
 export const componentScenarios = {
+  tooltip: ['tooltip-field', 'tooltip-controls'],
   badge: ['badge-variants'],
   button: ['button-variants', 'button-form'],
   'button-group': ['button-group-menu'],
@@ -68,6 +69,30 @@ export const componentScenarios = {
   'tree-item': ['tree-variants', 'tree-controls', 'tree-item-slots'],
 };
 export const extraExamples = {
+  'tooltip-field': demo(
+    '外部字段关联与持续提示',
+    [
+      'for 外部关联，保留输入框层级与 slot',
+      'open 持续提示、多行文字与主题切换',
+      'fallbacks 右 → 下 → 上，CSS 宽度约束',
+    ],
+    '<div class="tooltip-field"><vscode-textfield id="tooltip-input" label="基本风压" value="0"><span slot="content-after">kPa</span></vscode-textfield><vscode-tooltip id="field-tooltip" for="tooltip-input" placement="right" text="数值必须大于零&#10;说明：请输入基本风压" open style="--vsc-tooltip-min-width:160px;--vsc-tooltip-max-width:260px"></vscode-tooltip></div>',
+    "document.querySelector('#field-tooltip').fallbacks = ['bottom', 'top'];",
+    190,
+    '.tooltip-field{padding:24px 0} #tooltip-input{width:180px}'
+  ),
+  'tooltip-controls': demo(
+    '提示状态与关联目标切换',
+    [
+      'target 元素引用关联，保留 flex/grid 布局',
+      'text 动态更新、disabled 禁用提示而保留操作',
+      'delay=0 立即悬停、键盘聚焦与 Escape 关闭',
+    ],
+    '<div class="variants tooltip-actions"><vscode-button id="tooltip-save">保存</vscode-button><vscode-button id="tooltip-export" secondary>导出</vscode-button><vscode-tooltip id="action-tip" text="保存当前项目" delay="0"></vscode-tooltip></div><div class="variants"><vscode-button id="switch-tooltip-target" secondary>提示导出操作</vscode-button><vscode-checkbox id="disable-tooltip" label="禁用提示"></vscode-checkbox></div><output aria-live="polite">提示关联保存操作</output>',
+    "const tip=document.querySelector('#action-tip');tip.target=document.querySelector('#tooltip-save');document.querySelector('#switch-tooltip-target').onclick=()=>{tip.target=document.querySelector('#tooltip-export');tip.text='导出当前计算结果';document.querySelector('output').textContent='提示关联导出操作';};document.querySelector('#disable-tooltip').addEventListener('change',event=>{tip.disabled=event.target.checked;});",
+    240,
+    '.tooltip-actions{padding:36px 0}'
+  ),
   'textfield-native-types': demo(
     '其他原生输入类型',
     [

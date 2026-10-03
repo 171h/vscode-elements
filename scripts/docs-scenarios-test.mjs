@@ -58,7 +58,28 @@ export async function testScenarios(page, url) {
     );
     return frame;
   };
-  let frame = await open('button-form');
+  let frame = await open('tooltip-controls');
+  const tip = frame.locator('#action-tip');
+  await frame.getByRole('button', {name: '保存', exact: true}).hover();
+  await frame.getByRole('tooltip', {name: '保存当前项目'}).waitFor();
+  await frame.getByRole('button', {name: '提示导出操作', exact: true}).click();
+  await frame.getByText('提示关联导出操作', {exact: true}).waitFor();
+  await frame.getByRole('button', {name: '导出', exact: true}).focus();
+  await frame.getByRole('tooltip', {name: '导出当前计算结果'}).waitFor();
+  await page.keyboard.press('Escape');
+  await tip.locator('.tooltip').waitFor({state: 'hidden'});
+  await frame.getByText('禁用提示', {exact: true}).click();
+  await frame.getByRole('button', {name: '导出', exact: true}).focus();
+  assert.equal(await tip.evaluate((element) => element.disabled), true);
+  assert.equal(
+    await frame
+      .locator('#tooltip-export')
+      .evaluate((element) => element.disabled),
+    false
+  );
+  await tip.locator('.tooltip').waitFor({state: 'hidden'});
+
+  frame = await open('button-form');
   await frame.locator('vscode-textfield input').fill('修改项目');
   await frame.getByRole('button', {name: '提交', exact: true}).click();
   assert.match(await frame.locator('output').textContent(), /修改项目/);

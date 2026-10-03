@@ -46,10 +46,10 @@ jobs:
       - name: Prettier
         run: pnpm prettier
 
-      - name: 构建生产示例
-        run: pnpm build:demo
+      - name: 验证文档示例
+        run: pnpm docs:test
 
-      - name: 验证开发与生产环境
+      - name: 验证组件包产物
         run: pnpm test:build
 
       - name: Test
