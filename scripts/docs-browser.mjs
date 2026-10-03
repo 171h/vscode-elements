@@ -210,6 +210,81 @@ try {
   await sample.getByRole('button', {name: '代码', exact: true}).click();
   assert.match(await sample.locator('code').textContent(), /vscode-button/);
 
+  frame = await open('tooltip');
+  for (const theme of ['light', 'dark', 'hc-light', 'hc-dark']) {
+    await selectTheme(theme);
+    for (const size of ['small', 'medium', 'large']) {
+      await page
+        .locator('.example')
+        .first()
+        .getByLabel('尺寸')
+        .selectOption(size);
+      frame = page.frames().find((candidate) => candidate.parentFrame());
+      await frame.waitForFunction(
+        () => document.documentElement.dataset.ready === 'true'
+      );
+      const search = frame.getByRole('button', {name: '搜索', exact: true});
+      await search.hover();
+      await frame.getByRole('tooltip').filter({hasText: '搜索'}).waitFor();
+      const tip = frame.locator('vscode-tooltip .tooltip').last();
+      const colors = await tip.evaluate((element) => {
+        const css = getComputedStyle(element);
+        const probe = document.createElement('span');
+        probe.style.backgroundColor =
+          'var(--vscode-editorHoverWidget-background)';
+        element.append(probe);
+        const expected = getComputedStyle(probe).backgroundColor;
+        probe.remove();
+        return {actual: css.backgroundColor, expected, foreground: css.color};
+      });
+      assert.equal(colors.actual, colors.expected);
+      assert.notEqual(colors.foreground, colors.actual);
+      if (size === 'medium') {
+        await page
+          .locator('.example-frame')
+          .first()
+          .screenshot({
+            path: resolve(
+              root,
+              `.wireit/docs-screenshots/tooltip-${theme}.png`
+            ),
+          });
+      }
+      await search.focus();
+      await page.keyboard.press('Escape');
+      assert.equal(
+        await tip.evaluate((element) => element.matches(':popover-open')),
+        false
+      );
+      assert.equal(
+        await search.evaluate((element) => document.activeElement === element),
+        true
+      );
+    }
+  }
+  frame = await open('tooltip', 1);
+  await page.locator('.example-frame').nth(1).scrollIntoViewIfNeeded();
+  const fieldTip = frame.locator('#field-tooltip .tooltip');
+  await frame.getByRole('tooltip').waitFor();
+  assert.equal(
+    await fieldTip.evaluate((element) => element.matches(':popover-open')),
+    true
+  );
+  assert.equal(
+    await frame.locator('#tooltip-input [slot="content-after"]').textContent(),
+    'kPa'
+  );
+  await frame.locator('#field-tooltip').evaluate((element) => {
+    element.disabled = true;
+  });
+  assert.equal(
+    await frame
+      .locator('#tooltip-input')
+      .evaluate((element) => element.disabled),
+    false
+  );
+  await fieldTip.waitFor({state: 'hidden'});
+
   frame = await open('textfield', 1);
   const input = frame.locator('vscode-textfield input');
   assert.equal(await input.inputValue(), '12.5%');

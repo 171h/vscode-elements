@@ -1,4 +1,17 @@
 export const examples = {
+  'tooltip-field': {
+    height: 190,
+    title: '外部字段关联与持续提示',
+    css: '.tooltip-field{padding:24px 0} #tooltip-input{width:180px}',
+    html: '<div class="tooltip-field"><vscode-textfield id="tooltip-input" label="基本风压" value="0"><span slot="content-after">kPa</span></vscode-textfield><vscode-tooltip id="field-tooltip" for="tooltip-input" placement="right" text="数值必须大于零&#10;说明：请输入基本风压" open style="--vsc-tooltip-min-width:160px;--vsc-tooltip-max-width:260px"></vscode-tooltip></div>',
+    js: "document.querySelector('#field-tooltip').fallbacks = ['bottom', 'top'];",
+  },
+  tooltip: {
+    height: 230,
+    title: '四向提示与键盘聚焦',
+    css: '.tooltips{display:flex;gap:32px;justify-content:center;padding:64px 0}',
+    html: '<div class="tooltips"><vscode-tooltip text="上方提示" placement="top"><vscode-button>上</vscode-button></vscode-tooltip><vscode-tooltip text="下方提示" placement="bottom"><vscode-button>下</vscode-button></vscode-tooltip><vscode-tooltip text="左方提示" placement="left"><vscode-button>左</vscode-button></vscode-tooltip><vscode-tooltip text="搜索 (Ctrl+Shift+F)" placement="right"><vscode-button icon="search" aria-label="搜索" icon-only></vscode-button></vscode-tooltip></div>',
+  },
   badge: {
     height: 120,
     title: '徽章与计数',
