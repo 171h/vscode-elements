@@ -1124,9 +1124,6 @@
                 ><vscode-tab-panel>历史记录内容</vscode-tab-panel>
                 <vscode-tab-header icon="info">帮助与反馈</vscode-tab-header
                 ><vscode-tab-panel>帮助与反馈内容</vscode-tab-panel>
-                <vscode-button slot="addons" id="gallery-overflow-last"
-                  >选择末项</vscode-button
-                >
               </vscode-tabs>
             </div>
             <p id="gallery-overflow-status" role="status">当前选中：文件</p>
@@ -1578,13 +1575,6 @@
           '当前选中：' + headers[tabs.selectedIndex].textContent.trim();
       };
       tabs.addEventListener('vsc-tabs-select', updateStatus);
-      document
-        .querySelector('#gallery-overflow-last')
-        .addEventListener('click', async () => {
-          tabs.selectedIndex = headers.length - 1;
-          await tabs.updateComplete;
-          updateStatus();
-        });
       update();
     </script>
   </body>
