@@ -40,6 +40,18 @@ export class VscodeContextMenu extends VscElement {
 
   @property({type: Array, attribute: false})
   set data(data: MenuItemData[]) {
+    const identity = JSON.stringify(
+      data.map(({label, value, separator, keybinding}) => [
+        label,
+        value,
+        !!separator,
+        keybinding,
+      ])
+    );
+    if (identity !== this._dataIdentity) {
+      this._selectedClickableItemIndex = -1;
+    }
+    this._dataIdentity = identity;
     this._data = data;
 
     const indexes: number[] = [];
@@ -51,6 +63,9 @@ export class VscodeContextMenu extends VscElement {
     });
 
     this._clickableItemIndexes = indexes;
+    if (this._selectedClickableItemIndex >= indexes.length) {
+      this._selectedClickableItemIndex = -1;
+    }
   }
   get data(): MenuItemData[] {
     return this._data;
@@ -64,19 +79,34 @@ export class VscodeContextMenu extends VscElement {
 
   @property({type: Boolean, reflect: true})
   set show(show: boolean) {
+    const generation = ++this._showGeneration;
+    this._clearOutsideClickListener();
     this._show = show;
     this._selectedClickableItemIndex = -1;
 
     if (show) {
       this.updateComplete.then(() => {
-        if (this._wrapperEl) {
-          this._wrapperEl.focus();
+        if (
+          !this.show ||
+          !this.isConnected ||
+          generation !== this._showGeneration
+        ) {
+          return;
         }
-
-        requestAnimationFrame(() => {
-          document.addEventListener('click', this._onClickOutsideBound, {
-            once: true,
-          });
+        this._wrapperEl?.focus();
+        this._outsideClickFrame = requestAnimationFrame(() => {
+          this._outsideClickFrame = 0;
+          if (
+            this.show &&
+            this.isConnected &&
+            generation === this._showGeneration
+          ) {
+            this._outsideClickDocument = this.ownerDocument;
+            this._outsideClickDocument.addEventListener(
+              'click',
+              this._onClickOutsideBound
+            );
+          }
         });
       });
     }
@@ -94,15 +124,32 @@ export class VscodeContextMenu extends VscElement {
     this.addEventListener('keydown', this._onKeyDown);
   }
 
-  /* connectedCallback(): void {
+  override connectedCallback(): void {
     super.connectedCallback();
-    document.addEventListener('click', this._onClickOutsideBound);
+    if (this.show) {
+      this.show = true;
+    }
   }
 
-  disconnectedCallback(): void {
+  override disconnectedCallback(): void {
+    this._showGeneration++;
+    this._clearOutsideClickListener();
     super.disconnectedCallback();
-    document.removeEventListener('click', this._onClickOutsideBound);
-  } */
+  }
+
+  private _showGeneration = 0;
+  private _outsideClickFrame = 0;
+  private _outsideClickDocument?: Document;
+
+  private _clearOutsideClickListener() {
+    cancelAnimationFrame(this._outsideClickFrame);
+    this._outsideClickFrame = 0;
+    this._outsideClickDocument?.removeEventListener(
+      'click',
+      this._onClickOutsideBound
+    );
+    this._outsideClickDocument = undefined;
+  }
 
   @state()
   private _selectedClickableItemIndex = -1;
@@ -114,6 +161,7 @@ export class VscodeContextMenu extends VscElement {
   private _wrapperEl!: HTMLDivElement;
 
   private _data: MenuItemData[] = [];
+  private _dataIdentity = '';
 
   private _clickableItemIndexes: number[] = [];
 
@@ -155,27 +203,33 @@ export class VscodeContextMenu extends VscElement {
   }
 
   private _handleArrowUp() {
-    if (this._selectedClickableItemIndex === 0) {
-      this._selectedClickableItemIndex = this._clickableItemIndexes.length - 1;
+    const count = this._clickableItemIndexes.length;
+    if (count === 0) {
+      this._selectedClickableItemIndex = -1;
+      return;
+    }
+    if (
+      this._selectedClickableItemIndex <= 0 ||
+      this._selectedClickableItemIndex >= count
+    ) {
+      this._selectedClickableItemIndex = count - 1;
     } else {
       this._selectedClickableItemIndex -= 1;
     }
   }
 
   private _handleArrowDown() {
-    if (
-      this._selectedClickableItemIndex + 1 <
-      this._clickableItemIndexes.length
-    ) {
-      this._selectedClickableItemIndex += 1;
-    } else {
-      this._selectedClickableItemIndex = 0;
+    const count = this._clickableItemIndexes.length;
+    if (count === 0) {
+      this._selectedClickableItemIndex = -1;
+      return;
     }
+    this._selectedClickableItemIndex =
+      (this._selectedClickableItemIndex + 1) % count;
   }
 
   private _handleEscape() {
     this.show = false;
-    document.removeEventListener('click', this._onClickOutsideBound);
   }
 
   private _dispatchSelectEvent(selectedOption: VscodeContextMenuItem) {
@@ -195,7 +249,7 @@ export class VscodeContextMenu extends VscElement {
   }
 
   private _handleEnter() {
-    if (this._selectedClickableItemIndex === -1) {
+    if (this._selectedClickableItemIndex < 0) {
       return;
     }
 
@@ -205,12 +259,14 @@ export class VscodeContextMenu extends VscElement {
       'vscode-context-menu-item'
     );
     const selectedOption = options[realItemIndex];
+    if (!selectedOption || selectedOption.separator) {
+      return;
+    }
 
     this._dispatchSelectEvent(selectedOption);
 
     if (!this.preventClose) {
       this.show = false;
-      document.removeEventListener('click', this._onClickOutsideBound);
     }
   }
 

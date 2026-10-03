@@ -3,7 +3,11 @@ import {componentScenarios} from './scenarios.mjs';
 
 // 组合组件共用演示，综合页只展示一次。
 const seen = new Set();
-const extra = {textfield: ['percentage'], 'single-select': ['combobox']};
+const extra = {
+  textfield: ['percentage'],
+  'single-select': ['combobox'],
+  tabs: ['tabs-overflow'],
+};
 const wide = /^(form|tabs|table|split|textfield-native|choice-layouts)/;
 export const showcaseGroups = groups.map((title) => ({
   title,

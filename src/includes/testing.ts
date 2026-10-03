@@ -97,5 +97,11 @@ declare module 'vitest' {
   }
 }
 export {expect};
-export {fixture, aTimeout, nextFrame} from '@open-wc/testing-helpers';
+export {
+  fixture,
+  aTimeout,
+  nextFrame,
+  elementUpdated,
+  waitUntil,
+} from '@open-wc/testing-helpers';
 export {html} from 'lit/static-html.js';
