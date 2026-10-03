@@ -7,8 +7,8 @@ import ExamplePreview from './ExamplePreview.vue';
 
 <template>
   <section class="gallery" aria-label="全部组件演示">
-    <section v-for="group in showcaseGroups" :key="group.title">
-      <h2>{{ group.title }}</h2>
+    <section v-for="(group, index) in showcaseGroups" :key="group.title">
+      <h2 :id="`showcase-group-${index + 1}`">{{ group.title }}</h2>
       <div class="gallery-grid">
         <article
           v-for="demo in group.items"
@@ -16,7 +16,7 @@ import ExamplePreview from './ExamplePreview.vue';
           :data-demo="demo.id"
           :class="{'gallery-wide': demo.wide}"
         >
-          <h3>
+          <h3 :id="`demo-${demo.id}`">
             <a :href="withBase(`/components/${demo.component}`)">{{
               examples[demo.id].title
             }}</a>

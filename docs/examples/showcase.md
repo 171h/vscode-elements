@@ -1,5 +1,5 @@
 ---
-outline: false
+outline: [2, 3]
 pageClass: component-showcase
 ---
 

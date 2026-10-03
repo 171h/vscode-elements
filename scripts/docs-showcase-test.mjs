@@ -6,6 +6,27 @@ import {showcaseGroups} from '../docs/data/showcase.mjs';
 export async function testShowcase(page, url, selectTheme, screenshots) {
   await page.setViewportSize({width: 1440, height: 1000});
   await page.goto(url('examples/showcase'));
+  const outline = page.locator('.aside .VPDocAsideOutline');
+  await outline.getByRole('heading', {name: '本页内容', exact: true}).waitFor();
+  const outlineBox = await outline.boundingBox();
+  const galleryBox = await page.locator('.gallery').boundingBox();
+  assert.ok(
+    outlineBox && galleryBox && outlineBox.x >= galleryBox.x + galleryBox.width,
+    '本页内容必须位于综合演示右侧'
+  );
+  assert.equal(
+    await outline.locator('a').count(),
+    showcaseGroups.length + Object.keys(examples).length
+  );
+  await outline.locator('a[href="#demo-tree-controls"]').click();
+  await page.waitForFunction(() => location.hash === '#demo-tree-controls');
+  await page.waitForFunction(() => {
+    const top = document
+      .querySelector('#demo-tree-controls')
+      .getBoundingClientRect().top;
+    return top >= 0 && top < innerHeight;
+  });
+  await page.evaluate(() => window.scrollTo(0, 0));
   const demos = showcaseGroups.flatMap((group) => group.items);
   assert.equal(await page.locator('[data-demo]').count(), demos.length);
   assert.equal(
