@@ -64,24 +64,30 @@ export class VscodeContextMenuItem extends VscElement {
 
   override render(): TemplateResult {
     return html`
-      ${this.separator
-        ? html`
-            <div class="context-menu-item separator">
-              <span class="ruler"></span>
-            </div>
-          `
-        : html`
-            <div class="context-menu-item">
-              <a @click=${this.onItemClick}>
-                ${this.label
-                  ? html`<span class="label">${this.label}</span>`
-                  : nothing}
-                ${this.keybinding
-                  ? html`<span class="keybinding">${this.keybinding}</span>`
-                  : nothing}
-              </a>
-            </div>
-          `}
+      ${
+        this.separator
+          ? html`
+              <div class="context-menu-item separator">
+                <span class="ruler"></span>
+              </div>
+            `
+          : html`
+              <div class="context-menu-item">
+                <a @click=${this.onItemClick}>
+                  ${
+                    this.label
+                      ? html`<span class="label">${this.label}</span>`
+                      : nothing
+                  }
+                  ${
+                    this.keybinding
+                      ? html`<span class="keybinding">${this.keybinding}</span>`
+                      : nothing
+                  }
+                </a>
+              </div>
+            `
+      }
     `;
   }
 }

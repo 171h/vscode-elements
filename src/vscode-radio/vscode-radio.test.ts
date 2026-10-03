@@ -2,8 +2,8 @@
 import './index.js';
 import {VscodeRadio} from './index.js';
 import '../vscode-radio-group/index.js';
-import {expect, fixture, html} from '@open-wc/testing';
-import {sendKeys} from '@web/test-runner-commands';
+import {expect, fixture, html} from '../includes/testing.js';
+import {sendKeys} from '../includes/browser-commands.js';
 import sinon from 'sinon';
 
 describe('vscode-radio', () => {

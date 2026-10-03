@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>collapsible/actions-stop-propagation</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/src/main.ts"></script>
+    <script>
+      const logEvents = (selector, eventType) => {
+        document.querySelector(selector).addEventListener(eventType, (ev) => {
+          console.log(ev);
+        });
+      };
+    </script>
+  </head>
+
+  <body>
+    <h1>组件示例</h1>
+    <main>
+      <vscode-demo>
+        <vscode-collapsible
+          always-show-header-actions
+          heading="Test"
+          style="display: block; width: 500px"
+        >
+          <vscode-icon
+            name="file-add"
+            action-icon
+            aria-role="button"
+            id="btn-file-add"
+            title="New File"
+            slot="actions"
+          ></vscode-icon>
+          <vscode-icon
+            name="refresh"
+            action-icon
+            aria-role="button"
+            id="btn-refresh"
+            title="Refresh"
+            slot="decorations"
+          ></vscode-icon>
+          <p>Lorem ipsum</p>
+          <p>Lorem ipsum</p>
+          <p>Lorem ipsum</p>
+          <p>Lorem ipsum</p>
+          <p>Lorem ipsum</p>
+        </vscode-collapsible>
+        <div class="icon-size-buttons">
+          Icon size:
+          <button type="button" data-icon-size="small">small</button>
+          <button type="button" data-icon-size="medium">medium</button>
+          <button type="button" data-icon-size="large">large</button>
+        </div>
+      </vscode-demo>
+      <script>
+        logEvents('#btn-file-add', 'click');
+        logEvents('#btn-refresh', 'click');
+      </script>
+    </main>
+    <script type="module">
+      document
+        .querySelectorAll('.icon-size-buttons button')
+        .forEach((button) => {
+          button.addEventListener('click', () => {
+            button
+              .closest('vscode-demo')
+              .querySelectorAll('vscode-icon')
+              .forEach((icon) => {
+                icon.setAttribute('size', button.dataset.iconSize);
+              });
+          });
+        });
+    </script>
+  </body>
+</html>

@@ -15,12 +15,12 @@ const styles: CSSResultGroup = [
       border-bottom: 1px solid transparent;
       color: var(--vscode-foreground, #cccccc);
       display: flex;
-      min-height: 20px;
+      min-height: var(--vsc-tab-header-height, 20px);
       overflow: hidden;
       padding: 7px 8px;
       position: relative;
       text-overflow: ellipsis;
-      white-space: nowrap;
+      white-space: var(--vsc-tab-header-white-space, nowrap);
     }
 
     :host([active]) .wrapper {
@@ -42,7 +42,7 @@ const styles: CSSResultGroup = [
       align-items: center;
       color: var(--vscode-foreground, #cccccc);
       display: flex;
-      min-height: 20px;
+      min-height: var(--vsc-tab-header-height, 20px);
       overflow: inherit;
       text-overflow: inherit;
       position: relative;
@@ -60,14 +60,70 @@ const styles: CSSResultGroup = [
     :host([panel]) .wrapper {
       display: flex;
       font-size: 11px;
-      height: 31px;
+      min-height: var(--vsc-tab-header-height, 31px);
       padding: 2px 10px;
       text-transform: uppercase;
     }
 
     .main {
+      min-width: 0;
+      overflow-wrap: var(--vsc-tab-header-overflow-wrap, normal);
       overflow: inherit;
       text-overflow: inherit;
+    }
+
+    .before {
+      order: 0;
+    }
+    .main {
+      order: 2;
+    }
+    .after {
+      order: 4;
+    }
+
+    .icon {
+      order: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      margin-right: 8px;
+      line-height: 1;
+    }
+
+    .icon.trailing {
+      order: 3;
+      margin-right: 0;
+      margin-left: 8px;
+    }
+
+    .icon[hidden] {
+      display: none;
+    }
+
+    .icon vscode-icon,
+    .icon ::slotted(vscode-icon) {
+      --vsc-icon-size: 1em;
+    }
+
+    .icon ::slotted(*) {
+      width: 100%;
+      height: 100%;
+      font-size: inherit !important;
+      fill: currentColor;
+    }
+
+    :host([icon-display='icon']) .main {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+    }
+
+    :host([icon-display='icon']) .icon {
+      margin: 0;
     }
 
     .active-indicator {
@@ -86,7 +142,7 @@ const styles: CSSResultGroup = [
 
     :host(:focus-visible) .wrapper {
       outline-color: var(--vscode-focusBorder, #0078d4);
-      outline-offset: 3px;
+      outline-offset: var(--vsc-tab-focus-offset, 3px);
       outline-style: solid;
       outline-width: 1px;
     }

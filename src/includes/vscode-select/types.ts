@@ -18,7 +18,4 @@ export interface InternalOption extends Required<Option> {
 }
 
 export type FilterMethod =
-  | 'startsWithPerTerm'
-  | 'startsWith'
-  | 'contains'
-  | 'fuzzy';
+  'startsWithPerTerm' | 'startsWith' | 'contains' | 'fuzzy';

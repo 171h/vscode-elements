@@ -11,6 +11,7 @@ let nextId = 0;
  *
  * @tag vscode-tooltip
  * @slot - 一个触发元素；键盘操作时该元素应能获得焦点。
+ * @slot _description - 内部文字插槽，由组件管理，使用者无需提供内容。
  * @csspart tooltip - 提示面板，包含指向触发元素的小箭头。
  * @cssprop [--vscode-editorHoverWidget-background=#252526] - 提示背景色。
  * @cssprop [--vscode-editorHoverWidget-foreground=#cccccc] - 提示文字颜色。

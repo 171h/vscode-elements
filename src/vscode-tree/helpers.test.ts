@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-import {expect, fixture, html} from '@open-wc/testing';
+import {expect, fixture, html} from '../includes/testing.js';
 import {findLastChildItem, findNextItem, findPrevItem} from './helpers.js';
 import {VscodeTreeItem} from '../vscode-tree-item/vscode-tree-item.js';
 import '../vscode-tree-item/vscode-tree-item.js';

@@ -122,8 +122,7 @@ export class VscodeIcon extends VscElement {
     if (!linkElement) {
       let msg =
         'To use the Icon component, the codicons.css file must be included in the page with the id "vscode-codicon-stylesheet"! ';
-      msg +=
-        'See https://vscode-elements.github.io/components/icon/ for more details.';
+      msg += '请在宿主页面中加载 Codicon 样式表。';
 
       this.warn(msg);
     }

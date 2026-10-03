@@ -2,16 +2,18 @@
   "name": "VSCode Elements Dev Container",
   "image": "mcr.microsoft.com/devcontainers/base:ubuntu",
   "features": {
-    "node": "24"
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "24",
+      "pnpmVersion": "12.8.1"
+    }
   },
-  "postCreateCommand": "npm ci",
+  "postCreateCommand": "pnpm install --frozen-lockfile && pnpm test:install",
   "customizations": {
     "vscode": {
       "extensions": [
         "dbaeumer.vscode-eslint",
         "editorconfig.editorconfig",
         "esbenp.prettier-vscode",
-        "google.wireit",
         "runem.lit-plugin"
       ]
     }

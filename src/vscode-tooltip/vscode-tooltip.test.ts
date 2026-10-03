@@ -1,4 +1,4 @@
-import {expect, fixture, html, aTimeout} from '@open-wc/testing';
+import {expect, fixture, html, aTimeout} from '../includes/testing.js';
 import {VscodeTooltip, TooltipPlacement} from './index.js';
 import '../vscode-textfield/index.js';
 import '../vscode-radio-group/index.js';

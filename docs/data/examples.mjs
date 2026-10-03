@@ -1,17 +1,12 @@
+import {extraExamples} from './scenarios.mjs';
 export const examples = {
-  'tooltip-field': {
-    height: 190,
-    title: '外部字段关联与持续提示',
-    css: '.tooltip-field{padding:24px 0} #tooltip-input{width:180px}',
-    html: '<div class="tooltip-field"><vscode-textfield id="tooltip-input" label="基本风压" value="0"><span slot="content-after">kPa</span></vscode-textfield><vscode-tooltip id="field-tooltip" for="tooltip-input" placement="right" text="数值必须大于零&#10;说明：请输入基本风压" open style="--vsc-tooltip-min-width:160px;--vsc-tooltip-max-width:260px"></vscode-tooltip></div>',
-    js: "document.querySelector('#field-tooltip').fallbacks = ['bottom', 'top'];",
-  },
   tooltip: {
     height: 230,
     title: '四向提示与键盘聚焦',
     css: '.tooltips{display:flex;gap:32px;justify-content:center;padding:64px 0}',
     html: '<div class="tooltips"><vscode-tooltip text="上方提示" placement="top"><vscode-button>上</vscode-button></vscode-tooltip><vscode-tooltip text="下方提示" placement="bottom"><vscode-button>下</vscode-button></vscode-tooltip><vscode-tooltip text="左方提示" placement="left"><vscode-button>左</vscode-button></vscode-tooltip><vscode-tooltip text="搜索 (Ctrl+Shift+F)" placement="right"><vscode-button icon="search" aria-label="搜索" icon-only></vscode-button></vscode-tooltip></div>',
   },
+  ...extraExamples,
   badge: {
     height: 120,
     title: '徽章与计数',
@@ -118,6 +113,130 @@ export const examples = {
   'split-layout': {
     title: '分栏与最小尺寸',
     html: '<vscode-split-layout split="vertical" min-start="100px" min-end="100px" reset-on-dbl-click style="height: 200px"><div slot="start">资源管理器</div><div slot="end">编辑器<br />拖动中间分隔条，双击恢复。</div></vscode-split-layout>',
+  },
+  'tabs-overflow': {
+    title: '标签页溢出与标题图标',
+    height: 440,
+    html: `<div class="controls tabs-overflow-controls">
+              <label
+                >溢出方式<select id="gallery-overflow-mode">
+                  <option value="wrap">换行</option>
+                  <option value="scroll">水平滚动</option>
+                  <option value="menu">上下文菜单</option>
+                </select></label
+              >
+              <label
+                >换行对齐<select id="gallery-overflow-alignment">
+                  <option value="start">左对齐</option>
+                  <option value="center">居中</option>
+                </select></label
+              >
+              <label
+                >容器宽度<input
+                  id="gallery-overflow-width"
+                  type="range"
+                  min="160"
+                  max="800"
+                  value="420"
+                />
+                <output
+                  id="gallery-overflow-width-value"
+                  for="gallery-overflow-width"
+                  >420px</output
+                >
+              </label>
+              <label
+                >图文模式<select id="gallery-overflow-display">
+                  <option value="icon-text">图标和文字</option>
+                  <option value="icon">仅图标</option>
+                  <option value="text">仅文字</option>
+                </select></label
+              >
+              <label
+                >图标位置<select id="gallery-overflow-position">
+                  <option value="start">左侧</option>
+                  <option value="end">右侧</option>
+                </select></label
+              >
+              <label>面板风格<input id="gallery-overflow-panel" type="checkbox" /></label>
+              <label>标题内容高度<select id="gallery-overflow-height">
+                <option value="">默认</option><option value="20">20px</option><option value="32">32px</option><option value="44">44px</option>
+              </select></label>
+            </div>
+            <div id="gallery-overflow-container">
+              <vscode-tabs id="gallery-overflow-tabs">
+                <vscode-tab-header icon="files">文件</vscode-tab-header
+                ><vscode-tab-panel>文件内容</vscode-tab-panel>
+                <vscode-tab-header icon="search">搜索</vscode-tab-header
+                ><vscode-tab-panel>搜索内容</vscode-tab-panel>
+                <vscode-tab-header icon="source-control"
+                  >源代码管理</vscode-tab-header
+                ><vscode-tab-panel>源代码管理内容</vscode-tab-panel>
+                <vscode-tab-header icon="debug-alt"
+                  >运行与调试</vscode-tab-header
+                ><vscode-tab-panel>运行与调试内容</vscode-tab-panel>
+                <vscode-tab-header icon="extensions">扩展</vscode-tab-header
+                ><vscode-tab-panel>扩展内容</vscode-tab-panel>
+                <vscode-tab-header
+                  ><svg slot="icon" viewBox="0 0 16 16" aria-hidden="true">
+                    <path
+                      fill="currentColor"
+                      d="M2 2h12v12H2zM4 4v8h8V4z"
+                    /></svg
+                  >自定义 SVG</vscode-tab-header
+                ><vscode-tab-panel>自定义 SVG 图标</vscode-tab-panel>
+                <vscode-tab-header
+                  ><span
+                    slot="icon"
+                    class="codicon codicon-terminal"
+                    aria-hidden="true"
+                  ></span
+                  >自定义字体</vscode-tab-header
+                ><vscode-tab-panel>通过插槽使用字体图标</vscode-tab-panel>
+                <vscode-tab-header icon="gear">设置</vscode-tab-header
+                ><vscode-tab-panel>设置内容</vscode-tab-panel>
+                <vscode-tab-header icon="history">历史记录</vscode-tab-header
+                ><vscode-tab-panel>历史记录内容</vscode-tab-panel>
+                <vscode-tab-header icon="info">帮助与反馈</vscode-tab-header
+                ><vscode-tab-panel>帮助与反馈内容</vscode-tab-panel>
+              </vscode-tabs>
+            </div>
+            <p id="gallery-overflow-status" role="status">当前选中：文件</p>`,
+    css: `#gallery-overflow-container {width:420px;max-width:100%;border:1px solid var(--vscode-panel-border,#454545)} #gallery-overflow-tabs vscode-tab-panel {min-height:90px;padding:16px} #gallery-overflow-width {width:140px} .tabs-overflow-controls {display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:16px} .tabs-overflow-controls label {display:flex;gap:8px;align-items:center} .tabs-overflow-controls select {max-width:100%;background:var(--vscode-dropdown-background);color:var(--vscode-dropdown-foreground);border:1px solid var(--vscode-dropdown-border)} .tabs-overflow-controls output {display:inline;margin:0}`,
+    js: `const tabs = document.querySelector('#gallery-overflow-tabs');
+      const headers = [...tabs.querySelectorAll('vscode-tab-header')];
+      const mode = document.querySelector('#gallery-overflow-mode');
+      const alignment = document.querySelector('#gallery-overflow-alignment');
+      const width = document.querySelector('#gallery-overflow-width');
+      const display = document.querySelector('#gallery-overflow-display');
+      const position = document.querySelector('#gallery-overflow-position');
+      const panel = document.querySelector('#gallery-overflow-panel');
+      const height = document.querySelector('#gallery-overflow-height');
+      const update = () => {
+        tabs.panel = panel.checked;
+        tabs.overflow = mode.value;
+        tabs.wrapAlignment = alignment.value;
+        alignment.disabled = mode.value !== 'wrap';
+        document.querySelector('#gallery-overflow-container').style.width =
+          width.value + 'px';
+        document.querySelector('#gallery-overflow-width-value').value =
+          width.value + 'px';
+        headers.forEach((header) => {
+          header.iconDisplay = display.value;
+          header.iconPosition = position.value;
+          if (height.value) header.style.setProperty('--vsc-tab-header-height', height.value + 'px');
+          else header.style.removeProperty('--vsc-tab-header-height');
+        });
+      };
+      [mode, alignment, width, display, position, panel, height].forEach((control) =>
+        control.addEventListener('input', update)
+      );
+      const updateStatus = () => {
+        document.querySelector('#gallery-overflow-status').textContent =
+          '当前选中：' + headers[tabs.selectedIndex].textContent.trim();
+      };
+      tabs.addEventListener('vsc-tabs-select', updateStatus);
+      update();`,
   },
   tabs: {
     title: '标签切换与视图拖拽',

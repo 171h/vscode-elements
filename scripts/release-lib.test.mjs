@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import test from 'node:test';
+import {test} from 'vitest';
 
 import {
   renderChangelog,
@@ -144,7 +144,7 @@ test('updateChangelog writes release notes and preserves previous releases', (t)
   const directory = fs.mkdtempSync(
     path.join(os.tmpdir(), 'release-changelog-')
   );
-  t.after(() => fs.rmSync(directory, {recursive: true, force: true}));
+  t.onTestFinished(() => fs.rmSync(directory, {recursive: true, force: true}));
   const filePath = path.join(directory, 'CHANGELOG.md');
   const header = '# 变更日志\n\n记录所有重要变更。\n\n';
   const previous = '## [3.0.0] - 2026-09-02\n\n- 此前的发布。\n';

@@ -22,7 +22,7 @@ import 'nusys-ui/dist/vscode-textfield/index.js';
 
 ## 交互示例
 
-使用页面底部的全站主题和示例尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
+使用右上角导航栏的全站主题和尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
 
 <ExamplePreview example="tabs" />
 
@@ -65,6 +65,22 @@ tabs.addEventListener('vsc-tabs-layout-change', (event) => {
     '已移动视图：' + event.detail.views.length;
 });
 ```
+
+## 溢出标题与面板切换
+
+标题溢出方式由父级 `vscode-tabs` 配置，面板与标题仍按原有顺序配对。换行增加标题栏高度；滚动条覆盖分隔线；菜单隐藏标题时不会改变面板顺序。选中菜单中的隐藏标签，会激活对应面板，同时把标题显示在标题栏末位。
+
+在下例中缩小容器，选择菜单模式并激活“帮助与反馈”，观察标题末位、当前选中状态及面板内容同步变化。也可切换面板风格和标题高度，检查布局与图标缩放。
+
+<ExamplePreview example="tabs-overflow" />
+
+配置说明见 [Tabs 溢出布局](./tabs#溢出布局设置) 和 [标签页溢出与图标](../tabs-overflow)。
+
+## 功能场景
+
+下列场景补充状态、组合约束、数据操作和交互边界。每项列出覆盖的公开功能，代码视图可直接查阅实际运行代码。
+
+<ComponentExamples component="tab-panel" />
 
 ## 相关指南
 

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>split-layout/min-size</title>
+    <link
+      rel="stylesheet"
+      href="/node_modules/@vscode/codicons/dist/codicon.css"
+      id="vscode-codicon-stylesheet"
+    />
+    <script
+      type="module"
+      src="/node_modules/@vscode-elements/webview-playground/dist/index.js"
+    ></script>
+    <script type="module" src="/src/vscode-split-layout/index.ts"></script>
+    <script type="module" src="/src/vscode-scrollable/index.ts"></script>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        line-height: 1.4;
+        margin: 24px;
+      }
+
+      vscode-demo {
+        display: block;
+        margin-bottom: 32px;
+      }
+
+      .pane {
+        border: 1px solid #555;
+        box-sizing: border-box;
+        padding: 12px;
+      }
+
+      .pane.start {
+        background: #252526;
+        color: #f0f0f0;
+      }
+
+      .pane.end {
+        background: #1e1e1e;
+        color: #d0d0d0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>分割布局 · 最小尺寸示例</h1>
+    <p>
+      这些示例展示 <code>min-start</code> 和
+      <code>min-end</code>
+      如何限制分隔条，使面板不会缩小到最小尺寸以下。可混用像素与百分比以适应布局。
+    </p>
+
+    <h2>垂直混合约束：起始 240px，结束 25%</h2>
+    <p>
+      拖动手柄时，主面板宽度不会小于 <strong>240px</strong>，详情面板至少保留
+      <strong>25%</strong> 的宽度。
+    </p>
+    <vscode-demo>
+      <vscode-split-layout
+        style="width: 520px; height: 280px"
+        min-start="240px"
+        min-end="25%"
+      >
+        <div slot="start" class="pane start">
+          <h3>源文件</h3>
+          <p>此插槽不会缩小至 240px 以下。</p>
+          <p>尝试将手柄拖到最左侧，尺寸约束使列表仍然可读。</p>
+        </div>
+        <div slot="end" class="pane end">
+          <h3>详情</h3>
+          <p>此面板至少保留可用宽度的 25%，用于预览内容。</p>
+        </div>
+      </vscode-split-layout>
+    </vscode-demo>
+
+    <h2>水平比例约束（30%）</h2>
+    <p>两个面板均使用百分比最小尺寸，以保持水平分割中的工具栏可用。</p>
+    <vscode-demo>
+      <vscode-split-layout
+        split="horizontal"
+        style="width: 520px; height: 320px"
+        initial-handle-position="40%"
+        min-start="30%"
+        min-end="30%"
+      >
+        <div slot="start" class="pane start">
+          <h3>控制台</h3>
+          <p>控制台至少保留 30% 高度，防止过滤器消失。</p>
+        </div>
+        <div slot="end" class="pane end">
+          <h3>检查器</h3>
+          <p>检查器面板同样保留至少 30%，确保操作可用。</p>
+        </div>
+      </vscode-split-layout>
+    </vscode-demo>
+  </body>
+</html>

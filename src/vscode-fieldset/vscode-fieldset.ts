@@ -511,17 +511,19 @@ export class VscodeFieldset extends VscElement {
 
   override render(): TemplateResult {
     return html`
-      ${this.checkbox
-        ? html`
-            <div class="checkbox-row" part="checkbox">
-              <vscode-checkbox
-                label=${this.checkboxLabel}
-                ?checked=${this.checked}
-                @change=${this._onCheckboxChange}
-              ></vscode-checkbox>
-            </div>
-          `
-        : nothing}
+      ${
+        this.checkbox
+          ? html`
+              <div class="checkbox-row" part="checkbox">
+                <vscode-checkbox
+                  label=${this.checkboxLabel}
+                  ?checked=${this.checked}
+                  @change=${this._onCheckboxChange}
+                ></vscode-checkbox>
+              </div>
+            `
+          : nothing
+      }
       <slot @slotchange=${this._onSlotChange}></slot>
     `;
   }

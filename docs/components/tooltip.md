@@ -56,7 +56,7 @@ Vue 模板中用 `:text="tipText"`、`:open="hasTip"`、`:disabled="disabled"` �
 
 ## 交互示例
 
-切换全站主题查看浅色、深色和高对比度效果。悬停按钮或使用 Tab 聚焦，按 Escape 关闭提示。
+使用右上角导航栏的全站主题和尺寸选择查看浅色、深色和高对比度效果。悬停按钮或使用 Tab 聚焦，按 Escape 关闭提示；切换主题和尺寸时保留当前交互状态。
 
 <ExamplePreview example="tooltip" />
 
@@ -66,9 +66,11 @@ Vue 模板中用 `:text="tipText"`、`:open="hasTip"`、`:disabled="disabled"` �
 </vscode-tooltip>
 ```
 
-外部关联的持续字段提示：
+## 功能场景
 
-<ExamplePreview example="tooltip-field" />
+下列场景展示外部字段关联、持续提示、元素引用切换和禁用状态，并接入综合体验页。
+
+<ComponentExamples component="tooltip" />
 
 ## 主题
 

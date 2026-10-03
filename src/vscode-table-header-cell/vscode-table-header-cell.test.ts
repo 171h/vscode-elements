@@ -1,5 +1,5 @@
 import {VscodeTableHeaderCell} from './index.js';
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 
 describe('vscode-table-header-cell', () => {
   it('is defined', () => {

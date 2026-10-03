@@ -6,6 +6,7 @@ const styles: CSSResultGroup = [
   css`
     :host {
       display: block;
+      min-width: 0;
     }
 
     .header {
@@ -15,6 +16,7 @@ const styles: CSSResultGroup = [
       font-size: var(--vscode-font-size, 13px);
       font-weight: var(--vscode-font-weight, normal);
       width: 100%;
+      position: relative;
     }
 
     .header {
@@ -33,12 +35,149 @@ const styles: CSSResultGroup = [
 
     .tablist {
       display: flex;
+      flex: 1;
+      min-width: 0;
       margin-bottom: -1px;
+    }
+
+    .tablist ::slotted(vscode-tab-header) {
+      flex: 0 0 auto;
+    }
+
+    :host([overflow='wrap']) .tablist {
+      flex-wrap: wrap;
+    }
+
+    :host([overflow='wrap']) .tablist ::slotted(vscode-tab-header) {
+      max-width: 100%;
+      --vsc-tab-header-white-space: normal;
+      --vsc-tab-header-overflow-wrap: anywhere;
+    }
+
+    :host([overflow='wrap'][wrap-alignment='center']) .tablist {
+      justify-content: center;
+    }
+
+    :host([overflow='scroll']) .tablist,
+    :host([overflow='menu']) .tablist {
+      --vsc-tab-focus-offset: -2px;
+    }
+
+    :host([overflow='scroll']) .tablist {
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    :host([overflow='scroll']) .tablist::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar {
+      display: none;
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 8px;
+      overflow-x: scroll;
+      overflow-y: hidden;
+      z-index: 1;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    :host([overflow='scroll']) .scrollbar {
+      display: block;
+    }
+
+    :host([overflow='scroll']:hover) .scrollbar {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    :host([overflow='scroll']) .scrollbar[hidden] {
+      display: none;
+    }
+
+    .scrollbar::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb {
+      background: var(--vscode-scrollbarSlider-background, #79797966);
+    }
+
+    .scrollbar::-webkit-scrollbar-thumb:hover {
+      background: var(--vscode-scrollbarSlider-hoverBackground, #646464b3);
+    }
+
+    .tablist ::slotted([hidden]) {
+      display: none;
+    }
+
+    :host([overflow='menu']) .tablist {
+      overflow: hidden;
+    }
+
+    .tablist ::slotted([data-vsc-overflow-hidden]) {
+      position: absolute;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .tablist ::slotted([data-vsc-overflow-last]) {
+      order: 1;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    .overflow-button {
+      flex: 0 0 32px;
+      box-sizing: border-box;
+      padding: 0;
+      width: 32px;
+      align-self: stretch;
+      border: 0;
+      background: transparent;
+      color: var(--vscode-foreground, #cccccc);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .overflow-button[hidden] {
+      display: none;
+    }
+
+    .overflow-button:disabled {
+      cursor: default;
+      color: var(--vscode-disabledForeground, #cccccc80);
+    }
+
+    .overflow-button:hover:not(:disabled) {
+      background: var(--vscode-toolbar-hoverBackground, #5a5d5d4f);
+    }
+
+    .overflow-button:focus-visible {
+      outline: 1px solid var(--vscode-focusBorder, #0078d4);
+      outline-offset: -2px;
+    }
+
+    .menu-layer {
+      position: fixed;
+      inset: auto;
+      margin: 0;
+      border: 0;
+      padding: 0;
+      background: transparent;
+      max-width: 100vw;
+      max-height: 100vh;
+      overflow: auto;
     }
 
     slot[name='addons'] {
       display: block;
       margin-left: auto;
+      flex: 0 0 auto;
     }
   `,
 ];

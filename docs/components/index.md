@@ -16,3 +16,9 @@ import {withBase} from 'vitepress';
     </a>
   </div>
 </section>
+
+## 标签页溢出体验
+
+调整容器宽度，直接体验换行、水平滚动、隐藏标签菜单和标题图标。详细行为见 [标签页溢出与图标](../tabs-overflow)。
+
+<ExamplePreview example="tabs-overflow" />

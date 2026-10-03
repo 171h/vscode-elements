@@ -22,7 +22,7 @@ import 'nusys-ui/dist/vscode-toolbar-button/index.js';
 
 ## 交互示例
 
-使用页面底部的全站主题和示例尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
+使用右上角导航栏的全站主题和尺寸选择，使用鼠标或键盘操作。代码视图包含此预览实际执行的 HTML、CSS 与 JavaScript。
 
 <ExamplePreview example="collapsible" />
 
@@ -35,6 +35,12 @@ import 'nusys-ui/dist/vscode-toolbar-button/index.js';
   <p>package.json</p>
 </vscode-collapsible>
 ```
+
+## 功能场景
+
+下列场景补充状态、组合约束、数据操作和交互边界。每项列出覆盖的公开功能，代码视图可直接查阅实际运行代码。
+
+<ComponentExamples component="collapsible" />
 
 ## 相关指南
 

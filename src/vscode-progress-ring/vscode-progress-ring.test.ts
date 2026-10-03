@@ -1,5 +1,5 @@
 import {VscodeProgressRing} from './index.js';
-import {expect} from '@open-wc/testing';
+import {expect} from '../includes/testing.js';
 
 describe('vscode-progress-ring', () => {
   it('is defined', () => {
